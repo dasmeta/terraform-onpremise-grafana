@@ -29,8 +29,8 @@ No resources.
 | <a name="input_by_host"></a> [by\_host](#input\_by\_host) | n/a | `bool` | `false` | no |
 | <a name="input_by_path"></a> [by\_path](#input\_by\_path) | n/a | `bool` | `false` | no |
 | <a name="input_by_status_path"></a> [by\_status\_path](#input\_by\_status\_path) | n/a | `bool` | `false` | no |
-| <a name="input_coordinates"></a> [coordinates](#input\_coordinates) | position | <pre>object({<br>    x : number<br>    y : number<br>    width : number<br>    height : number<br>  })</pre> | n/a | yes |
-| <a name="input_data_source"></a> [data\_source](#input\_data\_source) | The custom datasource for widget item | <pre>object({<br>    uid  = optional(string, null)<br>    type = optional(string, "prometheus")<br>  })</pre> | n/a | yes |
+| <a name="input_coordinates"></a> [coordinates](#input\_coordinates) | position | <pre>object({<br/>    x : number<br/>    y : number<br/>    width : number<br/>    height : number<br/>  })</pre> | n/a | yes |
+| <a name="input_data_source"></a> [data\_source](#input\_data\_source) | The custom datasource for widget item | <pre>object({<br/>    uid  = optional(string, null)<br/>    type = optional(string, "prometheus")<br/>  })</pre> | n/a | yes |
 | <a name="input_ingress_type"></a> [ingress\_type](#input\_ingress\_type) | n/a | `string` | `"nginx"` | no |
 | <a name="input_only_5xx"></a> [only\_5xx](#input\_only\_5xx) | n/a | `bool` | `false` | no |
 | <a name="input_period"></a> [period](#input\_period) | stats | `number` | `3` | no |

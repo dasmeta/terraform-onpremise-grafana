@@ -7,12 +7,11 @@ module "this" {
     rows : [
       { type : "block/sla" },
       { type : "block/ingress" },
-      { type : "block/service", name : "service-name-1", host : "example.com" },
-      { type : "block/service", name : "service-name-2" },
-      { type : "block/service", name : "service-name-3" }
+      { type : "block/service", name : "backend", host : "api.example.com" },
+      { type : "block/service", name : "worker" }
     ]
     data_source = {
-      uid : "00000"
+      uid : "#######"
     }
     variables = [
       {
@@ -21,9 +20,6 @@ module "this" {
           {
             "selected" : true,
             "value" : "prod"
-          },
-          {
-            "value" : "stage"
           },
           {
             "value" : "dev"
@@ -70,39 +66,31 @@ module "this" {
         # "exec_err_state" : "Alerting" # uncomment to trigger new alert
       }
     ]
-    contact_points = {
-      webhook = [
-        {
-          name = "webhook-contact-point-default"
-          url  = "https://example.com?default"
-        },
-        {
-          name = "webhook-contact-point-second"
-          url  = "https://example.com?second"
-        },
-        {
-          name = "webhook-contact-point-third"
-          url  = "https://example.com?third"
-        }
-      ]
+  }
+
+  grafana_configs = {
+    prometheus_url = "http://prometheus-operated.monitoring.svc.cluster.local:9090"
+
+    resources = {
+      request = {
+        cpu = "1"
+        mem = "2Gi"
+      }
     }
-    notifications = {
-      "group_interval" : "1m",
-      "repeat_interval" : "1m",
-      "contact_point" : "webhook-contact-point-default", # the default policy/channel will be used if no one from policies listing handled alert, in this case as third policy have no matcher rules we will not have such cases
-      "policies" : [
-        {
-          "contact_point" : "webhook-contact-point-second", # the priority=P1 alerts will go by this channel
-          "matchers" : [{
-            "label" : "priority",
-            "match" : "=",
-            "value" : "P1"
-          }]
-        },
-        {
-          "contact_point" : "webhook-contact-point-third", # all alerts will go by this policy/channel
-        },
-      ]
+    ingress_configs = {
+      annotations = {
+        "kubernetes.io/ingress.class"                = "alb"
+        "alb.ingress.kubernetes.io/scheme"           = "internet-facing"
+        "alb.ingress.kubernetes.io/target-type"      = "ip"
+        "alb.ingress.kubernetes.io/listen-ports"     = "[{\\\"HTTP\\\": 80}, {\\\"HTTPS\\\": 443}]"
+        "alb.ingress.kubernetes.io/group.name"       = "dev-ingress"
+        "alb.ingress.kubernetes.io/healthcheck-path" = "/api/health"
+        "alb.ingress.kubernetes.io/ssl-redirect"     = "443"
+        "alb.ingress.kubernetes.io/certificate-arn"  = "certificate_arn"
+      }
+      hosts = ["grafana.example.com"]
     }
   }
+  grafana_admin_password = "admin"
+  aws_region             = "us-east-2"
 }

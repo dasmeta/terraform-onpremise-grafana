@@ -132,11 +132,11 @@ module "this" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_data_source"></a> [data\_source](#input\_data\_source) | The grafana dashboard global/default datasource, will be used in widget items if they have no their custom ones | <pre>object({<br>    uid  = string<br>    type = optional(string, "prometheus")<br>  })</pre> | n/a | yes |
+| <a name="input_data_source"></a> [data\_source](#input\_data\_source) | The grafana dashboard global/default datasource, will be used in widget items if they have no their custom ones | <pre>object({<br/>    uid  = string<br/>    type = optional(string, "prometheus")<br/>  })</pre> | n/a | yes |
 | <a name="input_defaults"></a> [defaults](#input\_defaults) | Default values to be supplied to all modules. | `any` | `{}` | no |
 | <a name="input_name"></a> [name](#input\_name) | Dashboard name. Should not contain spaces and special chars. | `string` | n/a | yes |
 | <a name="input_rows"></a> [rows](#input\_rows) | List of widgets to be inserted into the dashboard. See ./modules/widgets folder to see list of available widgets. | `any` | n/a | yes |
-| <a name="input_variables"></a> [variables](#input\_variables) | Allows to define variables to be used in dashboard | <pre>list(object({<br>    name        = string<br>    type        = optional(string, "custom")<br>    hide        = optional(number, 0)<br>    includeAll  = optional(bool, false)<br>    multi       = optional(bool, false)<br>    query       = optional(string, "")<br>    queryValue  = optional(string, "")<br>    skipUrlSync = optional(bool, false)<br>    options = optional(list(object({<br>      selected = optional(bool, false)<br>      value    = string<br>      text     = optional(string, null)<br>    })), [])<br>    }<br>  ))</pre> | `[]` | no |
+| <a name="input_variables"></a> [variables](#input\_variables) | Allows to define variables to be used in dashboard | <pre>list(object({<br/>    name        = string<br/>    type        = optional(string, "custom")<br/>    hide        = optional(number, 0)<br/>    includeAll  = optional(bool, false)<br/>    multi       = optional(bool, false)<br/>    query       = optional(string, "")<br/>    queryValue  = optional(string, "")<br/>    skipUrlSync = optional(bool, false)<br/>    options = optional(list(object({<br/>      selected = optional(bool, false)<br/>      value    = string<br/>      text     = optional(string, null)<br/>    })), [])<br/>    }<br/>  ))</pre> | `[]` | no |
 
 ## Outputs
 
