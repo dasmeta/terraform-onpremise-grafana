@@ -86,9 +86,9 @@ module "this" {
         "alb.ingress.kubernetes.io/group.name"       = "dev-ingress"
         "alb.ingress.kubernetes.io/healthcheck-path" = "/api/health"
         "alb.ingress.kubernetes.io/ssl-redirect"     = "443"
-        "alb.ingress.kubernetes.io/certificate-arn"  = "arn:aws:acm:us-east-2:774305617028:certificate/0c7b32a5-cfd3-488b-800c-fe289f3bb040"
+        "alb.ingress.kubernetes.io/certificate-arn"  = "certificate_arn"
       }
-      hosts = ["grafana.dev.trysela.com"]
+      hosts = ["grafana.example.com"]
     }
   }
 
@@ -96,7 +96,7 @@ module "this" {
     enabled           = true
     storage_backend   = "s3"
     bucket_name       = "my-tempo-traces-kauwnw"
-    oidc_provider_arn = "arn:aws:iam::774305617028:oidc-provider/oidc.eks.us-east-2.amazonaws.com/id/7EDF20F4011D608698CCE6E8061B9767"
+    oidc_provider_arn = "oidc_provider_arn"
 
     enable_metrics_generator = true
     enable_service_monitor   = true
@@ -114,7 +114,7 @@ module "this" {
         "nginx.ingress.kubernetes.io/rewrite-target" = "/"
         "nginx.ingress.kubernetes.io/ssl-redirect"   = "true"
       }
-      hosts     = ["tempo.dev.trysela.com"]
+      hosts     = ["tempo.example.com"]
       path      = "/"
       path_type = "Prefix"
     }

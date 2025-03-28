@@ -3,8 +3,10 @@ module "tempo" {
   region = "us-east-2"
 
   configs = {
-    storage_backend = "s3"
-    bucket_name     = "my-tempo-traces"
+    enabled           = true
+    storage_backend   = "s3"
+    bucket_name       = "my-tempo-traces-kauwnw"
+    oidc_provider_arn = "eks-oidc-provider-arn"
 
     enable_metrics_generator = true
     enable_service_monitor   = true
@@ -18,19 +20,14 @@ module "tempo" {
     ingress = {
       enabled = true
       annotations = {
-        "kubernetes.io/ingress.class"                = "alb"
-        "alb.ingress.kubernetes.io/scheme"           = "internet-facing"
-        "alb.ingress.kubernetes.io/target-type"      = "ip"
-        "alb.ingress.kubernetes.io/listen-ports"     = "[{\\\"HTTP\\\": 80}, {\\\"HTTPS\\\":443}]"
-        "alb.ingress.kubernetes.io/group.name"       = "dev-ingress"
-        "alb.ingress.kubernetes.io/healthcheck-path" = "/"
-        "alb.ingress.kubernetes.io/healthcheck-path" = "/api/health"
-        "alb.ingress.kubernetes.io/ssl-redirect"     = "443"
-        "alb.ingress.kubernetes.io/certificate-arn"  = "certificate_arn"
+        "kubernetes.io/ingress.class"                = "nginx"
+        "nginx.ingress.kubernetes.io/rewrite-target" = "/"
+        "nginx.ingress.kubernetes.io/ssl-redirect"   = "true"
       }
-      hosts     = ["tempo.dev.trysela.com"]
+      hosts     = ["tempo.example.com"]
       path      = "/"
       path_type = "Prefix"
     }
   }
+
 }
