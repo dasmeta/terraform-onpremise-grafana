@@ -47,9 +47,9 @@ module "tempo_iam_eks_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.53.0"
 
-  count = var.configs.storage_backend == "s3" && var.configs.tempo_role_arn == "" ? 1 : 0
+  count = local.create_tempo_role ? 1 : 0
 
-  role_name = var.configs.tempo_role_name
+  role_name = "${var.configs.tempo_role_name}-role"
   role_policy_arns = {
     policy = resource.aws_iam_policy.tempo_s3_access[0].arn
   }
@@ -63,8 +63,8 @@ module "tempo_iam_eks_role" {
 }
 
 resource "aws_iam_policy" "tempo_s3_access" {
-  count = var.configs.storage_backend == "s3" && var.configs.tempo_role_arn == "" ? 1 : 0
-  name  = "tempo_s3_access_policy"
+  count = local.create_tempo_role ? 1 : 0
+  name  = "${var.configs.tempo_role_name}-policy"
   path  = "/"
 
   policy = jsonencode({

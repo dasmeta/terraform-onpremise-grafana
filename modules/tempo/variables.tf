@@ -1,13 +1,13 @@
 variable "namespace" {
   type        = string
   description = "namespace for tempo deployment"
-  default     = "namespace"
+  default     = "monitoring"
 }
 
 variable "region" {
   type        = string
-  description = "aws region for s3 bucket"
-  default     = "us-east-2"
+  description = "aws region"
+  default     = "eu-central-1"
 }
 
 variable "configs" {
@@ -16,7 +16,6 @@ variable "configs" {
     tempo_role_arn           = optional(string, "")
     storage_backend          = optional(string, "s3") # "local" or "s3"
     bucket_name              = optional(string, "")
-    region                   = optional(string)
     enable_metrics_generator = optional(bool, true)
     enable_service_monitor   = optional(bool, true)
     tempo_role_name          = optional(string, "tempo-s3-role")
@@ -41,10 +40,4 @@ variable "configs" {
       annotations = optional(map(string), {})
     }), {})
   })
-}
-
-variable "oidc_provider_arn" {
-  type        = string
-  default     = ""
-  description = "arn of eks oidc provider"
 }

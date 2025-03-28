@@ -232,7 +232,6 @@ variable "tempo_configs" {
     tempo_image_tag          = optional(string, "2.4.0")
     storage_backend          = optional(string, "s3") # "local" or "s3"
     bucket_name              = optional(string)
-    region                   = optional(string)
     enable_metrics_generator = optional(bool, true)
     enable_service_monitor   = optional(bool, true)
     oidc_provider_arn        = optional(string, "")
@@ -244,7 +243,7 @@ variable "tempo_configs" {
     }), {})
 
     ingress = optional(object({
-      enabled     = optional(bool, true)
+      enabled     = optional(bool, false)
       annotations = optional(map(string), {})
       hosts       = optional(list(string), ["tempo.example.com"])
       path        = optional(string, "/")
