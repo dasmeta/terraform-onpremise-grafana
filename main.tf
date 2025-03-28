@@ -33,6 +33,7 @@ module "grafana" {
   grafana_admin_password = var.grafana_admin_password
   configs                = var.grafana_configs
   aws_region             = var.aws_region
+  namespace              = var.namespace
 
 }
 
@@ -41,5 +42,31 @@ module "prometheus" {
 
   count = var.prometheus_configs.enabled ? 1 : 0
 
-  configs = var.prometheus_configs
+  configs   = var.prometheus_configs
+  namespace = var.namespace
+}
+
+module "tempo" {
+  source = "./modules/tempo"
+
+  count = var.tempo_configs.enabled ? 1 : 0
+
+  configs   = var.tempo_configs
+  region    = var.aws_region
+  namespace = var.namespace
+}
+
+resource "grafana_data_source" "tempo" {
+  count = var.tempo_configs.enabled ? 1 : 0
+
+  type        = "tempo"
+  name        = "Tempo"
+  access_mode = "proxy"
+  uid         = "tempo"
+  is_default  = false
+  url         = module.tempo[0].tempo_url
+
+  json_data_encoded = jsonencode(var.tempo_configs.tempo_datasource_json)
+
+  depends_on = [module.tempo]
 }

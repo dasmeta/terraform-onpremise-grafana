@@ -124,7 +124,9 @@ Check `./tests`, `modules/alert-rules/tests`, `modules/alert-contact-points/test
 
 ## Providers
 
-No providers.
+| Name | Version |
+|------|---------|
+| <a name="provider_grafana"></a> [grafana](#provider\_grafana) | 3.22.0 |
 
 ## Modules
 
@@ -134,10 +136,13 @@ No providers.
 | <a name="module_application_dashboard"></a> [application\_dashboard](#module\_application\_dashboard) | ./modules/dashboard/ | n/a |
 | <a name="module_grafana"></a> [grafana](#module\_grafana) | ./modules/grafana | n/a |
 | <a name="module_prometheus"></a> [prometheus](#module\_prometheus) | ./modules/prometheus | n/a |
+| <a name="module_tempo"></a> [tempo](#module\_tempo) | ./modules/tempo | n/a |
 
 ## Resources
 
-No resources.
+| Name | Type |
+|------|------|
+| [grafana_data_source.tempo](https://registry.terraform.io/providers/grafana/grafana/latest/docs/resources/data_source) | resource |
 
 ## Inputs
 
@@ -149,7 +154,9 @@ No resources.
 | <a name="input_grafana_admin_password"></a> [grafana\_admin\_password](#input\_grafana\_admin\_password) | grafana admin user password | `string` | `""` | no |
 | <a name="input_grafana_configs"></a> [grafana\_configs](#input\_grafana\_configs) | Values to construct the values file for Grafana Helm chart | <pre>object({<br/>    enabled = optional(bool, true)<br/>    resources = optional(object({<br/>      request = optional(object({<br/>        cpu = optional(string, "1")<br/>        mem = optional(string, "2Gi")<br/>      }), {})<br/>      limit = optional(object({<br/>        cpu = optional(string, "2")<br/>        mem = optional(string, "3Gi")<br/>      }), {})<br/>    }), {})<br/>    persistence = optional(object({<br/>      enabled = optional(bool, true)<br/>      type    = optional(string, "pvc")<br/>      size    = optional(string, "10Gi")<br/>    }), {})<br/>    ingress_configs = optional(object({<br/>      annotations = optional(map(string),<br/>        {<br/>          "kubernetes.io/ingress.class"                = "alb"<br/>          "alb.ingress.kubernetes.io/scheme"           = "internet-facing"<br/>          "alb.ingress.kubernetes.io/target-type"      = "ip"<br/>          "alb.ingress.kubernetes.io/listen-ports"     = "[{\"HTTP\": 80}]"<br/>          "alb.ingress.kubernetes.io/group.name"       = "monitoring"<br/>          "alb.ingress.kubernetes.io/healthcheck-path" = "/api/health"<br/>        }<br/>      )<br/>      hosts     = optional(list(string), ["grafana.example.com"])<br/>      path      = optional(string, "/")<br/>      path_type = optional(string, "Prefix")<br/>    }))<br/>    prometheus_url = optional(string, "http://prometheus-operated.monitoring.svc.cluster.local:9090")<br/><br/>    replicas  = optional(number, 1)<br/>    image_tag = optional(string, "11.4.2")<br/>  })</pre> | `{}` | no |
 | <a name="input_name"></a> [name](#input\_name) | Dashboard name | `string` | n/a | yes |
+| <a name="input_namespace"></a> [namespace](#input\_namespace) | n/a | `string` | `"monitoring"` | no |
 | <a name="input_prometheus_configs"></a> [prometheus\_configs](#input\_prometheus\_configs) | values to be used as prometheus's chart values | <pre>object({<br/>    enabled        = optional(bool, true)<br/>    retention_days = optional(string, "15d")<br/>    storage_class  = optional(string, "efs-sc-root")<br/>    storage_size   = optional(string, "10Gi")<br/>    resources = optional(object({<br/>      request = optional(object({<br/>        cpu = optional(string, "500m")<br/>        mem = optional(string, "500Mi")<br/>      }), {})<br/>      limit = optional(object({<br/>        cpu = optional(string, "1")<br/>        mem = optional(string, "1Gi")<br/>      }), {})<br/>    }), {})<br/>    enable_alertmanager = optional(bool, true)<br/>  })</pre> | `{}` | no |
+| <a name="input_tempo_configs"></a> [tempo\_configs](#input\_tempo\_configs) | confgis for tempo deployment | <pre>object({<br/>    enabled                  = optional(string, false)<br/>    tempo_image_tag          = optional(string, "2.4.0")<br/>    storage_backend          = optional(string, "s3") # "local" or "s3"<br/>    bucket_name              = optional(string)<br/>    region                   = optional(string)<br/>    enable_metrics_generator = optional(bool, true)<br/>    enable_service_monitor   = optional(bool, true)<br/>    oidc_provider_arn        = optional(string, "")<br/><br/>    persistence = optional(object({<br/>      enabled       = optional(bool, true)<br/>      size          = optional(string, "10Gi")<br/>      storage_class = optional(string, "gp2")<br/>    }), {})<br/><br/>    ingress = optional(object({<br/>      enabled     = optional(bool, true)<br/>      annotations = optional(map(string), {})<br/>      hosts       = optional(list(string), ["tempo.example.com"])<br/>      path        = optional(string, "/")<br/>      path_type   = optional(string, "Prefix")<br/>    }), {})<br/><br/>    tempo_datasource_json = optional(object({<br/>      httpMethod = optional(string, "GET")<br/><br/>      tracesToMetrics = optional(object({<br/>        datasourceUid = optional(string, "prometheus")<br/>      }), {})<br/><br/>      serviceMap = optional(object({<br/>        datasourceUid = optional(string, "prometheus")<br/>      }), {})<br/><br/>      nodeGraph = optional(object({<br/>        enabled = optional(bool, true)<br/>      }), {})<br/>    }), {})<br/>  })</pre> | `{}` | no |
 
 ## Outputs
 

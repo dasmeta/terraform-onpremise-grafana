@@ -1,0 +1,50 @@
+variable "namespace" {
+  type        = string
+  description = "namespace for tempo deployment"
+  default     = "namespace"
+}
+
+variable "region" {
+  type        = string
+  description = "aws region for s3 bucket"
+  default     = "us-east-2"
+}
+
+variable "configs" {
+  type = object({
+    tempo_image_tag          = optional(string, "2.4.0")
+    tempo_role_arn           = optional(string, "")
+    storage_backend          = optional(string, "s3") # "local" or "s3"
+    bucket_name              = optional(string, "")
+    region                   = optional(string)
+    enable_metrics_generator = optional(bool, true)
+    enable_service_monitor   = optional(bool, true)
+    tempo_role_name          = optional(string, "tempo-s3-role")
+    oidc_provider_arn        = optional(string, "")
+
+    persistence = optional(object({
+      enabled       = optional(bool, true)
+      size          = optional(string, "10Gi")
+      storage_class = optional(string, "gp2")
+    }), {})
+
+    ingress = optional(object({
+      enabled     = optional(bool, false)
+      annotations = optional(map(string), {})
+      hosts       = optional(list(string), ["tempo.example.com"])
+      path        = optional(string, "/")
+      path_type   = optional(string, "Prefix")
+    }), {})
+
+    service_account = optional(object({
+      name        = optional(string, "tempo-serviceaccount")
+      annotations = optional(map(string), {})
+    }), {})
+  })
+}
+
+variable "oidc_provider_arn" {
+  type        = string
+  default     = ""
+  description = "arn of eks oidc provider"
+}
