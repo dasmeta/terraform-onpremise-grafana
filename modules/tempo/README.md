@@ -21,7 +21,7 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_my_bucket"></a> [my\_bucket](#module\_my\_bucket) | dasmeta/s3/aws | 1.2.1 |
+| <a name="module_tempo_bucket"></a> [tempo\_bucket](#module\_tempo\_bucket) | dasmeta/s3/aws | 1.3.1 |
 | <a name="module_tempo_iam_eks_role"></a> [tempo\_iam\_eks\_role](#module\_tempo\_iam\_eks\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.53.0 |
 
 ## Resources

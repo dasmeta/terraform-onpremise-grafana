@@ -230,6 +230,7 @@ variable "tempo_configs" {
   type = object({
     enabled                  = optional(string, false)
     tempo_image_tag          = optional(string, "2.4.0")
+    tempo_role_arn           = optional(string, "")
     storage_backend          = optional(string, "s3") # "local" or "s3"
     bucket_name              = optional(string)
     enable_metrics_generator = optional(bool, true)

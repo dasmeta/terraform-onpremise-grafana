@@ -68,5 +68,5 @@ resource "grafana_data_source" "tempo" {
 
   json_data_encoded = jsonencode(var.tempo_configs.tempo_datasource_json)
 
-  depends_on = [module.tempo]
+  depends_on = [module.tempo, module.grafana]
 }

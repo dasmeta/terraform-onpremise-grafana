@@ -10,7 +10,7 @@ resource "helm_release" "tempo" {
     templatefile("${path.module}/values/tempo-values.yaml.tpl", {
       tempo_image_tag = var.configs.tempo_image_tag
       storage_backend = var.configs.storage_backend
-      bucket_name     = module.my_bucket.s3_bucket_id
+      bucket_name     = module.tempo_bucket.s3_bucket_id
       region          = var.region
 
       persistence_enabled = var.configs.persistence.enabled
@@ -30,17 +30,15 @@ resource "helm_release" "tempo" {
       service_account_annotations = local.service_account_annotations
     })
   ]
-  depends_on = [module.my_bucket]
+  depends_on = [module.tempo_bucket]
 }
 
-module "my_bucket" {
+module "tempo_bucket" {
   source  = "dasmeta/s3/aws"
-  version = "1.2.1"
+  version = "1.3.1"
 
   name = var.configs.bucket_name
 
-
-  acl = "public"
 }
 
 module "tempo_iam_eks_role" {

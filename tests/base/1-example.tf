@@ -93,10 +93,11 @@ module "this" {
   }
 
   tempo_configs = {
-    enabled           = true
-    storage_backend   = "s3"
-    bucket_name       = "my-tempo-traces-kauwnw"
-    oidc_provider_arn = "oidc_provider_arn"
+    enabled         = true
+    storage_backend = "s3"
+    bucket_name     = "my-tempo-traces-kauwnw"
+    # tempo_role_arn    = "arn:aws:iam::12345678901:role/tempo-s3-access-manual" # if the role arn is provided then a role will not be created
+    oidc_provider_arn = ""
 
     enable_metrics_generator = true
     enable_service_monitor   = true
