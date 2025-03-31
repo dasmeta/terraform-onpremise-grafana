@@ -91,6 +91,36 @@ module "this" {
       hosts = ["grafana.example.com"]
     }
   }
+
+  tempo_configs = {
+    enabled         = true
+    storage_backend = "s3"
+    bucket_name     = "my-tempo-traces-kauwnw"
+    # tempo_role_arn    = "arn:aws:iam::12345678901:role/tempo-s3-access-manual" # if the role arn is provided then a role will not be created
+    oidc_provider_arn = ""
+
+    enable_metrics_generator = true
+    enable_service_monitor   = true
+
+    persistence = {
+      enabled       = true
+      size          = "10Gi"
+      storage_class = "gp2"
+    }
+
+    ingress = {
+      enabled = true
+      annotations = {
+        "kubernetes.io/ingress.class"                = "nginx"
+        "nginx.ingress.kubernetes.io/rewrite-target" = "/"
+        "nginx.ingress.kubernetes.io/ssl-redirect"   = "true"
+      }
+      hosts     = ["tempo.example.com"]
+      path      = "/"
+      path_type = "Prefix"
+    }
+  }
+
   grafana_admin_password = "admin"
   aws_region             = "us-east-2"
 }

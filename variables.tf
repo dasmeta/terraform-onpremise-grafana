@@ -225,3 +225,45 @@ variable "aws_region" {
   type    = string
   default = "eu-central-1"
 }
+
+variable "tempo_configs" {
+  type = object({
+    enabled                  = optional(string, false)
+    tempo_image_tag          = optional(string, "2.4.0")
+    tempo_role_arn           = optional(string, "")
+    storage_backend          = optional(string, "s3") # "local" or "s3"
+    bucket_name              = optional(string)
+    enable_metrics_generator = optional(bool, true)
+    enable_service_monitor   = optional(bool, true)
+    oidc_provider_arn        = optional(string, "")
+
+    persistence = optional(object({
+      enabled       = optional(bool, true)
+      size          = optional(string, "10Gi")
+      storage_class = optional(string, "gp2")
+    }), {})
+
+    tempo_datasource_json = optional(object({
+      httpMethod = optional(string, "GET")
+
+      tracesToMetrics = optional(object({
+        datasourceUid = optional(string, "prometheus")
+      }), {})
+
+      serviceMap = optional(object({
+        datasourceUid = optional(string, "prometheus")
+      }), {})
+
+      nodeGraph = optional(object({
+        enabled = optional(bool, true)
+      }), {})
+    }), {})
+  })
+  description = "confgis for tempo deployment"
+  default     = {}
+}
+
+variable "namespace" {
+  type    = string
+  default = "monitoring"
+}
