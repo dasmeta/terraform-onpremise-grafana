@@ -1,10 +1,7 @@
+
 tempo:
   image:
     tag: ${tempo_image_tag}
-
-  service:
-    enabled: true
-    type: ClusterIP
 
   storage:
     trace:
@@ -27,19 +24,6 @@ tempo:
 
   metricsGenerator:
     enabled: ${enable_metrics_generator}
-
-  ingress:
-    enabled: ${enable_ingress}
-    annotations:
-%{~ for k, v in ingress_annotations }
-      ${k}: "${v}"
-%{~ endfor }
-    hosts:
-%{~ for h in ingress_hosts }
-      - ${h}
-%{~ endfor }
-    path: ${ingress_path}
-    pathType: ${ingress_path_type}
 
 serviceMonitor:
   enabled: ${enable_service_monitor}
