@@ -20,12 +20,6 @@ resource "helm_release" "tempo" {
       enable_metrics_generator = var.configs.enable_metrics_generator
       enable_service_monitor   = var.configs.enable_service_monitor
 
-      enable_ingress      = var.configs.ingress.enabled
-      ingress_annotations = var.configs.ingress.annotations
-      ingress_hosts       = var.configs.ingress.hosts
-      ingress_path        = var.configs.ingress.path
-      ingress_path_type   = var.configs.ingress.path_type
-
       service_account_name        = var.configs.service_account.name
       service_account_annotations = local.service_account_annotations
     })

@@ -243,14 +243,6 @@ variable "tempo_configs" {
       storage_class = optional(string, "gp2")
     }), {})
 
-    ingress = optional(object({
-      enabled     = optional(bool, false)
-      annotations = optional(map(string), {})
-      hosts       = optional(list(string), ["tempo.example.com"])
-      path        = optional(string, "/")
-      path_type   = optional(string, "Prefix")
-    }), {})
-
     tempo_datasource_json = optional(object({
       httpMethod = optional(string, "GET")
 
