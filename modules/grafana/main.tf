@@ -6,7 +6,7 @@ resource "helm_release" "grafana" {
   namespace        = var.namespace
   create_namespace = true
   timeout          = 600
-  version          = "8.5.6"
+  version          = var.chart_version
 
   values = [
     templatefile("${path.module}/values/grafana-values.yaml.tpl", {

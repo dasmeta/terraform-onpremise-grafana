@@ -4,6 +4,12 @@ variable "namespace" {
   default     = "monitoring"
 }
 
+variable "chart_version" {
+  type        = string
+  description = "grafana chart version"
+  default     = "70.3.0"
+}
+
 variable "configs" {
   type = object({
     retention_days = optional(string, "15d")

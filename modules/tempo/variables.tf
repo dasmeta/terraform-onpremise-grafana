@@ -4,6 +4,12 @@ variable "namespace" {
   default     = "monitoring"
 }
 
+variable "chart_version" {
+  type        = string
+  description = "grafana chart version"
+  default     = "1.18.3"
+}
+
 variable "region" {
   type        = string
   description = "aws region"
