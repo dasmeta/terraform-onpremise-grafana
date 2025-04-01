@@ -11,6 +11,12 @@ variable "grafana_admin_password" {
   default     = ""
 }
 
+variable "chart_version" {
+  type        = string
+  description = "grafana chart version"
+  default     = "8.5.6"
+}
+
 variable "prometheus_datasource" {
   type        = bool
   description = "boolean flag to enable prometheus datasource"

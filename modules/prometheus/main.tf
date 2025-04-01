@@ -7,6 +7,7 @@ resource "helm_release" "prometheus" {
   namespace        = var.namespace
   create_namespace = true
   timeout          = 600
+  version          = var.chart_version
 
   values = [
     templatefile("${path.module}/values/prometheus-values.yaml.tpl", {
