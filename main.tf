@@ -30,11 +30,15 @@ module "grafana" {
 
   count = var.grafana_configs.enabled ? 1 : 0
 
+  chart_version          = var.grafana_configs.chart_version
   grafana_admin_password = var.grafana_admin_password
   configs                = var.grafana_configs
-  aws_region             = var.aws_region
-  namespace              = var.namespace
+  prometheus_datasource  = var.grafana_configs.prometheus_datasource
+  cloudwatch_datasource  = merge(var.grafana_configs.cloudwatch_datasource, { "aws_region" = var.aws_region })
+  tempo_datasource       = var.grafana_configs.tempo_datasource
+  loki_datasource        = var.grafana_configs.loki_datasource
 
+  namespace = var.namespace
 }
 
 module "prometheus" {
@@ -42,8 +46,9 @@ module "prometheus" {
 
   count = var.prometheus_configs.enabled ? 1 : 0
 
-  configs   = var.prometheus_configs
-  namespace = var.namespace
+  chart_version = var.prometheus_configs.chart_version
+  configs       = var.prometheus_configs
+  namespace     = var.namespace
 }
 
 module "tempo" {
@@ -51,22 +56,34 @@ module "tempo" {
 
   count = var.tempo_configs.enabled ? 1 : 0
 
-  configs   = var.tempo_configs
-  region    = var.aws_region
-  namespace = var.namespace
+  chart_version = var.tempo_configs.chart_version
+  configs       = var.tempo_configs
+  region        = var.aws_region
+  namespace     = var.namespace
 }
 
-resource "grafana_data_source" "tempo" {
-  count = var.tempo_configs.enabled ? 1 : 0
+module "loki" {
+  source = "./modules/loki"
 
-  type        = "tempo"
-  name        = "Tempo"
-  access_mode = "proxy"
-  uid         = "tempo"
-  is_default  = false
-  url         = module.tempo[0].tempo_url
+  count = var.loki_configs.enabled ? 1 : 0
 
-  json_data_encoded = jsonencode(var.tempo_configs.tempo_datasource_json)
+  chart_version = var.loki_configs.chart_version
+  configs       = var.loki_configs
+  namespace     = var.namespace
 
-  depends_on = [module.tempo, module.grafana]
 }
+
+# resource "grafana_data_source" "tempo" {
+#   count = var.tempo_configs.enabled ? 1 : 0
+
+#   type        = "tempo"
+#   name        = "Tempo"
+#   access_mode = "proxy"
+#   uid         = "tempo"
+#   is_default  = false
+#   url         = module.tempo[0].tempo_url
+
+#   json_data_encoded = jsonencode(var.tempo_configs.tempo_datasource_json)
+
+#   depends_on = [module.tempo, module.grafana]
+# }

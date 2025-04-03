@@ -7,6 +7,7 @@ module "tempo" {
     storage_backend   = "s3"
     bucket_name       = "my-tempo-traces-kauwnw"
     oidc_provider_arn = "eks-oidc-provider-arn"
+    tempo_role_arn    = "arn:aws:iam::774305617028:role/tempo-s3-access-manual"
 
     enable_metrics_generator = true
     enable_service_monitor   = true
@@ -15,18 +16,6 @@ module "tempo" {
       enabled       = true
       size          = "10Gi"
       storage_class = "gp2"
-    }
-
-    ingress = {
-      enabled = true
-      annotations = {
-        "kubernetes.io/ingress.class"                = "nginx"
-        "nginx.ingress.kubernetes.io/rewrite-target" = "/"
-        "nginx.ingress.kubernetes.io/ssl-redirect"   = "true"
-      }
-      hosts     = ["tempo.example.com"]
-      path      = "/"
-      path_type = "Prefix"
     }
   }
 

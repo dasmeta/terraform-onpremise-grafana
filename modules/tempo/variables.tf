@@ -7,7 +7,7 @@ variable "namespace" {
 variable "chart_version" {
   type        = string
   description = "grafana chart version"
-  default     = "1.18.3"
+  default     = "1.20.0"
 }
 
 variable "region" {
@@ -18,7 +18,6 @@ variable "region" {
 
 variable "configs" {
   type = object({
-    tempo_image_tag          = optional(string, "2.4.0")
     tempo_role_arn           = optional(string, "")
     storage_backend          = optional(string, "s3") # "local" or "s3"
     bucket_name              = optional(string, "")

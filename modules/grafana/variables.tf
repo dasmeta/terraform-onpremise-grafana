@@ -14,25 +14,50 @@ variable "grafana_admin_password" {
 variable "chart_version" {
   type        = string
   description = "grafana chart version"
-  default     = "8.5.6"
+  default     = "8.11.1"
 }
 
 variable "prometheus_datasource" {
-  type        = bool
-  description = "boolean flag to enable prometheus datasource"
-  default     = true
+  type = object({
+    enabled = optional(bool, true)
+    url     = optional(string, "http://prometheus-operated.monitoring.svc.cluster.local:9090")
+  })
+  description = "Enable Prometheus as a Grafana data source"
+  default     = {}
 }
 
 variable "cloudwatch_datasource" {
-  type        = bool
-  default     = true
-  description = "boolean flag to enable cloudwatch datasource"
+  type = object({
+    enabled             = optional(bool, false)
+    cloudwatch_role_arn = optional(string, "")
+    aws_region          = optional(string, "eu_central_1")
+  })
+  description = "Enable Cloudwatch as a Grafana data source"
+  default     = {}
 }
 
-variable "aws_region" {
-  type    = string
-  default = "eu-central-1"
+variable "tempo_datasource" {
+  type = object({
+    enabled = optional(bool, false)
+    url     = optional(string, "http://tempo.tempo.svc.cluster.local:3200")
+  })
+  description = "Enable Tempo as a Grafana data source"
+  default     = {}
 }
+
+variable "loki_datasource" {
+  type = object({
+    enabled = optional(bool, false)
+    url     = optional(string, "http://loki.loki.svc.cluster.local:3100")
+  })
+  description = "Enable Loki as a Grafana data source"
+  default     = {}
+}
+
+# variable "aws_region" {
+#   type    = string
+#   default = "eu-central-1"
+# }
 
 variable "configs" {
   type = object({
@@ -66,12 +91,17 @@ variable "configs" {
       path      = optional(string, "/")
       path_type = optional(string, "Prefix")
     }), {})
-    prometheus_url = optional(string, "http://prometheus-operated.monitoring.svc.cluster.local:9090")
 
     replicas  = optional(number, 1)
     image_tag = optional(string, "11.4.2")
   })
 
   description = "Values to construct the values file for Grafana Helm chart"
+  default     = {}
+}
+
+variable "additional_data_sources" {
+  type        = map(any)
+  description = "Any additional grafana datasources to merge in"
   default     = {}
 }

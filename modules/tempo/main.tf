@@ -8,7 +8,6 @@ resource "helm_release" "tempo" {
 
   values = [
     templatefile("${path.module}/values/tempo-values.yaml.tpl", {
-      tempo_image_tag = var.configs.tempo_image_tag
       storage_backend = var.configs.storage_backend
       bucket_name     = module.tempo_bucket.s3_bucket_id
       region          = var.region
@@ -32,7 +31,6 @@ module "tempo_bucket" {
   version = "1.3.1"
 
   name = var.configs.bucket_name
-
 }
 
 module "tempo_iam_eks_role" {

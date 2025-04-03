@@ -4,6 +4,22 @@ variable "name" {
   description = "Dashboard name"
 }
 
+variable "grafana_admin_password" {
+  type        = string
+  description = "grafana admin user password"
+  default     = ""
+}
+
+variable "namespace" {
+  type    = string
+  default = "monitoring"
+}
+
+variable "aws_region" {
+  type    = string
+  default = "eu-central-1"
+}
+
 variable "application_dashboard" {
   type = object({
     rows = optional(any, [])
@@ -152,7 +168,8 @@ variable "alerts" {
 
 variable "grafana_configs" {
   type = object({
-    enabled = optional(bool, true)
+    enabled       = optional(bool, true)
+    chart_version = optional(string, "8.11.1")
     resources = optional(object({
       request = optional(object({
         cpu = optional(string, "1")
@@ -183,10 +200,28 @@ variable "grafana_configs" {
       path      = optional(string, "/")
       path_type = optional(string, "Prefix")
     }))
-    prometheus_url = optional(string, "http://prometheus-operated.monitoring.svc.cluster.local:9090")
 
-    replicas  = optional(number, 1)
-    image_tag = optional(string, "11.4.2")
+    prometheus_datasource = optional(object({
+      enabled = optional(bool, true)
+      url     = optional(string, "http://prometheus-operated.monitoring.svc.cluster.local:9090")
+    }), {})
+
+    cloudwatch_datasource = optional(object({
+      enabled             = optional(bool, false)
+      cloudwatch_role_arn = optional(string, "")
+    }), {})
+
+    tempo_datasource = optional(object({
+      enabled = optional(bool, false)
+      url     = optional(string, "http://tempo.tempo.svc.cluster.local:3200")
+    }), {})
+
+    loki_datasource = optional(object({
+      enabled = optional(bool, false)
+      url     = optional(string, "http://loki.loki.svc.cluster.local:3100")
+    }), {})
+
+    replicas = optional(number, 1)
   })
 
   description = "Values to construct the values file for Grafana Helm chart"
@@ -196,6 +231,7 @@ variable "grafana_configs" {
 variable "prometheus_configs" {
   type = object({
     enabled        = optional(bool, true)
+    chart_version  = optional(string, "70.3.0")
     retention_days = optional(string, "15d")
     storage_class  = optional(string, "efs-sc-root")
     storage_size   = optional(string, "10Gi")
@@ -215,21 +251,10 @@ variable "prometheus_configs" {
   default     = {}
 }
 
-variable "grafana_admin_password" {
-  type        = string
-  description = "grafana admin user password"
-  default     = ""
-}
-
-variable "aws_region" {
-  type    = string
-  default = "eu-central-1"
-}
-
 variable "tempo_configs" {
   type = object({
     enabled                  = optional(string, false)
-    tempo_image_tag          = optional(string, "2.4.0")
+    chart_version            = optional(string, "1.20.0")
     tempo_role_arn           = optional(string, "")
     storage_backend          = optional(string, "s3") # "local" or "s3"
     bucket_name              = optional(string)
@@ -263,7 +288,22 @@ variable "tempo_configs" {
   default     = {}
 }
 
-variable "namespace" {
-  type    = string
-  default = "monitoring"
+variable "loki_configs" {
+  type = object({
+    enabled         = optional(bool, false)
+    chart_version   = optional(string, "2.10.2")
+    enable_test_pod = optional(bool, false)
+    loki = optional(object({
+      url = optional(string, "")
+    }), {})
+    promtail = optional(object({
+      enabled     = optional(bool, true)
+      log_level   = optional(string, "info")
+      server_port = optional(string, "3101")
+      clients     = optional(list(string), [])
+    }), {})
+    fluentbit_enabled = optional(bool, false)
+  })
+  description = "Values to pass to loki helm chart"
+  default     = {}
 }
