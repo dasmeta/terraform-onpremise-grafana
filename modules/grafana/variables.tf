@@ -17,47 +17,12 @@ variable "chart_version" {
   default     = "8.11.1"
 }
 
-variable "prometheus_datasource" {
-  type = object({
-    enabled = optional(bool, true)
-    url     = optional(string, "http://prometheus-operated.monitoring.svc.cluster.local:9090")
-  })
-  description = "Enable Prometheus as a Grafana data source"
-  default     = {}
-}
+variable "datasources" {
+  type        = list(map(any))
+  description = "A list of datasources configurations for grafana."
+  default     = []
 
-variable "cloudwatch_datasource" {
-  type = object({
-    enabled             = optional(bool, false)
-    cloudwatch_role_arn = optional(string, "")
-    aws_region          = optional(string, "eu_central_1")
-  })
-  description = "Enable Cloudwatch as a Grafana data source"
-  default     = {}
 }
-
-variable "tempo_datasource" {
-  type = object({
-    enabled = optional(bool, false)
-    url     = optional(string, "http://tempo.tempo.svc.cluster.local:3200")
-  })
-  description = "Enable Tempo as a Grafana data source"
-  default     = {}
-}
-
-variable "loki_datasource" {
-  type = object({
-    enabled = optional(bool, false)
-    url     = optional(string, "http://loki.loki.svc.cluster.local:3100")
-  })
-  description = "Enable Loki as a Grafana data source"
-  default     = {}
-}
-
-# variable "aws_region" {
-#   type    = string
-#   default = "eu-central-1"
-# }
 
 variable "configs" {
   type = object({
@@ -97,11 +62,5 @@ variable "configs" {
   })
 
   description = "Values to construct the values file for Grafana Helm chart"
-  default     = {}
-}
-
-variable "additional_data_sources" {
-  type        = map(any)
-  description = "Any additional grafana datasources to merge in"
   default     = {}
 }

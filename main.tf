@@ -33,10 +33,11 @@ module "grafana" {
   chart_version          = var.grafana_configs.chart_version
   grafana_admin_password = var.grafana_admin_password
   configs                = var.grafana_configs
-  prometheus_datasource  = var.grafana_configs.prometheus_datasource
-  cloudwatch_datasource  = merge(var.grafana_configs.cloudwatch_datasource, { "aws_region" = var.aws_region })
-  tempo_datasource       = var.grafana_configs.tempo_datasource
-  loki_datasource        = var.grafana_configs.loki_datasource
+  # prometheus_datasource  = var.grafana_configs.prometheus_datasource
+  # cloudwatch_datasource  = merge(var.grafana_configs.cloudwatch_datasource, { "aws_region" = var.aws_region })
+  # tempo_datasource       = var.grafana_configs.tempo_datasource
+  # loki_datasource        = var.grafana_configs.loki_datasource
+  datasources = var.grafana_configs.datasources
 
   namespace = var.namespace
 }

@@ -36,50 +36,60 @@ locals {
     },
   ]
 
-  prometheus_datasource = var.prometheus_datasource.enabled ? {
+
+  default_datasource_configs = {
     prometheus = {
-      name        = "Prometheus"
       type        = "prometheus"
-      url         = var.prometheus_datasource.url
-      is_default  = true
+      name        = "Prometheus"
       access_mode = "proxy"
+      url         = "http://prometheus-operated.monitoring.svc.cluster.local:9090"
+      is_deafult  = false
     }
-  } : {}
-
-  cloudwatch_datasource = var.cloudwatch_datasource.enabled ? {
     cloudwatch = {
-      name        = "CloudWatch"
       type        = "cloudwatch"
+      name        = "Cloudwatch"
       access_mode = "proxy"
-      json_data_encoded = jsonencode({
+      jsonData = {
         authType      = "default"
-        defaultRegion = var.cloudwatch_datasource.aws_region
-        assumeRoleArn = module.grafana_cloudwatch_role[0].arn
-      })
+        defaultRegion = "us-east-2"
+        assumeRoleArn = null
+      }
+      is_default = false
     }
-  } : {}
-
-  tempo_datasource = var.tempo_datasource.enabled ? {
-    tempo = {
-      name = "Tempo"
-      type = "tempo"
-      url  = var.tempo_datasource.url
-    }
-  } : {}
-
-  loki_datasource = var.loki_datasource.enabled ? {
     loki = {
-      name = "Loki"
-      type = "loki"
-      url  = var.loki_datasource.url
+      type        = "loki"
+      name        = "Loki"
+      access_mode = "proxy"
+      url         = "http://loki.monitoring.svc.cluster.local:3100"
+      is_default  = false
     }
-  } : {}
+    tempo = {
+      type        = "tempo"
+      name        = "Tempo"
+      access_mode = "proxy"
+      url         = "http://tempo.monitoring.svc.cluster.local:3100"
+      is_default  = false
+    }
+  }
 
-  data_sources = merge(
-    local.prometheus_datasource,
-    local.cloudwatch_datasource,
-    local.tempo_datasource,
-    local.loki_datasource,
-    var.additional_data_sources
-  )
+  _merged_base = {
+    for ds in var.datasources : ds.type => merge(
+      lookup(local.default_datasource_configs, ds.type, {}),
+      ds
+    )
+  }
+
+  merged_datasources = {
+    for k, v in local._merged_base : k => merge(
+      v,
+      {
+        jsonData = merge(
+          lookup(v, "jsonData", {}),
+          k == "cloudwatch" ? {
+            assumeRoleArn = try(module.grafana_cloudwatch_role[0].arn, "")
+          } : {}
+        )
+      }
+    )
+  }
 }

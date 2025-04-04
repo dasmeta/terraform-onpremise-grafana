@@ -69,7 +69,6 @@ module "this" {
   }
 
   grafana_configs = {
-    prometheus_url = "http://prometheus-operated.monitoring.svc.cluster.local:9090"
 
     resources = {
       request = {
@@ -90,6 +89,8 @@ module "this" {
       }
       hosts = ["grafana.example.com"]
     }
+
+    datasources = [{ type = "prometheus" }, { type = "cloudwatch" }, { type = "tempo" }, { type = "loki" }]
   }
 
   tempo_configs = {
@@ -97,7 +98,7 @@ module "this" {
     storage_backend = "s3"
     bucket_name     = "my-tempo-traces-kauwnw"
     # tempo_role_arn    = "arn:aws:iam::12345678901:role/tempo-s3-access-manual" # if the role arn is provided then a role will not be created
-    oidc_provider_arn = ""
+    oidc_provider_arn = "arn:aws:iam::123456789012:oidc-provider/oidc.eks.<aws_region>.amazonaws.com/id/#######"
 
     enable_metrics_generator = true
     enable_service_monitor   = true
@@ -112,7 +113,6 @@ module "this" {
   loki_configs = {
     enabled = true
   }
-
 
   grafana_admin_password = "admin"
   aws_region             = "us-east-2"
