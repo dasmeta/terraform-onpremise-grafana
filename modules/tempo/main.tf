@@ -68,9 +68,12 @@ resource "aws_iam_policy" "tempo_s3_access" {
       {
         Effect = "Allow",
         Action = [
-          "s3:GetObject",
           "s3:PutObject",
-          "s3:DeleteObject"
+          "s3:GetObject",
+          "s3:ListObjects",
+          "s3:DeleteObject",
+          "s3:GetObjectTagging",
+          "s3:PutObjectTagging"
         ],
         Resource = "arn:aws:s3:::${var.configs.bucket_name}/*"
       }

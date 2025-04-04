@@ -107,19 +107,12 @@ module "this" {
       size          = "10Gi"
       storage_class = "gp2"
     }
-
-    ingress = {
-      enabled = true
-      annotations = {
-        "kubernetes.io/ingress.class"                = "nginx"
-        "nginx.ingress.kubernetes.io/rewrite-target" = "/"
-        "nginx.ingress.kubernetes.io/ssl-redirect"   = "true"
-      }
-      hosts     = ["tempo.example.com"]
-      path      = "/"
-      path_type = "Prefix"
-    }
   }
+
+  loki_configs = {
+    enabled = true
+  }
+
 
   grafana_admin_password = "admin"
   aws_region             = "us-east-2"

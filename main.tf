@@ -70,20 +70,4 @@ module "loki" {
   chart_version = var.loki_configs.chart_version
   configs       = var.loki_configs
   namespace     = var.namespace
-
 }
-
-# resource "grafana_data_source" "tempo" {
-#   count = var.tempo_configs.enabled ? 1 : 0
-
-#   type        = "tempo"
-#   name        = "Tempo"
-#   access_mode = "proxy"
-#   uid         = "tempo"
-#   is_default  = false
-#   url         = module.tempo[0].tempo_url
-
-#   json_data_encoded = jsonencode(var.tempo_configs.tempo_datasource_json)
-
-#   depends_on = [module.tempo, module.grafana]
-# }
