@@ -14,24 +14,14 @@ variable "grafana_admin_password" {
 variable "chart_version" {
   type        = string
   description = "grafana chart version"
-  default     = "8.5.6"
+  default     = "8.11.1"
 }
 
-variable "prometheus_datasource" {
-  type        = bool
-  description = "boolean flag to enable prometheus datasource"
-  default     = true
-}
+variable "datasources" {
+  type        = list(map(any))
+  description = "A list of datasources configurations for grafana."
+  default     = []
 
-variable "cloudwatch_datasource" {
-  type        = bool
-  default     = true
-  description = "boolean flag to enable cloudwatch datasource"
-}
-
-variable "aws_region" {
-  type    = string
-  default = "eu-central-1"
 }
 
 variable "configs" {
@@ -66,7 +56,6 @@ variable "configs" {
       path      = optional(string, "/")
       path_type = optional(string, "Prefix")
     }), {})
-    prometheus_url = optional(string, "http://prometheus-operated.monitoring.svc.cluster.local:9090")
 
     replicas  = optional(number, 1)
     image_tag = optional(string, "11.4.2")

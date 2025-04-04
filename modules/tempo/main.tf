@@ -8,7 +8,6 @@ resource "helm_release" "tempo" {
 
   values = [
     templatefile("${path.module}/values/tempo-values.yaml.tpl", {
-      tempo_image_tag = var.configs.tempo_image_tag
       storage_backend = var.configs.storage_backend
       bucket_name     = module.tempo_bucket.s3_bucket_id
       region          = var.region
@@ -32,7 +31,6 @@ module "tempo_bucket" {
   version = "1.3.1"
 
   name = var.configs.bucket_name
-
 }
 
 module "tempo_iam_eks_role" {
@@ -70,9 +68,12 @@ resource "aws_iam_policy" "tempo_s3_access" {
       {
         Effect = "Allow",
         Action = [
-          "s3:GetObject",
           "s3:PutObject",
-          "s3:DeleteObject"
+          "s3:GetObject",
+          "s3:ListObjects",
+          "s3:DeleteObject",
+          "s3:GetObjectTagging",
+          "s3:PutObjectTagging"
         ],
         Resource = "arn:aws:s3:::${var.configs.bucket_name}/*"
       }

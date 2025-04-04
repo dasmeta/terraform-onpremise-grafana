@@ -1,8 +1,5 @@
 
 tempo:
-  image:
-    tag: ${tempo_image_tag}
-
   storage:
     trace:
       backend: ${storage_backend}  # "s3" or "local"

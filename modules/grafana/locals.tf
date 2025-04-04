@@ -36,4 +36,60 @@ locals {
     },
   ]
 
+
+  default_datasource_configs = {
+    prometheus = {
+      type        = "prometheus"
+      name        = "Prometheus"
+      access_mode = "proxy"
+      url         = "http://prometheus-operated.monitoring.svc.cluster.local:9090"
+      is_deafult  = false
+    }
+    cloudwatch = {
+      type        = "cloudwatch"
+      name        = "Cloudwatch"
+      access_mode = "proxy"
+      jsonData = {
+        authType      = "default"
+        defaultRegion = "us-east-2"
+        assumeRoleArn = null
+      }
+      is_default = false
+    }
+    loki = {
+      type        = "loki"
+      name        = "Loki"
+      access_mode = "proxy"
+      url         = "http://loki.monitoring.svc.cluster.local:3100"
+      is_default  = false
+    }
+    tempo = {
+      type        = "tempo"
+      name        = "Tempo"
+      access_mode = "proxy"
+      url         = "http://tempo.monitoring.svc.cluster.local:3100"
+      is_default  = false
+    }
+  }
+
+  _merged_base = {
+    for ds in var.datasources : ds.type => merge(
+      lookup(local.default_datasource_configs, ds.type, {}),
+      ds
+    )
+  }
+
+  merged_datasources = {
+    for k, v in local._merged_base : k => merge(
+      v,
+      {
+        jsonData = merge(
+          lookup(v, "jsonData", {}),
+          k == "cloudwatch" ? {
+            assumeRoleArn = try(module.grafana_cloudwatch_role[0].arn, "")
+          } : {}
+        )
+      }
+    )
+  }
 }
