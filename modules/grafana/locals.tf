@@ -42,7 +42,7 @@ locals {
       type        = "prometheus"
       name        = "Prometheus"
       access_mode = "proxy"
-      url         = "http://prometheus-operated.monitoring.svc.cluster.local:9090"
+      url         = "http://prometheus-operated.${var.namespace}.svc.cluster.local:9090"
       is_deafult  = false
     }
     cloudwatch = {
@@ -60,14 +60,14 @@ locals {
       type        = "loki"
       name        = "Loki"
       access_mode = "proxy"
-      url         = "http://loki.monitoring.svc.cluster.local:3100"
+      url         = "http://loki.${var.namespace}.svc.cluster.local:3100"
       is_default  = false
     }
     tempo = {
       type        = "tempo"
       name        = "Tempo"
       access_mode = "proxy"
-      url         = "http://tempo.monitoring.svc.cluster.local:3100"
+      url         = "http://tempo.${var.namespace}.svc.cluster.local:3100"
       is_default  = false
     }
   }
