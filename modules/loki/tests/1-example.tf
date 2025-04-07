@@ -1,0 +1,5 @@
+module "loki-test" {
+  source = "../."
+
+
+}
