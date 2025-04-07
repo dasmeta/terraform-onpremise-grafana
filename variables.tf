@@ -203,26 +203,6 @@ variable "grafana_configs" {
 
     datasources = optional(list(map(any))) # a list of grafana datasource configurations. Based on the type of the datasource the module will fill in the missing configuration for some supported datasources
 
-    # prometheus_datasource = optional(object({
-    #   enabled = optional(bool, true)
-    #   url     = optional(string, "http://prometheus-operated.monitoring.svc.cluster.local:9090")
-    # }), {})
-
-    # cloudwatch_datasource = optional(object({
-    #   enabled             = optional(bool, false)
-    #   cloudwatch_role_arn = optional(string, "")
-    # }), {})
-
-    # tempo_datasource = optional(object({
-    #   enabled = optional(bool, false)
-    #   url     = optional(string, "http://tempo.tempo.svc.cluster.local:3200")
-    # }), {})
-
-    # loki_datasource = optional(object({
-    #   enabled = optional(bool, false)
-    #   url     = optional(string, "http://loki.loki.svc.cluster.local:3100")
-    # }), {})
-
     replicas = optional(number, 1)
   })
 

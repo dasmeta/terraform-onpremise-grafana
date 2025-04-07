@@ -73,23 +73,28 @@ locals {
   }
 
   _merged_base = {
-    for ds in var.datasources : ds.type => merge(
+    for ds in var.datasources : ds.name => merge(
       lookup(local.default_datasource_configs, ds.type, {}),
       ds
     )
   }
 
   merged_datasources = {
-    for k, v in local._merged_base : k => merge(
-      v,
-      {
-        jsonData = merge(
-          lookup(v, "jsonData", {}),
-          k == "cloudwatch" ? {
-            assumeRoleArn = try(module.grafana_cloudwatch_role[0].arn, "")
-          } : {}
-        )
-      }
+    for name, ds in local._merged_base : name => (
+      ds.type == "cloudwatch" && try(ds.jsonData.assumeRoleArn, "") == ""
+      ? merge(
+        ds,
+        {
+          jsonData = merge(
+            lookup(ds, "jsonData", {}),
+            {
+              assumeRoleArn = try(module.grafana_cloudwatch_role[0].arn, "")
+            }
+          )
+        }
+      )
+      : ds
     )
   }
+
 }
