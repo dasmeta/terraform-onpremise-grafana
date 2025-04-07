@@ -89,8 +89,8 @@ module "this" {
       }
       hosts = ["grafana.example.com"]
     }
+    datasources = [{ type = "cloudwatch", name = "Cloudwatch" }]
 
-    datasources = [{ type = "prometheus" }, { type = "cloudwatch" }, { type = "tempo" }, { type = "loki" }]
   }
 
   tempo_configs = {

@@ -201,7 +201,7 @@ variable "grafana_configs" {
       path_type = optional(string, "Prefix")
     }))
 
-    datasources = optional(list(map(any))) # a list of grafana datasource configurations. Based on the type of the datasource the module will fill in the missing configuration for some supported datasources
+    datasources = optional(list(map(any))) # a list of grafana datasource configurations. Based on the type of the datasource the module will fill in the missing configuration for some supported datasources. Mandatory are name and type fields
 
     replicas = optional(number, 1)
   })
@@ -235,7 +235,7 @@ variable "prometheus_configs" {
 
 variable "tempo_configs" {
   type = object({
-    enabled                  = optional(string, false)
+    enabled                  = optional(bool, false)
     chart_version            = optional(string, "1.20.0")
     tempo_role_arn           = optional(string, "")
     storage_backend          = optional(string, "s3") # "local" or "s3"

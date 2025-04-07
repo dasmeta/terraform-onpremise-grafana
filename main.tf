@@ -33,7 +33,12 @@ module "grafana" {
   chart_version          = var.grafana_configs.chart_version
   grafana_admin_password = var.grafana_admin_password
   configs                = var.grafana_configs
-  datasources            = var.grafana_configs.datasources
+  datasources = concat(
+    var.grafana_configs.datasources == null ? [] : var.grafana_configs.datasources,
+    var.prometheus_configs.enabled ? [{ type = "prometheus", name = "Prometheus" }] : [],
+    var.tempo_configs.enabled ? [{ type = "tempo", name = "Tempo" }] : [],
+    var.loki_configs.enabled ? [{ type = "loki", name = "Loki" }] : []
+  )
 
   namespace = var.namespace
 }
