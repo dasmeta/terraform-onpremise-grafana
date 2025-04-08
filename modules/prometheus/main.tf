@@ -14,11 +14,14 @@ resource "helm_release" "prometheus" {
       retention_days     = var.configs.retention_days
       storage_class_name = var.configs.storage_class
       storage_size       = var.configs.storage_size
+      access_modes       = var.configs.access_modes
 
       request_cpu = var.configs.resources.request.cpu
       request_mem = var.configs.resources.request.mem
       limit_cpu   = var.configs.resources.limit.cpu
       limit_mem   = var.configs.resources.limit.mem
+
+      replicas = var.configs.replicas
 
       enable_alertmanager = var.configs.enable_alertmanager
     })

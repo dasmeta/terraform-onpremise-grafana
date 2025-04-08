@@ -15,6 +15,7 @@ variable "configs" {
     retention_days = optional(string, "15d")
     storage_class  = optional(string, "efs-sc-root")
     storage_size   = optional(string, "10Gi")
+    access_modes   = optional(list(string), ["ReadWriteOnce"])
     resources = optional(object({
       request = optional(object({
         cpu = optional(string, "500m")
@@ -25,6 +26,7 @@ variable "configs" {
         mem = optional(string, "1Gi")
       }), {})
     }), {})
+    replicas            = optional(number, 2)
     enable_alertmanager = optional(bool, true)
   })
 

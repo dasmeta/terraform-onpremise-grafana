@@ -10,13 +10,16 @@ prometheusOperator:
 prometheus:
   enabled: true
   prometheusSpec:
-    replicas: 2
+    replicas: ${replicas}
     retention: ${retention_days}
     storageSpec:
       volumeClaimTemplate:
         spec:
           storageClassName: ${storage_class_name}
-          accessModes: ["ReadWriteMany"]
+          accessModes:
+%{~ for mode in access_modes }
+            - ${mode}
+%{~ endfor }
           resources:
             requests:
               storage: ${storage_size}
