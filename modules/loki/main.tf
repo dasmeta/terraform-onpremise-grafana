@@ -1,5 +1,5 @@
 resource "helm_release" "name" {
-  chart     = "grafana/loki-stack"
+  chart     = "loki-stack"
   name      = var.release_name
   namespace = var.namespace
   version   = var.chart_version

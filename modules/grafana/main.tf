@@ -18,6 +18,7 @@ resource "helm_release" "grafana" {
       ingress_hosts       = var.configs.ingress_configs.hosts
       ingress_path        = var.configs.ingress_configs.path
       ingress_path_type   = var.configs.ingress_configs.path_type
+      tls_secrets         = var.configs.ingress_configs.tls_secrets
 
       request_cpu    = var.configs.resources.request.cpu
       request_memory = var.configs.resources.request.mem
