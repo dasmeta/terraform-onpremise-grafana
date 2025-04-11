@@ -199,6 +199,10 @@ variable "grafana_configs" {
       hosts     = optional(list(string), ["grafana.example.com"])
       path      = optional(string, "/")
       path_type = optional(string, "Prefix")
+      tls_secrets = optional(list(object({
+        secret_name = optional(string, "")
+        hosts       = optional(list(string), [])
+      })), [])
     }))
 
     datasources = optional(list(map(any))) # a list of grafana datasource configurations. Based on the type of the datasource the module will fill in the missing configuration for some supported datasources. Mandatory are name and type fields

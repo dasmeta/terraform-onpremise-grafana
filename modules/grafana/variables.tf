@@ -55,6 +55,10 @@ variable "configs" {
       hosts     = optional(list(string), ["grafana.example.com"])
       path      = optional(string, "/")
       path_type = optional(string, "Prefix")
+      tls_secrets = optional(list(object({
+        secret_name = optional(string, "")
+        hosts       = optional(list(string), [])
+      })), [])
     }), {})
 
     replicas  = optional(number, 1)

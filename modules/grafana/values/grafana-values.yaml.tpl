@@ -15,8 +15,15 @@ ingress:
     - ${h}
 %{ endfor }
   path: ${ingress_path}
-  pathType: ${ingress_path_type}
-
+  pathType: ${ingress_path_type }
+  tls:
+%{~ for item in tls_secrets }
+    - secretName: ${item.secret_name}
+      hosts:
+%{~ for host in item.hosts }
+        - ${host}
+%{~ endfor ~}
+%{ endfor }
 replicas: ${replicas}
 
 resources:
