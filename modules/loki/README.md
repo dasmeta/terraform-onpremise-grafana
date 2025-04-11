@@ -24,7 +24,7 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [helm_release.name](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
+| [helm_release.loki](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 
 ## Inputs
 
