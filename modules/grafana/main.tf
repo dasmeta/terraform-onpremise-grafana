@@ -14,11 +14,12 @@ resource "helm_release" "grafana" {
       persistence_type    = var.configs.persistence.type
       persistence_size    = var.configs.persistence.size
 
-      ingress_annotations = var.configs.ingress_configs.annotations
-      ingress_hosts       = var.configs.ingress_configs.hosts
-      ingress_path        = var.configs.ingress_configs.path
-      ingress_path_type   = var.configs.ingress_configs.path_type
-      tls_secrets         = var.configs.ingress_configs.tls_secrets
+      ingress_annotations = local.ingress_annotations
+      ingress_hosts       = var.configs.ingress.hosts
+      ingress_path        = var.configs.ingress.path
+      ingress_path_type   = var.configs.ingress.path_type
+      certificate         = var.configs.ingress.alb_certificate
+      tls_secrets         = local.ingress_tls
 
       request_cpu    = var.configs.resources.request.cpu
       request_memory = var.configs.resources.request.mem

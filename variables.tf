@@ -185,24 +185,15 @@ variable "grafana_configs" {
       type    = optional(string, "pvc")
       size    = optional(string, "10Gi")
     }), {})
-    ingress_configs = optional(object({
-      annotations = optional(map(string),
-        {
-          "kubernetes.io/ingress.class"                = "alb"
-          "alb.ingress.kubernetes.io/scheme"           = "internet-facing"
-          "alb.ingress.kubernetes.io/target-type"      = "ip"
-          "alb.ingress.kubernetes.io/listen-ports"     = "[{\"HTTP\": 80}]"
-          "alb.ingress.kubernetes.io/group.name"       = "monitoring"
-          "alb.ingress.kubernetes.io/healthcheck-path" = "/api/health"
-        }
-      )
-      hosts     = optional(list(string), ["grafana.example.com"])
-      path      = optional(string, "/")
-      path_type = optional(string, "Prefix")
-      tls_secrets = optional(list(object({
-        secret_name = optional(string, "")
-        hosts       = optional(list(string), [])
-      })), [])
+    ingress = optional(object({
+      annotations     = optional(map(string), {})
+      hosts           = optional(list(string), ["grafana.example.com"])
+      path            = optional(string, "/")
+      path_type       = optional(string, "Prefix")
+      type            = optional(string, "alb")
+      public          = optional(bool, true)
+      tls_enabled     = optional(bool, true)
+      alb_certificate = optional(string, "")
     }))
 
     datasources = optional(list(map(any))) # a list of grafana datasource configurations. Based on the type of the datasource the module will fill in the missing configuration for some supported datasources. Mandatory are name and type fields

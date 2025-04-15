@@ -9,13 +9,14 @@ ingress:
   annotations:
 %{~ for k, v in ingress_annotations }
     ${k}: "${v}"
-%{ endfor }
+%{~ endfor }
   hosts:
 %{~ for h in ingress_hosts }
     - ${h}
-%{ endfor }
+%{~ endfor }
   path: ${ingress_path}
   pathType: ${ingress_path_type }
+%{ if length(tls_secrets) > 0 }
   tls:
 %{~ for item in tls_secrets }
     - secretName: ${item.secret_name}
@@ -24,6 +25,7 @@ ingress:
         - ${host}
 %{~ endfor ~}
 %{ endfor }
+%{ endif }
 replicas: ${replicas}
 
 resources:
