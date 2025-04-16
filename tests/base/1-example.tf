@@ -76,25 +76,23 @@ module "this" {
         mem = "2Gi"
       }
     }
-    ingress_configs = {
-      annotations = {
-        "kubernetes.io/ingress.class"                = "alb"
-        "alb.ingress.kubernetes.io/scheme"           = "internet-facing"
-        "alb.ingress.kubernetes.io/target-type"      = "ip"
-        "alb.ingress.kubernetes.io/listen-ports"     = "[{\\\"HTTP\\\": 80}, {\\\"HTTPS\\\": 443}]"
-        "alb.ingress.kubernetes.io/group.name"       = "dev-ingress"
-        "alb.ingress.kubernetes.io/healthcheck-path" = "/api/health"
-        "alb.ingress.kubernetes.io/ssl-redirect"     = "443"
-        "alb.ingress.kubernetes.io/certificate-arn"  = "certificate_arn"
-      }
+    ingress = {
+      type        = "nginx"
+      tls_enabled = true
+      public      = true
+      # alb_certificate = "cert_arn"
+
       hosts = ["grafana.example.com"]
+      # annotations = {
+      #   "alb.ingress.kubernetes.io/group.name"       = "dev-ingress"
+      # }
     }
     datasources = [{ type = "cloudwatch", name = "Cloudwatch" }]
 
   }
 
   tempo_configs = {
-    enabled         = true
+    enabled         = false
     storage_backend = "s3"
     bucket_name     = "my-tempo-traces-kauwnw"
     # tempo_role_arn    = "arn:aws:iam::12345678901:role/tempo-s3-access-manual" # if the role arn is provided then a role will not be created
@@ -111,9 +109,12 @@ module "this" {
   }
 
   loki_configs = {
-    enabled = true
+    enabled = false
   }
 
+  prometheus_configs = {
+    enabled = false
+  }
   grafana_admin_password = "admin"
   aws_region             = "us-east-2"
 }
