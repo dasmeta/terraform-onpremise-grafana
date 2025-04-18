@@ -80,9 +80,9 @@ module "this" {
       type            = "alb"
       tls_enabled     = true
       public          = true
-      alb_certificate = "arn:aws:acm:us-east-2:774305617028:certificate/0c7b32a5-cfd3-488b-800c-fe289f3bb040"
+      alb_certificate = "cert_arn"
 
-      hosts = ["grafana.dev.trysela.com"]
+      hosts = ["grafana.example.com"]
       annotations = {
         "alb.ingress.kubernetes.io/group.name" = "dev-ingress"
       }
@@ -96,7 +96,7 @@ module "this" {
     storage_backend = "s3"
     bucket_name     = "my-tempo-traces-kauwnw"
     # tempo_role_arn    = "arn:aws:iam::12345678901:role/tempo-s3-access-manual" # if the role arn is provided then a role will not be created
-    oidc_provider_arn = "arn:aws:iam::774305617028:oidc-provider/oidc.eks.us-east-2.amazonaws.com/id/7EDF20F4011D608698CCE6E8061B9767"
+    oidc_provider_arn = "arn:aws:iam::12345678901:oidc-provider/oidc.eks.<aws-region>.amazonaws.com/id/########"
 
     metrics_generator = {
       enabled = true

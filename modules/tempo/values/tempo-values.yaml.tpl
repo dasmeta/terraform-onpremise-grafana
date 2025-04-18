@@ -17,7 +17,7 @@ tempo:
     enabled: ${metris_generator_enabled}
     remoteWriteUrl: ${metrics_generator_remote_url}
 
-    overrides:
+  overrides:
     defaults:
       metrics_generator:
         processors:
