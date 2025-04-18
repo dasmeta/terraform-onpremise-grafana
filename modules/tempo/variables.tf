@@ -32,6 +32,11 @@ variable "configs" {
       storage_class = optional(string, "gp2")
     }), {})
 
+    metrics_generator = optional(object({
+      enabled    = optional(bool, true)
+      remote_url = optional(string, "http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090/api/v1/write")
+    }), {})
+
     service_account = optional(object({
       name        = optional(string, "tempo-serviceaccount")
       annotations = optional(map(string), {})

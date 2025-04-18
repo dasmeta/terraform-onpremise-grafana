@@ -33,6 +33,8 @@ prometheus:
     serviceMonitorSelectorNilUsesHelmValues: false
     podMonitorSelectorNilUsesHelmValues: false
 
+    enableRemoteWriteReceiver: true
+
     additionalScrapeConfigs:
       - job_name: "annotation-scrape"
         kubernetes_sd_configs:

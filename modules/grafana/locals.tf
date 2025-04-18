@@ -73,20 +73,13 @@ locals {
       url         = "http://tempo.${var.namespace}.svc.cluster.local:3100"
       is_default  = false
 
-      json_data_encoded = jsonencode({
+      encoded_json = jsonencode({
         httpMethod = "GET"
-        traceToLogs = {
-          datasourceUid      = "loki"
-          spanStartTimeShift = "1h"
-          spanEndTimeShift   = "1h"
-          filterByTraceID    = true
-          filterBySpanID     = false
-          tags = [
-            {
-              key   = "job"
-              value = ".*"
-            }
-          ]
+        tracesToLogsV2 = {
+          datasourceUid = "loki"
+        }
+        tracesToMetrics = {
+          datasourceUid = "prometheus"
         }
       })
     }

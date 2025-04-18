@@ -232,14 +232,18 @@ variable "prometheus_configs" {
 
 variable "tempo_configs" {
   type = object({
-    enabled                  = optional(bool, false)
-    chart_version            = optional(string, "1.20.0")
-    tempo_role_arn           = optional(string, "")
-    storage_backend          = optional(string, "s3") # "local" or "s3"
-    bucket_name              = optional(string)
-    enable_metrics_generator = optional(bool, true)
-    enable_service_monitor   = optional(bool, true)
-    oidc_provider_arn        = optional(string, "")
+    enabled                = optional(bool, false)
+    chart_version          = optional(string, "1.20.0")
+    tempo_role_arn         = optional(string, "")
+    storage_backend        = optional(string, "s3") # "local" or "s3"
+    bucket_name            = optional(string)
+    enable_service_monitor = optional(bool, true)
+    oidc_provider_arn      = optional(string, "")
+
+    metrics_generator = optional(object({
+      enabled    = optional(bool, true)
+      remote_url = optional(string, "http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090/api/v1/write")
+    }))
 
     persistence = optional(object({
       enabled       = optional(bool, true)
@@ -247,21 +251,6 @@ variable "tempo_configs" {
       storage_class = optional(string, "gp2")
     }), {})
 
-    tempo_datasource_json = optional(object({
-      httpMethod = optional(string, "GET")
-
-      tracesToMetrics = optional(object({
-        datasourceUid = optional(string, "prometheus")
-      }), {})
-
-      serviceMap = optional(object({
-        datasourceUid = optional(string, "prometheus")
-      }), {})
-
-      nodeGraph = optional(object({
-        enabled = optional(bool, true)
-      }), {})
-    }), {})
   })
   description = "confgis for tempo deployment"
   default     = {}

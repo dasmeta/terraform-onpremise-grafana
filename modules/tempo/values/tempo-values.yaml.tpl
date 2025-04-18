@@ -13,14 +13,21 @@ tempo:
       local:
         path: /var/tempo/traces
 %{ endif }
+  metricsGenerator:
+    enabled: ${metris_generator_enabled}
+    remoteWriteUrl: ${metrics_generator_remote_url}
+
+    overrides:
+    defaults:
+      metrics_generator:
+        processors:
+          - service-graphs
+          - span-metrics
 
   persistence:
     enabled: ${persistence_enabled}
     size: ${persistence_size}
     storageClassName: ${persistence_class}
-
-  metricsGenerator:
-    enabled: ${enable_metrics_generator}
 
 serviceMonitor:
   enabled: ${enable_service_monitor}
