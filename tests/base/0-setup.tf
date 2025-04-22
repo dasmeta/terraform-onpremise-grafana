@@ -30,6 +30,10 @@ provider "helm" {
   }
 }
 
+provider "kubernetes" {
+  config_path = "~/.kube/config"
+}
+
 provider "aws" {
   region = "us-east-2"
 }

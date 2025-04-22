@@ -37,9 +37,11 @@ variable "configs" {
       }), {})
     }), {})
     persistence = optional(object({
-      enabled = optional(bool, true)
-      type    = optional(string, "pvc")
-      size    = optional(string, "10Gi")
+      enabled         = optional(bool, true)
+      type            = optional(string, "pvc")
+      size            = optional(string, "10Gi")
+      storage_class   = optional(string, "efs-sc-root")
+      prevent_destroy = optional(bool, true)
     }), {})
     ingress = optional(object({
       type            = optional(string, "alb")
@@ -52,6 +54,12 @@ variable "configs" {
       path        = optional(string, "/")
       path_type   = optional(string, "Prefix")
     }), {})
+
+    redundency = optional(object({
+      enabled      = optional(bool, false)
+      max_replicas = optional(number, 4)
+      min_replicas = optional(number, 1)
+    }))
 
     replicas  = optional(number, 1)
     image_tag = optional(string, "11.4.2")
