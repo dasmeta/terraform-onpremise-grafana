@@ -5,7 +5,6 @@ resource "helm_release" "grafana" {
   chart            = "grafana"
   namespace        = var.namespace
   create_namespace = true
-  timeout          = 600
   version          = var.chart_version
 
   values = [
@@ -13,12 +12,12 @@ resource "helm_release" "grafana" {
       enabled_persistence = var.configs.persistence.enabled
       persistence_type    = var.configs.persistence.type
       persistence_size    = var.configs.persistence.size
+      pvc_name            = var.configs.redundency.enabled ? "grafana-shared-pvc" : ""
 
       ingress_annotations = local.ingress_annotations
       ingress_hosts       = var.configs.ingress.hosts
       ingress_path        = var.configs.ingress.path
       ingress_path_type   = var.configs.ingress.path_type
-      certificate         = var.configs.ingress.alb_certificate
       tls_secrets         = local.ingress_tls
 
       request_cpu    = var.configs.resources.request.cpu
@@ -27,6 +26,10 @@ resource "helm_release" "grafana" {
       limit_memory   = var.configs.resources.limit.mem
 
       replicas = var.configs.replicas
+
+      redundency_enabled = var.configs.redundency.enabled
+      hpa_max_replicas   = var.configs.redundency.max_replicas
+      hpa_min_replicas   = var.configs.redundency.min_replicas
     })
   ]
 
@@ -34,6 +37,8 @@ resource "helm_release" "grafana" {
     name  = "adminPassword"
     value = var.grafana_admin_password
   }
+
+  depends_on = [kubernetes_persistent_volume_claim.grafana_efs, module.grafana_cloudwatch_role]
 }
 
 resource "grafana_data_source" "this" {
@@ -73,4 +78,28 @@ module "grafana_cloudwatch_role" {
       actions = ["sts:AssumeRole"]
     }
   ]
+}
+
+resource "kubernetes_persistent_volume_claim" "grafana_efs" {
+  count = var.configs.redundency.enabled ? 1 : 0
+  metadata {
+    name      = "grafana-shared-pvc"
+    namespace = var.namespace
+  }
+
+  spec {
+    access_modes = ["ReadWriteMany"]
+
+    resources {
+      requests = {
+        storage = var.configs.persistence.size
+      }
+    }
+
+    storage_class_name = var.configs.persistence.storage_class
+  }
+
+  lifecycle {
+    prevent_destroy = var.persistence.prevent_destroy
+  }
 }

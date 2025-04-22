@@ -3,6 +3,11 @@ persistence:
   enabled: ${enabled_persistence}
   type: ${persistence_type}
   size: ${persistence_size}
+  accessModes:
+    - ReadWriteMany
+%{ if redundency_enabled }
+  existingClaim: ${ pvc_name }
+%{ endif }
 
 ingress:
   enabled: true
@@ -42,3 +47,24 @@ serviceMonitor:
   selector:
     matchLabels:
       release: prometheus
+
+%{ if redundency_enabled }
+topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: "kubernetes.io/hostname"
+    whenUnsatisfiable: ScheduleAnyway
+    labelSelector:
+      matchLabels:
+        app.kubernetes.io/name: grafana
+
+autoscaling:
+  enabled: true
+  minReplicas: ${hpa_min_replicas}
+  maxReplicas: ${hpa_max_replicas}
+  targetCPU: "70"
+  targetMem: "60"
+
+podDisruptionBudget:
+  minAvailable: 1
+
+%{ endif }

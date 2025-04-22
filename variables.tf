@@ -181,9 +181,10 @@ variable "grafana_configs" {
       }), {})
     }), {})
     persistence = optional(object({
-      enabled = optional(bool, true)
-      type    = optional(string, "pvc")
-      size    = optional(string, "10Gi")
+      enabled       = optional(bool, true)
+      type          = optional(string, "pvc")
+      size          = optional(string, "10Gi")
+      storage_class = optional(string, "efs-sc-root")
     }), {})
     ingress = optional(object({
       annotations     = optional(map(string), {})
@@ -194,6 +195,12 @@ variable "grafana_configs" {
       public          = optional(bool, true)
       tls_enabled     = optional(bool, true)
       alb_certificate = optional(string, "")
+    }))
+
+    redundency = optional(object({
+      enabled      = optional(bool, false)
+      max_replicas = optional(number, 4)
+      min_replicas = optional(number, 1)
     }))
 
     datasources = optional(list(map(any))) # a list of grafana datasource configurations. Based on the type of the datasource the module will fill in the missing configuration for some supported datasources. Mandatory are name and type fields

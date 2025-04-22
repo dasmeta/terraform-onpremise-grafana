@@ -89,6 +89,12 @@ module "this" {
     }
     datasources = [{ type = "cloudwatch", name = "Cloudwatch" }]
 
+    redundency = {
+      enabled      = true
+      max_replicas = 3
+      min_replicas = 2
+    }
+
   }
 
   tempo_configs = {
