@@ -98,8 +98,4 @@ resource "kubernetes_persistent_volume_claim" "grafana_efs" {
 
     storage_class_name = var.configs.persistence.storage_class
   }
-
-  lifecycle {
-    prevent_destroy = var.persistence.prevent_destroy
-  }
 }
