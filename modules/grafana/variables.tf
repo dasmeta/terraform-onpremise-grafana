@@ -37,11 +37,10 @@ variable "configs" {
       }), {})
     }), {})
     persistence = optional(object({
-      enabled         = optional(bool, true)
-      type            = optional(string, "pvc")
-      size            = optional(string, "10Gi")
-      storage_class   = optional(string, "efs-sc-root")
-      prevent_destroy = optional(bool, true)
+      enabled       = optional(bool, true)
+      type          = optional(string, "pvc")
+      size          = optional(string, "10Gi")
+      storage_class = optional(string, "efs-sc-root")
     }), {})
     ingress = optional(object({
       type            = optional(string, "alb")
