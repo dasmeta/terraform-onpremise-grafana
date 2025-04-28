@@ -10,7 +10,7 @@ resource "helm_release" "tempo" {
     templatefile("${path.module}/values/tempo-values.yaml.tpl", {
       storage_backend = var.configs.storage_backend
       bucket_name     = module.tempo_bucket.s3_bucket_id
-      region          = var.region
+      region          = data.aws_region.current.name
 
       persistence_enabled = var.configs.persistence.enabled
       persistence_size    = var.configs.persistence.size

@@ -10,12 +10,6 @@ variable "chart_version" {
   default     = "1.20.0"
 }
 
-variable "region" {
-  type        = string
-  description = "aws region"
-  default     = "eu-central-1"
-}
-
 variable "configs" {
   type = object({
     tempo_role_arn           = optional(string, "")

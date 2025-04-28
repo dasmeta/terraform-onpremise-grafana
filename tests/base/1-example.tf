@@ -1,7 +1,8 @@
 module "this" {
   source = "../.."
 
-  name = "Test-dashboard"
+  name         = "Test-dashboard"
+  cluster_name = "eks-dev"
 
   application_dashboard = {
     rows : [
@@ -28,7 +29,6 @@ module "this" {
       }
     ]
   }
-
   alerts = {
     rules = [
       {
@@ -125,4 +125,8 @@ module "this" {
   }
   grafana_admin_password = "admin"
   aws_region             = "us-east-2"
+}
+
+output "outputs" {
+  value = module.this
 }

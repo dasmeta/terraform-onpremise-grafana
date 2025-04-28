@@ -9,6 +9,12 @@ persistence:
   existingClaim: ${ pvc_name }
 %{ endif }
 
+serviceAccount:
+  create: true
+  name: grafana-service-account
+  annotations:
+    eks.amazonaws.com/role-arn: ${ grafana_iam_role_arn }
+
 ingress:
   enabled: true
   annotations:

@@ -33,6 +33,7 @@ module "grafana" {
   chart_version          = var.grafana_configs.chart_version
   grafana_admin_password = var.grafana_admin_password
   configs                = var.grafana_configs
+  cluster_name           = var.cluster_name
   datasources = concat(
     var.grafana_configs.datasources == null ? [] : var.grafana_configs.datasources,
     var.prometheus_configs.enabled ? [{ type = "prometheus", name = "Prometheus" }] : [],
@@ -60,7 +61,6 @@ module "tempo" {
 
   chart_version = var.tempo_configs.chart_version
   configs       = var.tempo_configs
-  region        = var.aws_region
   namespace     = var.namespace
 }
 

@@ -1,4 +1,6 @@
 locals {
+  eks_oidc_provider_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${replace(data.aws_eks_cluster.this.identity[0].oidc[0].issuer, "https://", "")}"
+
   cloudwatch_policies = [
     {
       actions = [
@@ -50,11 +52,11 @@ locals {
       name        = "Cloudwatch"
       access_mode = "proxy"
       uid         = "cloudwatch"
-      jsonData = {
+      encoded_json = jsonencode({
         authType      = "default"
-        defaultRegion = "us-east-2"
-        assumeRoleArn = null
-      }
+        defaultRegion = data.aws_region.current.name
+        assumeRoleArn = ""
+      })
       is_default = false
     }
     loki = {
@@ -97,14 +99,14 @@ locals {
       merge(
         ds,
         {
-          jsonData = merge(
-            lookup(ds, "jsonData", {}),
-            ds.type == "cloudwatch" && try(ds.jsonData.assumeRoleArn, "") == ""
+          encoded_json = jsonencode(merge(
+            try(jsondecode(ds.encoded_json), {}),
+            ds.type == "cloudwatch" && try(jsondecode(ds.encoded_json).assumeRoleArn, "") == ""
             ? {
-              assumeRoleArn = try(module.grafana_cloudwatch_role[0].arn, "")
+              assumeRoleArn = module.grafana_cloudwatch_role[0].arn # try(module.grafana_cloudwatch_role[0].arn, "")
             }
             : {}
-          )
+          ))
         }
       )
     )

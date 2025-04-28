@@ -1,4 +1,9 @@
 # dashboard variables
+variable "cluster_name" {
+  type        = string
+  description = "name of the eks cluster"
+}
+
 variable "name" {
   type        = string
   description = "Dashboard name"

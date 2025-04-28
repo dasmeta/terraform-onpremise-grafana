@@ -6,6 +6,7 @@ resource "helm_release" "grafana" {
   namespace        = var.namespace
   create_namespace = true
   version          = var.chart_version
+  timeout          = 600
 
   values = [
     templatefile("${path.module}/values/grafana-values.yaml.tpl", {
@@ -30,6 +31,8 @@ resource "helm_release" "grafana" {
       redundency_enabled = var.configs.redundency.enabled
       hpa_max_replicas   = var.configs.redundency.max_replicas
       hpa_min_replicas   = var.configs.redundency.min_replicas
+
+      grafana_iam_role_arn = module.grafana_cloudwatch_role[0].arn
     })
   ]
 
@@ -63,7 +66,9 @@ resource "grafana_data_source" "this" {
 
 
 module "grafana_cloudwatch_role" {
-  count   = length(lookup(local._merged_base, "cloudwatch", {})) > 0 ? 1 : 0
+  count = anytrue([
+    for ds in local._merged_base : ds.type == "cloudwatch"
+  ]) ? 1 : 0
   source  = "dasmeta/iam/aws//modules/role"
   version = "1.3.0"
 
@@ -72,9 +77,21 @@ module "grafana_cloudwatch_role" {
   trust_relationship = [
     {
       principals = {
-        type        = "Service"
-        identifiers = ["eks.amazonaws.com", ]
-      },
+        type        = "Federated"
+        identifiers = [local.eks_oidc_provider_arn]
+      }
+      condition = {
+        test     = "StringEquals"
+        variable = "${data.aws_eks_cluster.this.identity[0].oidc[0].issuer}:sub"
+        values   = "system:serviceaccount:${var.namespace}:grafana-service-   account"
+      }
+      actions = ["sts:AssumeRole", "sts:AssumeRoleWithWebIdentity"]
+    },
+    {
+      principals = {
+        type        = "AWS"
+        identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/grafana-cloudwatch-role"]
+      }
       actions = ["sts:AssumeRole"]
     }
   ]
@@ -98,4 +115,5 @@ resource "kubernetes_persistent_volume_claim" "grafana_efs" {
 
     storage_class_name = var.configs.persistence.storage_class
   }
+
 }
