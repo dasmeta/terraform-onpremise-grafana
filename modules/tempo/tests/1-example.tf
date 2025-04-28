@@ -1,6 +1,5 @@
 module "tempo" {
   source = "../."
-  region = "us-east-2"
 
   configs = {
     enabled           = true
