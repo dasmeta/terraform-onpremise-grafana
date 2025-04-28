@@ -30,5 +30,7 @@ No inputs.
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_outputs"></a> [outputs](#output\_outputs) | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
