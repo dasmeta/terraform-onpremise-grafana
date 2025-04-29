@@ -98,11 +98,11 @@ module "this" {
   }
 
   tempo_configs = {
-    enabled         = false
+    enabled         = true
     storage_backend = "s3"
     bucket_name     = "my-tempo-traces-kauwnw"
     # tempo_role_arn    = "arn:aws:iam::12345678901:role/tempo-s3-access-manual" # if the role arn is provided then a role will not be created
-    oidc_provider_arn = "arn:aws:iam::12345678901:oidc-provider/oidc.eks.<aws-region>.amazonaws.com/id/########"
+    cluster_name = "eks-dev"
 
     metrics_generator = {
       enabled = true
@@ -117,7 +117,7 @@ module "this" {
   }
 
   loki_configs = {
-    enabled = false
+    enabled = true
   }
 
   prometheus_configs = {

@@ -1,3 +1,8 @@
+variable "cluster_name" {
+  type        = string
+  description = "name of the eks cluster"
+}
+
 variable "namespace" {
   type        = string
   description = "namespace for tempo deployment"
@@ -18,11 +23,10 @@ variable "configs" {
     enable_metrics_generator = optional(bool, true)
     enable_service_monitor   = optional(bool, true)
     tempo_role_name          = optional(string, "tempo-s3-role")
-    oidc_provider_arn        = optional(string, "")
 
     persistence = optional(object({
       enabled       = optional(bool, true)
-      size          = optional(string, "10Gi")
+      size          = optional(string, "20Gi")
       storage_class = optional(string, "gp2")
     }), {})
 

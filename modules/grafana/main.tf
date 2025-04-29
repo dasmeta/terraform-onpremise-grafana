@@ -67,7 +67,7 @@ resource "grafana_data_source" "this" {
 
 module "grafana_cloudwatch_role" {
   count = anytrue([
-    for ds in local._merged_base : ds.type == "cloudwatch"
+    for ds in local.merged_datasources : ds.type == "cloudwatch"
   ]) ? 1 : 0
   source  = "dasmeta/iam/aws//modules/role"
   version = "1.3.0"
@@ -80,22 +80,16 @@ module "grafana_cloudwatch_role" {
         type        = "Federated"
         identifiers = [local.eks_oidc_provider_arn]
       }
-      condition = {
-        test     = "StringEquals"
-        variable = "${data.aws_eks_cluster.this.identity[0].oidc[0].issuer}:sub"
-        values   = "system:serviceaccount:${var.namespace}:grafana-service-   account"
-      }
-      actions = ["sts:AssumeRole", "sts:AssumeRoleWithWebIdentity"]
-    },
-    {
-      principals = {
-        type        = "AWS"
-        identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/grafana-cloudwatch-role"]
-      }
-      actions = ["sts:AssumeRole"]
+      conditions = [{
+        type  = "StringEquals"
+        key   = "${replace(data.aws_eks_cluster.this.identity[0].oidc[0].issuer, "https://", "")}:sub"
+        value = ["system:serviceaccount:${var.namespace}:grafana-service-account"]
+      }]
+      actions = ["sts:AssumeRoleWithWebIdentity"]
     }
   ]
 }
+
 
 resource "kubernetes_persistent_volume_claim" "grafana_efs" {
   count = var.configs.redundency.enabled ? 1 : 0
