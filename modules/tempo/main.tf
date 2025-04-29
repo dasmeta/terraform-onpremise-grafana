@@ -48,7 +48,7 @@ module "tempo_iam_eks_role" {
 
   oidc_providers = {
     one = {
-      provider_arn               = var.configs.oidc_provider_arn
+      provider_arn               = local.eks_oidc_provider_arn
       namespace_service_accounts = ["${var.namespace}:${var.configs.service_account.name}"]
     }
   }

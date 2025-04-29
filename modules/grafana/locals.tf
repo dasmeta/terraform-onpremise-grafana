@@ -55,7 +55,6 @@ locals {
       encoded_json = jsonencode({
         authType      = "default"
         defaultRegion = data.aws_region.current.name
-        assumeRoleArn = ""
       })
       is_default = false
     }
@@ -87,30 +86,30 @@ locals {
     }
   }
 
-  _merged_base = {
+  merged_datasources = {
     for ds in var.datasources : ds.name => merge(
       lookup(local.default_datasource_configs, ds.type, {}),
       ds
     )
   }
 
-  merged_datasources = {
-    for name, ds in local._merged_base : name => (
-      merge(
-        ds,
-        {
-          encoded_json = jsonencode(merge(
-            try(jsondecode(ds.encoded_json), {}),
-            ds.type == "cloudwatch" && try(jsondecode(ds.encoded_json).assumeRoleArn, "") == ""
-            ? {
-              assumeRoleArn = module.grafana_cloudwatch_role[0].arn # try(module.grafana_cloudwatch_role[0].arn, "")
-            }
-            : {}
-          ))
-        }
-      )
-    )
-  }
+  # merged_datasources = {
+  #   for name, ds in local._merged_base : name => (
+  #     merge(
+  #       ds,
+  #       {
+  #         encoded_json = jsonencode(merge(
+  #           try(jsondecode(ds.encoded_json), {}),
+  #           ds.type == "cloudwatch" && try(jsondecode(ds.encoded_json).assumeRoleArn, "") == ""
+  #           ? {
+  #             assumeRoleArn = module.grafana_cloudwatch_role[0].arn # try(module.grafana_cloudwatch_role[0].arn, "")
+  #           }
+  #           : {}
+  #         ))
+  #       }
+  #     )
+  #   )
+  # }
 
   ingress_annotations = merge(
     {

@@ -1,4 +1,3 @@
-# dashboard variables
 variable "cluster_name" {
   type        = string
   description = "name of the eks cluster"
@@ -188,7 +187,7 @@ variable "grafana_configs" {
     persistence = optional(object({
       enabled       = optional(bool, true)
       type          = optional(string, "pvc")
-      size          = optional(string, "10Gi")
+      size          = optional(string, "100Gi")
       storage_class = optional(string, "efs-sc-root")
     }), {})
     ingress = optional(object({
@@ -222,8 +221,8 @@ variable "prometheus_configs" {
     enabled        = optional(bool, true)
     chart_version  = optional(string, "70.3.0")
     retention_days = optional(string, "15d")
-    storage_class  = optional(string, "efs-sc-root")
-    storage_size   = optional(string, "10Gi")
+    storage_class  = optional(string, "gp2")
+    storage_size   = optional(string, "100Gi")
     access_modes   = optional(list(string), ["ReadWriteOnce"])
     resources = optional(object({
       request = optional(object({
@@ -259,7 +258,7 @@ variable "tempo_configs" {
 
     persistence = optional(object({
       enabled       = optional(bool, true)
-      size          = optional(string, "10Gi")
+      size          = optional(string, "20Gi")
       storage_class = optional(string, "gp2")
     }), {})
 

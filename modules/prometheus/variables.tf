@@ -13,8 +13,8 @@ variable "chart_version" {
 variable "configs" {
   type = object({
     retention_days = optional(string, "15d")
-    storage_class  = optional(string, "efs-sc-root")
-    storage_size   = optional(string, "10Gi")
+    storage_class  = optional(string, "gp2")
+    storage_size   = optional(string, "100Gi")
     access_modes   = optional(list(string), ["ReadWriteOnce"])
     resources = optional(object({
       request = optional(object({

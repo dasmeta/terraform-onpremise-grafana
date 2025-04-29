@@ -62,6 +62,7 @@ module "tempo" {
   chart_version = var.tempo_configs.chart_version
   configs       = var.tempo_configs
   namespace     = var.namespace
+  cluster_name  = var.cluster_name
 }
 
 module "loki" {
