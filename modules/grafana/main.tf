@@ -90,22 +90,6 @@ module "grafana_cloudwatch_role" {
   ]
 }
 
-# data "aws_iam_policy_document" "test_trust_policy" {
-#   statement {
-#     actions = ["sts:AssumeRole"]
-
-#     principals {
-#       type        = "AWS"
-#       identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/grafana-cloudwatch-role"]
-#     }
-#   }
-# }
-
-# resource "aws_iam_role_policy_attachment" "grafana_cloudwatch_attach" {
-#   role       = module.grafana_cloudwatch_role[0].id
-#   policy_arn = "arn:aws:iam::aws:policy/CloudWatchReadOnlyAccess"
-# }
-
 
 resource "kubernetes_persistent_volume_claim" "grafana_efs" {
   count = var.configs.redundency.enabled ? 1 : 0

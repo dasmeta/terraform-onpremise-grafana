@@ -93,24 +93,6 @@ locals {
     )
   }
 
-  # merged_datasources = {
-  #   for name, ds in local._merged_base : name => (
-  #     merge(
-  #       ds,
-  #       {
-  #         encoded_json = jsonencode(merge(
-  #           try(jsondecode(ds.encoded_json), {}),
-  #           ds.type == "cloudwatch" && try(jsondecode(ds.encoded_json).assumeRoleArn, "") == ""
-  #           ? {
-  #             assumeRoleArn = module.grafana_cloudwatch_role[0].arn # try(module.grafana_cloudwatch_role[0].arn, "")
-  #           }
-  #           : {}
-  #         ))
-  #       }
-  #     )
-  #   )
-  # }
-
   ingress_annotations = merge(
     {
       "kubernetes.io/ingress.class" = var.configs.ingress.type

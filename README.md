@@ -161,5 +161,6 @@ No resources.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_data"></a> [data](#output\_data) | n/a |
 | <a name="output_grafana"></a> [grafana](#output\_grafana) | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

@@ -53,5 +53,4 @@
 | Name | Description |
 |------|-------------|
 | <a name="output_datasources"></a> [datasources](#output\_datasources) | n/a |
-| <a name="output_oidc_provider"></a> [oidc\_provider](#output\_oidc\_provider) | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
