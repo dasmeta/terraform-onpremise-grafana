@@ -89,30 +89,54 @@ locals {
       # region        = var.region
     }
   ] : []
-  metric_targets = [for row in local.metrics_with_defaults : row.expression != null ? {
+  metric_targets = [for row in local.metrics_with_defaults : {
     expr         = row.expression
     id           = ""
     legendFormat = row.label,
     editorMode   = "code",
 
-    } : {
+    }
+    #   : {
+    #   expression       = ""
+    #   id               = ""
+    #   matchExact       = true
+    #   metricEditorMode = 0
+    #   metricName       = row.metricName
+    #   metricQueryType  = 0
+    #   namespace        = row.metricNamespace
+    #   queryLanguage    = try(row.queryLanguage, "")
+    #   period           = ""
+    #   queryMode        = "Metrics"
+    #   region           = try(row.region, "")
+    #   sqlExpression = ""
+    #   editorMode   = "code"
+    #   statistic     = "Average"
+    #   dimensions    = { for key, item in row : key => item if !contains(concat(local.common_fields, local.attribute_fields, local.custom_fields), key) }
+    # }]
+  ]
+
+  cloudwatch_targets = [for row in var.cloudwatch_targets : {
+    data_source = {
+      type = "Cloudwatch"
+      uid  = row.datasource_uid
+    }
+    queryMode        = row.query_mode
+    region           = row.region
+    namespace        = row.namespace
+    metricName       = row.metric_name
+    dimensions       = row.dimensions
+    statistic        = row.statistic
+    period           = row.period
+    matchExact       = true
     expression       = ""
     id               = ""
-    matchExact       = true
     metricEditorMode = 0
-    metricName       = row.MetricName
     metricQueryType  = 0
-    namespace        = row.MetricNamespace
-    period           = ""
-    queryMode        = "Metrics"
-    # region           = var.region
-    sqlExpression = ""
-    statistic     = "Average"
-    dimensions    = { for key, item in row : key => item if !contains(concat(local.common_fields, local.attribute_fields, local.custom_fields), key) }
+    refId            = row.refId
   }]
 
   data = {
-    datasource  = var.data_source
+    data_source = var.data_source
     description = var.description
     fieldConfig = {
       defaults  = local.field_config_defaults
@@ -138,6 +162,6 @@ locals {
         sort = lookup(var.options.tooltip, "sort", "none")
       }
     }
-    targets = concat(local.query_targets, local.metric_targets)
+    targets = concat(local.query_targets, local.metric_targets, local.cloudwatch_targets)
   }
 }

@@ -1,14 +1,11 @@
 module "base" {
   source = "../../base"
 
-  name              = "Memory"
-  data_source       = var.data_source
-  coordinates       = var.coordinates
-  period            = var.period
-  region            = var.region
-  anomaly_detection = var.anomaly_detection
-  anomaly_deviation = var.anomaly_deviation
-  unit              = "bytes"
+  name        = "Memory"
+  data_source = var.data_source
+  coordinates = var.coordinates
+  period      = var.period
+  unit        = "bytes"
 
   defaults = {
     MetricNamespace = "ContainerInsights"

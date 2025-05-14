@@ -11,7 +11,6 @@ module "widget_sla_slo_sli_main" {
 
   balancer_name = try(each.value.balancer_name, null)
 
-  account_id = each.value.account_id
 }
 
 module "widget_sla_slo_sli_latency" {
@@ -26,5 +25,4 @@ module "widget_sla_slo_sli_latency" {
 
   balancer_name = try(each.value.balancer_name, null)
 
-  account_id = each.value.account_id
 }

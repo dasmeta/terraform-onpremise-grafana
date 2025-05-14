@@ -41,10 +41,10 @@ variable "period" {
   default = 3
 }
 
-# variable "region" {
-#   type    = string
-#   default = ""
-# }
+variable "region" {
+  type    = string
+  default = ""
+}
 
 variable "anomaly_detection" {
   type        = bool
@@ -67,7 +67,7 @@ variable "type" {
 variable "query" {
   type        = string
   default     = null
-  description = "The Logs Insights complete build query without sources and other options(in case of metric) query"
+  description = "The PromQL query to use for the chart"
 }
 
 variable "sources" {
@@ -82,12 +82,6 @@ variable "view" {
   description = "The view for log insights and alarm widgets"
 }
 
-variable "stacked" {
-  type        = bool
-  default     = null
-  description = "The stacked option for log insights and alarm widgets"
-}
-
 variable "annotations" {
   type        = any
   default     = null
@@ -98,12 +92,6 @@ variable "alarms" {
   type        = list(string)
   default     = null
   description = "The list of alarm_arns used for properties->alarms option in alarm widgets"
-}
-
-variable "properties_type" {
-  type        = string
-  default     = null
-  description = "The properties->type option for alarm widgets"
 }
 
 variable "decimals" {
@@ -182,8 +170,53 @@ variable "thresholds" {
   }
 }
 
+variable "cloudwatch_targets" {
+  type = list(object({
+    datasource_uid = optional(string, "cloudwatch")
+    query_mode     = optional(string, "Metrics") # Logs or Metrics
+    region         = optional(string, "eu-central-1")
+    namespace      = optional(string, "AWS/EC2")
+    metric_name    = optional(string, "CPUUtilization")
+    dimensions     = optional(map(string), {})
+    statistic      = optional(string, "Average")
+    period         = optional(number, 300)
+    refId          = optional(string, "A")
+  }))
+  description = "Target section of the cloudwatch based widget"
+  default     = []
+}
+
+variable "loki_targets" {
+  type = list(object({
+    expr          = string
+    format        = optional(string, "time_series")
+    refId         = optional(string, "A")
+    legend_format = optional(string, "Errors ({{instance}})")
+    queryType     = optional(string, "range")
+    hide          = optional(bool, false)
+  }))
+  description = "Target section of Loki based widget"
+  default     = []
+}
+
+variable "tempo_targets" {
+  type = list(object({
+    filters = optional(list(any), [])
+    limit   = optional(number, 20)
+    query   = string
+  }))
+  description = "Target section of tempo based widget"
+  default     = []
+}
+
 variable "color_mode" {
   type        = string
   description = "Color mode used for a widget"
   default     = "palette-classic"
+}
+
+variable "targets" {
+  type        = any
+  description = "Custom targets to use"
+  default     = null
 }

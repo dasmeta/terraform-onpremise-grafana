@@ -43,3 +43,11 @@ module "block_redis" {
   redis_namespace = try(each.value.block.redis_namespace, "")
   namespace       = try(each.value.block.namespace, "$namespace")
 }
+
+module "block_cloudwatch" {
+  source = "./modules/blocks/cloudwatch"
+
+  for_each = { for index, item in try(local.blocks_by_type["cloudwatch"], []) : index => item }
+
+  region = try(each.value.block.region, "")
+}

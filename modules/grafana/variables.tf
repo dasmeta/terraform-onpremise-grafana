@@ -18,7 +18,7 @@ variable "grafana_admin_password" {
 variable "chart_version" {
   type        = string
   description = "grafana chart version"
-  default     = "8.11.1"
+  default     = "8.15.0"
 }
 
 variable "datasources" {

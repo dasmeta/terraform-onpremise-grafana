@@ -14,7 +14,6 @@ module "base" {
   setPeriodToTimeRange     = true
   singleValueFullPrecision = false
   sparkline                = false
-  stacked                  = false
   start                    = "-PT8640H"
   trend                    = false
   end                      = "P0D"
