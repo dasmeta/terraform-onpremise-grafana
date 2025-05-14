@@ -51,3 +51,22 @@ variable "variables" {
   default     = []
   description = "Allows to define variables to be used in dashboard"
 }
+
+variable "custom_widgets" {
+  type = list(object({
+    datasource = optional(object({
+      uid  = optional(string, "")
+      type = optional(string, "prometheus")
+    }), {})
+    title              = optional(string, "custom_widget")
+    cloudwatch_targets = optional(list(any), [])
+    coordinates = optional(object({
+      x      = optional(number, 1)
+      y      = optional(number, 20)
+      width  = optional(number, 6)
+      height = optional(number, 1)
+    }), {})
+  }))
+  description = "list of maps to create custom widgets"
+  default     = []
+}

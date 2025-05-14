@@ -13,6 +13,11 @@ locals {
   ## Blocks
 
   # get all blocks and annotate
+  # initial_blocks = list(object({
+  #   block = object({type = string}) # "block/sla"
+  #   index1 = number
+  #   type = string # "sla"
+  # }))
   initial_blocks = [
     for index1, block in var.rows : {
       block : block,
@@ -28,10 +33,11 @@ locals {
 
   # bring all module results together
   blocks_results = {
-    ingress = values(module.block_ingress).*.result
-    service = values(module.block_service).*.result
-    sla     = values(module.block_sla).*.result
-    redis   = values(module.block_redis).*.result
+    ingress    = values(module.block_ingress).*.result
+    service    = values(module.block_service).*.result
+    sla        = values(module.block_sla).*.result
+    redis      = values(module.block_redis).*.result
+    cloudwatch = values(module.block_cloudwatch).*.result
   }
 
   blocks_by_type_results = concat([], [
@@ -39,6 +45,10 @@ locals {
       for index3, block in type_blocks : merge(block, { results : local.blocks_results[block.type][index3] }) if contains(keys(local.blocks_results), block.type)
     ] if contains(keys(local.blocks_results), block_type)
   ]...)
+
+  # custom_widgets =
+
+  # blocks_by_type_results_custom_containers = concat(local.blocks_by_type_results, local.custom_widgets)
 
   # inject block widgets into rows/panels listing in place of block/* definitions
   rows = concat([], [
@@ -65,7 +75,6 @@ locals {
       deployment        = "$deployment"
       namespace         = "$namespace"
       cluster           = "$cluster"
-      account_id        = null
       region            = null
       anomaly_detection = false
       anomaly_deviation = 6
@@ -167,5 +176,11 @@ locals {
     values(module.redis_keys_widget).*.data,
     values(module.redis_expired_evicted_keys_widget).*.data,
     values(module.redis_expiring_notexpiring_keys_widget).*.data,
+
+    # Custom widgets
+    values(module.instance_network_widget).*.data,
+    values(module.instance_cpu_widget).*.data,
+    values(module.instance_disk_widget).*.data
+
   )
 }

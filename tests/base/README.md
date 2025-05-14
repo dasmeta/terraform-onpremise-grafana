@@ -18,6 +18,7 @@ No providers.
 
 | Name | Source | Version |
 |------|--------|---------|
+| <a name="module_base"></a> [base](#module\_base) | ../../modules/dashboard/modules/widgets/base | n/a |
 | <a name="module_this"></a> [this](#module\_this) | ../.. | n/a |
 
 ## Resources
@@ -32,5 +33,5 @@ No inputs.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_outputs"></a> [outputs](#output\_outputs) | n/a |
+| <a name="output_dashboard"></a> [dashboard](#output\_dashboard) | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

@@ -1,5 +1,6 @@
 module "tempo" {
-  source = "../."
+  source       = "../."
+  cluster_name = "eks-dev"
 
   configs = {
     enabled           = true

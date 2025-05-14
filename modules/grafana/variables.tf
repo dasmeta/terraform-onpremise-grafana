@@ -18,7 +18,7 @@ variable "grafana_admin_password" {
 variable "chart_version" {
   type        = string
   description = "grafana chart version"
-  default     = "8.11.1"
+  default     = "8.15.0"
 }
 
 variable "datasources" {
@@ -62,7 +62,7 @@ variable "configs" {
       enabled      = optional(bool, false)
       max_replicas = optional(number, 4)
       min_replicas = optional(number, 1)
-    }))
+    }), {})
 
     replicas  = optional(number, 1)
     image_tag = optional(string, "11.4.2")

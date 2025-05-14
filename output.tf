@@ -1,4 +1,4 @@
-output "data" {
+output "dashboards" {
   value = {
     application_dashboard = module.application_dashboard
   }

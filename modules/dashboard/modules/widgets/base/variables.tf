@@ -82,7 +82,7 @@ variable "type" {
 variable "query" {
   type        = string
   default     = null
-  description = "The Logs Insights complete build query without sources and other options(in case of metric) query"
+  description = "The PromSql complete build query without sources and other options(in case of metric) query"
 }
 
 variable "sources" {
@@ -95,12 +95,6 @@ variable "view" {
   type        = string
   default     = null
   description = "The view for log insights and alarm widgets"
-}
-
-variable "stacked" {
-  type        = bool
-  default     = null
-  description = "The stacked option for log insights and alarm widgets"
 }
 
 variable "annotations" {
@@ -243,4 +237,46 @@ variable "color_mode" {
   type        = string
   description = "Color mode used for a widget"
   default     = "palette-classic"
+}
+
+variable "cloudwatch_targets" {
+  type = list(object({
+    datasource_uid = optional(string, "cloudwatch")
+    query_mode     = optional(string, "Metrics") # Logs or Metrics
+    region         = optional(string, "eu-central-1")
+    namespace      = optional(string, "AWS/EC2")
+    metric_name    = optional(string, "CPUUtilization")
+    dimensions     = optional(map(string), {})
+    statistic      = optional(string, "Average")
+    period         = optional(number, 300)
+    refId          = optional(string, "A")
+    id             = optional(string, "")
+    hide           = optional(bool, false)
+    widget_name    = optional(string, "widget_cloudwatch")
+  }))
+  description = "Target section of the cloudwatch based widget"
+  default     = []
+}
+
+variable "loki_targets" {
+  type = list(object({
+    expr          = string
+    format        = optional(string, "time_series")
+    refId         = optional(string, "A")
+    legend_format = optional(string, "Errors ({{instance}})")
+    queryType     = optional(string, "range")
+    hide          = optional(bool, false)
+  }))
+  description = "Target section of Loki based widget"
+  default     = []
+}
+
+variable "tempo_targets" {
+  type = list(object({
+    filters = optional(list(any), [])
+    limit   = optional(number, 20)
+    query   = string
+  }))
+  description = "Target section of tempo based widget"
+  default     = []
 }

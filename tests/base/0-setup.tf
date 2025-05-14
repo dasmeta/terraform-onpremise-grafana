@@ -19,7 +19,7 @@ terraform {
 
 # you can start dev grafana server locally using `docker compose up -d` from `/tests` folder before running the test locally
 provider "grafana" {
-  url  = "https://grafana.example.com"
+  url  = "https://grafana.dev.trysela.com"
   auth = "admin:admin"
 
 }
