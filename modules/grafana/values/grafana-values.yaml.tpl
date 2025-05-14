@@ -3,9 +3,9 @@ persistence:
   enabled: ${enabled_persistence}
   type: ${persistence_type}
   size: ${persistence_size}
+%{ if redundency_enabled }
   accessModes:
     - ReadWriteMany
-%{ if redundency_enabled }
   existingClaim: ${ pvc_name }
 %{ endif }
 
