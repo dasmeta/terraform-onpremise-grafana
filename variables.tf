@@ -205,7 +205,7 @@ variable "grafana_configs" {
       enabled      = optional(bool, false)
       max_replicas = optional(number, 4)
       min_replicas = optional(number, 1)
-    }))
+    }), {})
 
     datasources = optional(list(map(any))) # a list of grafana datasource configurations. Based on the type of the datasource the module will fill in the missing configuration for some supported datasources. Mandatory are name and type fields
 

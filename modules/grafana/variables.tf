@@ -62,7 +62,7 @@ variable "configs" {
       enabled      = optional(bool, false)
       max_replicas = optional(number, 4)
       min_replicas = optional(number, 1)
-    }))
+    }), {})
 
     replicas  = optional(number, 1)
     image_tag = optional(string, "11.4.2")
