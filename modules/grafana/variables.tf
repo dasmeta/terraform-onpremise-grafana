@@ -43,8 +43,8 @@ variable "configs" {
     persistence = optional(object({
       enabled       = optional(bool, true)
       type          = optional(string, "pvc")
-      size          = optional(string, "10Gi")
-      storage_class = optional(string, "efs-sc-root")
+      size          = optional(string, "20Gi")
+      storage_class = optional(string, "gp2")
     }), {})
     ingress = optional(object({
       type            = optional(string, "alb")
@@ -59,9 +59,10 @@ variable "configs" {
     }), {})
 
     redundency = optional(object({
-      enabled      = optional(bool, false)
-      max_replicas = optional(number, 4)
-      min_replicas = optional(number, 1)
+      enabled                  = optional(bool, false)
+      max_replicas             = optional(number, 4)
+      min_replicas             = optional(number, 1)
+      redundency_storage_class = optional(string, "efs-sc-root")
     }), {})
 
     replicas  = optional(number, 1)
