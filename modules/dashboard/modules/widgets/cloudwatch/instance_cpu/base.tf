@@ -17,15 +17,16 @@ module "base" {
       region      = var.region
       namespace   = "AWS/EC2"
       metric_name = "CPUUtilization"
-      period      = var.period
-      statistic   = "Average"
-      refId       = "A"
+      # period = var.period
+      period    = "1"
+      statistic = "Average"
+      refId     = "A"
     },
     {
       region      = var.region
       namespace   = "AWS/EC2"
       metric_name = "CPUUtilization"
-      period      = var.period
+      period      = "1"
       statistic   = "Maximum"
       refId       = "B"
     }

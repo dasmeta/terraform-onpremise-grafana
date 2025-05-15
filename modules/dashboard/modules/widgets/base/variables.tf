@@ -248,7 +248,7 @@ variable "cloudwatch_targets" {
     metric_name    = optional(string, "CPUUtilization")
     dimensions     = optional(map(string), {})
     statistic      = optional(string, "Average")
-    period         = optional(number, 300)
+    period         = optional(string, "300")
     refId          = optional(string, "A")
     id             = optional(string, "")
     hide           = optional(bool, false)

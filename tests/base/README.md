@@ -18,7 +18,6 @@ No providers.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_base"></a> [base](#module\_base) | ../../modules/dashboard/modules/widgets/base | n/a |
 | <a name="module_this"></a> [this](#module\_this) | ../.. | n/a |
 
 ## Resources

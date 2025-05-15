@@ -116,9 +116,9 @@ locals {
   ]
 
   cloudwatch_targets = [for row in var.cloudwatch_targets : {
-    data_source = {
-      type = "Cloudwatch"
-      uid  = row.datasource_uid
+    datasource = {
+      type = try(var.data_source.type, "")
+      uid  = try(var.data_source.uid, "")
     }
     queryMode        = row.query_mode
     region           = row.region
@@ -136,7 +136,7 @@ locals {
   }]
 
   data = {
-    data_source = var.data_source
+    datasource  = var.data_source
     description = var.description
     fieldConfig = {
       defaults  = local.field_config_defaults

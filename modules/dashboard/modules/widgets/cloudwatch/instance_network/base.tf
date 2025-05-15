@@ -17,7 +17,7 @@ module "base" {
       region      = var.region
       namespace   = "AWS/EC2"
       metric_name = "NetworkIn"
-      period      = var.period
+      period      = "1"
       statistic   = "Average"
       refId       = "A"
     },
@@ -25,7 +25,7 @@ module "base" {
       region      = var.region
       namespace   = "AWS/EC2"
       metric_name = "NetworkOut"
-      period      = var.period
+      period      = "1"
       statistic   = "Average"
       refId       = "B"
     }

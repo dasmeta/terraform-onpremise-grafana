@@ -150,5 +150,8 @@ module "this" {
 |------|-------------|
 | <a name="output_blocks_by_type_results"></a> [blocks\_by\_type\_results](#output\_blocks\_by\_type\_results) | n/a |
 | <a name="output_blocks_results"></a> [blocks\_results](#output\_blocks\_results) | n/a |
+| <a name="output_rows"></a> [rows](#output\_rows) | n/a |
+| <a name="output_widget_config"></a> [widget\_config](#output\_widget\_config) | n/a |
+| <a name="output_widget_config_with_raw_column_data_and_defaults"></a> [widget\_config\_with\_raw\_column\_data\_and\_defaults](#output\_widget\_config\_with\_raw\_column\_data\_and\_defaults) | n/a |
 | <a name="output_widget_result"></a> [widget\_result](#output\_widget\_result) | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

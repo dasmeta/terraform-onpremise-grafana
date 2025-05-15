@@ -17,7 +17,7 @@ module "base" {
       region      = var.region
       namespace   = "AWS/EC2"
       metric_name = "EBSReadOps"
-      period      = var.period
+      period      = "1"
       statistic   = "Average"
       refId       = "A"
     },
@@ -25,8 +25,8 @@ module "base" {
       region      = var.region
       namespace   = "AWS/EC2"
       metric_name = "EBSWriteOps"
-      period      = var.period
-      statistic   = "Average  "
+      period      = "1"
+      statistic   = "Average"
       refId       = "B"
     }
   ]
