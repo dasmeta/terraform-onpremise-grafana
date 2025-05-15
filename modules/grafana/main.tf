@@ -10,10 +10,11 @@ resource "helm_release" "grafana" {
 
   values = [
     templatefile("${path.module}/values/grafana-values.yaml.tpl", {
-      enabled_persistence = var.configs.persistence.enabled
-      persistence_type    = var.configs.persistence.type
-      persistence_size    = var.configs.persistence.size
-      pvc_name            = var.configs.redundency.enabled ? "grafana-shared-pvc" : ""
+      enabled_persistence       = var.configs.persistence.enabled
+      persistence_type          = var.configs.persistence.type
+      persistence_size          = var.configs.persistence.size
+      persistence_storage_class = var.configs.persistence.storage_class
+      pvc_name                  = var.configs.redundency.enabled ? "grafana-shared-pvc" : ""
 
       ingress_annotations = local.ingress_annotations
       ingress_hosts       = var.configs.ingress.hosts
@@ -107,7 +108,7 @@ resource "kubernetes_persistent_volume_claim" "grafana_efs" {
       }
     }
 
-    storage_class_name = var.configs.persistence.storage_class
+    storage_class_name = var.configs.redundency.redundency_storage_class
   }
 
 }

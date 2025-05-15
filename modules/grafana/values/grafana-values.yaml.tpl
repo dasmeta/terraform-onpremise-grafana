@@ -4,6 +4,7 @@ persistence:
   storageClassName: gp2
   type: ${persistence_type}
   size: ${persistence_size}
+  storageClassName: ${persistence_storage_class}
 %{ if redundency_enabled }
   accessModes:
     - ReadWriteMany
