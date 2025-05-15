@@ -3,10 +3,11 @@ module "application_dashboard" {
 
   count = length(var.application_dashboard) > 0 ? 1 : 0
 
-  name        = var.name
-  rows        = var.application_dashboard.rows
-  data_source = var.application_dashboard.data_source
-  variables   = var.application_dashboard.variables
+  name           = var.name
+  rows           = var.application_dashboard.rows
+  data_source    = var.application_dashboard.data_source
+  variables      = var.application_dashboard.variables
+  custom_widgets = var.application_dashboard.custom_widgets
 
   depends_on = [module.grafana, module.prometheus]
 }

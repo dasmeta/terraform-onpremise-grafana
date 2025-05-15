@@ -1,6 +1,6 @@
 variable "data_source" {
   type = object({
-    uid  = optional(string, null)
+    uid  = optional(string, "prometheus")
     type = optional(string, "prometheus")
   })
   description = "The custom datasource for widget item"
@@ -10,23 +10,9 @@ variable "container" {
   type = string
 }
 
-variable "cluster" {
-  type = string
-}
-
 variable "namespace" {
   type    = string
   default = "default"
-}
-
-variable "account_id" {
-  type    = string
-  default = null
-}
-
-variable "region" {
-  type    = string
-  default = ""
 }
 
 # position
