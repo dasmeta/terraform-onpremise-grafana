@@ -70,7 +70,7 @@ locals {
       height            = 5
       expressions       = []
       yAxis             = { left = { min = 0 } }
-      data_source       = var.data_source
+      datasource        = var.data_source
       container         = "$container"
       deployment        = "$deployment"
       namespace         = "$namespace"
