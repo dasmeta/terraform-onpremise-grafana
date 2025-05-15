@@ -1,18 +1,13 @@
 module "base" {
   source = "../../base"
 
-  name              = "Request Count ${var.only_5xx ? "5XX" : "All"} ${var.host} [${var.period}m]"
-  data_source       = var.data_source
-  coordinates       = var.coordinates
-  period            = var.period
-  region            = var.region
-  anomaly_detection = var.anomaly_detection
-  anomaly_deviation = var.anomaly_deviation
+  name        = "Request Count ${var.only_5xx ? "5XX" : "All"} ${var.host} [${var.period}m]"
+  data_source = var.data_source
+  coordinates = var.coordinates
+  period      = var.period
 
   defaults = {
     MetricNamespace = "AWS/ApplicationELB"
-    accountId       = var.account_id
-    TargetGroup     = var.target_group_name
   }
 
   metrics = concat(

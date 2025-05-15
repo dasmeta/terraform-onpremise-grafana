@@ -9,10 +9,8 @@ module "base" {
 
   defaults = {
     MetricNamespace = "ContainerInsights"
-    ClusterName     = var.cluster
     Namespace       = var.namespace
     PodName         = var.container
-    accountId       = var.account_id
   }
 
   metrics = [
