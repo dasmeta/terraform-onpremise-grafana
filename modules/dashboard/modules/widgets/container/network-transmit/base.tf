@@ -1,17 +1,13 @@
 module "base" {
   source = "../../base"
 
-  name              = "Network Transmit Errors [${var.period}m]"
-  data_source       = var.data_source
-  coordinates       = var.coordinates
-  period            = var.period
-  region            = var.region
-  anomaly_detection = var.anomaly_detection
-  anomaly_deviation = var.anomaly_deviation
+  name        = "Network Transmit Errors [${var.period}m]"
+  data_source = var.data_source
+  coordinates = var.coordinates
+  period      = var.period
 
   defaults = {
     MetricNamespace = "ContainerInsights"
-    accountId       = var.account_id
   }
 
   options = {

@@ -9,6 +9,7 @@ module "this" {
       { type : "block/sla" },
       # { type : "block/json-file", file: "../." },
       # { type : "block/ingress" },
+      { type : "block/service", name = "backend" },
       { type : "block/cloudwatch", region : "us-east-2" }
     ]
     data_source = {
@@ -73,7 +74,7 @@ module "this" {
     resources = {
       request = {
         cpu = "1"
-        mem = "2Gi"
+        mem = "1Gi"
       }
     }
     ingress = {
@@ -89,11 +90,11 @@ module "this" {
     }
     datasources = [{ type = "cloudwatch", name = "Cloudwatch" }]
 
-    redundency = {
-      enabled      = true
-      max_replicas = 3
-      min_replicas = 2
-    }
+    # redundency = {
+    #   enabled      = true
+    #   max_replicas = 3
+    #   min_replicas = 2
+    # }
 
   }
 
