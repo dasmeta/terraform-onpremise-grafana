@@ -22,7 +22,7 @@ No resources.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_datasource_uid"></a> [datasource\_uid](#input\_datasource\_uid) | datasource uid for the metrics | `string` | `"cloudwatch"` | no |
-| <a name="input_load_balancer_arn"></a> [load\_balancer\_arn](#input\_load\_balancer\_arn) | ALB name | `string` | n/a | yes |
+| <a name="input_load_balancer_arn"></a> [load\_balancer\_arn](#input\_load\_balancer\_arn) | ALB AWS arn | `string` | `"eu-central-1"` | no |
 | <a name="input_region"></a> [region](#input\_region) | n/a | `string` | `""` | no |
 
 ## Outputs

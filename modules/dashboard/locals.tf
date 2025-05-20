@@ -55,13 +55,12 @@ locals {
   # default values from module and provided from outside
   widget_default_values = merge(
     {
-      period      = 5 # in minutes
-      stat        = "Sum"
-      width       = 6
-      height      = 5
-      expressions = []
-      yAxis       = { left = { min = 0 } }
-      # data_source        = var.data_source
+      period            = 5 # in minutes
+      stat              = "Sum"
+      width             = 6
+      height            = 5
+      expressions       = []
+      yAxis             = { left = { min = 0 } }
       container         = "$container"
       deployment        = "$deployment"
       namespace         = "$namespace"

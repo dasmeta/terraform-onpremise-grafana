@@ -1,7 +1,8 @@
 
 variable "load_balancer_arn" {
   type        = string
-  description = "ALB name"
+  description = "ALB AWS arn"
+  default     = "eu-central-1"
 }
 
 variable "region" {
