@@ -5,7 +5,6 @@ module "block_ingress" {
   for_each = { for index, item in try(local.blocks_by_type["ingress"], []) : index => item }
 
   balancer_name = try(each.value.block.balancer_name, null)
-  account_id    = try(each.value.block.account_id, null)
   region        = try(each.value.block.region, null)
 
   datasource_uid = try(each.value.datasource_uid, null)

@@ -1,6 +1,6 @@
 variable "name" {
   type        = string
-  description = "Service nameD"
+  description = "Service name"
 }
 
 variable "namespace" {

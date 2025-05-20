@@ -5,7 +5,6 @@ module "ingress_connections_widget" {
 
   for_each = { for index, item in try(local.widget_config["ingress/connections"], []) : index => item }
 
-  # data_source = try(each.value.data_source, {})
   datasource_type = try(each.value.datasource_type, null)
   datasource_uid  = try(each.value.datasource_uid, null)
   coordinates     = each.value.coordinates
@@ -19,7 +18,6 @@ module "ingress_request_rate_widget" {
 
   for_each = { for index, item in try(local.widget_config["ingress/request-rate"], []) : index => item }
 
-  # data_source = try(each.value.data_source, {})
   datasource_type = try(each.value.datasource_type, null)
   datasource_uid  = try(each.value.datasource_uid, null)
   coordinates     = each.value.coordinates
@@ -34,7 +32,6 @@ module "ingress_request_count_widget" {
 
   for_each = { for index, item in try(local.widget_config["ingress/request-count"], []) : index => item }
 
-  # data_source = try(each.value.data_source, {})
   datasource_type = try(each.value.datasource_type, null)
   datasource_uid  = try(each.value.datasource_uid, null)
   coordinates     = each.value.coordinates
@@ -52,7 +49,6 @@ module "ingress_cpu_widget" {
 
   for_each = { for index, item in try(local.widget_config["ingress/cpu"], []) : index => item }
 
-  # data_source = try(each.value.data_source, {})
   datasource_type = try(each.value.datasource_type, null)
   datasource_uid  = try(each.value.datasource_uid, null)
   coordinates     = each.value.coordinates
@@ -69,7 +65,6 @@ module "ingress_memory_widget" {
 
   for_each = { for index, item in try(local.widget_config["ingress/memory"], []) : index => item }
 
-  # data_source = try(each.value.data_source, {})
   datasource_type = try(each.value.datasource_type, null)
   datasource_uid  = try(each.value.datasource_uid, null)
   coordinates     = each.value.coordinates
@@ -77,8 +72,6 @@ module "ingress_memory_widget" {
 
   pod       = each.value.pod
   namespace = each.value.namespace
-
-  region = each.value.region
 }
 
 module "ingress_latency_widget" {
@@ -86,7 +79,6 @@ module "ingress_latency_widget" {
 
   for_each = { for index, item in try(local.widget_config["ingress/latency"], []) : index => item }
 
-  # data_source = try(each.value.data_source, {})
   datasource_type = try(each.value.datasource_type, null)
   datasource_uid  = try(each.value.datasource_uid, null)
   coordinates     = each.value.coordinates

@@ -23,7 +23,7 @@ No resources.
 |------|-------------|------|---------|:--------:|
 | <a name="input_datasource_uid"></a> [datasource\_uid](#input\_datasource\_uid) | datasource uid for the metrics | `string` | `"prometheus"` | no |
 | <a name="input_host"></a> [host](#input\_host) | The service host name | `string` | `null` | no |
-| <a name="input_name"></a> [name](#input\_name) | Service nameD | `string` | n/a | yes |
+| <a name="input_name"></a> [name](#input\_name) | Service name | `string` | n/a | yes |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | EKS namespace name | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | n/a | `string` | `""` | no |
 

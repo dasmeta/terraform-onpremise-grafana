@@ -10,9 +10,7 @@ module "base" {
   period      = var.period
   region      = var.region
 
-  defaults = {
-    MetricNamespace = "ContainerInsights"
-  }
+  defaults = {}
 
   options = {
     legend = {

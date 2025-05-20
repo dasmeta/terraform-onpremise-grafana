@@ -10,9 +10,7 @@ module "base" {
   period      = var.period
   region      = var.region
 
-  defaults = {
-    MetricNamespace = "ContainerInsights"
-  }
+  defaults = {}
 
   metrics = var.by_host ? [
     { label : "Avg", color : "7AAFF9", expression : "avg(increase(nginx_ingress_controller_request_duration_seconds_sum[${var.period}m]))" },

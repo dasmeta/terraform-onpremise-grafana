@@ -21,7 +21,6 @@ No resources.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_account_id"></a> [account\_id](#input\_account\_id) | AWS account ID | `string` | n/a | yes |
 | <a name="input_balancer_name"></a> [balancer\_name](#input\_balancer\_name) | ALB name | `string` | n/a | yes |
 | <a name="input_datasource_uid"></a> [datasource\_uid](#input\_datasource\_uid) | datasource uid for the metrics | `string` | `"cloudwatch"` | no |
 | <a name="input_region"></a> [region](#input\_region) | n/a | `string` | `""` | no |
