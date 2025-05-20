@@ -177,6 +177,6 @@ locals {
     values(module.alb_ingress_connections_widget).*.data,
     values(module.alb_ingress_request_count_widget).*.data,
     values(module.alb_ingress_target_response_time_widget).*.data,
-
+    values(module.alb_ingress_target_http_response_widget).*.data,
   )
 }

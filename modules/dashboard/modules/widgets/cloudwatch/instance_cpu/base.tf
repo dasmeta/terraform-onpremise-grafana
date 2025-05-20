@@ -4,7 +4,7 @@ module "base" {
   name = "CPU [${var.period}m]"
   data_source = {
     uid  = var.datasource_uid
-    type = var.datasource_type
+    type = "Cloudwatch"
   }
   coordinates = var.coordinates
   period      = var.period
@@ -20,16 +20,15 @@ module "base" {
       region      = var.region
       namespace   = "AWS/EC2"
       metric_name = "CPUUtilization"
-      # period = var.period
-      period    = "1"
-      statistic = "Average"
-      refId     = "A"
+      period      = var.period
+      statistic   = "Average"
+      refId       = "A"
     },
     {
       region      = var.region
       namespace   = "AWS/EC2"
       metric_name = "CPUUtilization"
-      period      = "1"
+      period      = var.period
       statistic   = "Maximum"
       refId       = "B"
     }

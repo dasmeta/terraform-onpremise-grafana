@@ -1,10 +1,10 @@
 module "base" {
   source = "../../base"
 
-  name = "CPU [${var.period}m]"
+  name = "Disk [${var.period}m]"
   data_source = {
     uid  = var.datasource_uid
-    type = var.datasource_type
+    type = "Cloudwatch"
   }
   coordinates = var.coordinates
   period      = var.period
@@ -20,7 +20,7 @@ module "base" {
       region      = var.region
       namespace   = "AWS/EC2"
       metric_name = "EBSReadOps"
-      period      = "1"
+      period      = var.period
       statistic   = "Average"
       refId       = "A"
     },
@@ -28,7 +28,7 @@ module "base" {
       region      = var.region
       namespace   = "AWS/EC2"
       metric_name = "EBSWriteOps"
-      period      = "1"
+      period      = var.period
       statistic   = "Average"
       refId       = "B"
     }

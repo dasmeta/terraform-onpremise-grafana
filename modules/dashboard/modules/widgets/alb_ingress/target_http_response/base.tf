@@ -1,7 +1,7 @@
 module "base" {
   source = "../../base"
 
-  name = "Connections"
+  name = "Target HTTP Response"
   data_source = {
     uid  = var.datasource_uid
     type = "Cloudwatch"
@@ -17,7 +17,7 @@ module "base" {
     {
       region      = var.region
       namespace   = "AWS/ApplicationELB"
-      metric_name = "ActiveConnectionCount"
+      metric_name = "HTTPCode_Target_4XX_Count"
       period      = var.period
       statistic   = "Sum"
       refId       = "A"
@@ -28,7 +28,7 @@ module "base" {
     {
       region      = var.region
       namespace   = "AWS/ApplicationELB"
-      metric_name = "NewConnectionCount"
+      metric_name = "HTTPCode_Target_5XX_Count"
       period      = var.period
       statistic   = "Sum"
       refId       = "B"

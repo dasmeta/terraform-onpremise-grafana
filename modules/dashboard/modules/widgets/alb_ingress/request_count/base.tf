@@ -4,23 +4,20 @@ module "base" {
   name = "Requests Count"
   data_source = {
     uid  = var.datasource_uid
-    type = var.datasource_type
+    type = "Cloudwatch"
   }
   coordinates = var.coordinates
   period      = var.period
   region      = var.region
 
-  defaults = {
-    # MetricNamespace = "AWS/EC2"
-    # Namespace       = var.namespace
-  }
+  defaults = {}
 
   cloudwatch_targets = [
     {
       region      = var.region
       namespace   = "AWS/ApplicationELB"
       metric_name = "RequestCount"
-      period      = "1"
+      period      = var.period
       statistic   = "Sum"
       refId       = "A"
       dimensions = merge({
@@ -31,7 +28,7 @@ module "base" {
       region      = var.region
       namespace   = "AWS/ApplicationELB"
       metric_name = "RequestCountPerTarget"
-      period      = "1"
+      period      = var.period
       statistic   = "Sum"
       refId       = "B"
       dimensions = merge({

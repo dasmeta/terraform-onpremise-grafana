@@ -16,11 +16,10 @@ module "block_service" {
 
   for_each = { for index, item in try(local.blocks_by_type["service"], []) : index => item }
 
-  name            = each.value.block.name
-  namespace       = try(each.value.block.namespace, "$namespace")
-  host            = try(each.value.block.host, null)
-  datasource_type = try(each.value.datasource_type, null)
-  datasource_uid  = try(each.value.datasource_uid, null)
+  name           = each.value.block.name
+  namespace      = try(each.value.block.namespace, "$namespace")
+  host           = try(each.value.block.host, null)
+  datasource_uid = try(each.value.datasource_uid, null)
 
 }
 
@@ -51,7 +50,7 @@ module "block_cloudwatch" {
   for_each = { for index, item in try(local.blocks_by_type["cloudwatch"], []) : index => item }
 
   region         = try(each.value.block.region, "")
-  datasource_uid = try(each.value.datasource_uid, null)
+  datasource_uid = try(each.value.datasource_uid, "cloudwatch")
 
 }
 
@@ -62,5 +61,5 @@ module "block_alb_ingress" {
 
   load_balancer_arn = try(each.value.block.load_balancer_arn, "")
   region            = try(each.value.block.region, "")
-  datasource_uid    = try(each.value.datasource_uid, null)
+  datasource_uid    = try(each.value.datasource_uid, "cloudwatch")
 }

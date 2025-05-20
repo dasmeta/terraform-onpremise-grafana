@@ -11,19 +11,9 @@ variable "datasource_uid" {
   default = "cloudwatch"
 }
 
-variable "datasource_type" {
-  type    = string
-  default = "Cloudwatch"
-}
-
 variable "namespace" {
   type    = string
   default = "default"
-}
-
-variable "account_id" {
-  type    = string
-  default = null
 }
 
 variable "region" {
@@ -43,8 +33,8 @@ variable "coordinates" {
 
 # stats
 variable "period" {
-  type    = number
-  default = 60
+  type    = string
+  default = ""
 }
 
 variable "dimensions" {

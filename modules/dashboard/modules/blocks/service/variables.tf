@@ -24,9 +24,3 @@ variable "datasource_uid" {
   default     = "prometheus"
   description = "datasource uid for the metrics"
 }
-
-variable "datasource_type" {
-  type        = string
-  default     = "prometheus"
-  description = "datasource type"
-}

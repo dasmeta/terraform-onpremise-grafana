@@ -42,17 +42,16 @@ module "alb_ingress_request_count_widget" {
   region = each.value.region
 }
 
-# module "ingress_latency_widget" {
-#   source = "./modules/widgets/alb-ingress/latency"
+module "alb_ingress_target_http_response_widget" {
+  source = "./modules/widgets/alb_ingress/target_http_response"
 
-#   for_each = { for index, item in try(local.widget_config["alb-ingress/latency"], []) : index => item }
+  for_each = { for index, item in try(local.widget_config["alb_ingress/target_http_response"], []) : index => item }
 
-#   # data_source = try(each.value.data_source, {})
-#   datasource_type = try(each.value.datasource_type, null)
-#   datasource_uid = try(each.value.datasource_uid, null)
-#   coordinates = each.value.coordinates
-#   period      = each.value.period
-#   load_balancer_arn = each.value.load_balancer_arn
+  # data_source = try(each.value.data_source, {})
+  datasource_uid    = try(each.value.datasource_uid, null)
+  coordinates       = each.value.coordinates
+  period            = each.value.period
+  load_balancer_arn = each.value.load_balancer_arn
 
-#   region            = each.value.region
-# }
+  region = each.value.region
+}

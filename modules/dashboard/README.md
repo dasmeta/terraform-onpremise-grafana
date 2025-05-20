@@ -74,6 +74,7 @@ module "this" {
 |------|--------|---------|
 | <a name="module_alb_ingress_connections_widget"></a> [alb\_ingress\_connections\_widget](#module\_alb\_ingress\_connections\_widget) | ./modules/widgets/alb_ingress/connections | n/a |
 | <a name="module_alb_ingress_request_count_widget"></a> [alb\_ingress\_request\_count\_widget](#module\_alb\_ingress\_request\_count\_widget) | ./modules/widgets/alb_ingress/connections | n/a |
+| <a name="module_alb_ingress_target_http_response_widget"></a> [alb\_ingress\_target\_http\_response\_widget](#module\_alb\_ingress\_target\_http\_response\_widget) | ./modules/widgets/alb_ingress/target_http_response | n/a |
 | <a name="module_alb_ingress_target_response_time_widget"></a> [alb\_ingress\_target\_response\_time\_widget](#module\_alb\_ingress\_target\_response\_time\_widget) | ./modules/widgets/alb_ingress/target_response_time | n/a |
 | <a name="module_block_alb_ingress"></a> [block\_alb\_ingress](#module\_block\_alb\_ingress) | ./modules/blocks/alb_ingress | n/a |
 | <a name="module_block_cloudwatch"></a> [block\_cloudwatch](#module\_block\_cloudwatch) | ./modules/blocks/cloudwatch | n/a |
