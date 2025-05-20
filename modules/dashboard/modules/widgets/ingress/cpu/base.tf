@@ -1,17 +1,17 @@
 module "base" {
   source = "../../base"
 
-  name              = "CPU (${var.ingress_type}) [${var.period}m]"
-  data_source       = var.data_source
-  coordinates       = var.coordinates
-  period            = var.period
-  region            = var.region
-  anomaly_detection = var.anomaly_detection
-  anomaly_deviation = var.anomaly_deviation
+  name = "CPU (${var.ingress_type}) [${var.period}m]"
+  data_source = {
+    uid  = var.datasource_uid
+    type = var.datasource_type
+  }
+  coordinates = var.coordinates
+  period      = var.period
+  region      = var.region
 
   defaults = {
     MetricNamespace = "ContainerInsights"
-    accountId       = var.account_id
   }
 
   options = {

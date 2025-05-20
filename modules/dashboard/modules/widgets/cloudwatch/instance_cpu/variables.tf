@@ -1,9 +1,19 @@
-variable "data_source" {
-  type = object({
-    uid  = optional(string, "cloudwatch")
-    type = optional(string, "Cloudwatch")
-  })
-  description = "The custom datasource for widget item"
+# variable "data_source" {
+#   type = object({
+#     uid  = optional(string, "prometheus")
+#     type = optional(string, "prometheus")
+#   })
+#   description = "The custom datasource for widget item"
+# }
+
+variable "datasource_uid" {
+  type    = string
+  default = "cloudwatch"
+}
+
+variable "datasource_type" {
+  type    = string
+  default = "Cloudwatch"
 }
 
 variable "namespace" {

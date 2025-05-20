@@ -1,16 +1,18 @@
 module "base" {
   source = "../../base"
 
-  name        = "Memory"
-  data_source = var.data_source
+  name = "Memory"
+  data_source = {
+    type = var.datasource_type
+    uid  = var.datasource_uid
+  }
   coordinates = var.coordinates
   period      = var.period
   unit        = "bytes"
 
   defaults = {
-    MetricNamespace = "ContainerInsights"
-    Namespace       = var.namespace
-    PodName         = var.container
+    Namespace = var.namespace
+    PodName   = var.container
   }
 
   metrics = [

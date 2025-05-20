@@ -72,6 +72,10 @@ module "this" {
 
 | Name | Source | Version |
 |------|--------|---------|
+| <a name="module_alb_ingress_connections_widget"></a> [alb\_ingress\_connections\_widget](#module\_alb\_ingress\_connections\_widget) | ./modules/widgets/alb_ingress/connections | n/a |
+| <a name="module_alb_ingress_request_count_widget"></a> [alb\_ingress\_request\_count\_widget](#module\_alb\_ingress\_request\_count\_widget) | ./modules/widgets/alb_ingress/connections | n/a |
+| <a name="module_alb_ingress_target_response_time_widget"></a> [alb\_ingress\_target\_response\_time\_widget](#module\_alb\_ingress\_target\_response\_time\_widget) | ./modules/widgets/alb_ingress/target_response_time | n/a |
+| <a name="module_block_alb_ingress"></a> [block\_alb\_ingress](#module\_block\_alb\_ingress) | ./modules/blocks/alb_ingress | n/a |
 | <a name="module_block_cloudwatch"></a> [block\_cloudwatch](#module\_block\_cloudwatch) | ./modules/blocks/cloudwatch | n/a |
 | <a name="module_block_ingress"></a> [block\_ingress](#module\_block\_ingress) | ./modules/blocks/ingress | n/a |
 | <a name="module_block_redis"></a> [block\_redis](#module\_block\_redis) | ./modules/blocks/redis | n/a |
@@ -86,7 +90,6 @@ module "this" {
 | <a name="module_container_request_count_widget"></a> [container\_request\_count\_widget](#module\_container\_request\_count\_widget) | ./modules/widgets/container/request-count | n/a |
 | <a name="module_container_response_time_widget"></a> [container\_response\_time\_widget](#module\_container\_response\_time\_widget) | ./modules/widgets/container/response-time | n/a |
 | <a name="module_container_restarts_widget"></a> [container\_restarts\_widget](#module\_container\_restarts\_widget) | ./modules/widgets/container/restarts | n/a |
-| <a name="module_custom_widget"></a> [custom\_widget](#module\_custom\_widget) | ./modules/widgets/custom | n/a |
 | <a name="module_deployment_replicas_widget"></a> [deployment\_replicas\_widget](#module\_deployment\_replicas\_widget) | ./modules/widgets/deployment/replicas | n/a |
 | <a name="module_ingress_connections_widget"></a> [ingress\_connections\_widget](#module\_ingress\_connections\_widget) | ./modules/widgets/ingress/connections | n/a |
 | <a name="module_ingress_cpu_widget"></a> [ingress\_cpu\_widget](#module\_ingress\_cpu\_widget) | ./modules/widgets/ingress/cpu | n/a |
@@ -137,7 +140,6 @@ module "this" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_custom_widgets"></a> [custom\_widgets](#input\_custom\_widgets) | list of maps to create custom widgets | <pre>list(object({<br/>    datasource = optional(object({<br/>      uid  = optional(string, "")<br/>      type = optional(string, "prometheus")<br/>    }), {})<br/>    title              = optional(string, "custom_widget")<br/>    cloudwatch_targets = optional(list(any), [])<br/>    coordinates = optional(object({<br/>      x      = optional(number, 1)<br/>      y      = optional(number, 20)<br/>      width  = optional(number, 6)<br/>      height = optional(number, 1)<br/>    }), {})<br/>  }))</pre> | `[]` | no |
 | <a name="input_data_source"></a> [data\_source](#input\_data\_source) | The grafana dashboard global/default datasource, will be used in widget items if they have no their custom ones | <pre>object({<br/>    uid  = string<br/>    type = optional(string, "prometheus")<br/>  })</pre> | n/a | yes |
 | <a name="input_defaults"></a> [defaults](#input\_defaults) | Default values to be supplied to all modules. | `any` | `{}` | no |
 | <a name="input_name"></a> [name](#input\_name) | Dashboard name. Should not contain spaces and special chars. | `string` | n/a | yes |
@@ -148,10 +150,6 @@ module "this" {
 
 | Name | Description |
 |------|-------------|
-| <a name="output_blocks_by_type_results"></a> [blocks\_by\_type\_results](#output\_blocks\_by\_type\_results) | n/a |
-| <a name="output_blocks_results"></a> [blocks\_results](#output\_blocks\_results) | n/a |
 | <a name="output_rows"></a> [rows](#output\_rows) | n/a |
-| <a name="output_widget_config"></a> [widget\_config](#output\_widget\_config) | n/a |
 | <a name="output_widget_config_with_raw_column_data_and_defaults"></a> [widget\_config\_with\_raw\_column\_data\_and\_defaults](#output\_widget\_config\_with\_raw\_column\_data\_and\_defaults) | n/a |
-| <a name="output_widget_result"></a> [widget\_result](#output\_widget\_result) | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

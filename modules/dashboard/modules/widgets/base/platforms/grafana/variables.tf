@@ -46,18 +46,6 @@ variable "region" {
   default = ""
 }
 
-variable "anomaly_detection" {
-  type        = bool
-  default     = false
-  description = "Allow to enable anomaly detection on widget metrics"
-}
-
-variable "anomaly_deviation" {
-  type        = number
-  default     = 4
-  description = "Height of anomaly band"
-}
-
 variable "type" {
   type        = string
   default     = "metric"
@@ -172,15 +160,14 @@ variable "thresholds" {
 
 variable "cloudwatch_targets" {
   type = list(object({
-    datasource_uid = optional(string, "cloudwatch")
-    query_mode     = optional(string, "Metrics") # Logs or Metrics
-    region         = optional(string, "eu-central-1")
-    namespace      = optional(string, "AWS/EC2")
-    metric_name    = optional(string, "CPUUtilization")
-    dimensions     = optional(map(string), {})
-    statistic      = optional(string, "Average")
-    period         = optional(string, "300")
-    refId          = optional(string, "A")
+    query_mode  = optional(string, "Metrics") # Logs or Metrics
+    region      = optional(string, "eu-central-1")
+    namespace   = optional(string, "AWS/EC2")
+    metric_name = optional(string, "CPUUtilization")
+    dimensions  = optional(map(string), {})
+    statistic   = optional(string, "Average")
+    period      = optional(string, "300")
+    refId       = optional(string, "A")
   }))
   description = "Target section of the cloudwatch based widget"
   default     = []

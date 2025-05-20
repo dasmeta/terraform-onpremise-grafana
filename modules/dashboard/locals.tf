@@ -11,13 +11,6 @@ locals {
 
 
   ## Blocks
-
-  # get all blocks and annotate
-  # initial_blocks = list(object({
-  #   block = object({type = string}) # "block/sla"
-  #   index1 = number
-  #   type = string # "sla"
-  # }))
   initial_blocks = [
     for index1, block in var.rows : {
       block : block,
@@ -33,11 +26,12 @@ locals {
 
   # bring all module results together
   blocks_results = {
-    ingress    = values(module.block_ingress).*.result
-    service    = values(module.block_service).*.result
-    sla        = values(module.block_sla).*.result
-    redis      = values(module.block_redis).*.result
-    cloudwatch = values(module.block_cloudwatch).*.result
+    ingress     = values(module.block_ingress).*.result
+    service     = values(module.block_service).*.result
+    sla         = values(module.block_sla).*.result
+    redis       = values(module.block_redis).*.result
+    cloudwatch  = values(module.block_cloudwatch).*.result
+    alb_ingress = values(module.block_alb_ingress).*.result
   }
 
   blocks_by_type_results = concat([], [
@@ -46,9 +40,6 @@ locals {
     ] if contains(keys(local.blocks_results), block_type)
   ]...)
 
-  # custom_widgets =
-
-  # blocks_by_type_results_custom_containers = concat(local.blocks_by_type_results, local.custom_widgets)
 
   # inject block widgets into rows/panels listing in place of block/* definitions
   rows = concat([], [
@@ -64,13 +55,13 @@ locals {
   # default values from module and provided from outside
   widget_default_values = merge(
     {
-      period            = 5 # in minutes
-      stat              = "Sum"
-      width             = 6
-      height            = 5
-      expressions       = []
-      yAxis             = { left = { min = 0 } }
-      datasource        = var.data_source
+      period      = 5 # in minutes
+      stat        = "Sum"
+      width       = 6
+      height      = 5
+      expressions = []
+      yAxis       = { left = { min = 0 } }
+      # data_source        = var.data_source
       container         = "$container"
       deployment        = "$deployment"
       namespace         = "$namespace"
@@ -177,10 +168,15 @@ locals {
     values(module.redis_expired_evicted_keys_widget).*.data,
     values(module.redis_expiring_notexpiring_keys_widget).*.data,
 
-    # Custom widgets
+    # Cloudwatch widgets
     values(module.instance_network_widget).*.data,
     values(module.instance_cpu_widget).*.data,
-    values(module.instance_disk_widget).*.data
+    values(module.instance_disk_widget).*.data,
+
+    # ALB widgets
+    values(module.alb_ingress_connections_widget).*.data,
+    values(module.alb_ingress_request_count_widget).*.data,
+    values(module.alb_ingress_target_response_time_widget).*.data,
 
   )
 }

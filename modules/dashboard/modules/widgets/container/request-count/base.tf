@@ -1,8 +1,11 @@
 module "base" {
   source = "../../base"
 
-  name        = "Request Count ${var.only_5xx ? "5XX" : "All"} ${var.host} [${var.period}m]"
-  data_source = var.data_source
+  name = "Request Count ${var.only_5xx ? "5XX" : "All"} ${var.host} [${var.period}m]"
+  data_source = {
+    uid  = var.datasource_uid
+    type = var.datasource_type
+  }
   coordinates = var.coordinates
   period      = var.period
 

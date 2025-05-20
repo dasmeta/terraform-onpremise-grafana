@@ -39,6 +39,5 @@ module "pod_restarts_widget" {
 
   # pod
   pod       = each.value.pod
-  cluster   = try(each.value.cluster, null)
   namespace = each.value.namespace
 }

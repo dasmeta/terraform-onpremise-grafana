@@ -1,8 +1,11 @@
 module "base" {
   source = "../../base"
 
-  name        = "Replicas"
-  data_source = var.data_source
+  name = "Replicas"
+  data_source = {
+    uid  = var.datasource_uid
+    type = var.datasource_type
+  }
   coordinates = var.coordinates
   period      = var.period
 

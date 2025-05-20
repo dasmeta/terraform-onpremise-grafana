@@ -31,32 +31,6 @@ variable "application_dashboard" {
       uid  = string
       type = optional(string, "prometheus")
     })
-    custom_widgets = optional(list(object({
-      datasource = optional(object({
-        uid  = optional(string, "")
-        type = optional(string, "prometheus")
-      }), {})
-      title = optional(string, "custom_widget")
-      metrics = optional(list(object({
-        metric_name       = optional(string, "")
-        metric_query_type = optional(string, "0")
-      })), [])
-      expression = optional(list(object({
-        expression = string
-        label      = optional(string, null)
-        accountId  = optional(string, null)
-        visible    = optional(bool, null)
-        color      = optional(string, null)
-        yAxis      = optional(string, null)
-        region     = optional(string, null)
-      })), [])
-      coordinates = optional(object({
-        x      = optional(number, 1)
-        y      = optional(number, 20)
-        width  = optional(number, 6)
-        height = optional(number, 1)
-      }), {})
-    })), [])
     variables = optional(list(object({ # Allows to define variables to be used in dashboard
       name        = string
       type        = optional(string, "custom")

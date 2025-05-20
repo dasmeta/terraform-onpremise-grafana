@@ -9,8 +9,6 @@ module "base_grafana" {
   defaults           = var.defaults
   stat               = var.stat
   period             = var.period
-  anomaly_detection  = var.anomaly_detection
-  anomaly_deviation  = var.anomaly_deviation
   type               = var.type
   query              = var.query
   sources            = var.sources

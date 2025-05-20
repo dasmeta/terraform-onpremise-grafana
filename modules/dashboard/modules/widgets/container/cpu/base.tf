@@ -1,15 +1,17 @@
 module "base" {
   source = "../../base"
 
-  name        = "CPU [${var.period}m]"
-  data_source = var.data_source
+  name = "CPU [${var.period}m]"
+  data_source = {
+    uid  = var.datasource_uid
+    type = var.datasource_type
+  }
   coordinates = var.coordinates
   period      = var.period
 
   defaults = {
-    MetricNamespace = "ContainerInsights"
-    Namespace       = var.namespace
-    PodName         = var.container
+    Namespace = var.namespace
+    PodName   = var.container
   }
 
   metrics = var.by_pod ? [

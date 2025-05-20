@@ -1,7 +1,7 @@
 module "base" {
   source = "../../base"
 
-  name        = "Availability (1d) to be extended"
+  name        = "Availability (1d)"
   data_source = var.data_source
   coordinates = var.coordinates
   decimals    = 3
@@ -11,12 +11,9 @@ module "base" {
   view        = "gauge"
   yAxis       = { left = { min = 85, max = 100 } }
 
-  setPeriodToTimeRange     = true
-  singleValueFullPrecision = false
-  sparkline                = false
-  start                    = "-PT8640H"
-  trend                    = false
-  end                      = "P0D"
+  start = "-PT8640H"
+  trend = false
+  end   = "P0D"
   annotations = {
     horizontal = [
       {
@@ -44,7 +41,6 @@ module "base" {
   defaults = {
     MetricNamespace = "AWS/ApplicationELB"
     LoadBalancer    = var.balancer_name
-    accountId       = var.account_id
   }
 
   metrics = [

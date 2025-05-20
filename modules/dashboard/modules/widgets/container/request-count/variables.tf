@@ -1,9 +1,19 @@
-variable "data_source" {
-  type = object({
-    uid  = optional(string, "prometheus")
-    type = optional(string, "prometheus")
-  })
-  description = "The custom datasource for widget item"
+# variable "data_source" {
+#   type = object({
+#     uid  = optional(string, "prometheus")
+#     type = optional(string, "prometheus")
+#   })
+#   description = "The custom datasource for widget item"
+# }
+
+variable "datasource_uid" {
+  type    = string
+  default = "prometheus"
+}
+
+variable "datasource_type" {
+  type    = string
+  default = "prometheus"
 }
 
 variable "host" {

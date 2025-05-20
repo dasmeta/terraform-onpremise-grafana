@@ -1,8 +1,11 @@
 module "base" {
   source = "../../base"
 
-  name        = "Restarts [${var.period}m]"
-  data_source = var.data_source
+  name = "Restarts [${var.period}m]"
+  data_source = {
+    uid  = var.datasource_uid
+    type = var.datasource_type
+  }
   coordinates = var.coordinates
   stat        = "Maximum"
   period      = var.period

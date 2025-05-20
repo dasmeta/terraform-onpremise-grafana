@@ -64,7 +64,6 @@ locals {
 
   common_fields    = ["MetricNamespace", "MetricName"]
   attribute_fields = ["accountId", "period", "stat", "label", "visible", "color", "yAxis"]
-  custom_fields    = ["anomaly_detection", "anomaly_deviation"]
   metrics_local    = var.metrics == null ? [] : var.metrics
 
   # merge metrics with defaults
@@ -86,7 +85,7 @@ locals {
       logGroupNames = var.sources,
       queryMode     = "Logs",
       legendFormat  = ""
-      # region        = var.region
+      region        = var.region
     }
   ] : []
   metric_targets = [for row in local.metrics_with_defaults : {
@@ -96,30 +95,13 @@ locals {
     editorMode   = "code",
 
     }
-    #   : {
-    #   expression       = ""
-    #   id               = ""
-    #   matchExact       = true
-    #   metricEditorMode = 0
-    #   metricName       = row.metricName
-    #   metricQueryType  = 0
-    #   namespace        = row.metricNamespace
-    #   queryLanguage    = try(row.queryLanguage, "")
-    #   period           = ""
-    #   queryMode        = "Metrics"
-    #   region           = try(row.region, "")
-    #   sqlExpression = ""
-    #   editorMode   = "code"
-    #   statistic     = "Average"
-    #   dimensions    = { for key, item in row : key => item if !contains(concat(local.common_fields, local.attribute_fields, local.custom_fields), key) }
-    # }]
   ]
 
   cloudwatch_targets = [for row in var.cloudwatch_targets : {
-    datasource = {
-      type = try(var.data_source.type, "")
-      uid  = try(var.data_source.uid, "")
-    }
+    # datasource = {
+    #   type = try(row.data_source.type, "")
+    #   uid  = try(row.data_source.uid, "")
+    # }
     queryMode        = row.query_mode
     region           = row.region
     namespace        = row.namespace

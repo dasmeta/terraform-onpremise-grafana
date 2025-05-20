@@ -10,10 +10,6 @@ variable "pod" {
   type = string
 }
 
-variable "cluster" {
-  type = string
-}
-
 variable "namespace" {
   type    = string
   default = "default"

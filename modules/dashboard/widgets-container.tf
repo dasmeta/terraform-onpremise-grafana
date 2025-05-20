@@ -4,9 +4,11 @@ module "container_cpu_widget" {
 
   for_each = { for index, item in try(local.widget_config["container/cpu"], []) : index => item }
 
-  data_source = try(each.value.data_source, {})
-  coordinates = each.value.coordinates
-  period      = each.value.period
+  # data_source = try(each.value.data_source, {})
+  datasource_type = try(each.value.datasource_type, null)
+  datasource_uid  = try(each.value.datasource_uid, null)
+  coordinates     = each.value.coordinates
+  period          = each.value.period
 
   # container
   container = each.value.container
@@ -19,9 +21,11 @@ module "container_memory_widget" {
 
   for_each = { for index, item in try(local.widget_config["container/memory"], []) : index => item }
 
-  data_source = try(each.value.data_source, {})
-  coordinates = each.value.coordinates
-  period      = each.value.period
+  # data_source = try(each.value.data_source, {})
+  datasource_type = try(each.value.datasource_type, null)
+  datasource_uid  = try(each.value.datasource_uid, null)
+  coordinates     = each.value.coordinates
+  period          = each.value.period
 
   # container
   container = each.value.container
@@ -33,9 +37,11 @@ module "container_network_widget" {
 
   for_each = { for index, item in try(local.widget_config["container/network"], []) : index => item }
 
-  data_source = try(each.value.data_source, {})
-  coordinates = each.value.coordinates
-  period      = each.value.period
+  # data_source = try(each.value.data_source, {})
+  datasource_type = try(each.value.datasource_type, null)
+  datasource_uid  = try(each.value.datasource_uid, null)
+  coordinates     = each.value.coordinates
+  period          = each.value.period
 
   # container
   container = each.value.container
@@ -48,9 +54,11 @@ module "container_replicas_widget" {
 
   for_each = { for index, item in try(local.widget_config["container/replicas"], []) : index => item }
 
-  data_source = try(each.value.data_source, {})
-  coordinates = each.value.coordinates
-  period      = each.value.period
+  # data_source = try(each.value.data_source, {})
+  datasource_type = try(each.value.datasource_type, null)
+  datasource_uid  = try(each.value.datasource_uid, null)
+  coordinates     = each.value.coordinates
+  period          = each.value.period
 
   # container
   container = each.value.container
@@ -62,9 +70,11 @@ module "container_restarts_widget" {
 
   for_each = { for index, item in try(local.widget_config["container/restarts"], []) : index => item }
 
-  data_source = try(each.value.data_source, {})
-  coordinates = each.value.coordinates
-  period      = each.value.period
+  # data_source = try(each.value.data_source, {})
+  datasource_type = try(each.value.datasource_type, null)
+  datasource_uid  = try(each.value.datasource_uid, null)
+  coordinates     = each.value.coordinates
+  period          = each.value.period
 
   # container
   container = each.value.container
@@ -76,9 +86,11 @@ module "container_request_count_widget" {
 
   for_each = { for index, item in try(local.widget_config["container/request-count"], []) : index => item }
 
-  data_source = try(each.value.data_source, {})
-  coordinates = each.value.coordinates
-  period      = each.value.period
+  # data_source = try(each.value.data_source, {})
+  datasource_type = try(each.value.datasource_type, null)
+  datasource_uid  = try(each.value.datasource_uid, null)
+  coordinates     = each.value.coordinates
+  period          = each.value.period
 
   # container
   host              = each.value.host
@@ -91,11 +103,13 @@ module "container_response_time_widget" {
 
   for_each = { for index, item in try(local.widget_config["container/response-time"], []) : index => item }
 
-  data_source = try(each.value.data_source, {})
-  coordinates = each.value.coordinates
-  period      = each.value.period
-  acceptable  = try(each.value.acceptable, 1)
-  problem     = try(each.value.problem, 2)
+  # data_source = try(each.value.data_source, {})
+  datasource_type = try(each.value.datasource_type, null)
+  datasource_uid  = try(each.value.datasource_uid, null)
+  coordinates     = each.value.coordinates
+  period          = each.value.period
+  acceptable      = try(each.value.acceptable, 1)
+  problem         = try(each.value.problem, 2)
 
   # container
   host = each.value.host
@@ -106,9 +120,11 @@ module "container_network_traffic_widget" {
 
   for_each = { for index, item in try(local.widget_config["container/network-traffic"], []) : index => item }
 
-  data_source = try(each.value.data_source, {})
-  coordinates = each.value.coordinates
-  period      = each.value.period
+  # data_source = try(each.value.data_source, {})
+  datasource_type = try(each.value.datasource_type, null)
+  datasource_uid  = try(each.value.datasource_uid, null)
+  coordinates     = each.value.coordinates
+  period          = each.value.period
 
   pod = each.value.pod
 }
@@ -118,9 +134,11 @@ module "container_network_transmit_widget" {
 
   for_each = { for index, item in try(local.widget_config["container/network-transmit"], []) : index => item }
 
-  data_source = try(each.value.data_source, {})
-  coordinates = each.value.coordinates
-  period      = each.value.period
+  # data_source = try(each.value.data_source, {})
+  datasource_type = try(each.value.datasource_type, null)
+  datasource_uid  = try(each.value.datasource_uid, null)
+  coordinates     = each.value.coordinates
+  period          = each.value.period
 
   pod = each.value.pod
 }

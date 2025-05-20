@@ -1,8 +1,11 @@
 module "base" {
   source = "../../base"
 
-  name        = "Network Traffic (${var.ingress_type}) [${var.period}m]"
-  data_source = var.data_source
+  name = "Network Traffic (${var.ingress_type}) [${var.period}m]"
+  data_source = {
+    uid  = var.datasource_uid
+    type = var.datasource_type
+  }
   coordinates = var.coordinates
   period      = var.period
 
