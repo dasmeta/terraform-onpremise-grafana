@@ -64,7 +64,6 @@ locals {
 
   common_fields    = ["MetricNamespace", "MetricName"]
   attribute_fields = ["accountId", "period", "stat", "label", "visible", "color", "yAxis"]
-  custom_fields    = ["anomaly_detection", "anomaly_deviation"]
   metrics_local    = var.metrics == null ? [] : var.metrics
 
   # merge metrics with defaults
@@ -86,29 +85,36 @@ locals {
       logGroupNames = var.sources,
       queryMode     = "Logs",
       legendFormat  = ""
-      # region        = var.region
+      region        = var.region
     }
   ] : []
-  metric_targets = [for row in local.metrics_with_defaults : row.expression != null ? {
+  metric_targets = [for row in local.metrics_with_defaults : {
     expr         = row.expression
     id           = ""
     legendFormat = row.label,
     editorMode   = "code",
 
-    } : {
+    }
+  ]
+
+  cloudwatch_targets = [for row in var.cloudwatch_targets : {
+    # datasource = {
+    #   type = try(row.data_source.type, "")
+    #   uid  = try(row.data_source.uid, "")
+    # }
+    queryMode        = row.query_mode
+    region           = row.region
+    namespace        = row.namespace
+    metricName       = row.metric_name
+    dimensions       = row.dimensions
+    statistic        = row.statistic
+    period           = row.period
+    matchExact       = true
     expression       = ""
     id               = ""
-    matchExact       = true
     metricEditorMode = 0
-    metricName       = row.MetricName
     metricQueryType  = 0
-    namespace        = row.MetricNamespace
-    period           = ""
-    queryMode        = "Metrics"
-    # region           = var.region
-    sqlExpression = ""
-    statistic     = "Average"
-    dimensions    = { for key, item in row : key => item if !contains(concat(local.common_fields, local.attribute_fields, local.custom_fields), key) }
+    refId            = row.refId
   }]
 
   data = {
@@ -138,6 +144,6 @@ locals {
         sort = lookup(var.options.tooltip, "sort", "none")
       }
     }
-    targets = concat(local.query_targets, local.metric_targets)
+    targets = concat(local.query_targets, local.metric_targets, local.cloudwatch_targets)
   }
 }

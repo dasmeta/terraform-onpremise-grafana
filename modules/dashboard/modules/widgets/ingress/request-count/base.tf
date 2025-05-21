@@ -1,18 +1,16 @@
 module "base" {
   source = "../../base"
 
-  name              = "${var.by_status_path ? "5XX Rate(5m) by (status, host, path) (> 0.01)" : var.only_5xx && !var.by_path ? "5XX Rate" : var.by_path ? "5XX Rate per Path (0.01)" : "All Requests Rate"} (${var.ingress_type})${var.by_host ? " by host" : ""} [${var.period}m]"
-  data_source       = var.data_source
-  coordinates       = var.coordinates
-  period            = var.period
-  region            = var.region
-  anomaly_detection = var.anomaly_detection
-  anomaly_deviation = var.anomaly_deviation
-
-  defaults = {
-    MetricNamespace = "ContainerInsights"
-    accountId       = var.account_id
+  name = "${var.by_status_path ? "5XX Rate(5m) by (status, host, path) (> 0.01)" : var.only_5xx && !var.by_path ? "5XX Rate" : var.by_path ? "5XX Rate per Path (0.01)" : "All Requests Rate"} (${var.ingress_type})${var.by_host ? " by host" : ""} [${var.period}m]"
+  data_source = {
+    uid  = var.datasource_uid
+    type = var.datasource_type
   }
+  coordinates = var.coordinates
+  period      = var.period
+  region      = var.region
+
+  defaults = {}
 
   options = {
     legend = {

@@ -21,9 +21,6 @@ output "result" {
       { type : "ingress/memory", pod : "nginx-ingress", namespace : "ingress-nginx", width : 4, },
       { type : "container/network-traffic", pod : "nginx-ingress", width : 4 },
       { type : "container/network-transmit", pod : "nginx-ingress", width : 4 },
-      # { type : "logs/count", aggregated_metric : "controller"},
-      # { type : "logs/error-rate", aggregated_metric : "controller"},
-      # { type : "logs/warning-rate", aggregated_metric : "controller"},
     ],
   ]
 }

@@ -7,7 +7,7 @@ variable "defaults" {
   type = any
   ## valid values
   # object({
-  #     period    = number
+  #     period    = string
   #     namespace = string
   #     cluster   = string
   #     width     = number

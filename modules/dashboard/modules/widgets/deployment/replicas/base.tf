@@ -1,20 +1,13 @@
 module "base" {
   source = "../../base"
 
-  name              = "Replicas"
-  data_source       = var.data_source
-  coordinates       = var.coordinates
-  period            = var.period
-  region            = var.region
-  anomaly_detection = var.anomaly_detection
-  anomaly_deviation = var.anomaly_deviation
+  name        = "Replicas"
+  data_source = var.data_source
+  coordinates = var.coordinates
+  period      = var.period
 
   defaults = {
     MetricNamespace = "KubeStateMetrics"
-    ClusterName     = var.cluster
-    Namespace       = var.namespace
-    DeploymentName  = var.deployment
-    accountId       = var.account_id
   }
 
   metrics = [

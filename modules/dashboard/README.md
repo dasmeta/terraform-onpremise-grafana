@@ -72,6 +72,12 @@ module "this" {
 
 | Name | Source | Version |
 |------|--------|---------|
+| <a name="module_alb_ingress_connections_widget"></a> [alb\_ingress\_connections\_widget](#module\_alb\_ingress\_connections\_widget) | ./modules/widgets/alb_ingress/connections | n/a |
+| <a name="module_alb_ingress_request_count_widget"></a> [alb\_ingress\_request\_count\_widget](#module\_alb\_ingress\_request\_count\_widget) | ./modules/widgets/alb_ingress/connections | n/a |
+| <a name="module_alb_ingress_target_http_response_widget"></a> [alb\_ingress\_target\_http\_response\_widget](#module\_alb\_ingress\_target\_http\_response\_widget) | ./modules/widgets/alb_ingress/target_http_response | n/a |
+| <a name="module_alb_ingress_target_response_time_widget"></a> [alb\_ingress\_target\_response\_time\_widget](#module\_alb\_ingress\_target\_response\_time\_widget) | ./modules/widgets/alb_ingress/target_response_time | n/a |
+| <a name="module_block_alb_ingress"></a> [block\_alb\_ingress](#module\_block\_alb\_ingress) | ./modules/blocks/alb_ingress | n/a |
+| <a name="module_block_cloudwatch"></a> [block\_cloudwatch](#module\_block\_cloudwatch) | ./modules/blocks/cloudwatch | n/a |
 | <a name="module_block_ingress"></a> [block\_ingress](#module\_block\_ingress) | ./modules/blocks/ingress | n/a |
 | <a name="module_block_redis"></a> [block\_redis](#module\_block\_redis) | ./modules/blocks/redis | n/a |
 | <a name="module_block_service"></a> [block\_service](#module\_block\_service) | ./modules/blocks/service | n/a |
@@ -92,6 +98,9 @@ module "this" {
 | <a name="module_ingress_memory_widget"></a> [ingress\_memory\_widget](#module\_ingress\_memory\_widget) | ./modules/widgets/ingress/memory | n/a |
 | <a name="module_ingress_request_count_widget"></a> [ingress\_request\_count\_widget](#module\_ingress\_request\_count\_widget) | ./modules/widgets/ingress/request-count | n/a |
 | <a name="module_ingress_request_rate_widget"></a> [ingress\_request\_rate\_widget](#module\_ingress\_request\_rate\_widget) | ./modules/widgets/ingress/request-rate | n/a |
+| <a name="module_instance_cpu_widget"></a> [instance\_cpu\_widget](#module\_instance\_cpu\_widget) | ./modules/widgets/cloudwatch/instance_cpu | n/a |
+| <a name="module_instance_disk_widget"></a> [instance\_disk\_widget](#module\_instance\_disk\_widget) | ./modules/widgets/cloudwatch/instance_disk | n/a |
+| <a name="module_instance_network_widget"></a> [instance\_network\_widget](#module\_instance\_network\_widget) | ./modules/widgets/cloudwatch/instance_network | n/a |
 | <a name="module_logs_count_widget"></a> [logs\_count\_widget](#module\_logs\_count\_widget) | ./modules/widgets/logs/count | n/a |
 | <a name="module_logs_error_rate_widget"></a> [logs\_error\_rate\_widget](#module\_logs\_error\_rate\_widget) | ./modules/widgets/logs/error-rate | n/a |
 | <a name="module_logs_warning_rate_widget"></a> [logs\_warning\_rate\_widget](#module\_logs\_warning\_rate\_widget) | ./modules/widgets/logs/warning-rate | n/a |
@@ -142,5 +151,7 @@ module "this" {
 
 | Name | Description |
 |------|-------------|
-| <a name="output_dump"></a> [dump](#output\_dump) | n/a |
+| <a name="output_blocks_by_type"></a> [blocks\_by\_type](#output\_blocks\_by\_type) | n/a |
+| <a name="output_blocks_results"></a> [blocks\_results](#output\_blocks\_results) | n/a |
+| <a name="output_rows"></a> [rows](#output\_rows) | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

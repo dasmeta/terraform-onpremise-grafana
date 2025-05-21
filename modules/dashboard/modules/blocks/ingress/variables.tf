@@ -1,7 +1,3 @@
-variable "account_id" {
-  type        = string
-  description = "AWS account ID"
-}
 
 variable "balancer_name" {
   type        = string
@@ -11,4 +7,11 @@ variable "balancer_name" {
 variable "region" {
   type    = string
   default = ""
+}
+
+variable "datasource_uid" {
+  nullable    = false
+  type        = string
+  default     = "prometheus"
+  description = "datasource uid for the metrics"
 }

@@ -11,8 +11,6 @@ locals {
 
 
   ## Blocks
-
-  # get all blocks and annotate
   initial_blocks = [
     for index1, block in var.rows : {
       block : block,
@@ -28,10 +26,12 @@ locals {
 
   # bring all module results together
   blocks_results = {
-    ingress = values(module.block_ingress).*.result
-    service = values(module.block_service).*.result
-    sla     = values(module.block_sla).*.result
-    redis   = values(module.block_redis).*.result
+    ingress     = values(module.block_ingress).*.result
+    service     = values(module.block_service).*.result
+    sla         = values(module.block_sla).*.result
+    redis       = values(module.block_redis).*.result
+    cloudwatch  = values(module.block_cloudwatch).*.result
+    alb_ingress = values(module.block_alb_ingress).*.result
   }
 
   blocks_by_type_results = concat([], [
@@ -39,6 +39,7 @@ locals {
       for index3, block in type_blocks : merge(block, { results : local.blocks_results[block.type][index3] }) if contains(keys(local.blocks_results), block.type)
     ] if contains(keys(local.blocks_results), block_type)
   ]...)
+
 
   # inject block widgets into rows/panels listing in place of block/* definitions
   rows = concat([], [
@@ -60,12 +61,10 @@ locals {
       height            = 5
       expressions       = []
       yAxis             = { left = { min = 0 } }
-      data_source       = var.data_source
       container         = "$container"
       deployment        = "$deployment"
       namespace         = "$namespace"
       cluster           = "$cluster"
-      account_id        = null
       region            = null
       anomaly_detection = false
       anomaly_deviation = 6
@@ -167,5 +166,16 @@ locals {
     values(module.redis_keys_widget).*.data,
     values(module.redis_expired_evicted_keys_widget).*.data,
     values(module.redis_expiring_notexpiring_keys_widget).*.data,
+
+    # Cloudwatch widgets
+    values(module.instance_network_widget).*.data,
+    values(module.instance_cpu_widget).*.data,
+    values(module.instance_disk_widget).*.data,
+
+    # ALB widgets
+    values(module.alb_ingress_connections_widget).*.data,
+    values(module.alb_ingress_request_count_widget).*.data,
+    values(module.alb_ingress_target_response_time_widget).*.data,
+    values(module.alb_ingress_target_http_response_widget).*.data,
   )
 }

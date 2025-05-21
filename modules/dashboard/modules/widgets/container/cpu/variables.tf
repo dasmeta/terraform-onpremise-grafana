@@ -1,32 +1,21 @@
-variable "data_source" {
-  type = object({
-    uid  = optional(string, null)
-    type = optional(string, "prometheus")
-  })
-  description = "The custom datasource for widget item"
+
+variable "datasource_uid" {
+  type    = string
+  default = "prometheus"
+}
+
+variable "datasource_type" {
+  type    = string
+  default = "prometheus"
 }
 
 variable "container" {
   type = string
 }
 
-variable "cluster" {
-  type = string
-}
-
 variable "namespace" {
   type    = string
   default = "default"
-}
-
-variable "account_id" {
-  type    = string
-  default = null
-}
-
-variable "region" {
-  type    = string
-  default = ""
 }
 
 # position
@@ -41,23 +30,11 @@ variable "coordinates" {
 
 # stats
 variable "period" {
-  type    = number
-  default = 60
+  type    = string
+  default = ""
 }
 
 variable "by_pod" {
   type    = bool
   default = false
-}
-
-variable "anomaly_detection" {
-  type        = bool
-  default     = false
-  description = "Allow to enable anomaly detection on widget metrics"
-}
-
-variable "anomaly_deviation" {
-  type        = number
-  default     = 6
-  description = "Deviation of the anomaly band"
 }

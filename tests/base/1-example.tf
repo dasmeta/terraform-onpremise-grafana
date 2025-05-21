@@ -7,22 +7,22 @@ module "this" {
   application_dashboard = {
     rows : [
       { type : "block/sla" },
-      { type : "block/ingress" },
-      { type : "block/service", name : "backend", host : "api.example.com" },
-      { type : "block/service", name : "worker" }
+      { type : "block/alb_ingress", load_balancer_arn = "arn:aws:elasticloadbalancing:us-east-2:774305617028:loadbalancer/app/dev-ingress/8b813880d8b3d469", region : "us-east-2" },
+      { type : "block/service", name = "backend" },
+      { type : "block/cloudwatch", region : "us-east-2" }
     ]
     data_source = {
-      uid : "#######"
+      uid : "cloudwatch"
     }
     variables = [
       {
         "name" : "namespace",
         "options" : [
           {
-            "selected" : true,
             "value" : "prod"
           },
           {
+            "selected" : true,
             "value" : "dev"
           }
         ],
@@ -73,7 +73,7 @@ module "this" {
     resources = {
       request = {
         cpu = "1"
-        mem = "2Gi"
+        mem = "1Gi"
       }
     }
     ingress = {
@@ -89,16 +89,16 @@ module "this" {
     }
     datasources = [{ type = "cloudwatch", name = "Cloudwatch" }]
 
-    redundency = {
-      enabled      = true
-      max_replicas = 3
-      min_replicas = 2
-    }
+    # redundency = {
+    #   enabled      = true
+    #   max_replicas = 3
+    #   min_replicas = 2
+    # }
 
   }
 
   tempo_configs = {
-    enabled         = true
+    enabled         = false
     storage_backend = "s3"
     bucket_name     = "my-tempo-traces-kauwnw"
     # tempo_role_arn    = "arn:aws:iam::12345678901:role/tempo-s3-access-manual" # if the role arn is provided then a role will not be created
@@ -117,7 +117,7 @@ module "this" {
   }
 
   loki_configs = {
-    enabled = true
+    enabled = false
   }
 
   prometheus_configs = {
@@ -127,6 +127,12 @@ module "this" {
   aws_region             = "us-east-2"
 }
 
-output "outputs" {
-  value = module.this
+
+
+# output "outputs" {
+#   value = module.this.grafana
+# }
+
+output "dashboard" {
+  value = module.this.dashboards
 }

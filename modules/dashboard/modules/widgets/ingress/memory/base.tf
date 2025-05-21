@@ -1,25 +1,20 @@
 module "base" {
   source = "../../base"
 
-  name              = "Memory (${var.ingress_type}) [${var.period}m]"
-  data_source       = var.data_source
-  coordinates       = var.coordinates
-  period            = var.period
-  region            = var.region
-  anomaly_detection = var.anomaly_detection
-  anomaly_deviation = var.anomaly_deviation
-
-  defaults = {
-    MetricNamespace = "ContainerInsights"
-    accountId       = var.account_id
+  name = "Memory (${var.ingress_type}) [${var.period}m]"
+  data_source = {
+    uid  = var.datasource_uid
+    type = var.datasource_type
   }
+  coordinates = var.coordinates
+  period      = var.period
+  defaults    = {}
 
   options = {
     legend = {
       show_legend = false
     }
   }
-
   unit = "bytes"
 
   metrics = [

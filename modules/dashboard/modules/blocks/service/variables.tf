@@ -1,26 +1,6 @@
 variable "name" {
   type        = string
-  description = "Service nameD"
-}
-
-variable "balancer_name" {
-  type        = string
-  description = "ALB name"
-}
-
-variable "target_group_arn" {
-  type        = string
-  description = "Target group ARN which points to the service"
-}
-
-variable "healthcheck_id" {
-  type        = string
-  description = "R53 healthcheck ID for the service"
-}
-
-variable "cluster" {
-  type        = string
-  description = "EKS cluster name"
+  description = "Service name"
 }
 
 variable "namespace" {
@@ -33,19 +13,15 @@ variable "region" {
   default = ""
 }
 
-variable "version_label" {
-  type        = string
-  description = "The deployment label which shows app version"
-  default     = "app-version"
-}
-
-variable "log_group_name" {
-  type        = string
-  description = "The log group name where app sends logs"
-}
-
 variable "host" {
   type        = string
   default     = null
   description = "The service host name"
+}
+
+variable "datasource_uid" {
+  nullable    = false
+  type        = string
+  default     = "prometheus"
+  description = "datasource uid for the metrics"
 }

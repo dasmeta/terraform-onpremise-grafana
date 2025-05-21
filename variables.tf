@@ -173,7 +173,7 @@ variable "alerts" {
 variable "grafana_configs" {
   type = object({
     enabled       = optional(bool, true)
-    chart_version = optional(string, "8.11.1")
+    chart_version = optional(string, "8.15.0")
     resources = optional(object({
       request = optional(object({
         cpu = optional(string, "1")

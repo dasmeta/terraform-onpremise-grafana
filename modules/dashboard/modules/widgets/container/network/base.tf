@@ -1,21 +1,19 @@
 module "base" {
   source = "../../base"
 
-  name              = "Network Traffic [${var.period}m]"
-  data_source       = var.data_source
-  coordinates       = var.coordinates
-  period            = var.period
-  region            = var.region
-  anomaly_detection = var.anomaly_detection
-  anomaly_deviation = var.anomaly_deviation
-  unit              = "bytes"
+  name = "Network Traffic [${var.period}m]"
+  data_source = {
+    uid  = var.datasource_uid
+    type = var.datasource_type
+  }
+  coordinates = var.coordinates
+  period      = var.period
+  unit        = "bytes"
 
   defaults = {
     MetricNamespace = "ContainerInsights"
-    ClusterName     = var.cluster
     Namespace       = var.namespace
     PodName         = var.container
-    accountId       = var.account_id
   }
 
   metrics = concat([

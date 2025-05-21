@@ -1,19 +1,16 @@
 module "base" {
   source = "../../base"
 
-  name              = "Response Time [${var.period}m]"
-  data_source       = var.data_source
-  coordinates       = var.coordinates
-  period            = var.period
-  region            = var.region
-  anomaly_detection = var.anomaly_detection
-  anomaly_deviation = var.anomaly_deviation
+  name = "Response Time [${var.period}m]"
+  data_source = {
+    uid  = var.datasource_uid
+    type = var.datasource_type
+  }
+  coordinates = var.coordinates
+  period      = var.period
 
   defaults = {
     MetricNamespace = "AWS/ApplicationELB"
-    LoadBalancer    = var.balancer_name
-    TargetGroup     = var.target_group_name
-    accountId       = var.account_id
   }
 
   metrics = [
