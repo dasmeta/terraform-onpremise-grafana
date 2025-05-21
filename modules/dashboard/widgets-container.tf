@@ -4,11 +4,9 @@ module "container_cpu_widget" {
 
   for_each = { for index, item in try(local.widget_config["container/cpu"], []) : index => item }
 
-  # data_source = try(each.value.data_source, {})
-  datasource_type = try(each.value.datasource_type, null)
-  datasource_uid  = try(each.value.datasource_uid, null)
-  coordinates     = each.value.coordinates
-  period          = each.value.period
+  datasource_uid = try(each.value.datasource_uid, null)
+  coordinates    = each.value.coordinates
+  period         = each.value.period
 
   # container
   container = each.value.container
@@ -21,11 +19,9 @@ module "container_memory_widget" {
 
   for_each = { for index, item in try(local.widget_config["container/memory"], []) : index => item }
 
-  # data_source = try(each.value.data_source, {})
-  datasource_type = try(each.value.datasource_type, null)
-  datasource_uid  = try(each.value.datasource_uid, null)
-  coordinates     = each.value.coordinates
-  period          = each.value.period
+  datasource_uid = try(each.value.datasource_uid, null)
+  coordinates    = each.value.coordinates
+  period         = each.value.period
 
   # container
   container = each.value.container

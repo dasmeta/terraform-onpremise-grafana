@@ -10,7 +10,8 @@ variable "region" {
 }
 
 variable "datasource_uid" {
+  nullable    = false
   type        = string
-  default     = "cloudwatch"
+  default     = "prometheus"
   description = "datasource uid for the metrics"
 }

@@ -2,15 +2,16 @@
 variable "load_balancer_arn" {
   type        = string
   description = "ALB AWS arn"
-  default     = "eu-central-1"
+  default     = ""
 }
 
 variable "region" {
   type    = string
-  default = ""
+  default = "eu-central-1"
 }
 
 variable "datasource_uid" {
+  nullable    = false
   type        = string
   default     = "cloudwatch"
   description = "datasource uid for the metrics"

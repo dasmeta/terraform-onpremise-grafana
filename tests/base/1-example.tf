@@ -7,8 +7,7 @@ module "this" {
   application_dashboard = {
     rows : [
       { type : "block/sla" },
-      # { type : "block/json-file", file: "../." },
-      # { type : "block/ingress" },
+      { type : "block/alb_ingress", load_balancer_arn = "arn:aws:elasticloadbalancing:us-east-2:774305617028:loadbalancer/app/dev-ingress/8b813880d8b3d469", region : "us-east-2" },
       { type : "block/service", name = "backend" },
       { type : "block/cloudwatch", region : "us-east-2" }
     ]
@@ -20,10 +19,10 @@ module "this" {
         "name" : "namespace",
         "options" : [
           {
-            "selected" : true,
             "value" : "prod"
           },
           {
+            "selected" : true,
             "value" : "dev"
           }
         ],

@@ -1,7 +1,7 @@
 variable "data_source" {
   type = object({
-    uid  = optional(string, null)
-    type = optional(string, "prometheus")
+    uid  = string
+    type = string
   })
   description = "The custom datasource for widget item"
 }

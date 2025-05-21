@@ -20,6 +20,7 @@ variable "host" {
 }
 
 variable "datasource_uid" {
+  nullable    = false
   type        = string
   default     = "prometheus"
   description = "datasource uid for the metrics"

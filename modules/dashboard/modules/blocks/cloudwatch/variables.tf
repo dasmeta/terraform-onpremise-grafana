@@ -5,6 +5,7 @@ variable "region" {
 }
 
 variable "datasource_uid" {
+  nullable    = false
   type        = string
   default     = "cloudwatch"
   description = "datasource uid for the metrics"

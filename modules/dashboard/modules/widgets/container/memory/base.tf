@@ -3,7 +3,7 @@ module "base" {
 
   name = "Memory"
   data_source = {
-    type = var.datasource_type
+    type = "prometheus"
     uid  = var.datasource_uid
   }
   coordinates = var.coordinates

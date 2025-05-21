@@ -4,7 +4,7 @@ module "base" {
   name = "CPU [${var.period}m]"
   data_source = {
     uid  = var.datasource_uid
-    type = var.datasource_type
+    type = "prometheus"
   }
   coordinates = var.coordinates
   period      = var.period
