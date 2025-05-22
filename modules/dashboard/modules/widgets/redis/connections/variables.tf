@@ -37,8 +37,8 @@ variable "coordinates" {
 
 # stats
 variable "period" {
-  type    = number
-  default = 60
+  type    = string
+  default = "60"
 }
 
 variable "by_pod" {

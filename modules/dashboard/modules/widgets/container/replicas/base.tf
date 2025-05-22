@@ -10,9 +10,8 @@ module "base" {
   period      = var.period
 
   defaults = {
-    MetricNamespace = "ContainerInsights"
-    Namespace       = var.namespace
-    PodName         = var.container
+    Namespace = var.namespace
+    PodName   = var.container
   }
 
   metrics = [

@@ -9,13 +9,20 @@ variable "region" {
 }
 
 variable "datasource_uid" {
+  nullable    = false
   type        = string
   default     = "prometheus"
   description = "datasource uid for the metrics"
 }
 
-variable "datasource_type" {
+variable "sla_ingress_type" {
   type        = string
-  default     = "prometheus"
-  description = "datasource type"
+  default     = "alb"
+  description = "Type of the ingress resource "
+}
+
+variable "load_balancer_arn" {
+  type        = string
+  description = "AWS Application LB arn"
+  default     = ""
 }

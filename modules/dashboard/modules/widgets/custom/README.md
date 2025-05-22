@@ -34,7 +34,7 @@ No resources.
 | <a name="input_fillOpacity"></a> [fillOpacity](#input\_fillOpacity) | The fillOpacity value | `number` | `0` | no |
 | <a name="input_loki_targets"></a> [loki\_targets](#input\_loki\_targets) | Target section of Loki based widget | <pre>list(object({<br/>    expr          = string<br/>    format        = optional(string, "time_series")<br/>    refId         = optional(string, "A")<br/>    legend_format = optional(string, "Errors ({{instance}})")<br/>    queryType     = optional(string, "range")<br/>    hide          = optional(bool, false)<br/>  }))</pre> | `[]` | no |
 | <a name="input_metrics"></a> [metrics](#input\_metrics) | n/a | `any` | n/a | yes |
-| <a name="input_period"></a> [period](#input\_period) | n/a | `number` | `3` | no |
+| <a name="input_period"></a> [period](#input\_period) | n/a | `string` | `"3"` | no |
 | <a name="input_region"></a> [region](#input\_region) | n/a | `string` | `""` | no |
 | <a name="input_stat"></a> [stat](#input\_stat) | n/a | `string` | `"Average"` | no |
 | <a name="input_tempo_targets"></a> [tempo\_targets](#input\_tempo\_targets) | Target section of tempo based widget | <pre>list(object({<br/>    filters = optional(list(any), [])<br/>    limit   = optional(number, 20)<br/>    query   = string<br/>  }))</pre> | `[]` | no |

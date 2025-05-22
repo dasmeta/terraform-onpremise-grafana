@@ -37,8 +37,8 @@ variable "stat" {
 }
 
 variable "period" {
-  type    = number
-  default = 3
+  type    = string
+  default = "3"
 }
 
 variable "region" {
@@ -53,8 +53,19 @@ variable "type" {
 }
 
 variable "query" {
-  type        = string
-  default     = null
+  type = list(object({
+    datasource = object({
+      uid  = optional(string, "__expr__")
+      type = optional(string, "__expr__")
+      name = optional(string, "Expression")
+    })
+    expression = optional(string, "")
+    refId      = optional(string, "")
+    querymode  = optional(string, "")
+    type       = optional(string, "math")
+    hide       = optional(bool, false)
+  }))
+  default     = []
   description = "The PromQL query to use for the chart"
 }
 
@@ -166,8 +177,10 @@ variable "cloudwatch_targets" {
     metric_name = optional(string, "CPUUtilization")
     dimensions  = optional(map(string), {})
     statistic   = optional(string, "Average")
+    hide        = optional(bool, false)
     period      = optional(string, "300")
     refId       = optional(string, "A")
+    label       = optional(string, "")
   }))
   description = "Target section of the cloudwatch based widget"
   default     = []

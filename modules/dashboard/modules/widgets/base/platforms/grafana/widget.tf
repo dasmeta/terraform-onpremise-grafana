@@ -7,6 +7,7 @@ locals {
     "custom" : {
       "axisLabel" : "",
       "axisPlacement" : "auto",
+      "noValue" : "No Input Data",
       "barAlignment" : 0,
       "drawStyle" : "line",
       "fillOpacity" : var.fillOpacity,
@@ -79,15 +80,26 @@ locals {
   }
 
   # create query and metric based targets
-  query_targets = var.query != null ? [
-    {
-      expression    = var.query,
-      logGroupNames = var.sources,
-      queryMode     = "Logs",
-      legendFormat  = ""
-      region        = var.region
+  query_targets = [for query in var.query : {
+    datasource = lookup(query, "datasource", {})
+    expression = query.expression
+    refId      = lookup(query, "refId", "")
+    queryMode  = lookup(query, "querymode", "")
+    type       = query.type
+    hide       = query.hide
     }
-  ] : []
+  ]
+
+
+  # var.query != null ? [
+  #   {
+  #     expression    = var.query,
+  #     logGroupNames = var.sources,
+  #     queryMode     = "Logs",
+  #     legendFormat  = ""
+  #     region        = var.region
+  #   }
+  # ] : []
   metric_targets = [for row in local.metrics_with_defaults : {
     expr         = row.expression
     id           = ""
@@ -98,10 +110,6 @@ locals {
   ]
 
   cloudwatch_targets = [for row in var.cloudwatch_targets : {
-    # datasource = {
-    #   type = try(row.data_source.type, "")
-    #   uid  = try(row.data_source.uid, "")
-    # }
     queryMode        = row.query_mode
     region           = row.region
     namespace        = row.namespace
@@ -109,6 +117,8 @@ locals {
     dimensions       = row.dimensions
     statistic        = row.statistic
     period           = row.period
+    hide             = row.hide
+    label            = row.label
     matchExact       = true
     expression       = ""
     id               = ""

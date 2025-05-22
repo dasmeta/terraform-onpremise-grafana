@@ -127,8 +127,10 @@ module "this" {
 | <a name="module_text_title_with_collapse"></a> [text\_title\_with\_collapse](#module\_text\_title\_with\_collapse) | ./modules/widgets/text/title-with-collapse | n/a |
 | <a name="module_text_title_with_link"></a> [text\_title\_with\_link](#module\_text\_title\_with\_link) | ./modules/widgets/text/title-with-link | n/a |
 | <a name="module_widget_custom"></a> [widget\_custom](#module\_widget\_custom) | ./modules/widgets/custom | n/a |
-| <a name="module_widget_sla_slo_sli_latency"></a> [widget\_sla\_slo\_sli\_latency](#module\_widget\_sla\_slo\_sli\_latency) | ./modules/widgets/sla-slo-sli/latency | n/a |
-| <a name="module_widget_sla_slo_sli_main"></a> [widget\_sla\_slo\_sli\_main](#module\_widget\_sla\_slo\_sli\_main) | ./modules/widgets/sla-slo-sli/main | n/a |
+| <a name="module_widget_sla_slo_sli_alb_availability"></a> [widget\_sla\_slo\_sli\_alb\_availability](#module\_widget\_sla\_slo\_sli\_alb\_availability) | ./modules/widgets/sla-slo-sli/alb_availability | n/a |
+| <a name="module_widget_sla_slo_sli_alb_latency"></a> [widget\_sla\_slo\_sli\_alb\_latency](#module\_widget\_sla\_slo\_sli\_alb\_latency) | ./modules/widgets/sla-slo-sli/alb_latency | n/a |
+| <a name="module_widget_sla_slo_sli_nginx_latency"></a> [widget\_sla\_slo\_sli\_nginx\_latency](#module\_widget\_sla\_slo\_sli\_nginx\_latency) | ./modules/widgets/sla-slo-sli/nginx_latency | n/a |
+| <a name="module_widget_sla_slo_sli_nginx_main"></a> [widget\_sla\_slo\_sli\_nginx\_main](#module\_widget\_sla\_slo\_sli\_nginx\_main) | ./modules/widgets/sla-slo-sli/nginx_main | n/a |
 
 ## Resources
 

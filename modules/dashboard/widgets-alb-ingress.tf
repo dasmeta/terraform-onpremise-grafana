@@ -5,7 +5,6 @@ module "alb_ingress_connections_widget" {
 
   for_each = { for index, item in try(local.widget_config["alb_ingress/connections"], []) : index => item }
 
-  # data_source = try(each.value.data_source, {})
   datasource_uid    = try(each.value.datasource_uid, null)
   coordinates       = each.value.coordinates
   period            = each.value.period
@@ -19,7 +18,6 @@ module "alb_ingress_target_response_time_widget" {
 
   for_each = { for index, item in try(local.widget_config["alb_ingress/target_response_time"], []) : index => item }
 
-  # data_source = try(each.value.data_source, {})
   datasource_uid    = try(each.value.datasource_uid, null)
   coordinates       = each.value.coordinates
   period            = each.value.period

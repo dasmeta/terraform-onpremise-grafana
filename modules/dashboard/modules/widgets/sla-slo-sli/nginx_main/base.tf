@@ -1,8 +1,11 @@
 module "base" {
   source = "../../base"
 
-  name        = "Availability (1d)"
-  data_source = var.data_source
+  name = "Availability (1d)"
+  data_source = {
+    uid  = var.datasource_uid
+    type = "prometheus"
+  }
   coordinates = var.coordinates
   decimals    = 3
   stat        = "Sum"
@@ -36,7 +39,6 @@ module "base" {
       }
     ]
   }
-
 
   defaults = {
     MetricNamespace = "AWS/ApplicationELB"

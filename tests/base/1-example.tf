@@ -6,8 +6,8 @@ module "this" {
 
   application_dashboard = {
     rows : [
-      { type : "block/sla" },
-      { type : "block/alb_ingress", load_balancer_arn = "arn:aws:elasticloadbalancing:us-east-2:774305617028:loadbalancer/app/dev-ingress/8b813880d8b3d469", region : "us-east-2" },
+      { type : "block/sla", sla_ingress_type = "alb", load_balancer_arn = "load_balancer_arn", datasource_uid = "cloudwatch", region = "us-east-2" },
+      { type : "block/alb_ingress", load_balancer_arn = "load_balancer_arn", region : "us-east-2" },
       { type : "block/service", name = "backend" },
       { type : "block/cloudwatch", region : "us-east-2" }
     ]
@@ -80,9 +80,9 @@ module "this" {
       type            = "alb"
       tls_enabled     = true
       public          = true
-      alb_certificate = "cert_arn"
+      alb_certificate = "arn:aws:acm:us-east-2:774305617028:certificate/0c7b32a5-cfd3-488b-800c-fe289f3bb040"
 
-      hosts = ["grafana.example.com"]
+      hosts = ["grafana.dev.trysela.com"]
       annotations = {
         "alb.ingress.kubernetes.io/group.name" = "dev-ingress"
       }

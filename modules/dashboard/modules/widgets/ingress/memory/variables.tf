@@ -1,12 +1,3 @@
-# variable "data_source" {
-#   type = object({
-#     uid  = optional(string, null)
-#     type = optional(string, "prometheus")
-#   })
-#   description = "The custom datasource for widget item"
-# }
-
-
 variable "datasource_uid" {
   type    = string
   default = "prometheus"
@@ -29,11 +20,6 @@ variable "pod" {
 variable "namespace" {
   type    = string
   default = "default"
-}
-
-variable "region" {
-  type    = string
-  default = ""
 }
 
 # position

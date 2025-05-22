@@ -1,4 +1,4 @@
-# latency
+# instance_cpu
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -23,13 +23,14 @@ No resources.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_account_id"></a> [account\_id](#input\_account\_id) | n/a | `string` | `null` | no |
-| <a name="input_balancer_name"></a> [balancer\_name](#input\_balancer\_name) | n/a | `string` | `null` | no |
 | <a name="input_coordinates"></a> [coordinates](#input\_coordinates) | position | <pre>object({<br/>    x : number<br/>    y : number<br/>    width : number<br/>    height : number<br/>  })</pre> | n/a | yes |
-| <a name="input_data_source"></a> [data\_source](#input\_data\_source) | The custom datasource for widget item | <pre>object({<br/>    uid  = optional(string, null)<br/>    type = optional(string, "prometheus")<br/>  })</pre> | n/a | yes |
-| <a name="input_histogram"></a> [histogram](#input\_histogram) | n/a | `bool` | `false` | no |
-| <a name="input_period"></a> [period](#input\_period) | stats | `number` | `3` | no |
+| <a name="input_datasource_uid"></a> [datasource\_uid](#input\_datasource\_uid) | n/a | `string` | `"cloudwatch"` | no |
+| <a name="input_dimensions"></a> [dimensions](#input\_dimensions) | List of instance attributes for filtering instances | `map(string)` | `{}` | no |
+| <a name="input_load_balancer_arn"></a> [load\_balancer\_arn](#input\_load\_balancer\_arn) | The aws arn of the alb load balancer | `string` | n/a | yes |
+| <a name="input_namespace"></a> [namespace](#input\_namespace) | n/a | `string` | `"default"` | no |
+| <a name="input_period"></a> [period](#input\_period) | stats | `string` | `""` | no |
 | <a name="input_region"></a> [region](#input\_region) | n/a | `string` | `""` | no |
+| <a name="input_search"></a> [search](#input\_search) | The Cloudwatch search expression to use for filtering metrics | `map(any)` | `{}` | no |
 
 ## Outputs
 

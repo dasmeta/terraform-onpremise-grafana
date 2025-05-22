@@ -55,8 +55,8 @@ variable "region" {
 }
 
 variable "period" {
-  type    = number
-  default = 3
+  type    = string
+  default = "3"
 }
 
 variable "stat" {

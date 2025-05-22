@@ -27,9 +27,10 @@ module "block_sla" {
 
   for_each = { for index, item in try(local.blocks_by_type["sla"], []) : index => item }
 
-  balancer_name   = try(each.value.block.balancer_name, null)
-  datasource_type = try(each.value.block.datasource_type, null)
-  datasource_uid  = try(each.value.block.datasource_uid, null)
+  balancer_name     = try(each.value.block.balancer_name, null)
+  load_balancer_arn = try(each.value.block.load_balancer_arn, null)
+  datasource_uid    = try(each.value.block.datasource_uid, null)
+  region            = try(each.value.block.region, null)
 }
 
 module "block_redis" {
