@@ -16,6 +16,7 @@ variable "datasource_uid" {
 }
 
 variable "sla_ingress_type" {
+  nullable    = false
   type        = string
   default     = "alb"
   description = "Type of the ingress resource "

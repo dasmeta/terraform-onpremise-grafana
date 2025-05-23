@@ -45,4 +45,5 @@ variable "search" {
 variable "load_balancer_arn" {
   type        = string
   description = "The aws arn of the alb load balancer"
+  default     = ""
 }
