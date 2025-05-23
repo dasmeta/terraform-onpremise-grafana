@@ -80,9 +80,9 @@ module "this" {
       type            = "alb"
       tls_enabled     = true
       public          = true
-      alb_certificate = "arn:aws:acm:us-east-2:774305617028:certificate/0c7b32a5-cfd3-488b-800c-fe289f3bb040"
+      alb_certificate = "cert_arn"
 
-      hosts = ["grafana.dev.trysela.com"]
+      hosts = ["grafana.example.com"]
       annotations = {
         "alb.ingress.kubernetes.io/group.name" = "dev-ingress"
       }
@@ -126,12 +126,6 @@ module "this" {
   grafana_admin_password = "admin"
   aws_region             = "us-east-2"
 }
-
-
-
-# output "outputs" {
-#   value = module.this.grafana
-# }
 
 output "dashboard" {
   value = module.this.dashboards
