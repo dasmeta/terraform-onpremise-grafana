@@ -1,9 +1,7 @@
-variable "data_source" {
-  type = object({
-    uid  = optional(string, null)
-    type = optional(string, "prometheus")
-  })
-  description = "The custom datasource for widget item"
+variable "datasource_uid" {
+  type        = string
+  default     = "prometheus"
+  description = "prometheus datasource type uid to use for widget"
 }
 
 variable "balancer_name" {
@@ -11,6 +9,10 @@ variable "balancer_name" {
   default = null
 }
 
+variable "histogram" {
+  type    = bool
+  default = false
+}
 
 variable "account_id" {
   type    = string
@@ -34,6 +36,6 @@ variable "coordinates" {
 
 # stats
 variable "period" {
-  type    = number
-  default = 3
+  type    = string
+  default = "3"
 }

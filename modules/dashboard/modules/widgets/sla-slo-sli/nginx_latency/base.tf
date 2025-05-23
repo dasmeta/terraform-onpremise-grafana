@@ -1,8 +1,11 @@
 module "base" {
   source = "../../base"
 
-  name        = "${var.histogram ? "Request Duration histogram" : "Latency"} [${var.period}m]"
-  data_source = var.data_source
+  name = "${var.histogram ? "Request Duration histogram" : "Latency"} [${var.period}m]"
+  data_source = {
+    uid  = var.datasource_uid
+    type = "prometheus"
+  }
   coordinates = var.coordinates
   decimals    = var.histogram ? null : 3
   period      = var.period

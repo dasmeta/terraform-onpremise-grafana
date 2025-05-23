@@ -1,3 +1,4 @@
+
 variable "datasource_uid" {
   type    = string
   default = "cloudwatch"
@@ -39,4 +40,10 @@ variable "search" {
   type        = map(any)
   description = "The Cloudwatch search expression to use for filtering metrics"
   default     = {}
+}
+
+variable "load_balancer_arn" {
+  type        = string
+  description = "The aws arn of the alb load balancer"
+  default     = ""
 }

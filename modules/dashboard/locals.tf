@@ -55,19 +55,17 @@ locals {
   # default values from module and provided from outside
   widget_default_values = merge(
     {
-      period            = 5 # in minutes
-      stat              = "Sum"
-      width             = 6
-      height            = 5
-      expressions       = []
-      yAxis             = { left = { min = 0 } }
-      container         = "$container"
-      deployment        = "$deployment"
-      namespace         = "$namespace"
-      cluster           = "$cluster"
-      region            = null
-      anomaly_detection = false
-      anomaly_deviation = 6
+      period      = 5 # in minutes
+      stat        = "Sum"
+      width       = 6
+      height      = 5
+      expressions = []
+      yAxis       = { left = { min = 0 } }
+      container   = "$container"
+      deployment  = "$deployment"
+      namespace   = "$namespace"
+      cluster     = "$cluster"
+      region      = null
     },
     var.defaults
   )
@@ -138,8 +136,10 @@ locals {
     values(module.text_title_with_collapse).*.data,
 
     # sla/slo/sli widgets
-    values(module.widget_sla_slo_sli_main).*.data,
-    values(module.widget_sla_slo_sli_latency).*.data,
+    values(module.widget_sla_slo_sli_nginx_main).*.data,
+    values(module.widget_sla_slo_sli_nginx_latency).*.data,
+    values(module.widget_sla_slo_sli_alb_availability).*.data,
+    values(module.widget_sla_slo_sli_alb_latency).*.data,
 
     # single widgets
     values(module.widget_custom).*.data,

@@ -6,8 +6,8 @@ module "this" {
 
   application_dashboard = {
     rows : [
-      { type : "block/sla" },
-      { type : "block/alb_ingress", load_balancer_arn = "arn:aws:elasticloadbalancing:us-east-2:774305617028:loadbalancer/app/dev-ingress/8b813880d8b3d469", region : "us-east-2" },
+      { type : "block/sla", sla_ingress_type = "alb", load_balancer_arn = "load_balancer_arn", datasource_uid = "cloudwatch", region = "us-east-2" },
+      { type : "block/alb_ingress", load_balancer_arn = "load_balancer_arn", region : "us-east-2" },
       { type : "block/service", name = "backend" },
       { type : "block/cloudwatch", region : "us-east-2" }
     ]
@@ -126,12 +126,6 @@ module "this" {
   grafana_admin_password = "admin"
   aws_region             = "us-east-2"
 }
-
-
-
-# output "outputs" {
-#   value = module.this.grafana
-# }
 
 output "dashboard" {
   value = module.this.dashboards

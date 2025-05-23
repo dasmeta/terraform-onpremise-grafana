@@ -34,6 +34,6 @@ variable "coordinates" {
 
 # stats
 variable "period" {
-  type    = number
-  default = 3
+  type    = string
+  default = "3"
 }
