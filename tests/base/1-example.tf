@@ -125,6 +125,9 @@ module "this" {
   }
   grafana_admin_password = "admin"
   aws_region             = "us-east-2"
+  dashboards_json_files = [
+    "./dashboard_files/ALB_dashboard.json"
+  ]
 }
 
 output "dashboard" {

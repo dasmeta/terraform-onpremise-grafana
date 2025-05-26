@@ -287,3 +287,9 @@ variable "loki_configs" {
   description = "Values to pass to loki helm chart"
   default     = {}
 }
+
+variable "dashboards_json_files" {
+  type        = list(string)
+  default     = []
+  description = "Json definition of dashboard. For quickly provisioning the dashboards"
+}
