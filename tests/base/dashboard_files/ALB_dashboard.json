@@ -1,0 +1,3028 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "datasource",
+            "uid": "grafana"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        }
+      ]
+    },
+    "description": "Visualize AWS ELB Application Load Balancer and Target Group metrics",
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 4,
+    "links": [],
+    "panels": [
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 2
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 0,
+          "y": 0
+        },
+        "id": 25,
+        "options": {
+          "minVizHeight": 75,
+          "minVizWidth": 75,
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true,
+          "sizing": "auto",
+          "text": {}
+        },
+        "pluginVersion": "11.6.0",
+        "targets": [
+          {
+            "alias": "",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "prometheus"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername",
+              "TargetGroup": "$targetgroup"
+            },
+            "expression": "",
+            "id": "",
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "HealthyHostCount",
+            "metricQueryType": 0,
+            "namespace": "AWS/ApplicationELB",
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "A",
+            "region": "default",
+            "sqlExpression": "",
+            "statistic": "Average"
+          }
+        ],
+        "title": "Healthy Hosts ($loadbalancername)",
+        "type": "gauge"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "decimals": 0,
+            "mappings": [],
+            "max": 1,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 1
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 6,
+          "y": 0
+        },
+        "id": 26,
+        "options": {
+          "minVizHeight": 75,
+          "minVizWidth": 75,
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true,
+          "sizing": "auto",
+          "text": {}
+        },
+        "pluginVersion": "11.6.0",
+        "targets": [
+          {
+            "alias": "",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "prometheus"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername",
+              "TargetGroup": "$targetgroup"
+            },
+            "expression": "",
+            "id": "",
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "UnHealthyHostCount",
+            "metricQueryType": 0,
+            "namespace": "AWS/ApplicationELB",
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "A",
+            "region": "default",
+            "sqlExpression": "",
+            "statistic": "Average"
+          }
+        ],
+        "title": "Unhealthy Hosts ($targetgroup)",
+        "type": "gauge"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "decimals": 3,
+            "mappings": [],
+            "max": 1,
+            "noValue": "NaN",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 1
+                }
+              ]
+            },
+            "unit": "ms"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 12,
+          "y": 0
+        },
+        "id": 27,
+        "options": {
+          "minVizHeight": 75,
+          "minVizWidth": 75,
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "mean"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true,
+          "sizing": "auto",
+          "text": {}
+        },
+        "pluginVersion": "11.6.0",
+        "targets": [
+          {
+            "alias": "",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "prometheus"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername",
+              "TargetGroup": "$targetgroup"
+            },
+            "expression": "",
+            "id": "",
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "TargetResponseTime",
+            "metricQueryType": 0,
+            "namespace": "AWS/ApplicationELB",
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "A",
+            "region": "default",
+            "sqlExpression": "",
+            "statistic": "Average"
+          }
+        ],
+        "title": "Avg. TargetResponseTime ($targetgroup)",
+        "type": "gauge"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "decimals": 0,
+            "mappings": [],
+            "max": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 5
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 18,
+          "y": 0
+        },
+        "id": 28,
+        "options": {
+          "minVizHeight": 75,
+          "minVizWidth": 75,
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "mean"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true,
+          "sizing": "auto",
+          "text": {}
+        },
+        "pluginVersion": "11.6.0",
+        "targets": [
+          {
+            "alias": "",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "prometheus"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "id": "",
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "TargetConnectionErrorCount",
+            "metricQueryType": 0,
+            "namespace": "AWS/ApplicationELB",
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "A",
+            "region": "default",
+            "sqlExpression": "",
+            "statistic": "Average"
+          }
+        ],
+        "title": "Avg TargetConnectionErrors ($loadbalancername)",
+        "type": "gauge"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 4
+        },
+        "id": 21,
+        "panels": [],
+        "title": "ELB and TargetGroup Metrics",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 10,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 2,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "never",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "decimals": 0,
+            "links": [],
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "TargetResponseTime_Average"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "s"
+                },
+                {
+                  "id": "custom.axisPlacement",
+                  "value": "right"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 12,
+          "x": 0,
+          "y": 5
+        },
+        "id": 16,
+        "options": {
+          "alertThreshold": true,
+          "legend": {
+            "calcs": [
+              "mean",
+              "lastNotNull",
+              "max",
+              "min"
+            ],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "11.6.0",
+        "targets": [
+          {
+            "alias": "",
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "hide": false,
+            "id": "",
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "TargetResponseTime",
+            "metricQueryType": 0,
+            "namespace": "AWS/ApplicationELB",
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "A",
+            "region": "default",
+            "sqlExpression": "",
+            "statistic": "Average"
+          },
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "RequestCount",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "B",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Average"
+          }
+        ],
+        "title": "RequestCount / TargetResponseTime ($loadbalancername)",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 10,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 2,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "never",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "decimals": 0,
+            "links": [],
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "TargetResponseTime_Average"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "s"
+                },
+                {
+                  "id": "custom.axisPlacement",
+                  "value": "right"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 12,
+          "x": 12,
+          "y": 5
+        },
+        "id": 17,
+        "options": {
+          "alertThreshold": true,
+          "legend": {
+            "calcs": [
+              "mean",
+              "lastNotNull",
+              "max",
+              "min"
+            ],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "11.6.0",
+        "targets": [
+          {
+            "alias": "",
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername",
+              "TargetGroup": "$targetgroup"
+            },
+            "expression": "",
+            "hide": false,
+            "id": "",
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "TargetResponseTime",
+            "metricQueryType": 0,
+            "namespace": "AWS/ApplicationELB",
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "A",
+            "region": "default",
+            "sqlExpression": "",
+            "statistic": "Average"
+          },
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername",
+              "TargetGroup": "$targetgroup"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "RequestCount",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "B",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Average"
+          }
+        ],
+        "title": "RequestCount / TargetResponseTime ($targetgroup)",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 10,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 2,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "never",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "normal"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "links": [],
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 12
+        },
+        "id": 1,
+        "options": {
+          "alertThreshold": true,
+          "legend": {
+            "calcs": [
+              "mean",
+              "lastNotNull",
+              "max",
+              "min"
+            ],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "11.6.0",
+        "targets": [
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "HTTPCode_Target_5XX_Count",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "D",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Sum"
+          },
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "HTTPCode_Target_4XX_Count",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "C",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Sum"
+          },
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "HTTPCode_Target_3XX_Count",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "B",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Sum"
+          },
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "HTTPCode_Target_2XX_Count",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "A",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Sum"
+          }
+        ],
+        "title": "HTTPCode_Target ($loadbalancername)",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 10,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 2,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "never",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "normal"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "links": [],
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 12
+        },
+        "id": 18,
+        "options": {
+          "alertThreshold": true,
+          "legend": {
+            "calcs": [
+              "mean",
+              "lastNotNull",
+              "max",
+              "min"
+            ],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "11.6.0",
+        "targets": [
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername",
+              "TargetGroup": "$targetgroup"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "HTTPCode_Target_5XX_Count",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "D",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Sum"
+          },
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername",
+              "TargetGroup": "$targetgroup"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "HTTPCode_Target_4XX_Count",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "C",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Sum"
+          },
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername",
+              "TargetGroup": "$targetgroup"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "HTTPCode_Target_3XX_Count",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "B",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Sum"
+          },
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername",
+              "TargetGroup": "$targetgroup"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "HTTPCode_Target_2XX_Count",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "A",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Sum"
+          }
+        ],
+        "title": "HTTPCode_Target ($targetgroup)",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 10,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 2,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "never",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "normal"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "decimals": 0,
+            "links": [],
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 9,
+          "w": 12,
+          "x": 0,
+          "y": 20
+        },
+        "id": 12,
+        "options": {
+          "alertThreshold": true,
+          "legend": {
+            "calcs": [
+              "mean",
+              "lastNotNull",
+              "max",
+              "min"
+            ],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "11.6.0",
+        "targets": [
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "HTTPCode_ELB_3XX_Count",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "D",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Sum"
+          },
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "HTTPCode_ELB_4XX_Count",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "A",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Sum"
+          },
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "HTTPCode_ELB_5XX_Count",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "B",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Sum"
+          }
+        ],
+        "title": "HTTPCode_ELB ($loadbalancername)",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 10,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 2,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "never",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "normal"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "decimals": 0,
+            "links": [],
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 9,
+          "w": 12,
+          "x": 12,
+          "y": 20
+        },
+        "id": 19,
+        "options": {
+          "alertThreshold": true,
+          "legend": {
+            "calcs": [
+              "mean",
+              "lastNotNull",
+              "max",
+              "min"
+            ],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "11.6.0",
+        "targets": [
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername",
+              "TargetGroup": "$targetgroup"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "HTTPCode_Target_3XX_Count",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "D",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Sum"
+          },
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername",
+              "TargetGroup": "$targetgroup"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "HTTPCode_Target_4XX_Count",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "A",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Sum"
+          },
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername",
+              "TargetGroup": "$targetgroup"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "HTTPCode_Target_5XX_Count",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "B",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Sum"
+          }
+        ],
+        "title": "HTTPCode_TargetGroup ($targetgroup)",
+        "type": "timeseries"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 29
+        },
+        "id": 23,
+        "panels": [],
+        "title": "ELB Only Metrics",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "links": [],
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 24,
+          "x": 0,
+          "y": 30
+        },
+        "id": 10,
+        "options": {
+          "alertThreshold": true,
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "11.6.0",
+        "targets": [
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "ActiveConnectionCount",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "D",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Average"
+          },
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "NewConnectionCount",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "C",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Average"
+          },
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "RejectedConnectionCount",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "B",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Average"
+          },
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "TargetConnectionErrorCount",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "A",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Average"
+          }
+        ],
+        "title": "ConnectionCount (ELB Only)",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "links": [],
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 37
+        },
+        "id": 8,
+        "options": {
+          "alertThreshold": true,
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "11.6.0",
+        "targets": [
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "ConsumedLBCapacityUnits",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "A",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Average"
+          },
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "ProcessedBytes",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "B",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Average"
+          },
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "ConsumedLCUs",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "C",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Average"
+          }
+        ],
+        "title": "ConsumedLBCapacityUnits / ConsumedLCUs / ProcessedBytes (ELB Only)",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "links": [],
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 24,
+          "x": 0,
+          "y": 45
+        },
+        "id": 11,
+        "options": {
+          "alertThreshold": true,
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "11.6.0",
+        "targets": [
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "TargetTLSNegotiationErrorCount",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "D",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Sum"
+          },
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "ClientTLSNegotiationErrorCount",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "C",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Sum"
+          }
+        ],
+        "title": "TLSNegotiationErrorCount (ELB Only)",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "links": [],
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 24,
+          "x": 0,
+          "y": 52
+        },
+        "id": 13,
+        "options": {
+          "alertThreshold": true,
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "11.6.0",
+        "targets": [
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "RuleEvaluations",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "D",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Sum"
+          }
+        ],
+        "title": "RuleEvaluations (ELB Only)",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "links": [],
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 14,
+          "w": 24,
+          "x": 0,
+          "y": 59
+        },
+        "id": 14,
+        "options": {
+          "alertThreshold": true,
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "11.6.0",
+        "targets": [
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "ELBAuthError",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "D",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Sum"
+          },
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "ELBAuthFailure",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "B",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Sum"
+          },
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "ELBAuthSuccess",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "A",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Sum"
+          },
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "ELBAuthRefreshTokenSuccess",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "C",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Sum"
+          },
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "ELBAuthUserClaimsSizeExceeded",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "E",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Sum"
+          },
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "ELBAuthLatency",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "F",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Average"
+          }
+        ],
+        "title": "Auth (ELB Only)",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "uid": "$datasource"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "links": [],
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 24,
+          "x": 0,
+          "y": 73
+        },
+        "id": 15,
+        "options": {
+          "alertThreshold": true,
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "11.6.0",
+        "targets": [
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "IPv6RequestCount",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "D",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Sum"
+          },
+          {
+            "alias": "",
+            "application": {
+              "filter": ""
+            },
+            "datasource": {
+              "uid": "$datasource"
+            },
+            "dimensions": {
+              "LoadBalancer": "$loadbalancername"
+            },
+            "expression": "",
+            "functions": [],
+            "group": {
+              "filter": ""
+            },
+            "highResolution": false,
+            "host": {
+              "filter": ""
+            },
+            "id": "",
+            "item": {
+              "filter": ""
+            },
+            "matchExact": true,
+            "metricEditorMode": 0,
+            "metricName": "IPv6ProcessedBytes",
+            "metricQueryType": 0,
+            "mode": 0,
+            "namespace": "AWS/ApplicationELB",
+            "options": {
+              "showDisabledItems": false
+            },
+            "period": "",
+            "queryMode": "Metrics",
+            "refId": "A",
+            "region": "$region",
+            "returnData": false,
+            "sqlExpression": "",
+            "statistic": "Sum"
+          }
+        ],
+        "title": "IPv6 (ELB Only)",
+        "type": "timeseries"
+      }
+    ],
+    "preload": false,
+    "refresh": "",
+    "schemaVersion": 41,
+    "tags": [
+      "cloudwatch"
+    ],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "text": "Cloudwatch",
+            "value": "cloudwatch"
+          },
+          "includeAll": false,
+          "label": "Datasource",
+          "name": "datasource",
+          "options": [],
+          "query": "cloudwatch",
+          "refresh": 1,
+          "regex": "",
+          "type": "datasource"
+        },
+        {
+          "current": {
+            "text": "default",
+            "value": "default"
+          },
+          "datasource": "$datasource",
+          "definition": "regions()",
+          "includeAll": false,
+          "label": "Region",
+          "name": "region",
+          "options": [],
+          "query": "regions()",
+          "refresh": 1,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {
+            "text": "app/prod-ingress/b6c44bfc862a0b91",
+            "value": "app/prod-ingress/b6c44bfc862a0b91"
+          },
+          "datasource": "$datasource",
+          "definition": "dimension_values($region,AWS/ApplicationELB,ActiveConnectionCount,LoadBalancer)",
+          "includeAll": false,
+          "label": "LoadBalancerName",
+          "name": "loadbalancername",
+          "options": [],
+          "query": "dimension_values($region,AWS/ApplicationELB,ActiveConnectionCount,LoadBalancer)",
+          "refresh": 2,
+          "regex": "",
+          "sort": 1,
+          "type": "query"
+        },
+        {
+          "current": {
+            "text": "targetgroup/k8s-grafana-grafana-d512d5e26c/576abc1e001b2b07",
+            "value": "targetgroup/k8s-grafana-grafana-d512d5e26c/576abc1e001b2b07"
+          },
+          "datasource": "ceim87vifo0lcc",
+          "definition": "dimension_values($region,AWS/ApplicationELB,HealthyHostCount,TargetGroup, {\"LoadBalancer\":\"$loadbalancername\"})",
+          "includeAll": false,
+          "label": "Target Group",
+          "name": "targetgroup",
+          "options": [],
+          "query": "dimension_values($region,AWS/ApplicationELB,HealthyHostCount,TargetGroup, {\"LoadBalancer\":\"$loadbalancername\"})",
+          "refresh": 1,
+          "regex": "",
+          "sort": 1,
+          "type": "query"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-7d",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "AWS ELB Application Load Balancer by Target Group",
+    "uid": "bt8qGKJZz-targetGroup",
+    "version": 1
+  }
