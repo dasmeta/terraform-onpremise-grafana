@@ -52,6 +52,19 @@ prometheus:
             target_label: __address__
             regex: (.+):(?:\d+);(.+)
             replacement: $1:$2
+      - job_name: 'kubernetes-service-monitor'
+        kubernetes_sd_configs:
+          - role: service
+        relabel_configs:
+          - action: keep
+            source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
+            regex: "true"
+          - action: replace
+            source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
+            target_label: __metrics_path__
+          - action: replace
+            source_labels: [__meta_kubernetes_service_annotation_prometheus_io_port]
+            target_label: __metrics_port__
 
 alertmanager:
   enabled: ${enable_alertmanager}
