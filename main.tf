@@ -15,6 +15,7 @@ module "application_dashboard_json" {
   source = "./modules/dashboard-json"
 
   dashboard_json_files = var.dashboards_json_files
+  depends_on           = [module.grafana, module.prometheus]
 }
 
 module "alerts" {
