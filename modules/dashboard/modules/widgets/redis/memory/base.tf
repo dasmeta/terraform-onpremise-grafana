@@ -9,7 +9,7 @@ module "base" {
   anomaly_detection = var.anomaly_detection
   anomaly_deviation = var.anomaly_deviation
 
-  view = "gauge"
+  type = "gauge"
 
   thresholds = {
     "mode" : "absolute",
