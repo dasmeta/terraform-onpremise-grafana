@@ -23,4 +23,5 @@ module "base_grafana" {
   fillOpacity        = var.fillOpacity
   options            = var.options
   cloudwatch_targets = var.cloudwatch_targets
+  loki_targets       = var.loki_targets
 }

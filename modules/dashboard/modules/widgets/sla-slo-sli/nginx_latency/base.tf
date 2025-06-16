@@ -10,7 +10,7 @@ module "base" {
   decimals    = var.histogram ? null : 3
   period      = var.period
   region      = var.region
-  view        = var.histogram ? "histogram" : "gauge"
+  type        = var.histogram ? "histogram" : "gauge"
   fillOpacity = 80
 
   defaults = {

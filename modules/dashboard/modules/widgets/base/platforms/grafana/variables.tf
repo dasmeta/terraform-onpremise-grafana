@@ -189,11 +189,12 @@ variable "cloudwatch_targets" {
 variable "loki_targets" {
   type = list(object({
     expr          = string
-    format        = optional(string, "time_series")
     refId         = optional(string, "A")
-    legend_format = optional(string, "Errors ({{instance}})")
+    direction     = optional(string, "backward")
+    legend_format = optional(string, "")
     queryType     = optional(string, "range")
     hide          = optional(bool, false)
+    label         = optional(string, "Logs")
   }))
   description = "Target section of Loki based widget"
   default     = []

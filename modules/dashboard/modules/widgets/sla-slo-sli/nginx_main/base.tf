@@ -11,7 +11,7 @@ module "base" {
   stat        = "Sum"
   period      = var.period
   region      = var.region
-  view        = "gauge"
+  type        = "gauge"
   yAxis       = { left = { min = 85, max = 100 } }
 
   start = "-PT8640H"
