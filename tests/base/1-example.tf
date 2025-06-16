@@ -8,7 +8,7 @@ module "this" {
     rows : [
       { type : "block/sla", sla_ingress_type = "alb", load_balancer_arn = "load_balancer_arn", datasource_uid = "cloudwatch", region = "us-east-2" },
       { type : "block/alb_ingress", load_balancer_arn = "load_balancer_arn", region : "us-east-2" },
-      { type : "block/service", name = "backend", show_err_logs = false },
+      { type : "block/service", name = "worker", show_err_logs = true },
       { type : "block/cloudwatch", region : "us-east-2" }
     ]
     data_source = {
