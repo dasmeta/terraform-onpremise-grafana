@@ -8,7 +8,7 @@ module "this" {
     rows : [
       { type : "block/sla", sla_ingress_type = "alb", load_balancer_arn = "load_balancer_arn", datasource_uid = "cloudwatch", region = "us-east-2" },
       { type : "block/alb_ingress", load_balancer_arn = "load_balancer_arn", region : "us-east-2" },
-      { type : "block/service", name = "backend" },
+      { type : "block/service", name = "backend", show_err_logs = false },
       { type : "block/cloudwatch", region : "us-east-2" }
     ]
     data_source = {
@@ -117,7 +117,7 @@ module "this" {
   }
 
   loki_configs = {
-    enabled = false
+    enabled = true
   }
 
   prometheus_configs = {
@@ -125,10 +125,10 @@ module "this" {
   }
   grafana_admin_password = "admin"
   aws_region             = "us-east-2"
-  dashboards_json_files = [
-    "./dashboard_files/ALB_dashboard.json",
-    "./dashboard_files/Application_main_dashboard.json"
-  ]
+  # dashboards_json_files = [
+  #   "./dashboard_files/ALB_dashboard.json",
+  #   "./dashboard_files/Application_main_dashboard.json"
+  # ]
 }
 
 output "dashboard" {
