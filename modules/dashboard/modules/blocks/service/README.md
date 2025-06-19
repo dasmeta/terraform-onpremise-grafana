@@ -21,6 +21,7 @@ No resources.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_expr"></a> [expr](#input\_expr) | logql query used to query logs | `string` | `""` | no |
 | <a name="input_host"></a> [host](#input\_host) | The service host name | `string` | `null` | no |
 | <a name="input_loki_datasource_uid"></a> [loki\_datasource\_uid](#input\_loki\_datasource\_uid) | datasource uid for the logs widgets | `string` | `"loki"` | no |
 | <a name="input_name"></a> [name](#input\_name) | Service name | `string` | n/a | yes |

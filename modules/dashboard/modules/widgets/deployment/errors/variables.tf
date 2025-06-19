@@ -28,3 +28,9 @@ variable "period" {
   type    = string
   default = "3"
 }
+
+variable "expr" {
+  type        = string
+  default     = ""
+  description = "LogQl expression to get the logs"
+}

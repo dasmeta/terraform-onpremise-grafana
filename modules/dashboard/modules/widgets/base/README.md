@@ -56,7 +56,6 @@ No resources.
 | <a name="input_trend"></a> [trend](#input\_trend) | trend of widget | `bool` | `null` | no |
 | <a name="input_type"></a> [type](#input\_type) | The type of widget to be prepared | `string` | `"metric"` | no |
 | <a name="input_unit"></a> [unit](#input\_unit) | Unit used for widget metric | `string` | `""` | no |
-| <a name="input_view"></a> [view](#input\_view) | The view for log insights and alarm widgets | `string` | `null` | no |
 | <a name="input_yAxis"></a> [yAxis](#input\_yAxis) | Widget Item common yAxis option (applied only metric type widgets). | `any` | <pre>{<br/>  "left": {}<br/>}</pre> | no |
 
 ## Outputs

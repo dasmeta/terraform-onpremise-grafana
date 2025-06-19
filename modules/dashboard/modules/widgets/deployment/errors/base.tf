@@ -12,6 +12,6 @@ module "base" {
   period      = var.period
 
   loki_targets = [
-    { label = "Errors or Warns in logs", legend_format = "Errors deployment", expr = "{pod=~\"${var.deployment}.*\"} | logfmt | level=\"warn\" or level=\"error\"" }
+    { label = "Errors or Warns in logs", legend_format = "Errors deployment", expr = var.expr == "" ? "{pod=~\"${var.deployment}.*\"} | logfmt | level=\"warn\" or level=\"error\"" : var.expr }
   ]
 }

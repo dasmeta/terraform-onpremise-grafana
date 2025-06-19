@@ -45,7 +45,6 @@ No resources.
 | <a name="input_thresholds"></a> [thresholds](#input\_thresholds) | Thresholds defined for a widget | <pre>object({<br/>    mode = string<br/>    steps = list(object({<br/>      color = string<br/>      value = number<br/>    }))<br/>  })</pre> | <pre>{<br/>  "mode": "absolute",<br/>  "steps": [<br/>    {<br/>      "color": "green",<br/>      "value": null<br/>    },<br/>    {<br/>      "color": "red",<br/>      "value": 80<br/>    }<br/>  ]<br/>}</pre> | no |
 | <a name="input_type"></a> [type](#input\_type) | The type of widget to be prepared | `string` | `"metric"` | no |
 | <a name="input_unit"></a> [unit](#input\_unit) | Unit used for widget metric | `string` | `""` | no |
-| <a name="input_view"></a> [view](#input\_view) | The view for log insights and alarm widgets | `string` | `null` | no |
 
 ## Outputs
 

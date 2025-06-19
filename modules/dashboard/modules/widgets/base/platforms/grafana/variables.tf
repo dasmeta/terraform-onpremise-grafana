@@ -75,12 +75,6 @@ variable "sources" {
   description = "Log groups list for Logs Insights query"
 }
 
-variable "view" {
-  type        = string
-  default     = null
-  description = "The view for log insights and alarm widgets"
-}
-
 variable "annotations" {
   type        = any
   default     = null

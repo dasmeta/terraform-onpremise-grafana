@@ -12,7 +12,6 @@ module "base_grafana" {
   type               = var.type
   query              = var.query
   sources            = var.sources
-  view               = var.view
   thresholds         = var.thresholds
   color_mode         = var.color_mode
   annotations        = var.annotations

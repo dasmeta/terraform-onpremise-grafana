@@ -21,6 +21,7 @@ module "deployment_errors_widget" {
   datasource_uid = try(each.value.datasource_uid, {})
   coordinates    = each.value.coordinates
   period         = each.value.period
+  expr           = try(each.value.expr, "")
 
   # deployment
   deployment = each.value.deployment

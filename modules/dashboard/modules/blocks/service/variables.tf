@@ -38,3 +38,9 @@ variable "show_err_logs" {
   default     = true
   description = "Wether to show the error and warning logs for the deployment"
 }
+
+variable "expr" {
+  type        = string
+  default     = ""
+  description = "logql query used to query logs"
+}

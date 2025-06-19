@@ -9,7 +9,7 @@ module "base" {
   anomaly_detection = var.anomaly_detection
   anomaly_deviation = var.anomaly_deviation
 
-  view = "stat"
+  type = "stat"
 
   metrics = [
     { label = "Clients", color : "808080", expression = "sum(redis_connected_clients{service=\"${var.redis_name}\", namespace=\"${var.namespace}\"})" }

@@ -33,7 +33,7 @@ resource "helm_release" "grafana" {
       hpa_max_replicas   = var.configs.redundency.max_replicas
       hpa_min_replicas   = var.configs.redundency.min_replicas
 
-      grafana_iam_role_arn = module.grafana_cloudwatch_role[0].arn
+      grafana_iam_role_arn = try(module.grafana_cloudwatch_role[0].arn, "")
     })
   ]
 

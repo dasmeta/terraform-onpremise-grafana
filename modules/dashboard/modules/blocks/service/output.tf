@@ -12,7 +12,7 @@ output "result" {
     ],
     var.show_err_logs ?
     [
-      { type : "deployment/errors", deployment : var.name, datasource_uid = var.loki_datasource_uid, width : 24 },
+      { type : "deployment/errors", deployment : var.name, datasource_uid = var.loki_datasource_uid, width : 24, expr = var.expr },
     ] :
     [],
     concat(

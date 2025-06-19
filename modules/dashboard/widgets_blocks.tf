@@ -21,6 +21,7 @@ module "block_service" {
   prometheus_datasource_uid = try(each.value.block.prometheus_datasource_uid, null)
   loki_datasource_uid       = try(each.value.block.loki_datasource_uid, null)
   show_err_logs             = try(each.value.block.show_err_logs, true)
+  expr                      = try(each.value.block.expr, "")
 
 }
 
