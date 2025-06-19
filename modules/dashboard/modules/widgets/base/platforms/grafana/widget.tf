@@ -77,6 +77,7 @@ locals {
     gauge      = "gauge"
     histogram  = "histogram"
     stat       = "stat"
+    logs       = "logs"
   }
 
   # create query and metric based targets
@@ -90,7 +91,6 @@ locals {
     }
   ]
 
-
   # var.query != null ? [
   #   {
   #     expression    = var.query,
@@ -100,6 +100,7 @@ locals {
   #     region        = var.region
   #   }
   # ] : []
+
   metric_targets = [for row in local.metrics_with_defaults : {
     expr         = row.expression
     id           = ""
@@ -127,6 +128,15 @@ locals {
     refId            = row.refId
   }]
 
+  loki_targets = [for row in var.loki_targets : {
+    direction     = row.direction
+    expr          = row.expr
+    queryType     = "range"
+    refId         = row.refId
+    label         = row.label
+    legend_format = row.legend_format
+  }]
+
   data = {
     datasource  = var.data_source
     description = var.description
@@ -141,7 +151,7 @@ locals {
       y = var.coordinates.y
     }
     title = var.name
-    type  = try(local.type_map[var.view], local.type_map.timeSeries)
+    type  = try(local.type_map[var.type], local.type_map.timeSeries)
     options = {
       legend = {
         calcs       = lookup(var.options.legend, "calcs", [])
@@ -154,6 +164,6 @@ locals {
         sort = lookup(var.options.tooltip, "sort", "none")
       }
     }
-    targets = concat(local.query_targets, local.metric_targets, local.cloudwatch_targets)
+    targets = concat(local.query_targets, local.metric_targets, local.cloudwatch_targets, local.loki_targets)
   }
 }

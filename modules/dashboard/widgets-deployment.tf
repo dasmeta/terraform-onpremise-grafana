@@ -12,3 +12,17 @@ module "deployment_replicas_widget" {
   deployment = each.value.deployment
   namespace  = each.value.namespace
 }
+
+module "deployment_errors_widget" {
+  source = "./modules/widgets/deployment/errors"
+
+  for_each = { for index, item in try(local.widget_config["deployment/errors"], []) : index => item }
+
+  datasource_uid = try(each.value.datasource_uid, {})
+  coordinates    = each.value.coordinates
+  period         = each.value.period
+  expr           = try(each.value.expr, "")
+
+  # deployment
+  deployment = each.value.deployment
+}

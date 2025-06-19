@@ -12,7 +12,6 @@ module "base_grafana" {
   type               = var.type
   query              = var.query
   sources            = var.sources
-  view               = var.view
   thresholds         = var.thresholds
   color_mode         = var.color_mode
   annotations        = var.annotations
@@ -23,4 +22,5 @@ module "base_grafana" {
   fillOpacity        = var.fillOpacity
   options            = var.options
   cloudwatch_targets = var.cloudwatch_targets
+  loki_targets       = var.loki_targets
 }

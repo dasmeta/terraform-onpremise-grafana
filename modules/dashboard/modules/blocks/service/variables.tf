@@ -19,9 +19,28 @@ variable "host" {
   description = "The service host name"
 }
 
-variable "datasource_uid" {
+variable "prometheus_datasource_uid" {
   nullable    = false
   type        = string
   default     = "prometheus"
-  description = "datasource uid for the metrics"
+  description = "datasource uid for the metrics widgets"
+}
+
+variable "loki_datasource_uid" {
+  nullable    = false
+  type        = string
+  default     = "loki"
+  description = "datasource uid for the logs widgets"
+}
+
+variable "show_err_logs" {
+  type        = bool
+  default     = true
+  description = "Wether to show the error and warning logs for the deployment"
+}
+
+variable "expr" {
+  type        = string
+  default     = ""
+  description = "logql query used to query logs"
 }

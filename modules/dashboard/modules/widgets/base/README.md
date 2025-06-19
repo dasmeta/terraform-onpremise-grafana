@@ -37,7 +37,7 @@ No resources.
 | <a name="input_end"></a> [end](#input\_end) | end of widget | `string` | `null` | no |
 | <a name="input_expressions"></a> [expressions](#input\_expressions) | Custom metric expressions over metrics, note that metrics have auto generated m1,m2,..., m{n} ids | <pre>list(object({<br/>    expression = string<br/>    label      = optional(string, null)<br/>    accountId  = optional(string, null)<br/>    visible    = optional(bool, null)<br/>    color      = optional(string, null)<br/>    yAxis      = optional(string, null)<br/>    region     = optional(string, null)<br/>    id         = optional(string, null)<br/>  }))</pre> | `[]` | no |
 | <a name="input_fillOpacity"></a> [fillOpacity](#input\_fillOpacity) | The fillOpacity value | `number` | `0` | no |
-| <a name="input_loki_targets"></a> [loki\_targets](#input\_loki\_targets) | Target section of Loki based widget | <pre>list(object({<br/>    expr          = string<br/>    format        = optional(string, "time_series")<br/>    refId         = optional(string, "A")<br/>    legend_format = optional(string, "Errors ({{instance}})")<br/>    queryType     = optional(string, "range")<br/>    hide          = optional(bool, false)<br/>  }))</pre> | `[]` | no |
+| <a name="input_loki_targets"></a> [loki\_targets](#input\_loki\_targets) | Target section of Loki based widget | <pre>list(object({<br/>    expr          = string<br/>    refId         = optional(string, "A")<br/>    direction     = optional(string, "backward")<br/>    legend_format = optional(string, "")<br/>    queryType     = optional(string, "range")<br/>    hide          = optional(bool, false)<br/>    label         = optional(string, "Logs")<br/>  }))</pre> | `[]` | no |
 | <a name="input_metrics"></a> [metrics](#input\_metrics) | Metrics to be displayed on the widget. | `any` | `[]` | no |
 | <a name="input_name"></a> [name](#input\_name) | n/a | `string` | n/a | yes |
 | <a name="input_options"></a> [options](#input\_options) | Configuration options for widget legend and tooltip. | <pre>object({<br/>    legend = object({<br/>      calcs       = optional(list(string), [])<br/>      displayMode = optional(string, "list")<br/>      placement   = optional(string, "bottom")<br/>      show_legend = optional(bool, true)<br/>    })<br/>    tooltip = optional(object({<br/>      mode = optional(string, "single")<br/>      sort = optional(string, "none")<br/>    }), {})<br/>  })</pre> | <pre>{<br/>  "legend": {<br/>    "calcs": [],<br/>    "displayMode": "list",<br/>    "placement": "bottom",<br/>    "show_legend": true<br/>  },<br/>  "tooltip": {<br/>    "mode": "single",<br/>    "sort": "none"<br/>  }<br/>}</pre> | no |
@@ -56,7 +56,6 @@ No resources.
 | <a name="input_trend"></a> [trend](#input\_trend) | trend of widget | `bool` | `null` | no |
 | <a name="input_type"></a> [type](#input\_type) | The type of widget to be prepared | `string` | `"metric"` | no |
 | <a name="input_unit"></a> [unit](#input\_unit) | Unit used for widget metric | `string` | `""` | no |
-| <a name="input_view"></a> [view](#input\_view) | The view for log insights and alarm widgets | `string` | `null` | no |
 | <a name="input_yAxis"></a> [yAxis](#input\_yAxis) | Widget Item common yAxis option (applied only metric type widgets). | `any` | <pre>{<br/>  "left": {}<br/>}</pre> | no |
 
 ## Outputs

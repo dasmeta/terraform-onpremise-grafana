@@ -15,10 +15,13 @@ module "block_service" {
 
   for_each = { for index, item in try(local.blocks_by_type["service"], []) : index => item }
 
-  name           = each.value.block.name
-  namespace      = try(each.value.block.namespace, "$namespace")
-  host           = try(each.value.block.host, null)
-  datasource_uid = try(each.value.block.datasource_uid, null)
+  name                      = each.value.block.name
+  namespace                 = try(each.value.block.namespace, "$namespace")
+  host                      = try(each.value.block.host, null)
+  prometheus_datasource_uid = try(each.value.block.prometheus_datasource_uid, null)
+  loki_datasource_uid       = try(each.value.block.loki_datasource_uid, null)
+  show_err_logs             = try(each.value.block.show_err_logs, true)
+  expr                      = try(each.value.block.expr, "")
 
 }
 

@@ -7,7 +7,6 @@ module "base" {
   period             = var.period
   stat               = var.stat
   yAxis              = var.yAxis
-  view               = var.view
   decimals           = var.decimals
   fillOpacity        = var.fillOpacity
   anomaly_detection  = var.anomaly_detection

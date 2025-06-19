@@ -10,7 +10,7 @@ module "base" {
   coordinates = var.coordinates
   period      = var.period
   region      = var.region
-  view        = "gauge"
+  type        = "gauge"
   decimals    = 2
   thresholds = {
     mode = "absolute"
