@@ -11,10 +11,12 @@ promtail:
       - url: ${c}
 %{ endfor }
     logFormat: ${log_format}
-%{ if length(promtail_extra_label_configs) > 0 }
     snippets:
+%{ if length(promtail_extra_label_configs_raw) > 0 }
       extraRelabelConfigs:
-      ${indent(6, promtail_extra_label_configs)}
+      ${indent(6, promtail_extra_label_configs_yaml)}
+%{ else }
+      extraRelabelConfigs: []
 %{ endif }
 %{ if length(promtail_extra_scrape_configs) > 0 }
       extraScrapeConfigs: |
