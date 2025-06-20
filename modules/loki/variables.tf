@@ -19,7 +19,8 @@ variable "configs" {
   type = object({
     enable_test_pod = optional(bool, false)
     loki = optional(object({
-      url = optional(string, "")
+      url            = optional(string, "")
+      volume_enabled = optional(bool, true)
     }), {})
     promtail = optional(object({
       enabled              = optional(bool, true)

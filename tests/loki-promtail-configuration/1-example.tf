@@ -45,11 +45,13 @@ module "this" {
         "alb.ingress.kubernetes.io/group.name" = "dev-ingress"
       }
     }
-    # datasources = [{ type = "cloudwatch", name = "Cloudwatch" }]
   }
 
   loki_configs = {
     enabled = true
+    loki = {
+      volume_enabled = true
+    }
     promtail = {
       ignored_namespaces = ["kube-system", "monitoring"]
       ignored_containers = ["loki", "manager"]
@@ -102,8 +104,4 @@ module "this" {
   }
   grafana_admin_password = "admin"
   aws_region             = "us-east-2"
-}
-
-output "dashboard" {
-  value = module.this.dashboards
 }
