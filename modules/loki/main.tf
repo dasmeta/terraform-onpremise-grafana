@@ -9,6 +9,7 @@ resource "helm_release" "loki" {
   values = [
     templatefile("${path.module}/values/loki-values.yaml.tpl", {
       loki_url                          = var.configs.loki.url == "" ? "http://${var.release_name}:3100" : var.configs.loki.url
+      volume_enabled                    = var.configs.loki.volume_enabled
       promtail_enabled                  = var.configs.promtail.enabled
       promtail_log_level                = var.configs.promtail.log_level
       log_format                        = var.configs.promtail.log_format

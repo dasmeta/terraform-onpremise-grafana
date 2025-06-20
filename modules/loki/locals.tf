@@ -19,7 +19,3 @@ locals {
   extra_relabel_configs_yaml = yamlencode(local.extra_relabel_configs)
   extra_scrape_configs_yaml  = length(var.configs.promtail.extra_scrape_configs) > 0 ? yamlencode(var.configs.promtail.extra_scrape_configs) : ""
 }
-
-output "scrape_configs" {
-  value = local.extra_scrape_configs_yaml
-}

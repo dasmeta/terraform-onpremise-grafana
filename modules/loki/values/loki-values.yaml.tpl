@@ -1,5 +1,13 @@
 loki:
   url: ${loki_url}
+  image:
+    repository: grafana/loki
+    tag: 2.9.4
+%{ if volume_enabled }
+  config:
+    limits_config:
+      volume_enabled: ${volume_enabled}
+%{ endif }
 
 promtail:
   enabled: ${promtail_enabled}
