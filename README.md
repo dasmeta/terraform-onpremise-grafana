@@ -10,6 +10,10 @@ At this moment we support managing
 
 More parts are coming soon.
 
+## Known issues
+Grafana provider sometimes has issues with endpoints behind WAFs: https://github.com/grafana/terraform-provider-grafana/issues/1851
+
+
 ## example for dashboard
 ```hcl
 module "grafana_monitoring" {
