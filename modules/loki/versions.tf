@@ -8,5 +8,8 @@ terraform {
     kubernetes = {
       version = ">2.3"
     }
+    random = {
+      version = "> 3.7"
+    }
   }
 }
