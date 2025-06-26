@@ -58,7 +58,7 @@ module "loki_iam_eks_role" {
 
   count = local.create_loki_role ? 1 : 0
 
-  role_name = "loki-role"
+  role_name = "loki-${var.cluster_name}-${random_string.random.result}"
   role_policy_arns = {
     policy = resource.aws_iam_policy.loki_s3_access[0].arn
   }
@@ -102,7 +102,7 @@ resource "aws_iam_policy" "loki_s3_access" {
 }
 
 resource "random_string" "random" {
-  length  = 16
+  length  = 8
   special = false
   upper   = false
 }

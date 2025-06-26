@@ -52,8 +52,7 @@ module "this" {
     loki = {
       volume_enabled = true
       send_logs_s3 = {
-        enable       = true
-        aws_role_arn = "some-random-role-arn"
+        enable = true
       }
       schema_configs = [{
         from         = "2023-01-01"
