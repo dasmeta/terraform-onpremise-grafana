@@ -80,4 +80,5 @@ module "loki" {
   chart_version = var.loki_configs.chart_version
   configs       = var.loki_configs
   namespace     = var.namespace
+  cluster_name  = var.cluster_name
 }

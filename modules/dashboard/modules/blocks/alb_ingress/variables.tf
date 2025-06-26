@@ -16,3 +16,9 @@ variable "datasource_uid" {
   default     = "cloudwatch"
   description = "datasource uid for the metrics"
 }
+
+variable "block_name" {
+  type        = string
+  default     = "AWS ALB"
+  description = "Widget block name"
+}

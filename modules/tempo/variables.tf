@@ -1,6 +1,7 @@
 variable "cluster_name" {
   type        = string
   description = "name of the eks cluster"
+  default     = ""
 }
 
 variable "namespace" {
