@@ -7,7 +7,13 @@ variable "namespace" {
 variable "chart_version" {
   type        = string
   description = "loki chart version"
-  default     = "2.10.2"
+  default     = "6.30.1"
+}
+
+variable "promtail_chart_version" {
+  type        = string
+  description = "promtail chart version"
+  default     = "6.17.0"
 }
 
 variable "release_name" {
@@ -22,9 +28,10 @@ variable "configs" {
       url                = optional(string, "")
       log_volume_enabled = optional(bool, true)
       send_logs_s3 = optional(object({
-        enable       = optional(bool, false)
-        bucket_name  = optional(string, "")
-        aws_role_arn = optional(string, "")
+        enable         = optional(bool, true)
+        bucket_name    = optional(string, "")
+        aws_role_arn   = optional(string, "")
+        retention_days = optional(number, 7) # remove log item after set days
       }), {})
       service_account = optional(object({
         enable      = optional(bool, true)
@@ -38,16 +45,16 @@ variable "configs" {
         access_mode   = optional(string, "ReadWriteOnce")
       }), {})
       schema_configs = optional(list(object({
-        from         = string
-        object_store = optional(string, "filesystem")
-        store        = optional(string, "boltdb-shipper")
-        schema       = optional(string, "v12")
+        from         = optional(string, "2025-01-01")
+        object_store = optional(string, "s3")
+        store        = optional(string, "tsdb")
+        schema       = optional(string, "v13")
         index = optional(object({
           prefix = optional(string, "index_")
           period = optional(string, "24h")
         }))
       })), [])
-      storage_configs  = optional(map(any), {})
+      storage          = optional(map(any), { type = "filesystem" })
       replicas         = optional(number, 1)
       retention_period = optional(string, "168h")
       resources = optional(object({

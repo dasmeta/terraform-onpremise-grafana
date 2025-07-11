@@ -17,7 +17,7 @@ module "base" {
   unit        = "bytes"
 
   metrics = [
-    { label : "Received", color : "7AAFF9", expression : "sum(rate(container_network_receive_bytes_total{pod=~\"^${var.pod}-[^-]+-[^-]+$\"}[$__rate_interval]))" },
-    { label : "Sent", color : "EF8BBE", expression : "- sum(rate(container_network_transmit_bytes_total{pod=~\"^${var.pod}-[^-]+-[^-]+$\"}[$__rate_interval]))" },
+    { label : "Received", color : "7AAFF9", expression : "sum(rate(container_network_receive_bytes_total{namespace=\"${var.namespace}\", pod=~\"^${var.pod}(-[^-]+)?-[^-]+$\"}[$__rate_interval]))" },
+    { label : "Sent", color : "EF8BBE", expression : "- sum(rate(container_network_transmit_bytes_total{namespace=\"${var.namespace}\", pod=~\"^${var.pod}(-[^-]+)?-[^-]+$\"}[$__rate_interval]))" },
   ]
 }

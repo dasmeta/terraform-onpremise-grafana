@@ -10,11 +10,19 @@ resource "helm_release" "grafana" {
 
   values = [
     templatefile("${path.module}/values/grafana-values.yaml.tpl", {
+      database = var.configs.database.enabled ? jsonencode({ # if we enable/set database, no need for enabling persistence
+        host     = local.database.host
+        user     = local.database.username
+        password = local.database.password
+        name     = local.database.name
+        type     = local.database.type
+        }
+      ) : null
       enabled_persistence       = var.configs.persistence.enabled
       persistence_type          = var.configs.persistence.type
       persistence_size          = var.configs.persistence.size
       persistence_storage_class = var.configs.persistence.storage_class
-      pvc_name                  = var.configs.redundency.enabled ? "grafana-shared-pvc" : ""
+      pvc_name                  = var.configs.redundancy.enabled && var.configs.persistence.enabled ? "grafana-shared-pvc" : ""
 
       ingress_annotations = local.ingress_annotations
       ingress_hosts       = var.configs.ingress.hosts
@@ -29,9 +37,9 @@ resource "helm_release" "grafana" {
 
       replicas = var.configs.replicas
 
-      redundency_enabled = var.configs.redundency.enabled
-      hpa_max_replicas   = var.configs.redundency.max_replicas
-      hpa_min_replicas   = var.configs.redundency.min_replicas
+      redundancy_enabled = var.configs.redundancy.enabled
+      hpa_max_replicas   = var.configs.redundancy.max_replicas
+      hpa_min_replicas   = var.configs.redundancy.min_replicas
 
       grafana_iam_role_arn = try(module.grafana_cloudwatch_role[0].arn, "")
     })
@@ -43,6 +51,31 @@ resource "helm_release" "grafana" {
   }
 
   depends_on = [kubernetes_persistent_volume_claim.grafana_efs, module.grafana_cloudwatch_role]
+}
+
+resource "helm_release" "mysql" {
+  count = var.configs.database.enabled && var.configs.database.create ? 1 : 0
+
+  name             = var.mysql_release_name
+  repository       = "oci://registry-1.docker.io/bitnamicharts"
+  chart            = "mysql"
+  namespace        = var.namespace
+  create_namespace = false
+  version          = var.mysql_chart_version
+  timeout          = 600
+
+  values = [jsonencode({
+    persistence = var.configs.database.persistence
+    auth = {
+      username     = local.database.username
+      database     = local.database.name,
+      password     = local.database.password
+      rootPassword = local.database.root_password
+    }
+    primary = {
+      extraFlags = var.configs.database.extra_flags
+    }
+  })]
 }
 
 resource "grafana_data_source" "this" {
@@ -93,7 +126,7 @@ module "grafana_cloudwatch_role" {
 
 
 resource "kubernetes_persistent_volume_claim" "grafana_efs" {
-  count = var.configs.redundency.enabled ? 1 : 0
+  count = var.configs.redundancy.enabled && var.configs.persistence.enabled ? 1 : 0
   metadata {
     name      = "grafana-shared-pvc"
     namespace = var.namespace
@@ -108,7 +141,7 @@ resource "kubernetes_persistent_volume_claim" "grafana_efs" {
       }
     }
 
-    storage_class_name = var.configs.redundency.redundency_storage_class
+    storage_class_name = var.configs.redundancy.redundancy_storage_class
   }
 
 }

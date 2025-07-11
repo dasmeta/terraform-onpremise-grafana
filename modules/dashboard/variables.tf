@@ -51,3 +51,15 @@ variable "variables" {
   default     = []
   description = "Allows to define variables to be used in dashboard"
 }
+
+variable "alerts" {
+  type        = any
+  default     = {}
+  description = "Allows to configure globally dashboard block/(sla|ingress|service) blocks/widgets related alerts"
+}
+
+variable "folder_name" {
+  type        = string
+  default     = "application-dashboard"
+  description = "The folder name to place grafana dashboard"
+}

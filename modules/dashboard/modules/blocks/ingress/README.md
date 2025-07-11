@@ -21,9 +21,9 @@ No resources.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_balancer_name"></a> [balancer\_name](#input\_balancer\_name) | ALB name | `string` | n/a | yes |
 | <a name="input_datasource_uid"></a> [datasource\_uid](#input\_datasource\_uid) | datasource uid for the metrics | `string` | `"prometheus"` | no |
-| <a name="input_region"></a> [region](#input\_region) | n/a | `string` | `""` | no |
+| <a name="input_namespace"></a> [namespace](#input\_namespace) | The namespace where nginx ingress controller is deployed | `string` | `"ingress-nginx"` | no |
+| <a name="input_pod"></a> [pod](#input\_pod) | The name identifier/prefix of nginx ingress controller pods | `string` | `"ingress-nginx-controller"` | no |
 
 ## Outputs
 

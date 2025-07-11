@@ -1,8 +1,8 @@
 locals {
-  folders = toset(distinct([for rule in var.alert_rules : rule.folder_name]))
-  alerts = { for member in local.folders : member => [for rule in var.alert_rules : merge(rule, {
+  groups = toset(distinct([for rule in var.alert_rules : coalesce(rule.group, var.group)]))
+  alerts = { for member in local.groups : member => [for rule in var.alert_rules : merge(rule, {
     expr : coalesce(rule.expr, "${rule.metric_function}(${rule.metric_name}${rule.filters != null ? format("{%s}", replace(join(", ", [for k, v in rule.filters : "${k}=\"${v}\""]), "\"", "\\\"")) : ""}${rule.metric_interval})")
-  }) if rule.folder_name == member] }
+  }) if coalesce(rule.group, var.group) == member] }
   comparison_operators = {
     gte = { operator = ">=", definition = "greater than or equal to" },
     gt  = { operator = ">", definition = "greater than" },
@@ -12,30 +12,36 @@ locals {
   }
 }
 
-resource "grafana_folder" "rule_folder" {
-  for_each = local.folders
-  title    = each.key
+resource "grafana_folder" "this" {
+  count = var.folder_name != null && var.create_folder && length(var.alert_rules) > 0 ? 1 : 0
+
+  title = var.folder_name
+}
+
+data "grafana_folder" "this" {
+  count = var.folder_name != null && !var.create_folder && length(var.alert_rules) > 0 ? 1 : 0
+
+  title = var.folder_name
 }
 
 resource "grafana_rule_group" "this" {
   for_each = local.alerts
 
-  name               = "${each.key} Group"
+  name               = each.key
   disable_provenance = var.disable_provenance
-  folder_uid         = grafana_folder.rule_folder[each.key].uid
+  folder_uid         = try(grafana_folder.this[0].uid, data.grafana_folder.this[0].uid)
   interval_seconds   = var.alert_interval_seconds
-  org_id             = 1
   dynamic "rule" {
     for_each = each.value
     content {
       name           = rule.value["name"]
-      for            = "0"
+      for            = lookup(rule.value, "pending_period", "0")
       condition      = "C"
       no_data_state  = lookup(rule.value, "no_data_state", "NoData")
       exec_err_state = lookup(rule.value, "exec_err_state", "Error")
       annotations = {
         "Managed By" = "Terraform"
-        "Summary"    = coalesce(rule.value.summary, "${rule.value.name} alert, the value is ${local.comparison_operators[rule.value.equation].definition} ${rule.value.threshold}")
+        "Summary"    = coalesce(rule.value.summary, "${rule.value.name} alert, the evaluated value($B) is ${rule.value.condition != null ? rule.value.condition : "${local.comparison_operators[rule.value.equation].definition} ${rule.value.threshold}"}")
       }
       labels    = lookup(rule.value, "labels", { "priority" : "P1" })
       is_paused = false
@@ -145,7 +151,7 @@ EOT
         "type": "__expr__",
         "uid": "__expr__"
     },
-    "expression": "$B ${local.comparison_operators[rule.value.equation].operator} ${rule.value.threshold}",
+    "expression": "${rule.value.condition != null ? rule.value.condition : "$B ${local.comparison_operators[rule.value.equation].operator} ${rule.value.threshold}"}",
     "hide": false,
     "intervalMs": 1000,
     "maxDataPoints": 43200,

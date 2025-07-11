@@ -1,15 +1,18 @@
 module "alert_rules" {
-  source = "../alert-rules"
+  source = "./modules/rules"
 
   count = var.rules != null ? 1 : 0
 
+  folder_name            = var.folder_name
+  create_folder          = var.create_folder
+  group                  = var.group
   alert_interval_seconds = var.alert_interval_seconds
   disable_provenance     = var.disable_provenance
   alert_rules            = var.rules
 }
 
 module "contact_points" {
-  source = "../alert-contact-points"
+  source = "./modules/contact-points"
 
   count = var.contact_points != null ? 1 : 0
 
@@ -21,7 +24,7 @@ module "contact_points" {
 }
 
 module "notifications" {
-  source = "../alert-notifications"
+  source = "./modules/notifications"
 
   count = var.notifications != null ? 1 : 0
 

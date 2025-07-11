@@ -10,6 +10,24 @@ variable "disable_provenance" {
   description = "Allow modifying the resources from other sources than Terraform or the Grafana API"
 }
 
+variable "create_folder" {
+  type        = bool
+  default     = true
+  description = "Whether to create one general group folder for all alerts"
+}
+
+variable "folder_name" {
+  type        = string
+  default     = "alerts"
+  description = "The alerts general group folder name to attach all alerts to if no specific folder name set for alert rule item"
+}
+
+variable "group" {
+  type        = string
+  default     = "group"
+  description = "The alerts general group name to attach all alerts to if no specific group set for alert rule item"
+}
+
 variable "rules" {
   type = list(object({
     name                 = string                                    # The name of the alert rule
@@ -17,7 +35,7 @@ variable "rules" {
     exec_err_state       = optional(string, "Error")                 # Describes what state to enter when the rule's query is invalid and the rule cannot be executed
     summary              = optional(string, null)                    # Rule annotation as a summary, if not passed automatically generated based on data
     labels               = optional(map(any), { "priority" : "P1" }) # Labels help to define matchers in notification policy to control where to send each alert
-    folder_name          = optional(string, "Main Alerts")           # Grafana folder name in which the rule will be created, the folder name used also as alert group name with suffix " Group"
+    group                = optional(string, null)                    # Grafana group name in which the rule will be created/grouped
     datasource           = string                                    # Name of the datasource used for the alert
     expr                 = optional(string, null)                    # Full expression for the alert
     metric_name          = optional(string, "")                      # Prometheus metric name which queries the data for the alert

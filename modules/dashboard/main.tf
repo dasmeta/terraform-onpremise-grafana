@@ -1,4 +1,9 @@
+resource "grafana_folder" "this" {
+  title = var.folder_name
+}
+
 resource "grafana_dashboard" "metrics" {
+  folder = grafana_folder.this.uid
   config_json = jsonencode({
     uid                  = random_string.grafana_dashboard_id.result
     title                = local.dashboard_title

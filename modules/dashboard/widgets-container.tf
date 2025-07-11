@@ -122,13 +122,14 @@ module "container_network_traffic_widget" {
   coordinates     = each.value.coordinates
   period          = each.value.period
 
-  pod = each.value.pod
+  pod       = each.value.pod
+  namespace = each.value.namespace
 }
 
-module "container_network_transmit_widget" {
-  source = "./modules/widgets/container/network-transmit"
+module "container_network_error_widget" {
+  source = "./modules/widgets/container/network-error"
 
-  for_each = { for index, item in try(local.widget_config["container/network-transmit"], []) : index => item }
+  for_each = { for index, item in try(local.widget_config["container/network-error"], []) : index => item }
 
   # data_source = try(each.value.data_source, {})
   datasource_type = try(each.value.datasource_type, null)
@@ -136,5 +137,6 @@ module "container_network_transmit_widget" {
   coordinates     = each.value.coordinates
   period          = each.value.period
 
-  pod = each.value.pod
+  pod       = each.value.pod
+  namespace = each.value.namespace
 }

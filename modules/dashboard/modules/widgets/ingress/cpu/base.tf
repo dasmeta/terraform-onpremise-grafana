@@ -23,6 +23,6 @@ module "base" {
   unit = "percent"
 
   metrics = [
-    { label : "__auto", expression : "rate(container_cpu_usage_seconds_total{pod=~\"${var.pod}-[^-]+-[^-]+$\", namespace=\"${var.namespace}\"}[$__rate_interval]) * 100" },
+    { label : "__auto", expression : "rate(container_cpu_usage_seconds_total{pod=~\"(.+-)?${var.pod}(-[^-]+)?-[^-]+$\", namespace=\"${var.namespace}\"}[$__rate_interval]) * 100" },
   ]
 }

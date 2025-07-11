@@ -134,4 +134,13 @@ locals {
     hosts       = var.configs.ingress.hosts
     secret_name = join("-", [replace(var.configs.ingress.hosts[0], ".", "-"), "tls"])
   }] : []
+
+  database = {
+    host          = coalesce(var.configs.database.host, "${var.mysql_release_name}.${var.namespace}")
+    username      = coalesce(var.configs.database.user, "grafana")
+    password      = coalesce(var.configs.database.password, var.grafana_admin_password)
+    root_password = coalesce(var.configs.database.root_password, var.grafana_admin_password)
+    name          = coalesce(var.configs.database.name, "grafana"),
+    type          = var.configs.database.create ? "mysql" : coalesce(var.configs.database.type, "mysql"),
+  }
 }

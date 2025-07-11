@@ -6,8 +6,8 @@ variable "namespace" {
 
 variable "chart_version" {
   type        = string
-  description = "grafana chart version"
-  default     = "70.3.0"
+  description = "prometheus chart version"
+  default     = "75.8.0"
 }
 
 variable "configs" {

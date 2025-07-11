@@ -27,7 +27,7 @@ module "this" {
     ]
   }
 
-  grafana_configs = {
+  grafana = {
     resources = {
       request = {
         cpu = "1"
@@ -47,7 +47,7 @@ module "this" {
     }
   }
 
-  loki_configs = {
+  loki = {
     enabled = true
     loki = {
       volume_enabled = true
@@ -99,7 +99,7 @@ module "this" {
     }
   }
 
-  prometheus_configs = {
+  prometheus = {
     enabled = true
   }
   grafana_admin_password = "admin"
