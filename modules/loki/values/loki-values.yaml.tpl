@@ -1,109 +1,76 @@
-loki:
-  url: ${loki_url}
-  image:
-    repository: grafana/loki
-    tag: 2.9.4
-%{ if persistence_enabled }
-  persistence:
-    enabled: ${persistence_enabled}
-    accessModes:
-      - ${persistence_access_mode}
-    size: ${persistence_size}
-    storageClassName: ${persistence_storage_class}
-%{ endif }
-
-%{ if num_replicas > 1 }
-  replicas: ${num_replicas}
-%{ endif }
+deploymentMode: SingleBinary # right now we support this simplest loki setup only, TODO: consider level up and support multi component loki
 
 %{ if create_service_account }
-  serviceAccount:
-    create: ${create_service_account}
-    name: ${service_account_name}
-    annotations:
-  %{for k, v in service_account_annotations }
-      ${k}: "${v}"
-  %{~ endfor }
+serviceAccount:
+  create: ${create_service_account}
+  name: ${service_account_name}
+  annotations:
+%{for k, v in service_account_annotations }
+    ${k}: "${v}"
+%{~ endfor }
 %{ endif }
 
-  resources:
-    request:
-      cpu: ${request_cpu}
-      memory: ${request_mem}
-    limits:
-      cpu: ${limit_cpu}
-      memory: ${limit_mem}
+# disable chart test and related canary setup(TODO: check this components, maybe they are something to have enabled)
+test:
+  enabled: false
+lokiCanary:
+  enabled: false
 
-  config:
-%{ if log_volume_enabled }
-    limits_config:
-      volume_enabled: ${log_volume_enabled}
-%{ endif }
+# TODO: for now disabled, it seems we can use this option to expose loki endpoint, it has options to configure ingress/auth
+gateway:
+  enabled: false
 
-%{ if num_replicas > 1 }
-    ingester:
-      lifecycler:
-        ring:
-          kvstore:
-            store: memberlist
-          replication_factor: ${num_replicas}
-        heartbeat_period: 10s
-        join_after: 15s
-    memberlist:
-      join_members:
-        - loki-memberlist:7946
-%{ endif }
+loki:
+  singleBinary:
 
-%{ if length(schema_configs_raw) > 0 }
-    schema_config:
-      configs:
-        ${indent(8,schema_configs_yaml)}
-%{ else }
-    schema_config:
-      configs: []
-%{ endif }
+  %{ if persistence_enabled }
+    persistence:
+      enabled: ${persistence_enabled}
+      accessModes:
+        - ${persistence_access_mode}
+      size: ${persistence_size}
+      storageClassName: ${persistence_storage_class}
+  %{ endif }
 
-%{ if length(storage_configs) > 0 }
-    storage_config:
-%{ for k, v in storage_configs }
-      ${k}:
-%{ for inner_key, inner_value in v }
-        ${inner_key}: ${inner_value}
-%{ endfor }
-%{ endfor }
-%{ else }
-    storage_config: {}
-%{ endif }
+  %{ if num_replicas > 1 }
+    replicas: ${num_replicas}
+  %{ endif }
+    resources:
+      request:
+        cpu: ${request_cpu}
+        memory: ${request_mem}
+      limits:
+        cpu: ${limit_cpu}
+        memory: ${limit_mem}
 
-    limits_config:
-      retention_period: ${retention_period}
+  %{ if num_replicas > 1 }
+  ingester:
+    lifecycler:
+      ring:
+        kvstore:
+          store: memberlist
+        replication_factor: ${num_replicas}
+      heartbeat_period: 10s
+      join_after: 15s
+  memberlistConfig:
+    join_members:
+      - loki-memberlist:7946
+  %{ endif }
 
-promtail:
-  enabled: ${promtail_enabled}
-  config:
-    logLevel: ${promtail_log_level}
-    serverPort: ${promtail_server_port}
-    clients:
-%{~ for c in promtail_clients }
-      - url: ${c}
-%{ endfor }
-    logFormat: ${log_format}
-    snippets:
-%{ if length(promtail_extra_label_configs_raw) > 0 }
-      extraRelabelConfigs:
-      ${indent(6, promtail_extra_label_configs_yaml)}
-%{ else }
-      extraRelabelConfigs: []
-%{ endif }
-%{ if length(promtail_extra_scrape_configs) > 0 }
-      extraScrapeConfigs: |
-        ${indent(8, promtail_extra_scrape_configs)}
-%{ else }
-      extraScrapeConfigs: ""
-%{ endif }
+  %{ if length(schema_configs) > 0 }
+  schemaConfig:
+    configs: ${schema_configs}
+  %{ else }
+  schemaConfig:
+    configs: []
+  %{ endif }
 
-fluent-bit:
-  enabled: ${enabled_fluentbit}
+  storage: ${storage}
 
-test_pod:
-  enabled: ${enabled_test_pod}
+  %{ if log_volume_enabled }
+  limits_config:
+    volume_enabled: ${log_volume_enabled}
+  %{ endif }
+
+  retention_deletes_enabled: true
+  retention_period: ${retention_period}

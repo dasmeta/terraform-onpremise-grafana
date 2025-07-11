@@ -1,12 +1,13 @@
-
-variable "balancer_name" {
+variable "pod" {
   type        = string
-  description = "ALB name"
+  default     = "ingress-nginx-controller"
+  description = "The name identifier/prefix of nginx ingress controller pods"
 }
 
-variable "region" {
-  type    = string
-  default = ""
+variable "namespace" {
+  type        = string
+  default     = "ingress-nginx"
+  description = "The namespace where nginx ingress controller is deployed"
 }
 
 variable "datasource_uid" {

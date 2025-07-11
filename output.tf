@@ -7,3 +7,7 @@ output "dashboards" {
 output "grafana" {
   value = module.grafana
 }
+
+output "alerts" {
+  value = concat(var.alerts.rules, try(module.application_dashboard[0].widget_alert_rules, []))
+}

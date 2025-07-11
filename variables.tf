@@ -26,11 +26,12 @@ variable "aws_region" {
 
 variable "application_dashboard" {
   type = object({
-    rows = optional(any, [])
-    data_source = object({ # global/default datasource, TODO: create datasource inside the module
-      uid  = string
+    folder_name = optional(string, "application-dashboard") # the folder name for dashboard
+    rows        = optional(any, [])
+    data_source = optional(object({
+      uid  = optional(string, "prometheus")
       type = optional(string, "prometheus")
-    })
+    }), {})
     variables = optional(list(object({ # Allows to define variables to be used in dashboard
       name        = string
       type        = optional(string, "custom")
@@ -46,6 +47,7 @@ variable "application_dashboard" {
         text     = optional(string, null)
       })), [])
     })), [])
+    alerts = optional(any, { enabled = true }) # Allows to configure globally dashboard block/(sla|ingress|service) blocks/widgets related alerts
   })
   default = {
     rows        = [],
@@ -57,16 +59,19 @@ variable "application_dashboard" {
 
 variable "alerts" {
   type = object({
-    alert_interval_seconds = optional(number, 10) # The interval, in seconds, at which all rules in the group are evaluated. If a group contains many rules, the rules are evaluated sequentially
-    disable_provenance     = optional(bool, true) # Allow modifying resources from other sources than Terraform or the Grafana API
-    rules = optional(                             # Describes alert folders, groups and rules
-      list(object({
+    alert_interval_seconds = optional(number, 10)       # The interval, in seconds, at which all rules in the group are evaluated. If a group contains many rules, the rules are evaluated sequentially
+    disable_provenance     = optional(bool, true)       # Allow modifying resources from other sources than Terraform or the Grafana API
+    create_folder          = optional(bool, false)      # whether to create folder to place app dashboard and alerts there, if folder with provided name exist already no need to create it again
+    folder_name            = optional(string, null)     # The folder name for dashboard, if not set it defaults to var.application_dashboard.folder_name
+    group                  = optional(string, "custom") # The alerts general group name
+    rules = optional(
+      list(object({                                                      # Describes custom alert rules
         name                 = string                                    # The name of the alert rule
         no_data_state        = optional(string, "NoData")                # Describes what state to enter when the rule's query returns No Data
         exec_err_state       = optional(string, "Error")                 # Describes what state to enter when the rule's query is invalid and the rule cannot be executed
         summary              = optional(string, null)                    # Rule annotation as a summary, if not passed automatically generated based on data
         labels               = optional(map(any), { "priority" : "P1" }) # Labels help to define matchers in notification policy to control where to send each alert
-        folder_name          = optional(string, "Main Alerts")           # Grafana folder name in which the rule will be created, the folder name used also as alert group name with suffix " Group"
+        group                = optional(string, "custom")                # Grafana alert group name in which the rule will be created/grouped
         datasource           = string                                    # Name of the datasource used for the alert
         expr                 = optional(string, null)                    # Full expression for the alert
         metric_name          = optional(string, "")                      # Prometheus metric name which queries the data for the alert
@@ -74,7 +79,7 @@ variable "alerts" {
         metric_interval      = optional(string, "")                      # The time interval with using functions like rate
         settings_mode        = optional(string, "replaceNN")             # The mode used in B block, possible values are Strict, replaceNN, dropNN
         settings_replaceWith = optional(number, 0)                       # The value by which NaN results of the query will be replaced
-        filters              = optional(any, null)                       # Filters object to identify each service for alerting
+        filters              = optional(any, {})                         # Filters object to identify each service for alerting
         function             = optional(string, "mean")                  # One of Reduce functions which will be used in B block for alerting
         equation             = string                                    # The equation in the math expression which compares B blocks value with a number and generates an alert if needed. Possible values: gt, lt, gte, lte, e
         threshold            = number                                    # The value against which B blocks are compared in the math expression
@@ -167,13 +172,14 @@ variable "alerts" {
     }), null)
   })
 
-  default = {}
+  default     = {}
+  description = "Alerting configurations, NOTE: we have also option to create alert rules attached to dashboard widget blocks"
 }
 
-variable "grafana_configs" {
+variable "grafana" {
   type = object({
     enabled       = optional(bool, true)
-    chart_version = optional(string, "8.15.0")
+    chart_version = optional(string, "9.2.9")
     resources = optional(object({
       request = optional(object({
         cpu = optional(string, "1")
@@ -184,8 +190,25 @@ variable "grafana_configs" {
         mem = optional(string, "3Gi")
       }), {})
     }), {})
-    persistence = optional(object({
-      enabled       = optional(bool, true)
+    database = optional(object({           # configure external(or in helm created) database base storing/persisting grafana data
+      enabled       = optional(bool, true) # whether database based persistence is enabled
+      create        = optional(bool, true) # whether to create mysql databases or use already existing database
+      name          = optional(string, "grafana")
+      type          = optional(string, "mysql") # when we set external database we can set any sql compatible one like postgresql or ms sql, but when we create database it supports only mysql and changing this field do not affect
+      host          = optional(string, null)    # it will set right host for grafana mysql in case create=true
+      user          = optional(string, "grafana")
+      password      = optional(string, null)    # if not set it will use var.grafana_admin_password
+      root_password = optional(string, null)    # if not set it will use var.grafana_admin_password
+      persistence = optional(object({           # allows to configure created(when database.create=true) mysql databases storage/persistence configs
+        enabled      = optional(bool, true)     # whether to have created in k8s mysql database with persistence
+        size         = optional(string, "20Gi") # the size of primary persistent volume of mysql when creating it
+        storageClass = optional(string, "")     # if set "" it takes the default storage class of k8s
+      }), {})
+      storage_size = optional(string, "20Gi")           # the size of primary persistent volume of mysql when creating it
+      extra_flags  = optional(string, "--skip-log-bin") # allows to set extra flags(whitespace separated) on grafana mysql primary instance, we have by default skip-log-bin flag set to disable bin-logs which overload mysql disc and/but we do not use multi replica mysql here
+    }), {})
+    persistence = optional(object({ # configure pvc base storing/persisting grafana data(it uses sqlite DB in this mode), NOTE: we use mysql database for data storage by default and no need to enable persistence if DB is set, so that we have persistence disable here by default
+      enabled       = optional(bool, false)
       type          = optional(string, "pvc")
       size          = optional(string, "20Gi")
       storage_class = optional(string, "gp2")
@@ -201,11 +224,11 @@ variable "grafana_configs" {
       alb_certificate = optional(string, "")
     }))
 
-    redundency = optional(object({
+    redundancy = optional(object({
       enabled                  = optional(bool, false)
       max_replicas             = optional(number, 4)
       min_replicas             = optional(number, 1)
-      redundency_storage_class = optional(string, "efs-sc-root")
+      redundancy_storage_class = optional(string, "efs-sc-root")
     }), {})
 
     datasources = optional(list(map(any))) # a list of grafana datasource configurations. Based on the type of the datasource the module will fill in the missing configuration for some supported datasources. Mandatory are name and type fields
@@ -217,10 +240,10 @@ variable "grafana_configs" {
   default     = {}
 }
 
-variable "prometheus_configs" {
+variable "prometheus" {
   type = object({
     enabled        = optional(bool, true)
-    chart_version  = optional(string, "70.3.0")
+    chart_version  = optional(string, "75.8.0")
     retention_days = optional(string, "15d")
     storage_class  = optional(string, "gp2")
     storage_size   = optional(string, "100Gi")
@@ -242,7 +265,7 @@ variable "prometheus_configs" {
   default     = {}
 }
 
-variable "tempo_configs" {
+variable "tempo" {
   type = object({
     enabled                = optional(bool, false)
     chart_version          = optional(string, "1.20.0")
@@ -268,16 +291,15 @@ variable "tempo_configs" {
   default     = {}
 }
 
-variable "loki_configs" {
+variable "loki" {
   type = object({
-    enabled         = optional(bool, false)
-    chart_version   = optional(string, "2.10.2")
-    enable_test_pod = optional(bool, false)
+    enabled       = optional(bool, false)
+    chart_version = optional(string, "6.30.1")
     loki = optional(object({
       url            = optional(string, "")
       volume_enabled = optional(bool, true)
       send_logs_s3 = optional(object({
-        enable       = optional(bool, false)
+        enable       = optional(bool, true)
         bucket_name  = optional(string, "")
         aws_role_arn = optional(string, "")
       }), {})
@@ -293,16 +315,16 @@ variable "loki_configs" {
         access_mode   = optional(string, "ReadWriteOnce")
       }), {})
       schema_configs = optional(list(object({
-        from         = string
-        object_store = optional(string, "filesystem")
-        store        = optional(string, "boltdb-shipper")
-        schema       = optional(string, "v12")
+        from         = optional(string, "2025-01-01") # defines starting at which date this storage schema will be applied
+        object_store = optional(string, "s3")
+        store        = optional(string, "tsdb")
+        schema       = optional(string, "v13")
         index = optional(object({
           prefix = optional(string, "index_")
           period = optional(string, "24h")
-        }))
-      })), [])
-      storage_configs  = optional(map(any), {})
+        }), {})
+      })), [{}])
+      storage          = optional(map(any), {})
       replicas         = optional(number, 1)
       retention_period = optional(string, "168h")
       resources = optional(object({
@@ -327,7 +349,6 @@ variable "loki_configs" {
       ignored_containers   = optional(list(string), [])
       ignored_namespaces   = optional(list(string), [])
     }), {})
-    fluentbit_enabled = optional(bool, false)
   })
   description = "Values to pass to loki helm chart"
   default     = {}

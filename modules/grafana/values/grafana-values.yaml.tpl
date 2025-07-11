@@ -1,15 +1,20 @@
-
+%{ if enabled_persistence }
 persistence:
   enabled: ${enabled_persistence}
   storageClassName: gp2
   type: ${persistence_type}
   size: ${persistence_size}
   storageClassName: ${persistence_storage_class}
-%{ if redundency_enabled }
+%{ if redundancy_enabled }
   accessModes:
     - ReadWriteMany
   existingClaim: ${ pvc_name }
 %{ endif }
+%{ endif }
+
+grafana.ini:
+  database: ${database}
+assertNoLeakedSecrets: false
 
 serviceAccount:
   create: true
@@ -56,7 +61,7 @@ serviceMonitor:
     matchLabels:
       release: prometheus
 
-%{ if redundency_enabled }
+%{ if redundancy_enabled }
 topologySpreadConstraints:
   - maxSkew: 1
     topologyKey: "kubernetes.io/hostname"

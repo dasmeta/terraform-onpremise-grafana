@@ -4,10 +4,10 @@ module "block_ingress" {
 
   for_each = { for index, item in try(local.blocks_by_type["ingress"], []) : index => item }
 
-  balancer_name = try(each.value.block.balancer_name, null)
-  region        = try(each.value.block.region, null)
+  pod       = try(each.value.block.pod, "ingress-nginx-controller")
+  namespace = try(each.value.block.namespace, "ingress-nginx")
 
-  datasource_uid = try(each.value.block.datasource_uid, null)
+  datasource_uid = try(each.value.block.datasource_uid, var.data_source.uid, null)
 }
 
 module "block_service" {
@@ -22,7 +22,6 @@ module "block_service" {
   loki_datasource_uid       = try(each.value.block.loki_datasource_uid, null)
   show_err_logs             = try(each.value.block.show_err_logs, true)
   expr                      = try(each.value.block.expr, "")
-
 }
 
 module "block_sla" {
@@ -55,7 +54,6 @@ module "block_cloudwatch" {
 
   region         = try(each.value.block.region, "")
   datasource_uid = try(each.value.block.datasource_uid, "cloudwatch")
-
 }
 
 module "block_alb_ingress" {

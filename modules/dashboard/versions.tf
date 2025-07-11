@@ -5,12 +5,16 @@ terraform {
 
     grafana = {
       source  = "grafana/grafana"
-      version = ">= 3.7.0"
+      version = "~> 3.7"
     }
 
     random = {
       source  = "hashicorp/random"
-      version = ">= 3.6.2"
+      version = "~> 3.6"
+    }
+    deepmerge = {
+      source  = "isometry/deepmerge"
+      version = "1.0.2"
     }
   }
 }

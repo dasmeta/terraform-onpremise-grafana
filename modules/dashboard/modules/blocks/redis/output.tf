@@ -18,7 +18,7 @@ output "result" {
       { type : "redis/connections", redis_name = var.redis_name, namespace = var.namespace, width : 4 },
       { type : "redis/latency", redis_name = var.redis_name, namespace = var.namespace, width : 4 },
       { type : "redis/network", redis_name = var.redis_name, namespace = var.namespace, width : 4 },
-      { type : "container/network-transmit", pod : var.redis_pod, width : 4 },
+      { type : "container/network-error", pod : var.redis_pod, width : 4 },
     ],
     [
       { type : "redis/total-commands", redis_name = var.redis_name, namespace = var.namespace, width : 4 },

@@ -18,6 +18,6 @@ module "base" {
   unit = "bytes"
 
   metrics = [
-    { label : "__auto", expression : "container_memory_working_set_bytes{pod=~\"${var.pod}-[^-]+-[^-]+$\", namespace=\"${var.namespace}\"}" },
+    { label : "__auto", expression : "container_memory_working_set_bytes{pod=~\"(.+-)?${var.pod}(-[^-]+)?-[^-]+$\", namespace=\"${var.namespace}\"}" },
   ]
 }

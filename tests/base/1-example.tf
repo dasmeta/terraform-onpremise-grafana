@@ -68,7 +68,7 @@ module "this" {
     ]
   }
 
-  grafana_configs = {
+  grafana = {
 
     resources = {
       request = {
@@ -89,7 +89,7 @@ module "this" {
     }
     datasources = [{ type = "cloudwatch", name = "Cloudwatch" }]
 
-    # redundency = {
+    # redundancy = {
     #   enabled      = true
     #   max_replicas = 3
     #   min_replicas = 2
@@ -97,7 +97,7 @@ module "this" {
 
   }
 
-  tempo_configs = {
+  tempo = {
     enabled         = false
     storage_backend = "s3"
     bucket_name     = "my-tempo-traces-kauwnw"
@@ -116,11 +116,11 @@ module "this" {
     }
   }
 
-  loki_configs = {
+  loki = {
     enabled = true
   }
 
-  prometheus_configs = {
+  prometheus = {
     enabled = true
   }
   grafana_admin_password = "admin"
