@@ -23,7 +23,6 @@ variable "release_name" {
 
 variable "configs" {
   type = object({
-    enable_test_pod = optional(bool, false)
     loki = optional(object({
       url                = optional(string, "")
       log_volume_enabled = optional(bool, true)
@@ -79,7 +78,6 @@ variable "configs" {
       ignored_containers   = optional(list(string), [])
       ignored_namespaces   = optional(list(string), [])
     }), {})
-    fluentbit_enabled = optional(bool, false)
   })
   description = "Values to pass to loki helm chart"
   default     = {}

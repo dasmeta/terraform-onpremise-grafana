@@ -50,8 +50,6 @@ resource "helm_release" "promtail" {
       promtail_extra_label_configs_raw  = local.extra_relabel_configs
       promtail_clients                  = try(var.configs.promtails.clients, ["http://${var.release_name}:3100/loki/api/v1/push"])
       promtail_server_port              = var.configs.promtail.server_port
-      enabled_fluentbit                 = var.configs.fluentbit_enabled
-      enabled_test_pod                  = var.configs.enable_test_pod
       }
     )
   ]

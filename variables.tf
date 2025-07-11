@@ -293,9 +293,8 @@ variable "tempo" {
 
 variable "loki" {
   type = object({
-    enabled         = optional(bool, false)
-    chart_version   = optional(string, "6.30.1")
-    enable_test_pod = optional(bool, false)
+    enabled       = optional(bool, false)
+    chart_version = optional(string, "6.30.1")
     loki = optional(object({
       url            = optional(string, "")
       volume_enabled = optional(bool, true)
@@ -350,7 +349,6 @@ variable "loki" {
       ignored_containers   = optional(list(string), [])
       ignored_namespaces   = optional(list(string), [])
     }), {})
-    fluentbit_enabled = optional(bool, false)
   })
   description = "Values to pass to loki helm chart"
   default     = {}
