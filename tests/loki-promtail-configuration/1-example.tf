@@ -45,6 +45,11 @@ module "this" {
         "alb.ingress.kubernetes.io/group.name" = "dev-ingress"
       }
     }
+
+    trace_log_mapping = {
+      enabled       = true
+      trace_pattern = "trace_id"
+    }
   }
 
   loki = {
@@ -55,6 +60,29 @@ module "this" {
     promtail = {
       ignored_namespaces = ["kube-system", "monitoring"]
       ignored_containers = ["loki", "manager"]
+      extra_pipeline_stages = [
+        {
+          match = {
+            selector = "{namespace=~\"external-api-.*\"}"
+            stages = [
+              {
+                json = {
+                  expressions = { log = "message" }
+                }
+              },
+              {
+                regex = {
+                  expression = "(kube-probe|health|prometheus|liveness|ELB-HealthChecker|Amazon-Route53-Health-Check-Service|AUDIT-LOG)"
+                  source     = "log"
+                }
+              },
+              {
+                drop = { expression = "true" }
+              }
+            ]
+          }
+        }
+      ]
       extra_scrape_configs = [
         {
           job_name = "test-scrape-job"
@@ -99,6 +127,24 @@ module "this" {
     }
   }
 
+  tempo = {
+    enabled         = true
+    storage_backend = "s3"
+    bucket_name     = "my-tempo-traces-kauwnw"
+    # tempo_role_arn    = "arn:aws:iam::12345678901:role/tempo-s3-access-manual" # if the role arn is provided then a role will not be created
+    cluster_name = "eks-dev"
+
+    metrics_generator = {
+      enabled = true
+    }
+    enable_service_monitor = true
+
+    persistence = {
+      enabled       = true
+      size          = "10Gi"
+      storage_class = "gp2"
+    }
+  }
   prometheus = {
     enabled = true
   }

@@ -1,5 +1,6 @@
 locals {
   # Promtail related configs
+  default_promtail_pipelines_stages = [{ cri = {} }]
   extra_relabel_configs = concat(
     try(var.configs.promtail.extra_relabel_configs, []),
     length(var.configs.promtail.ignored_namespaces) > 0 ?
@@ -19,6 +20,7 @@ locals {
   )
   extra_relabel_configs_yaml = yamlencode(local.extra_relabel_configs)
   extra_scrape_configs_yaml  = length(var.configs.promtail.extra_scrape_configs) > 0 ? yamlencode(var.configs.promtail.extra_scrape_configs) : ""
+  extra_pipeline_stages_yaml = yamlencode(concat(local.default_promtail_pipelines_stages, var.configs.promtail.extra_pipeline_stages))
 
   # Loki related configs
   create_service_account      = try(var.configs.loki.service_account.enable, false) ? true : (var.configs.loki.send_logs_s3.enable ? true : false)
@@ -45,4 +47,13 @@ locals {
   loki_storage = (
     var.configs.loki.send_logs_s3.enable && length(var.configs.loki.storage) == 0
   ) ? jsonencode(local.default_loki_storage) : jsonencode(var.configs.loki.storage)
+}
+
+
+output "extra_scrape_configs" {
+  value = local.extra_pipeline_stages_yaml
+}
+
+output "extra_pipeline_stages_debug" {
+  value = var.configs.promtail.extra_pipeline_stages
 }

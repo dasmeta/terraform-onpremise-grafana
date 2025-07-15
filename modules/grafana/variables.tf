@@ -96,6 +96,10 @@ variable "configs" {
       redundancy_storage_class = optional(string, "efs-sc-root")
     }), {})
 
+    trace_log_mapping = optional(object({
+      enabled       = optional(bool, false)
+      trace_pattern = optional(string, "trace_id=(\\w+)")
+    }), {})
     replicas  = optional(number, 1)
     image_tag = optional(string, "11.4.2")
   })
