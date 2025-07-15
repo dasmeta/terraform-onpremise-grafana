@@ -156,4 +156,6 @@ locals {
     name          = coalesce(var.configs.database.name, "grafana"),
     type          = var.configs.database.create ? "mysql" : coalesce(var.configs.database.type, "mysql"),
   }
+
+  grafana_root_url = "https://${var.configs.ingress.hosts[0]}"
 }

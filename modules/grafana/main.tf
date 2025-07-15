@@ -42,6 +42,8 @@ resource "helm_release" "grafana" {
       hpa_min_replicas   = var.configs.redundancy.min_replicas
 
       grafana_iam_role_arn = try(module.grafana_cloudwatch_role[0].arn, "")
+
+      grafana_root_url = local.grafana_root_url
     })
   ]
 
