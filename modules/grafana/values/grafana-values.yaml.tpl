@@ -14,6 +14,9 @@ persistence:
 
 grafana.ini:
   database: ${database}
+  server:
+    root_url: ${grafana_root_url}
+    serve_from_sub_path: false
 assertNoLeakedSecrets: false
 
 serviceAccount:

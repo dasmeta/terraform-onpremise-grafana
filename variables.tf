@@ -232,6 +232,10 @@ variable "grafana" {
     }), {})
 
     datasources = optional(list(map(any))) # a list of grafana datasource configurations. Based on the type of the datasource the module will fill in the missing configuration for some supported datasources. Mandatory are name and type fields
+    trace_log_mapping = optional(object({
+      enabled       = optional(bool, false)
+      trace_pattern = optional(string, "trace_id=(\\w+)")
+    }), {})
 
     replicas = optional(number, 1)
   })
@@ -339,15 +343,16 @@ variable "loki" {
       }), {})
     }), {})
     promtail = optional(object({
-      enabled              = optional(bool, true)
-      log_level            = optional(string, "info")
-      server_port          = optional(string, "3101")
-      clients              = optional(list(string), [])
-      log_format           = optional(string, "logfmt")
-      extra_scrape_configs = optional(list(any), [])
-      extra_label_configs  = optional(list(map(string)), [])
-      ignored_containers   = optional(list(string), [])
-      ignored_namespaces   = optional(list(string), [])
+      enabled               = optional(bool, true)
+      log_level             = optional(string, "info")
+      server_port           = optional(string, "3101")
+      clients               = optional(list(string), [])
+      log_format            = optional(string, "logfmt")
+      extra_scrape_configs  = optional(list(any), [])
+      extra_label_configs   = optional(list(map(string)), [])
+      extra_pipeline_stages = optional(any, [])
+      ignored_containers    = optional(list(string), [])
+      ignored_namespaces    = optional(list(string), [])
     }), {})
   })
   description = "Values to pass to loki helm chart"

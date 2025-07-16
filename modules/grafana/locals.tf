@@ -45,7 +45,7 @@ locals {
       access_mode = "proxy"
       uid         = "prometheus"
       url         = "http://prometheus-operated.${var.namespace}.svc.cluster.local:9090"
-      is_deafult  = false
+      is_deafult  = true
     }
     cloudwatch = {
       type        = "cloudwatch"
@@ -65,6 +65,19 @@ locals {
       uid         = "loki"
       url         = "http://loki.${var.namespace}.svc.cluster.local:3100"
       is_default  = false
+      encoded_json = jsonencode(merge(
+        var.configs.trace_log_mapping.enabled ?
+        {
+          derivedFields = [
+            {
+              name          = "traceID"
+              matcherRegex  = var.configs.trace_log_mapping.trace_pattern
+              datasourceUid = "tempo"
+              url           = "$${__value.raw}"
+            }
+          ]
+        } : {}
+      ))
     }
     tempo = {
       type        = "tempo"
@@ -143,4 +156,6 @@ locals {
     name          = coalesce(var.configs.database.name, "grafana"),
     type          = var.configs.database.create ? "mysql" : coalesce(var.configs.database.type, "mysql"),
   }
+
+  grafana_root_url = "https://${var.configs.ingress.hosts[0]}"
 }

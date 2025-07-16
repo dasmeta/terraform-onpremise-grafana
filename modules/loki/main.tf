@@ -39,7 +39,7 @@ resource "helm_release" "promtail" {
   namespace        = var.namespace
   create_namespace = false
   version          = var.promtail_chart_version
-  timeout          = 600
+  timeout          = 300
 
   values = [
     templatefile("${path.module}/values/promtail-values.tpl", {
@@ -48,6 +48,7 @@ resource "helm_release" "promtail" {
       promtail_extra_scrape_configs     = local.extra_scrape_configs_yaml
       promtail_extra_label_configs_yaml = local.extra_relabel_configs_yaml
       promtail_extra_label_configs_raw  = local.extra_relabel_configs
+      promtail_extra_pipeline_stages    = local.extra_pipeline_stages_yaml
       promtail_clients                  = try(var.configs.promtails.clients, ["http://${var.release_name}:3100/loki/api/v1/push"])
       promtail_server_port              = var.configs.promtail.server_port
       }
