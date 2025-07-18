@@ -59,15 +59,14 @@ variable "configs" {
       type          = optional(string, "mysql") # when we set external database we can set any sql compatible one like postgresql or ms sql, but when we create database it supports only mysql and changing this field do not affect
       host          = optional(string, null)    # it will set right host for grafana mysql in case create=true
       user          = optional(string, "grafana")
-      password      = optional(string, null)    # if not set it will use var.grafana_admin_password
-      root_password = optional(string, null)    # if not set it will use var.grafana_admin_password
-      persistence = optional(object({           # allows to configure created(when database.create=true) mysql databases storage/persistence configs
-        enabled      = optional(bool, true)     # whether to have created in k8s mysql database with persistence
-        size         = optional(string, "20Gi") # the size of primary persistent volume of mysql when creating it
-        storageClass = optional(string, "")     # if set "" it takes the default storage class of k8s
+      password      = optional(string, null)     # if not set it will use var.grafana_admin_password
+      root_password = optional(string, null)     # if not set it will use var.grafana_admin_password
+      persistence = optional(object({            # allows to configure created(when database.create=true) mysql databases storage/persistence configs
+        enabled       = optional(bool, true)     # whether to have created in k8s mysql database with persistence
+        size          = optional(string, "20Gi") # the size of primary persistent volume of mysql when creating it
+        storage_class = optional(string, "gp2")  # default storage class for the mysql database
       }), {})
-      storage_size = optional(string, "20Gi")           # the size of primary persistent volume of mysql when creating it
-      extra_flags  = optional(string, "--skip-log-bin") # allows to set extra flags(whitespace separated) on grafana mysql primary instance, we have by default skip-log-bin flag set to disable bin-logs which overload mysql disc and/but we do not use multi replica mysql here
+      extra_flags = optional(string, "--skip-log-bin") # allows to set extra flags(whitespace separated) on grafana mysql primary instance, we have by default skip-log-bin flag set to disable bin-logs which overload mysql disc and/but we do not use multi replica mysql here
 
       # TODO: implement multi-replica/redundant grafana mysql database creation possibility
     }), {})
