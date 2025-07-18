@@ -52,7 +52,7 @@ resource "helm_release" "grafana" {
     value = var.grafana_admin_password
   }
 
-  depends_on = [kubernetes_persistent_volume_claim.grafana_efs, module.grafana_cloudwatch_role]
+  depends_on = [kubernetes_persistent_volume_claim.grafana_efs, module.grafana_cloudwatch_role, helm_release.mysql]
 }
 
 resource "helm_release" "mysql" {
@@ -67,7 +67,6 @@ resource "helm_release" "mysql" {
   timeout          = 600
 
   values = [jsonencode({
-    persistence = var.configs.database.persistence
     auth = {
       username     = local.database.username
       database     = local.database.name,
@@ -76,6 +75,11 @@ resource "helm_release" "mysql" {
     }
     primary = {
       extraFlags = var.configs.database.extra_flags
+      persistence = {
+        enabled      = var.configs.database.persistence.enabled
+        size         = var.configs.database.persistence.size
+        storageClass = var.configs.database.persistence.storage_class
+      }
     }
   })]
 }

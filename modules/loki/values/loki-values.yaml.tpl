@@ -21,8 +21,10 @@ gateway:
   enabled: false
 
 loki:
+  auth_enabled: false
+  commonConfig:
+    replication_factor: 1
   singleBinary:
-
   %{ if persistence_enabled }
     persistence:
       enabled: ${persistence_enabled}
@@ -43,8 +45,17 @@ loki:
         cpu: ${limit_cpu}
         memory: ${limit_mem}
 
-  %{ if num_replicas > 1 }
+%{ if tonumber(num_replicas) > 1 }
   ingester:
+    wal:
+      enabled: true
+    persistence:
+      enabled: true
+      size: 10Gi
+    chunk_idle_period: 5m
+    chunk_block_size: 262144
+    max_chunk_age: 1h
+    chunk_target_size: 1048576
     lifecycler:
       ring:
         kvstore:
@@ -54,8 +65,14 @@ loki:
       join_after: 15s
   memberlistConfig:
     join_members:
-      - loki-memberlist:7946
-  %{ endif }
+      - loki-memberlist.monitoring.svc.cluster.local:7946
+%{ else }
+  ingester:
+    lifecycler:
+      ring:
+        kvstore:
+          store: inmemory
+%{ endif }
 
   %{ if length(schema_configs) > 0 }
   schemaConfig:
@@ -70,6 +87,11 @@ loki:
   %{ if log_volume_enabled }
   limits_config:
     volume_enabled: ${log_volume_enabled}
+    max_query_length: 1h
+    max_streams_per_user: 1000
+    max_entries_limit_per_query: 5000
+    ingestion_rate_mb: 16
+    ingestion_burst_size_mb: 32
   %{ endif }
 
   retention_deletes_enabled: true
