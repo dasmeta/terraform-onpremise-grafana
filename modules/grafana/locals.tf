@@ -1,42 +1,4 @@
 locals {
-  eks_oidc_provider_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${replace(data.aws_eks_cluster.this.identity[0].oidc[0].issuer, "https://", "")}"
-
-  cloudwatch_policies = [
-    {
-      actions = [
-        "cloudwatch:DescribeAlarmsForMetric",
-        "cloudwatch:DescribeAlarmHistory",
-        "cloudwatch:DescribeAlarms",
-        "cloudwatch:ListMetrics",
-        "cloudwatch:GetMetricData",
-        "cloudwatch:GetInsightRuleReport"
-      ],
-      resources = ["*"]
-    },
-    {
-      actions   = ["ec2:DescribeTags", "ec2:DescribeInstances", "ec2:DescribeRegions"],
-      resources = ["*"]
-    },
-    {
-      actions   = ["tag:GetResources"],
-      resources = ["*"]
-    },
-    {
-      actions   = ["pi:GetResourceMetrics"],
-      resources = ["*"]
-    },
-    {
-      actions = [
-        "logs:DescribeLogGroups",
-        "logs:GetLogGroupFields",
-        "logs:StartQuery",
-        "logs:StopQuery",
-        "logs:GetQueryResults",
-        "logs:GetLogEvents"
-      ],
-      resources = ["*"]
-    },
-  ]
 
   default_datasource_configs = {
     prometheus = {
@@ -46,17 +8,6 @@ locals {
       uid         = "prometheus"
       url         = "http://prometheus-operated.${var.namespace}.svc.cluster.local:9090"
       is_deafult  = true
-    }
-    cloudwatch = {
-      type        = "cloudwatch"
-      name        = "Cloudwatch"
-      access_mode = "proxy"
-      uid         = "cloudwatch"
-      encoded_json = jsonencode({
-        authType      = "default"
-        defaultRegion = data.aws_region.current.name
-      })
-      is_default = false
     }
     loki = {
       type        = "loki"

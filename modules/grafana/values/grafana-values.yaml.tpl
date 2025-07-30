@@ -20,10 +20,12 @@ grafana.ini:
 assertNoLeakedSecrets: false
 
 serviceAccount:
-  create: true
+  create: ${create_service_account}
   name: grafana-service-account
   annotations:
-    eks.amazonaws.com/role-arn: ${ grafana_iam_role_arn }
+%{~ for k, v in service_account_annotations }
+    ${k}: "${v}"
+%{~ endfor }
 
 ingress:
   enabled: true

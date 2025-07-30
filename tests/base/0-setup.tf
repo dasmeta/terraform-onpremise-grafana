@@ -10,17 +10,13 @@ terraform {
       source  = "hashicorp/helm"
       version = "~> 2.17"
     }
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
   }
 }
 
 # you can start dev grafana server locally using `docker compose up -d` from `/tests` folder before running the test locally
 provider "grafana" {
-  url  = "https://grafana.example.com"
-  auth = "admin:admin"
+  url  = "https://grafana.dev.trysela.com"
+  auth = "admin:adminPassport333"
 
 }
 
@@ -32,8 +28,4 @@ provider "helm" {
 
 provider "kubernetes" {
   config_path = "~/.kube/config"
-}
-
-provider "aws" {
-  region = "us-east-2"
 }

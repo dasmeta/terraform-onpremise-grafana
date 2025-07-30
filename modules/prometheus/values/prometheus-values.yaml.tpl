@@ -12,6 +12,34 @@ prometheus:
   prometheusSpec:
     replicas: ${replicas}
     retention: ${retention_days}
+%{ if ingress_enabled }
+  ingress:
+    enabled: ${ingress_enabled}
+    ingressClassName: ${ingress_class}
+    annotations:
+%{~ for k, v in ingress_annotations }
+      ${k}: "${v}"
+%{~ endfor }
+    hosts:
+%{~ for h in ingress_hosts }
+    - ${h}
+%{~ endfor }
+%{ for path in ingress_paths }
+    paths:
+    - ${path}
+%{~ endfor}
+%{ if length(tls_secrets) > 0 }
+    tls:
+%{~ for item in tls_secrets }
+    - secretName: ${item.secret_name}
+      hosts:
+%{~ for host in item.hosts }
+      - ${host}
+%{~ endfor ~}
+%{ endfor }
+%{ endif }
+%{ endif }
+
     storageSpec:
       volumeClaimTemplate:
         spec:

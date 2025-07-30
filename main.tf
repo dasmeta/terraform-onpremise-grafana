@@ -15,6 +15,7 @@ module "application_dashboard" {
 }
 
 module "application_dashboard_json" {
+  count  = length(var.dashboards_json_files) > 0 ? 1 : 0
   source = "./modules/dashboard-json"
 
   dashboard_json_files = var.dashboards_json_files
@@ -23,6 +24,8 @@ module "application_dashboard_json" {
 
 module "alerts" {
   source = "./modules/alerts"
+
+  count = length(var.alerts) > 0 ? 1 : 0
 
   alert_interval_seconds = var.alerts.alert_interval_seconds
   disable_provenance     = var.alerts.disable_provenance
@@ -44,7 +47,6 @@ module "grafana" {
   chart_version          = var.grafana.chart_version
   grafana_admin_password = var.grafana_admin_password
   configs                = var.grafana
-  cluster_name           = var.cluster_name
   datasources = concat(
     var.grafana.datasources == null ? [] : var.grafana.datasources,
     var.prometheus.enabled ? [{ type = "prometheus", name = "Prometheus" }] : [],
@@ -73,7 +75,6 @@ module "tempo" {
   chart_version = var.tempo.chart_version
   configs       = var.tempo
   namespace     = var.namespace
-  cluster_name  = var.cluster_name
 }
 
 module "loki" {
@@ -84,5 +85,4 @@ module "loki" {
   chart_version = var.loki.chart_version
   configs       = var.loki
   namespace     = var.namespace
-  cluster_name  = var.cluster_name
 }

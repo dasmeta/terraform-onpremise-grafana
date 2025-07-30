@@ -13,7 +13,7 @@ variable "chart_version" {
 variable "configs" {
   type = object({
     retention_days = optional(string, "15d")
-    storage_class  = optional(string, "gp2")
+    storage_class  = optional(string, "")
     storage_size   = optional(string, "100Gi")
     access_modes   = optional(list(string), ["ReadWriteOnce"])
     resources = optional(object({
@@ -28,6 +28,16 @@ variable "configs" {
     }), {})
     replicas            = optional(number, 2)
     enable_alertmanager = optional(bool, true)
+    ingress = optional(object({
+      enabled     = optional(bool, false)
+      type        = optional(string, "nginx")
+      public      = optional(bool, true)
+      tls_enabled = optional(bool, true)
+
+      annotations = optional(map(string), {})
+      hosts       = optional(list(string), ["prometheus.example.com"])
+      path        = optional(list(string), ["/"])
+    }), {})
   })
 
   description = "Values to send to Prometheus template values file"
