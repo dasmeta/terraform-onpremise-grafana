@@ -26,12 +26,6 @@ variable "configs" {
     loki = optional(object({
       url                = optional(string, "")
       log_volume_enabled = optional(bool, true)
-      send_logs_s3 = optional(object({
-        enable         = optional(bool, true)
-        bucket_name    = optional(string, "")
-        aws_role_arn   = optional(string, "")
-        retention_days = optional(number, 7) # remove log item after set days
-      }), {})
       service_account = optional(object({
         enable      = optional(bool, true)
         name        = optional(string, "loki")
@@ -40,12 +34,12 @@ variable "configs" {
       persistence = optional(object({
         enabled       = optional(bool, true)
         size          = optional(string, "20Gi")
-        storage_class = optional(string, "gp2")
+        storage_class = optional(string, "")
         access_mode   = optional(string, "ReadWriteOnce")
       }), {})
       schema_configs = optional(list(object({
         from         = optional(string, "2025-01-01")
-        object_store = optional(string, "s3")
+        object_store = optional(string, "filesystem")
         store        = optional(string, "tsdb")
         schema       = optional(string, "v13")
         index = optional(object({
@@ -53,7 +47,19 @@ variable "configs" {
           period = optional(string, "24h")
         }))
       })), [])
-      storage          = optional(map(any), { type = "filesystem" })
+      storage = optional(any, {
+        type = "filesystem",
+        filesystem = {
+          chunks_directory    = "/var/loki/chunks"
+          rules_directory     = "/var/loki/rules"
+          admin_api_directory = "/var/loki/admin"
+        }
+        bucketNames = {
+          chunks = "unused-for-filesystem"
+          ruler  = "unused-for-filesystem"
+          admin  = "unused-for-filesystem"
+        }
+      })
       replicas         = optional(number, 1)
       retention_period = optional(string, "168h")
       resources = optional(object({
@@ -65,6 +71,17 @@ variable "configs" {
           cpu = optional(string, "400m")
           mem = optional(string, "500Mi")
         }), {})
+      }), {})
+      ingress = optional(object({
+        enabled     = optional(bool, false)
+        type        = optional(string, "nginx")
+        public      = optional(bool, true)
+        tls_enabled = optional(bool, true)
+
+        annotations = optional(map(string), {})
+        hosts       = optional(list(string), ["loki.example.com"])
+        path        = optional(string, "/")
+        path_type   = optional(string, "Prefix")
       }), {})
     }), {})
     promtail = optional(object({
@@ -82,10 +99,4 @@ variable "configs" {
   })
   description = "Values to pass to loki helm chart"
   default     = {}
-}
-
-variable "cluster_name" {
-  type        = string
-  default     = ""
-  description = "name of the eks cluster"
 }

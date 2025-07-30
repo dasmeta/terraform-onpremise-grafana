@@ -24,6 +24,13 @@ resource "helm_release" "prometheus" {
       replicas = var.configs.replicas
 
       enable_alertmanager = var.configs.enable_alertmanager
+
+      ingress_enabled     = var.configs.ingress.enabled
+      ingress_class       = var.configs.ingress.type
+      ingress_annotations = var.configs.ingress.annotations
+      ingress_hosts       = var.configs.ingress.hosts
+      ingress_paths       = var.configs.ingress.path
+      tls_secrets         = local.ingress_tls
     })
   ]
 

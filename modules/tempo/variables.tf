@@ -1,9 +1,3 @@
-variable "cluster_name" {
-  type        = string
-  description = "name of the eks cluster"
-  default     = ""
-}
-
 variable "namespace" {
   type        = string
   description = "namespace for tempo deployment"
@@ -18,17 +12,15 @@ variable "chart_version" {
 
 variable "configs" {
   type = object({
-    tempo_role_arn           = optional(string, "")
-    storage_backend          = optional(string, "s3") # "local" or "s3"
-    bucket_name              = optional(string, "")
+    storage_backend          = optional(string, "local") # "local" or "s3"
     enable_metrics_generator = optional(bool, true)
     enable_service_monitor   = optional(bool, true)
-    tempo_role_name          = optional(string, "tempo-s3-role")
+    tempo_role_name          = optional(string, "tempo-role")
 
     persistence = optional(object({
       enabled       = optional(bool, true)
       size          = optional(string, "20Gi")
-      storage_class = optional(string, "gp2")
+      storage_class = optional(string, "")
     }), {})
 
     metrics_generator = optional(object({

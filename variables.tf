@@ -1,8 +1,3 @@
-variable "cluster_name" {
-  type        = string
-  description = "name of the eks cluster"
-}
-
 variable "name" {
   type        = string
   description = "Dashboard name"
@@ -17,11 +12,6 @@ variable "grafana_admin_password" {
 variable "namespace" {
   type    = string
   default = "monitoring"
-}
-
-variable "aws_region" {
-  type    = string
-  default = "eu-central-1"
 }
 
 variable "application_dashboard" {
@@ -202,7 +192,7 @@ variable "grafana" {
       persistence = optional(object({            # allows to configure created(when database.create=true) mysql databases storage/persistence configs
         enabled       = optional(bool, true)     # whether to have created in k8s mysql database with persistence
         size          = optional(string, "20Gi") # the size of primary persistent volume of mysql when creating it
-        storage_class = optional(string, "gp2")  # default storage class for the mysql database
+        storage_class = optional(string, "")     # default storage class for the mysql database
       }), {})
       # the size of primary persistent volume of mysql when creating it
       extra_flags = optional(string, "--skip-log-bin") # allows to set extra flags(whitespace separated) on grafana mysql primary instance, we have by default skip-log-bin flag set to disable bin-logs which overload mysql disc and/but we do not use multi replica mysql here
@@ -211,24 +201,22 @@ variable "grafana" {
       enabled       = optional(bool, false)
       type          = optional(string, "pvc")
       size          = optional(string, "20Gi")
-      storage_class = optional(string, "gp2")
+      storage_class = optional(string, "")
     }), {})
     ingress = optional(object({
-      annotations     = optional(map(string), {})
-      hosts           = optional(list(string), ["grafana.example.com"])
-      path            = optional(string, "/")
-      path_type       = optional(string, "Prefix")
-      type            = optional(string, "alb")
-      public          = optional(bool, true)
-      tls_enabled     = optional(bool, true)
-      alb_certificate = optional(string, "")
+      annotations = optional(map(string), {})
+      hosts       = optional(list(string), ["grafana.example.com"])
+      path        = optional(string, "/")
+      path_type   = optional(string, "Prefix")
+      type        = optional(string, "alb")
+      public      = optional(bool, true)
+      tls_enabled = optional(bool, true)
     }))
 
     redundancy = optional(object({
-      enabled                  = optional(bool, false)
-      max_replicas             = optional(number, 4)
-      min_replicas             = optional(number, 1)
-      redundancy_storage_class = optional(string, "efs-sc-root")
+      enabled      = optional(bool, false)
+      max_replicas = optional(number, 4)
+      min_replicas = optional(number, 1)
     }), {})
 
     datasources = optional(list(map(any))) # a list of grafana datasource configurations. Based on the type of the datasource the module will fill in the missing configuration for some supported datasources. Mandatory are name and type fields
@@ -249,7 +237,7 @@ variable "prometheus" {
     enabled        = optional(bool, true)
     chart_version  = optional(string, "75.8.0")
     retention_days = optional(string, "15d")
-    storage_class  = optional(string, "gp2")
+    storage_class  = optional(string, "")
     storage_size   = optional(string, "100Gi")
     access_modes   = optional(list(string), ["ReadWriteOnce"])
     resources = optional(object({
@@ -264,6 +252,16 @@ variable "prometheus" {
     }), {})
     replicas            = optional(number, 2)
     enable_alertmanager = optional(bool, true)
+    ingress = optional(object({
+      enabled     = optional(bool, false)
+      type        = optional(string, "nginx")
+      public      = optional(bool, true)
+      tls_enabled = optional(bool, true)
+
+      annotations = optional(map(string), {})
+      hosts       = optional(list(string), ["prometheus.example.com"])
+      path        = optional(list(string), ["/"])
+    }), {})
   })
   description = "values to be used as prometheus's chart values"
   default     = {}
@@ -274,8 +272,7 @@ variable "tempo" {
     enabled                = optional(bool, false)
     chart_version          = optional(string, "1.20.0")
     tempo_role_arn         = optional(string, "")
-    storage_backend        = optional(string, "s3") # "local" or "s3"
-    bucket_name            = optional(string)
+    storage_backend        = optional(string, "local")
     enable_service_monitor = optional(bool, true)
     oidc_provider_arn      = optional(string, "")
 
@@ -287,9 +284,8 @@ variable "tempo" {
     persistence = optional(object({
       enabled       = optional(bool, true)
       size          = optional(string, "20Gi")
-      storage_class = optional(string, "gp2")
+      storage_class = optional(string, "")
     }), {})
-
   })
   description = "confgis for tempo deployment"
   default     = {}
@@ -302,11 +298,6 @@ variable "loki" {
     loki = optional(object({
       url            = optional(string, "")
       volume_enabled = optional(bool, true)
-      send_logs_s3 = optional(object({
-        enable       = optional(bool, true)
-        bucket_name  = optional(string, "")
-        aws_role_arn = optional(string, "")
-      }), {})
       service_account = optional(object({
         enable      = optional(bool, true)
         name        = optional(string, "loki")
@@ -315,12 +306,12 @@ variable "loki" {
       persistence = optional(object({
         enabled       = optional(bool, true)
         size          = optional(string, "20Gi")
-        storage_class = optional(string, "gp2")
+        storage_class = optional(string, "")
         access_mode   = optional(string, "ReadWriteOnce")
       }), {})
       schema_configs = optional(list(object({
         from         = optional(string, "2025-01-01") # defines starting at which date this storage schema will be applied
-        object_store = optional(string, "s3")
+        object_store = optional(string, "filesystem")
         store        = optional(string, "tsdb")
         schema       = optional(string, "v13")
         index = optional(object({
@@ -328,7 +319,30 @@ variable "loki" {
           period = optional(string, "24h")
         }), {})
       })), [{}])
-      storage          = optional(map(any), {})
+      storage = optional(any, {
+        type = "filesystem",
+        filesystem = {
+          chunks_directory    = "/var/loki/chunks"
+          rules_directory     = "/var/loki/rules"
+          admin_api_directory = "/var/loki/admin"
+        }
+        bucketNames = {
+          chunks = "unused-for-filesystem"
+          ruler  = "unused-for-filesystem"
+          admin  = "unused-for-filesystem"
+        }
+      })
+      ingress = optional(object({
+        enabled     = optional(bool, false)
+        type        = optional(string, "nginx")
+        public      = optional(bool, true)
+        tls_enabled = optional(bool, true)
+
+        annotations = optional(map(string), {})
+        hosts       = optional(list(string), ["loki.exampleeee.com"])
+        path        = optional(string, "/")
+        path_type   = optional(string, "Prefix")
+      }), {})
       replicas         = optional(number, 1)
       retention_period = optional(string, "168h")
       resources = optional(object({

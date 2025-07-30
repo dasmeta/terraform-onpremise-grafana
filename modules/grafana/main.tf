@@ -41,9 +41,9 @@ resource "helm_release" "grafana" {
       hpa_max_replicas   = var.configs.redundancy.max_replicas
       hpa_min_replicas   = var.configs.redundancy.min_replicas
 
-      grafana_iam_role_arn = try(module.grafana_cloudwatch_role[0].arn, "")
-
-      grafana_root_url = local.grafana_root_url
+      grafana_root_url            = local.grafana_root_url
+      create_service_account      = var.configs.service_account.enable
+      service_account_annotations = var.configs.service_account.annotations
     })
   ]
 
@@ -52,7 +52,7 @@ resource "helm_release" "grafana" {
     value = var.grafana_admin_password
   }
 
-  depends_on = [kubernetes_persistent_volume_claim.grafana_efs, module.grafana_cloudwatch_role, helm_release.mysql]
+  depends_on = [helm_release.mysql]
 }
 
 resource "helm_release" "mysql" {
@@ -64,7 +64,7 @@ resource "helm_release" "mysql" {
   namespace        = var.namespace
   create_namespace = false
   version          = var.mysql_chart_version
-  timeout          = 600
+  timeout          = 300
 
   values = [jsonencode({
     auth = {
@@ -102,52 +102,4 @@ resource "grafana_data_source" "this" {
   uid                      = try(each.value.uid, null)
 
   depends_on = [helm_release.grafana]
-}
-
-
-module "grafana_cloudwatch_role" {
-  count = anytrue([
-    for ds in local.merged_datasources : ds.type == "cloudwatch"
-  ]) ? 1 : 0
-  source  = "dasmeta/iam/aws//modules/role"
-  version = "1.3.0"
-
-  name   = "grafana-cloudwatch-role"
-  policy = local.cloudwatch_policies
-  trust_relationship = [
-    {
-      principals = {
-        type        = "Federated"
-        identifiers = [local.eks_oidc_provider_arn]
-      }
-      conditions = [{
-        type  = "StringEquals"
-        key   = "${replace(data.aws_eks_cluster.this.identity[0].oidc[0].issuer, "https://", "")}:sub"
-        value = ["system:serviceaccount:${var.namespace}:grafana-service-account"]
-      }]
-      actions = ["sts:AssumeRoleWithWebIdentity"]
-    }
-  ]
-}
-
-
-resource "kubernetes_persistent_volume_claim" "grafana_efs" {
-  count = var.configs.redundancy.enabled && var.configs.persistence.enabled ? 1 : 0
-  metadata {
-    name      = "grafana-shared-pvc"
-    namespace = var.namespace
-  }
-
-  spec {
-    access_modes = ["ReadWriteMany"]
-
-    resources {
-      requests = {
-        storage = var.configs.persistence.size
-      }
-    }
-
-    storage_class_name = var.configs.redundancy.redundancy_storage_class
-  }
-
 }

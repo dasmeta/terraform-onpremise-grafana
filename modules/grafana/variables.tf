@@ -1,7 +1,3 @@
-variable "cluster_name" {
-  type        = string
-  description = "name of the eks cluster"
-}
 
 variable "namespace" {
   type        = string
@@ -64,7 +60,7 @@ variable "configs" {
       persistence = optional(object({            # allows to configure created(when database.create=true) mysql databases storage/persistence configs
         enabled       = optional(bool, true)     # whether to have created in k8s mysql database with persistence
         size          = optional(string, "20Gi") # the size of primary persistent volume of mysql when creating it
-        storage_class = optional(string, "gp2")  # default storage class for the mysql database
+        storage_class = optional(string, "")     # default storage class for the mysql database
       }), {})
       extra_flags = optional(string, "--skip-log-bin") # allows to set extra flags(whitespace separated) on grafana mysql primary instance, we have by default skip-log-bin flag set to disable bin-logs which overload mysql disc and/but we do not use multi replica mysql here
 
@@ -74,13 +70,12 @@ variable "configs" {
       enabled       = optional(bool, false)
       type          = optional(string, "pvc")
       size          = optional(string, "20Gi")
-      storage_class = optional(string, "gp2")
+      storage_class = optional(string, "")
     }), {})
     ingress = optional(object({
-      type            = optional(string, "alb")
-      public          = optional(bool, true)
-      tls_enabled     = optional(bool, true)
-      alb_certificate = optional(string, "")
+      type        = optional(string, "nginx")
+      public      = optional(bool, true)
+      tls_enabled = optional(bool, true)
 
       annotations = optional(map(string), {})
       hosts       = optional(list(string), ["grafana.example.com"])
@@ -88,11 +83,16 @@ variable "configs" {
       path_type   = optional(string, "Prefix")
     }), {})
 
+    service_account = optional(object({
+      enable      = optional(bool, true)
+      annotations = optional(map(string), {})
+    }), {})
+
     redundancy = optional(object({
       enabled                  = optional(bool, false)
       max_replicas             = optional(number, 4)
       min_replicas             = optional(number, 1)
-      redundancy_storage_class = optional(string, "efs-sc-root")
+      redundancy_storage_class = optional(string, "")
     }), {})
 
     trace_log_mapping = optional(object({

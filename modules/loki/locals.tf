@@ -22,38 +22,48 @@ locals {
   extra_scrape_configs_yaml  = length(var.configs.promtail.extra_scrape_configs) > 0 ? yamlencode(var.configs.promtail.extra_scrape_configs) : ""
   extra_pipeline_stages_yaml = yamlencode(concat(local.default_promtail_pipelines_stages, var.configs.promtail.extra_pipeline_stages))
 
-  # Loki related configs
-  create_service_account      = try(var.configs.loki.service_account.enable, false) ? true : (var.configs.loki.send_logs_s3.enable ? true : false)
-  loki_role                   = local.create_loki_role ? module.loki_iam_eks_role[0].iam_role_arn : (var.configs.loki.send_logs_s3.enable ? var.configs.loki.send_logs_s3.aws_role_arn : "")
-  service_account_annotations = merge(var.configs.loki.service_account.annotations, var.configs.loki.send_logs_s3.enable ? { "eks.amazonaws.com/role-arn" = local.loki_role } : {})
-  create_loki_role            = var.configs.loki.send_logs_s3.enable && var.configs.loki.send_logs_s3.aws_role_arn == ""
-  eks_oidc_provider_arn       = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${replace(data.aws_eks_cluster.this.identity[0].oidc[0].issuer, "https://", "")}"
+  # Loki configs
 
-  s3_bucket_name = length(var.configs.loki.send_logs_s3.bucket_name) > 0 ? var.configs.loki.send_logs_s3.bucket_name : "loki-logs-${var.cluster_name}-${random_string.random.result}"
-  default_loki_storage = {
-    type = "s3"
-    s3 = {
-      s3               = local.s3_bucket_name
-      region           = data.aws_region.current.name
-      s3ForcePathStyle = true
-    }
+  ingress_annotations = merge(
+    {
+      "kubernetes.io/ingress.class" = var.configs.loki.ingress.type
+    },
+    var.configs.loki.ingress.type == "alb" ? merge({
+      "alb.ingress.kubernetes.io/target-type"      = "ip"
+      "alb.ingress.kubernetes.io/scheme"           = var.configs.loki.ingress.public ? "internet-facing" : "internal"
+      "alb.ingress.kubernetes.io/healthcheck-path" = "/api/health"
+      "alb.ingress.kubernetes.io/listen-ports" = join(
+        "",
+        concat(
+          ["["],
+          [join(",", compact([
+            "{\\\"HTTP\\\": 80}",
+            var.configs.loki.ingress.tls_enabled ? "{\\\"HTTPS\\\": 443}" : null
+          ]))],
+          ["]"]
+        )
+      )
 
-    bucketNames = {
-      chunks = local.s3_bucket_name
-      ruler  = local.s3_bucket_name
-      admin  = local.s3_bucket_name
-    }
-  }
-  loki_storage = (
-    var.configs.loki.send_logs_s3.enable && length(var.configs.loki.storage) == 0
-  ) ? jsonencode(local.default_loki_storage) : jsonencode(var.configs.loki.storage)
-}
+      }, var.configs.loki.ingress.tls_enabled ? {
+      "alb.ingress.kubernetes.io/ssl-redirect"    = "443"
+      "alb.ingress.kubernetes.io/certificate-arn" = var.configs.ingress.alb_certificate
+    } : {}) : {},
+    var.configs.loki.ingress.type == "nginx" ? merge({
+      "nginx.ingress.kubernetes.io/backend-protocol"   = "HTTP"
+      "nginx.ingress.kubernetes.io/proxy-buffer-size"  = "128k"
+      "nginx.ingress.kubernetes.io/proxy-read-timeout" = "60"
+      "nginx.ingress.kubernetes.io/proxy-send-timeout" = "60"
+      }, var.configs.loki.ingress.tls_enabled ? {
+      "nginx.ingress.kubernetes.io/ssl-redirect"       = "true"
+      "nginx.ingress.kubernetes.io/force-ssl-redirect" = "true"
+      # "cert-manager.io/cluster-issuer"                 = "letsencrypt-prod"
+    } : {}) : {},
+    var.configs.loki.ingress.annotations
+  )
 
+  ingress_tls = var.configs.loki.ingress.tls_enabled && var.configs.loki.ingress.type == "nginx" ? [{
+    hosts       = var.configs.loki.ingress.hosts
+    secret_name = join("-", [replace(var.configs.loki.ingress.hosts[0], ".", "-"), "tls"])
+  }] : []
 
-output "extra_scrape_configs" {
-  value = local.extra_pipeline_stages_yaml
-}
-
-output "extra_pipeline_stages_debug" {
-  value = var.configs.promtail.extra_pipeline_stages
 }

@@ -1,18 +1,9 @@
-
 tempo:
   storage:
     trace:
-      backend: ${storage_backend}  # "s3" or "local"
-%{ if storage_backend == "s3" }
-      s3:
-        bucket: ${bucket_name}
-        endpoint: s3.${region}.amazonaws.com
-        region: ${region}
-        insecure: false
-%{ else }
+      backend: ${storage_backend}
       local:
         path: /var/tempo/traces
-%{ endif }
   metricsGenerator:
     enabled: ${metris_generator_enabled}
     remoteWriteUrl: ${metrics_generator_remote_url}

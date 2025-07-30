@@ -1,19 +1,12 @@
 module "this" {
   source = "../.."
 
-  name         = "Test-dashboard"
-  cluster_name = "eks-dev"
+  name = "Test-dashboard"
 
   application_dashboard = {
     rows : [
-      { type : "block/sla", sla_ingress_type = "alb", load_balancer_arn = "load_balancer_arn", datasource_uid = "cloudwatch", region = "us-east-2" },
-      { type : "block/alb_ingress", load_balancer_arn = "load_balancer_arn", region : "us-east-2" },
       { type : "block/service", name = "worker", show_err_logs = true },
-      { type : "block/cloudwatch", region : "us-east-2" }
     ]
-    data_source = {
-      uid : "cloudwatch"
-    }
     variables = [
       {
         "name" : "namespace",
@@ -77,17 +70,15 @@ module "this" {
       }
     }
     ingress = {
-      type            = "alb"
-      tls_enabled     = true
-      public          = true
-      alb_certificate = "cert_arn"
+      type        = "nginx"
+      tls_enabled = true
+      public      = true
 
-      hosts = ["grafana.example.com"]
+      hosts = ["grafana.dev.trysela.com"]
       annotations = {
         "alb.ingress.kubernetes.io/group.name" = "dev-ingress"
       }
     }
-    datasources = [{ type = "cloudwatch", name = "Cloudwatch" }]
 
     # redundancy = {
     #   enabled      = true
@@ -98,11 +89,7 @@ module "this" {
   }
 
   tempo = {
-    enabled         = false
-    storage_backend = "s3"
-    bucket_name     = "my-tempo-traces-kauwnw"
-    # tempo_role_arn    = "arn:aws:iam::12345678901:role/tempo-s3-access-manual" # if the role arn is provided then a role will not be created
-    cluster_name = "eks-dev"
+    enabled = true
 
     metrics_generator = {
       enabled = true
@@ -123,14 +110,9 @@ module "this" {
   prometheus = {
     enabled = true
   }
-  grafana_admin_password = "admin"
-  aws_region             = "us-east-2"
+  grafana_admin_password = "adminPassport333"
   # dashboards_json_files = [
   #   "./dashboard_files/ALB_dashboard.json",
   #   "./dashboard_files/Application_main_dashboard.json"
   # ]
-}
-
-output "dashboard" {
-  value = module.this.dashboards
 }
