@@ -309,6 +309,7 @@ variable "loki" {
         storage_class = optional(string, "")
         access_mode   = optional(string, "ReadWriteOnce")
       }), {})
+      limits_config = optional(map(string), {}) # This allows setting limitations and enabling some features for loki. https://grafana.com/docs/loki/latest/configure/#limits_config
       schema_configs = optional(list(object({
         from         = optional(string, "2025-01-01") # defines starting at which date this storage schema will be applied
         object_store = optional(string, "filesystem")

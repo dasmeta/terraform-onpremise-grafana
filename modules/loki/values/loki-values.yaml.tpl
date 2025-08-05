@@ -81,15 +81,10 @@ loki:
 
   storage: ${storage}
 
-  %{ if log_volume_enabled }
+%{ for k, v in limits_config ~}
   limits_config:
-    volume_enabled: ${log_volume_enabled}
-    max_query_length: 2h
-    max_streams_per_user: 5000
-    max_entries_limit_per_query: 5000
-    ingestion_rate_mb: 16
-    ingestion_burst_size_mb: 32
-  %{ endif }
+    ${k}: ${v}
+%{~ endfor }
 
   retention_deletes_enabled: true
   retention_period: ${retention_period}

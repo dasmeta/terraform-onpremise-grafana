@@ -47,6 +47,7 @@ variable "configs" {
           period = optional(string, "24h")
         }))
       })), [])
+      limits_config = optional(map(string), {})
       storage = optional(any, {
         type = "filesystem",
         filesystem = {
@@ -64,19 +65,22 @@ variable "configs" {
       retention_period = optional(string, "168h")
       resources = optional(object({
         request = optional(object({
-          cpu = optional(string, "200m")
-          mem = optional(string, "250Mi")
+          cpu = optional(string, "1")
+          mem = optional(string, "1500Mi")
         }), {})
         limit = optional(object({
-          cpu = optional(string, "400m")
-          mem = optional(string, "500Mi")
+          cpu = optional(string, "1500m")
+          mem = optional(string, "2000Mi")
         }), {})
       }), {})
       ingress = optional(object({
-        enabled     = optional(bool, false)
-        type        = optional(string, "nginx")
-        public      = optional(bool, true)
-        tls_enabled = optional(bool, true)
+        enabled = optional(bool, false)
+        type    = optional(string, "nginx")
+        public  = optional(bool, true)
+        tls = optional(object({
+          enabled       = optional(bool, true)
+          cert_provider = optional(string, "letsencrypt-prod")
+        }), {})
 
         annotations = optional(map(string), {})
         hosts       = optional(list(string), ["loki.example.com"])
