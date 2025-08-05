@@ -73,9 +73,12 @@ variable "configs" {
       storage_class = optional(string, "")
     }), {})
     ingress = optional(object({
-      type        = optional(string, "nginx")
-      public      = optional(bool, true)
-      tls_enabled = optional(bool, true)
+      type   = optional(string, "nginx")
+      public = optional(bool, true)
+      tls = optional(object({
+        enabled       = optional(bool, true)
+        cert_provider = optional(string, "letsencrypt-prod")
+      }), {})
 
       annotations = optional(map(string), {})
       hosts       = optional(list(string), ["grafana.example.com"])

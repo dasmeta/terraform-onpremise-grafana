@@ -6,15 +6,15 @@ variable "namespace" {
 
 variable "chart_version" {
   type        = string
-  description = "grafana chart version"
+  description = "Tempo chart version"
   default     = "1.20.0"
 }
 
 variable "configs" {
   type = object({
-    storage_backend          = optional(string, "local") # "local" or "s3"
+    storage_backend          = optional(string, "local")
     enable_metrics_generator = optional(bool, true)
-    enable_service_monitor   = optional(bool, true)
+    enable_service_monitor   = optional(bool, false)
     tempo_role_name          = optional(string, "tempo-role")
 
     persistence = optional(object({

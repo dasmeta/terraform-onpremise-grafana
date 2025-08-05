@@ -13,13 +13,13 @@ locals {
 }
 
 resource "grafana_folder" "this" {
-  count = var.folder_name != null && var.create_folder && length(var.alert_rules) > 0 ? 1 : 0
+  count = var.folder_name != null && var.create_folder && try(length(var.alert_rules), 0) > 0 ? 1 : 0
 
   title = var.folder_name
 }
 
 data "grafana_folder" "this" {
-  count = var.folder_name != null && !var.create_folder && length(var.alert_rules) > 0 ? 1 : 0
+  count = var.folder_name != null && !var.create_folder && try(length(var.alert_rules), 0) > 0 ? 1 : 0
 
   title = var.folder_name
 }

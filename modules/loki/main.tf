@@ -25,6 +25,7 @@ resource "helm_release" "loki" {
       limit_cpu                   = var.configs.loki.resources.limit.cpu
       limit_mem                   = var.configs.loki.resources.limit.mem
       retention_period            = var.configs.loki.retention_period
+      limits_config               = local.limits_config
 
       ingress_annotations = var.configs.loki.ingress.annotations
       ingress_hosts       = var.configs.loki.ingress.hosts

@@ -23,7 +23,7 @@ locals {
   extra_pipeline_stages_yaml = yamlencode(concat(local.default_promtail_pipelines_stages, var.configs.promtail.extra_pipeline_stages))
 
   # Loki configs
-
+  limits_config = merge(var.configs.loki.limits_config, var.configs.loki.log_volume_enabled ? { "volume_enabled" : true } : {})
   ingress_annotations = merge(
     {
       "kubernetes.io/ingress.class" = var.configs.loki.ingress.type
@@ -38,13 +38,13 @@ locals {
           ["["],
           [join(",", compact([
             "{\\\"HTTP\\\": 80}",
-            var.configs.loki.ingress.tls_enabled ? "{\\\"HTTPS\\\": 443}" : null
+            var.configs.loki.ingress.tls.enabled ? "{\\\"HTTPS\\\": 443}" : null
           ]))],
           ["]"]
         )
       )
 
-      }, var.configs.loki.ingress.tls_enabled ? {
+      }, var.configs.loki.ingress.tls.enabled ? {
       "alb.ingress.kubernetes.io/ssl-redirect"    = "443"
       "alb.ingress.kubernetes.io/certificate-arn" = var.configs.ingress.alb_certificate
     } : {}) : {},
@@ -53,7 +53,7 @@ locals {
       "nginx.ingress.kubernetes.io/proxy-buffer-size"  = "128k"
       "nginx.ingress.kubernetes.io/proxy-read-timeout" = "60"
       "nginx.ingress.kubernetes.io/proxy-send-timeout" = "60"
-      }, var.configs.loki.ingress.tls_enabled ? {
+      }, var.configs.loki.ingress.tls.enabled ? {
       "nginx.ingress.kubernetes.io/ssl-redirect"       = "true"
       "nginx.ingress.kubernetes.io/force-ssl-redirect" = "true"
       # "cert-manager.io/cluster-issuer"                 = "letsencrypt-prod"
@@ -61,7 +61,7 @@ locals {
     var.configs.loki.ingress.annotations
   )
 
-  ingress_tls = var.configs.loki.ingress.tls_enabled && var.configs.loki.ingress.type == "nginx" ? [{
+  ingress_tls = var.configs.loki.ingress.tls.enabled && var.configs.loki.ingress.type == "nginx" ? [{
     hosts       = var.configs.loki.ingress.hosts
     secret_name = join("-", [replace(var.configs.loki.ingress.hosts[0], ".", "-"), "tls"])
   }] : []
