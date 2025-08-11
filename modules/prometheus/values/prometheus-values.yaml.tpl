@@ -12,35 +12,8 @@ prometheus:
   prometheusSpec:
     replicas: ${replicas}
     retention: ${retention_days}
-%{ if ingress_enabled }
-  ingress:
-    enabled: ${ingress_enabled}
-    ingressClassName: ${ingress_class}
-    pathType: ${ingress_path_type}
-    annotations:
-%{~ for k, v in ingress_annotations }
-      ${k}: "${v}"
-%{~ endfor }
-    hosts:
-%{~ for h in ingress_hosts }
-    - ${h}
-%{~ endfor }
-%{~ for path in ingress_paths }
-    paths:
-    - ${path}
-%{~ endfor}
-%{ if length(tls_secrets) > 0 }
-    tls:
-%{~ for item in tls_secrets }
-    - secretName: ${item.secret_name}
-      hosts:
-%{~ for host in item.hosts }
-      - ${host}
-%{~ endfor ~}
-%{ endfor }
-%{ endif }
-%{ endif }
-
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
     storageSpec:
       volumeClaimTemplate:
         spec:
@@ -59,8 +32,6 @@ prometheus:
       limits:
         memory: ${limit_mem}
         cpu: ${limit_cpu}
-    serviceMonitorSelectorNilUsesHelmValues: false
-    podMonitorSelectorNilUsesHelmValues: false
 
     enableRemoteWriteReceiver: true
 
@@ -94,6 +65,38 @@ prometheus:
         - action: replace
           source_labels: [__meta_kubernetes_service_annotation_prometheus_io_port]
           target_label: __metrics_port__
+
+
+
+%{ if ingress_enabled }
+  ingress:
+    enabled: ${ingress_enabled}
+    ingressClassName: ${ingress_class}
+    pathType: ${ingress_path_type}
+    annotations:
+%{~ for k, v in ingress_annotations }
+      ${k}: "${v}"
+%{~ endfor }
+    hosts:
+%{~ for h in ingress_hosts }
+    - ${h}
+%{~ endfor }
+%{~ for path in ingress_paths }
+    paths:
+    - ${path}
+%{~ endfor}
+%{ if length(tls_secrets) > 0 }
+    tls:
+%{~ for item in tls_secrets }
+    - secretName: ${item.secret_name}
+      hosts:
+%{~ for host in item.hosts }
+      - ${host}
+%{~ endfor ~}
+%{ endfor }
+%{ endif }
+%{ endif }
+
 
 alertmanager:
   enabled: ${enable_alertmanager}
