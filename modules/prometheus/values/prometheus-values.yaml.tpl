@@ -41,30 +41,30 @@ prometheus:
 %{ endif }
 %{ endif }
 
-  storageSpec:
-    volumeClaimTemplate:
-      spec:
-        storageClassName: ${storage_class_name}
-        accessModes:
-%{~ for mode in access_modes }
-          - ${mode}
-%{~ endfor }
-        resources:
-          requests:
-            storage: ${storage_size}
-  resources:
-    requests:
-      memory: ${request_mem}
-      cpu: ${request_cpu}
-    limits:
-      memory: ${limit_mem}
-      cpu: ${limit_cpu}
-  serviceMonitorSelectorNilUsesHelmValues: false
-  podMonitorSelectorNilUsesHelmValues: false
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: ${storage_class_name}
+          accessModes:
+    %{~ for mode in access_modes }
+            - ${mode}
+    %{~ endfor }
+          resources:
+            requests:
+              storage: ${storage_size}
+    resources:
+      requests:
+        memory: ${request_mem}
+        cpu: ${request_cpu}
+      limits:
+        memory: ${limit_mem}
+        cpu: ${limit_cpu}
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
 
-  enableRemoteWriteReceiver: true
+    enableRemoteWriteReceiver: true
 
-  additionalScrapeConfigs:
+    additionalScrapeConfigs:
     - job_name: "annotation-scrape"
       kubernetes_sd_configs:
         - role: pod

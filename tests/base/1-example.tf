@@ -104,7 +104,9 @@ module "this" {
   }
 
   prometheus = {
-    enabled = true
+    enabled       = true
+    storage_size  = "20Gi"
+    storage_class = "gp2"
   }
   grafana_admin_password = "admin"
   # dashboards_json_files = [
