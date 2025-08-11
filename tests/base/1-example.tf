@@ -5,7 +5,7 @@ module "this" {
 
   application_dashboard = {
     rows : [
-      # { type : "block/service", name = "worker", show_err_logs = true },
+      { type : "block/service", name = "worker", show_err_logs = true },
     ]
     variables = [
       {
@@ -73,7 +73,7 @@ module "this" {
       tls_enabled = true
       public      = true
 
-      hosts = ["grafana.dev.trysela.com"]
+      hosts = ["grafana.example.com"]
       annotations = {
         "alb.ingress.kubernetes.io/certificate-arn" = "cert_arn",
         "alb.ingress.kubernetes.io/group.name"      = "dev-ingress"
@@ -104,7 +104,9 @@ module "this" {
   }
 
   prometheus = {
-    enabled = true
+    enabled       = true
+    storage_size  = "20Gi"
+    storage_class = "gp2"
   }
   grafana_admin_password = "admin"
   # dashboards_json_files = [

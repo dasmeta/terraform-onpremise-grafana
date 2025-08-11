@@ -22,7 +22,7 @@ gateway:
   enabled: ${ingress_enabled}
   ingress:
     enabled: ${ingress_enabled}
-    ingressClassName: nginx
+    ingressClassName: ${ingress_type}
     annotations:
 %{ for k, v in ingress_annotations ~}
       ${k}: "${v}"
@@ -68,8 +68,6 @@ loki:
       limits:
         cpu: ${limit_cpu}
         memory: ${limit_mem}
-
-
 
   %{ if length(schema_configs) > 0 }
   schemaConfig:

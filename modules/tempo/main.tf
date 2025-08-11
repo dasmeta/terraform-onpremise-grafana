@@ -8,7 +8,8 @@ resource "helm_release" "tempo" {
 
   values = [
     templatefile("${path.module}/values/tempo-values.yaml.tpl", {
-      storage_backend = var.configs.storage_backend
+      storage_backend_type           = var.configs.storage.backend
+      storage_backend_configurations = yamlencode(var.configs.storage.backend_configuration)
 
       persistence_enabled = var.configs.persistence.enabled
       persistence_size    = var.configs.persistence.size

@@ -21,8 +21,8 @@ locals {
       )
 
       }, var.configs.ingress.tls_enabled ? {
-      "alb.ingress.kubernetes.io/ssl-redirect"    = "443"
-      "alb.ingress.kubernetes.io/certificate-arn" = var.configs.ingress.alb_certificate
+      "alb.ingress.kubernetes.io/ssl-redirect" = "443"
+      # "alb.ingress.kubernetes.io/certificate-arn" = var.configs.ingress.alb_certificate
     } : {}) : {},
     var.configs.ingress.type == "nginx" ? merge({
       "nginx.ingress.kubernetes.io/backend-protocol"   = "HTTP"

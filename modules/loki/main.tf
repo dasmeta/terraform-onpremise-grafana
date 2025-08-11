@@ -18,7 +18,7 @@ resource "helm_release" "loki" {
       storage                     = jsonencode(var.configs.loki.storage)
       schema_configs              = jsonencode(var.configs.loki.schema_configs)
       create_service_account      = var.configs.loki.service_account.enable
-      service_account_name        = try(var.configs.loki.service_account.name, "loki")
+      service_account_name        = var.configs.loki.service_account.name
       service_account_annotations = var.configs.loki.service_account.annotations
       request_cpu                 = var.configs.loki.resources.request.cpu
       request_mem                 = var.configs.loki.resources.request.mem
@@ -27,12 +27,13 @@ resource "helm_release" "loki" {
       retention_period            = var.configs.loki.retention_period
       limits_config               = local.limits_config
 
-      ingress_annotations = var.configs.loki.ingress.annotations
+      ingress_annotations = local.ingress_annotations
       ingress_hosts       = var.configs.loki.ingress.hosts
       ingress_path        = var.configs.loki.ingress.path
       ingress_path_type   = var.configs.loki.ingress.path_type
       ingress_tls_secrets = local.ingress_tls
       ingress_enabled     = var.configs.loki.ingress.enabled
+      ingress_type        = var.configs.loki.ingress.type
       }
     )
   ]

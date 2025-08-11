@@ -43,6 +43,7 @@ resource "helm_release" "grafana" {
 
       grafana_root_url            = local.grafana_root_url
       create_service_account      = var.configs.service_account.enable
+      service_account_name        = var.configs.service_account.name
       service_account_annotations = var.configs.service_account.annotations
     })
   ]

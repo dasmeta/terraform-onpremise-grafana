@@ -212,7 +212,11 @@ variable "grafana" {
       public      = optional(bool, true)
       tls_enabled = optional(bool, true)
     }))
-
+    service_account = optional(object({
+      name        = optional(string, "grafana")
+      enable      = optional(bool, true)
+      annotations = optional(map(string), {})
+    }), {})
     redundancy = optional(object({
       enabled      = optional(bool, false)
       max_replicas = optional(number, 4)
@@ -261,6 +265,7 @@ variable "prometheus" {
       annotations = optional(map(string), {})
       hosts       = optional(list(string), ["prometheus.example.com"])
       path        = optional(list(string), ["/"])
+      path_type   = optional(string, "Prefix")
     }), {})
   })
   description = "values to be used as prometheus's chart values"
@@ -269,10 +274,19 @@ variable "prometheus" {
 
 variable "tempo" {
   type = object({
-    enabled                = optional(bool, false)
-    chart_version          = optional(string, "1.20.0")
-    tempo_role_arn         = optional(string, "")
-    storage_backend        = optional(string, "local")
+    enabled       = optional(bool, false)
+    chart_version = optional(string, "1.20.0")
+    service_account = optional(object({
+      name        = optional(string, "tempo")
+      annotations = optional(map(string), {})
+    }), {})
+    storage = optional(object({
+      backend = optional(string, "local")
+      backend_configuration = optional(map(any), {
+        local = { path = "/var/tempo/traces" },
+        wal   = { path = "/var/tempo/wal" }
+      })
+    }), {})
     enable_service_monitor = optional(bool, true)
     oidc_provider_arn      = optional(string, "")
 
