@@ -21,7 +21,7 @@ assertNoLeakedSecrets: false
 
 serviceAccount:
   create: ${create_service_account}
-  name: grafana-service-account
+  name: ${service_account_name}
   annotations:
 %{~ for k, v in service_account_annotations }
     ${k}: "${v}"

@@ -27,10 +27,11 @@ resource "helm_release" "prometheus" {
 
       ingress_enabled     = var.configs.ingress.enabled
       ingress_class       = var.configs.ingress.type
-      ingress_annotations = var.configs.ingress.annotations
+      ingress_annotations = local.ingress_annotations
       ingress_hosts       = var.configs.ingress.hosts
       ingress_paths       = var.configs.ingress.path
       tls_secrets         = local.ingress_tls
+      ingress_path_type   = var.configs.ingress.path_type
     })
   ]
 

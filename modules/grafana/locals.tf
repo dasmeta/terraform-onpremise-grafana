@@ -88,7 +88,7 @@ locals {
       }, var.configs.ingress.tls.enabled ? {
       "nginx.ingress.kubernetes.io/ssl-redirect"       = "true"
       "nginx.ingress.kubernetes.io/force-ssl-redirect" = "true"
-      "cert-manager.io/cluster-issuer"                 = var.configs.ingress.tls.cert_provider
+      # "cert-manager.io/cluster-issuer"                 = var.configs.ingress.tls.cert_provider
     } : {}) : {},
     var.configs.ingress.annotations
   )

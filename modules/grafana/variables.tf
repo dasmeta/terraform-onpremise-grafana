@@ -87,6 +87,7 @@ variable "configs" {
     }), {})
 
     service_account = optional(object({
+      name        = optional(string, "grafana")
       enable      = optional(bool, true)
       annotations = optional(map(string), {})
     }), {})

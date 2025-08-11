@@ -1,9 +1,9 @@
 tempo:
   storage:
     trace:
-      backend: ${storage_backend}
-      local:
-        path: /var/tempo/traces
+      backend: ${storage_backend_type}
+      ${indent(6, storage_backend_configurations)}
+
   metricsGenerator:
     enabled: ${metris_generator_enabled}
     remoteWriteUrl: ${metrics_generator_remote_url}
@@ -28,5 +28,5 @@ serviceAccount:
   name: ${service_account_name}
   annotations:
   %{for k, v in service_account_annotations }
-      ${k}: "${v}"
+    ${k}: "${v}"
   %{~ endfor }

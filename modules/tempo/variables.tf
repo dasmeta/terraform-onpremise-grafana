@@ -12,7 +12,13 @@ variable "chart_version" {
 
 variable "configs" {
   type = object({
-    storage_backend          = optional(string, "local")
+    storage = optional(object({
+      backend = optional(string, "local")
+      backend_configuration = optional(map(any), {
+        local = { path = "/var/tempo/traces" },
+        wal   = { path = "/var/tempo/wal" }
+      })
+    }), {})
     enable_metrics_generator = optional(bool, true)
     enable_service_monitor   = optional(bool, false)
     tempo_role_name          = optional(string, "tempo-role")
@@ -29,7 +35,7 @@ variable "configs" {
     }), {})
 
     service_account = optional(object({
-      name        = optional(string, "tempo-serviceaccount")
+      name        = optional(string, "tempo")
       annotations = optional(map(string), {})
     }), {})
   })

@@ -37,6 +37,7 @@ variable "configs" {
       annotations = optional(map(string), {})
       hosts       = optional(list(string), ["prometheus.example.com"])
       path        = optional(list(string), ["/"])
+      path_type   = optional(string, "Prefix")
     }), {})
   })
 
