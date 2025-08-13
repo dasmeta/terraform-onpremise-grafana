@@ -1,7 +1,7 @@
 module "application_dashboard" {
   source = "./modules/dashboard/"
 
-  count = length(var.application_dashboard) > 0 ? 1 : 0
+  count = length(var.application_dashboard.rows) > 0 ? 1 : 0
 
   name        = var.name
   folder_name = var.application_dashboard.folder_name
@@ -29,7 +29,7 @@ module "alerts" {
 
   alert_interval_seconds = var.alerts.alert_interval_seconds
   disable_provenance     = var.alerts.disable_provenance
-  create_folder          = length(var.application_dashboard) > 0 && (var.alerts.folder_name == null || var.alerts.folder_name != var.application_dashboard.folder_name) ? false : true
+  create_folder          = var.alerts.create_folder ? true : (length(var.application_dashboard.rows) > 0 && (var.alerts.folder_name == null || var.alerts.folder_name != var.application_dashboard.folder_name) ? false : true)
   folder_name            = coalesce(var.alerts.folder_name, var.application_dashboard.folder_name)
   group                  = var.alerts.group
   rules                  = var.alerts.rules
