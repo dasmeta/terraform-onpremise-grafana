@@ -60,7 +60,7 @@ resources:
     memory: ${limit_memory}
 
 serviceMonitor:
-  enabled: true
+  enabled: false
   namespace: monitoring
   selector:
     matchLabels:
