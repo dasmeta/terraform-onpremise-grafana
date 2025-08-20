@@ -10,6 +10,11 @@ prometheusOperator:
 prometheus:
   enabled: true
   prometheusSpec:
+    scrapeInterval: "30s"
+    scrapeTimeout: "10s"
+    evaluationInterval: "30s"
+    extraArgs:
+    - --web.disable-exporter-metrics
     replicas: ${replicas}
     retention: ${retention_days}
     serviceMonitorSelectorNilUsesHelmValues: false
@@ -100,6 +105,10 @@ prometheus:
 
 alertmanager:
   enabled: ${enable_alertmanager}
+  extraArgs:
+    - --web.disable-exporter-metrics
+  serviceMonitor:
+    selfMonitor: false
   alertmanagerSpec:
     replicas: 1
     resources:
@@ -110,13 +119,32 @@ alertmanager:
         memory: 1Gi
         cpu: 500m
 
+kubeApiServer:
+  enabled: false
+
 kube-state-metrics:
   enabled: true
+  collectors:
+    - configmaps
+    - pods
+    - cronjobs
+    - deployments
+    - endpoints
+    - daemonsets
+    - ingresses
+    - nodes
+    - persistentvolumeclaims
+    - persistentvolumes
+    - poddisruptionbudgets
+    - replicasets
+    - storageclasses
 
 nodeExporter:
   enabled: true
 
 prometheus-node-exporter:
+  extraArgs:
+    - --web.disable-exporter-metrics
   resources:
     requests:
       memory: 200Mi
