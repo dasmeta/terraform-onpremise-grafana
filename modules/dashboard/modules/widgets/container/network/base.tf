@@ -10,12 +10,6 @@ module "base" {
   period      = var.period
   unit        = "bytes"
 
-  defaults = {
-    MetricNamespace = "ContainerInsights"
-    Namespace       = var.namespace
-    PodName         = var.container
-  }
-
   metrics = concat([
     { label = "Received", color = "3ECE76", expression = "sum(rate(container_network_receive_bytes_total{namespace=\"${var.namespace}\", pod=~\"^${var.container}-[^-]+-[^-]+$\"}[${var.period}m]))" },
     { label = "Sent", color = "FF0F3C", expression = "- sum(rate(container_network_transmit_bytes_total{namespace=\"${var.namespace}\", pod=~\"^${var.container}-[^-]+-[^-]+$\"}[${var.period}m]))" },

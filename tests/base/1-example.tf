@@ -5,8 +5,12 @@ module "this" {
 
   application_dashboard = {
     rows : [
-      { type : "block/service", name = "worker", show_err_logs = true },
+      { type : "block/service", name = "worker", show_err_logs = true, loki_datasource_uid = "loki" }
     ]
+    data_source = {
+      uid = "prometheus"
+    }
+
     variables = [
       {
         "name" : "namespace",
@@ -35,6 +39,7 @@ module "this" {
           "priority" : "P1",
         }
         "threshold" : 3
+        "summary" : "This is the summary1"
 
         # we override no-data/exec-error state for this example/test only, it is supposed this values will not be set here so they get their default ones
         "no_data_state" : "OK"
@@ -52,6 +57,7 @@ module "this" {
           "priority" : "P2",
         }
         "threshold" : 3
+        "summary" : "This is the summary2"
 
         # we override no-data/exec-error state for this example/test only, it is supposed this values will not be set here so they get their default ones
         "no_data_state" : "OK"
@@ -113,4 +119,8 @@ module "this" {
   #   "./dashboard_files/ALB_dashboard.json",
   #   "./dashboard_files/Application_main_dashboard.json"
   # ]
+}
+
+output "dashboard_blocks" {
+  value = module.this.dashboard_blocks
 }

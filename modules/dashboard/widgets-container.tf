@@ -33,11 +33,9 @@ module "container_network_widget" {
 
   for_each = { for index, item in try(local.widget_config["container/network"], []) : index => item }
 
-  # data_source = try(each.value.data_source, {})
-  datasource_type = try(each.value.datasource_type, null)
-  datasource_uid  = try(each.value.datasource_uid, null)
-  coordinates     = each.value.coordinates
-  period          = each.value.period
+  datasource_uid = try(each.value.datasource_uid, null)
+  coordinates    = each.value.coordinates
+  period         = each.value.period
 
   # container
   container = each.value.container
@@ -116,11 +114,9 @@ module "container_network_traffic_widget" {
 
   for_each = { for index, item in try(local.widget_config["container/network-traffic"], []) : index => item }
 
-  # data_source = try(each.value.data_source, {})
-  datasource_type = try(each.value.datasource_type, null)
-  datasource_uid  = try(each.value.datasource_uid, null)
-  coordinates     = each.value.coordinates
-  period          = each.value.period
+  datasource_uid = try(each.value.datasource_uid, null)
+  coordinates    = each.value.coordinates
+  period         = each.value.period
 
   pod       = each.value.pod
   namespace = each.value.namespace
@@ -131,11 +127,9 @@ module "container_network_error_widget" {
 
   for_each = { for index, item in try(local.widget_config["container/network-error"], []) : index => item }
 
-  # data_source = try(each.value.data_source, {})
-  datasource_type = try(each.value.datasource_type, null)
-  datasource_uid  = try(each.value.datasource_uid, null)
-  coordinates     = each.value.coordinates
-  period          = each.value.period
+  datasource_uid = try(each.value.datasource_uid, null)
+  coordinates    = each.value.coordinates
+  period         = each.value.period
 
   pod       = each.value.pod
   namespace = each.value.namespace

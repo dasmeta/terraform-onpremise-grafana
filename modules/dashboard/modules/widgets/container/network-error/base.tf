@@ -8,10 +8,7 @@ module "base" {
   }
   coordinates = var.coordinates
   period      = var.period
-
-  defaults = {
-    MetricNamespace = "ContainerInsights"
-  }
+  unit        = "bytes"
 
   options = {
     legend = {

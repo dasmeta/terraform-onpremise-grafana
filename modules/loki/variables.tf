@@ -7,7 +7,7 @@ variable "namespace" {
 variable "chart_version" {
   type        = string
   description = "loki chart version"
-  default     = "6.30.1"
+  default     = "6.32.0"
 }
 
 variable "promtail_chart_version" {

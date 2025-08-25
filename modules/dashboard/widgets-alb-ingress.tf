@@ -31,7 +31,6 @@ module "alb_ingress_request_count_widget" {
 
   for_each = { for index, item in try(local.widget_config["alb_ingress/request_count"], []) : index => item }
 
-  # data_source = try(each.value.data_source, {})
   datasource_uid    = try(each.value.datasource_uid, null)
   coordinates       = each.value.coordinates
   period            = each.value.period
@@ -45,7 +44,6 @@ module "alb_ingress_target_http_response_widget" {
 
   for_each = { for index, item in try(local.widget_config["alb_ingress/target_http_response"], []) : index => item }
 
-  # data_source = try(each.value.data_source, {})
   datasource_uid    = try(each.value.datasource_uid, null)
   coordinates       = each.value.coordinates
   period            = each.value.period

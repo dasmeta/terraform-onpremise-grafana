@@ -1,8 +1,7 @@
 module "this" {
   source = "../.."
 
-  name         = "Loki-test"
-  cluster_name = "eks-dev"
+  name = "Loki-test"
 
   application_dashboard = {
     rows : [
@@ -135,5 +134,4 @@ module "this" {
     enabled = true
   }
   grafana_admin_password = "admin"
-  aws_region             = "us-east-2"
 }
