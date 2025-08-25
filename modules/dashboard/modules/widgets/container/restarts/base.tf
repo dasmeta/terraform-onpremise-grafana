@@ -15,6 +15,6 @@ module "base" {
   }
 
   metrics = [
-    { label = "Restarts", expression = "sum(rate(kube_pod_container_status_restarts_total{container=~\"${var.container}.*\", namespace=\"${var.namespace}\"}[${var.period}m])) by (container)" },
+    { label = "Restarts", expression = "sum(rate(kube_pod_container_status_restarts_total{container=\"${var.container}\", namespace=\"${var.namespace}\"}[${var.period}m])) by (container)" },
   ]
 }
