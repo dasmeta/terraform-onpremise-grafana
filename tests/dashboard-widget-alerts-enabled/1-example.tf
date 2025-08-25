@@ -1,8 +1,7 @@
 module "this" {
   source = "../.."
 
-  name         = "dashboard-with-service-alerts-enabled"
-  cluster_name = "dashboard-with-service-alerts-enabled" # not used now, we set it as it is required
+  name = "dashboard-with-service-alerts-enabled"
 
   application_dashboard = {
     rows : [

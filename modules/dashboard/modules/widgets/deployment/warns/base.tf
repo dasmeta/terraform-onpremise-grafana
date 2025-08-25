@@ -1,7 +1,7 @@
 module "base" {
   source = "../../base"
 
-  name = "Errors"
+  name = "Warns"
   data_source = {
     uid  = var.datasource_uid
     type = "loki"
@@ -10,8 +10,7 @@ module "base" {
   type        = "logs"
   coordinates = var.coordinates
   period      = var.period
-
   loki_targets = [
-    { label = "Errors in logs", legend_format = "Errors deployment", expr = var.expr == "" ? "{pod=~\"${var.deployment}.*\"} | logfmt | level=\"error\"" : var.expr }
+    { label = "Warns in logs", legend_format = "Warns deployment", expr = var.expr == "" ? "{pod=~\"${var.deployment}.*\"} | logfmt | level=\"warn\"" : var.expr }
   ]
 }

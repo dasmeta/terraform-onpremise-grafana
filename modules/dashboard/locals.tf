@@ -122,6 +122,7 @@ locals {
     # Deployment widgets
     values(module.deployment_replicas_widget).*.data,
     values(module.deployment_errors_widget).*.data,
+    values(module.deployment_warns_widget).*.data,
 
     # Ingress widgets
     values(module.ingress_connections_widget).*.data,

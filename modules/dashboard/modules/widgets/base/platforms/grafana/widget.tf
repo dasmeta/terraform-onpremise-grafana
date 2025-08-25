@@ -1,48 +1,54 @@
 locals {
-  field_config_defaults = {
-    "color" : {
-      "mode" : try(var.color_mode, "palette-classic")
-    },
-    decimals : var.decimals,
-    "custom" : {
-      "axisLabel" : "",
-      "axisPlacement" : "auto",
-      "noValue" : "No Input Data",
-      "barAlignment" : 0,
-      "drawStyle" : "line",
-      "fillOpacity" : var.fillOpacity,
-      "gradientMode" : "none",
-      "hideFrom" : {
-        "legend" : false,
-        "tooltip" : false,
-        "viz" : false
-      },
-      "lineInterpolation" : "linear",
-      "lineWidth" : 1,
-      "pointSize" : 5,
-      "scaleDistribution" : {
-        "type" : "linear"
-      },
-      "showPoints" : "auto",
-      "spanNulls" : false,
-      "stacking" : {
-        "group" : "A",
-        "mode" : "none"
-      },
-      "thresholdsStyle" : {
-        "mode" : "off"
+  field_config_defaults = merge(
+    {
+      "color" : {
+        "mode" : try(var.color_mode, "palette-classic")
       }
     },
-    mappings = []
-    thresholds = try(var.thresholds, {
-      mode = "absolute",
-      steps = [
-        { color = "green", value = null },
-        { color = "red", value = 80 }
-      ]
-    })
-    unit = var.unit
-  }
+    { var.decimals != 0 ? "decimals" : var.decimals : {} },
+    {
+      "custom" : {
+        "axisLabel" : "",
+        "axisPlacement" : "auto",
+        "noValue" : "No Input Data",
+        "barAlignment" : 0,
+        "drawStyle" : "line",
+        "fillOpacity" : var.fillOpacity,
+        "gradientMode" : "none",
+        "hideFrom" : {
+          "legend" : false,
+          "tooltip" : false,
+          "viz" : false
+        },
+        "lineInterpolation" : "linear",
+        "lineWidth" : 1,
+        "pointSize" : 5,
+        "scaleDistribution" : {
+          "type" : "linear"
+        },
+        "showPoints" : "auto",
+        "spanNulls" : false,
+        "stacking" : {
+          "group" : "A",
+          "mode" : "none"
+        },
+        "thresholdsStyle" : {
+          "mode" : "off"
+        }
+      }
+    },
+    { mappings = [] },
+    {
+      thresholds = try(var.thresholds, {
+        mode = "absolute",
+        steps = [
+          { color = "green", value = null },
+          { color = "red", value = 80 }
+        ]
+      })
+    },
+    { unit = var.unit }
+  )
 
   field_config_overrides = [
     for metric in local.metrics_with_defaults : {
@@ -91,22 +97,11 @@ locals {
     }
   ]
 
-  # var.query != null ? [
-  #   {
-  #     expression    = var.query,
-  #     logGroupNames = var.sources,
-  #     queryMode     = "Logs",
-  #     legendFormat  = ""
-  #     region        = var.region
-  #   }
-  # ] : []
-
   metric_targets = [for row in local.metrics_with_defaults : {
     expr         = row.expression
     id           = ""
     legendFormat = row.label,
     editorMode   = "code",
-
     }
   ]
 

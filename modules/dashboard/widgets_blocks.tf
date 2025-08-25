@@ -2,8 +2,7 @@
 module "block_ingress" {
   source = "./modules/blocks/ingress"
 
-  for_each = { for index, item in try(local.blocks_by_type["ingress"], []) : index => item }
-
+  for_each  = { for index, item in try(local.blocks_by_type["ingress"], []) : index => item }
   pod       = try(each.value.block.pod, "ingress-nginx-controller")
   namespace = try(each.value.block.namespace, "ingress-nginx")
 
@@ -18,8 +17,8 @@ module "block_service" {
   name                      = each.value.block.name
   namespace                 = try(each.value.block.namespace, "$namespace")
   host                      = try(each.value.block.host, null)
-  prometheus_datasource_uid = try(each.value.block.prometheus_datasource_uid, null)
-  loki_datasource_uid       = try(each.value.block.loki_datasource_uid, null)
+  prometheus_datasource_uid = try(each.value.block.prometheus_datasource_uid, var.data_source.uid, null)
+  loki_datasource_uid       = try(each.value.block.loki_datasource_uid, var.data_source.uid, null)
   show_err_logs             = try(each.value.block.show_err_logs, true)
   expr                      = try(each.value.block.expr, "")
 }
@@ -32,7 +31,7 @@ module "block_sla" {
   balancer_name     = try(each.value.block.balancer_name, null)
   sla_ingress_type  = try(each.value.block.sla_ingress_type, null)
   load_balancer_arn = try(each.value.block.load_balancer_arn, null)
-  datasource_uid    = try(each.value.block.datasource_uid, null)
+  datasource_uid    = try(each.value.block.datasource_uid, var.data_source.uid, null)
   region            = try(each.value.block.region, null)
 }
 
@@ -63,5 +62,5 @@ module "block_alb_ingress" {
 
   load_balancer_arn = try(each.value.block.load_balancer_arn, "")
   region            = try(each.value.block.region, "")
-  datasource_uid    = try(each.value.block.datasource_uid, "cloudwatch")
+  datasource_uid    = try(each.value.block.datasource_uid, var.data_source.uid, "cloudwatch")
 }

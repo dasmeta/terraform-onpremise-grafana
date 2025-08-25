@@ -33,9 +33,9 @@ module "pod_restarts_widget" {
 
   for_each = { for index, item in try(local.widget_config["pod/restarts"], []) : index => item }
 
-  data_source = try(each.value.data_source, {})
-  coordinates = each.value.coordinates
-  period      = each.value.period
+  datasource_uid = try(each.value.datasource_uid, {})
+  coordinates    = each.value.coordinates
+  period         = each.value.period
 
   # pod
   pod       = each.value.pod

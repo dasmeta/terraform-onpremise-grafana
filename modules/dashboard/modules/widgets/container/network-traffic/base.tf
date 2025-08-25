@@ -9,10 +9,6 @@ module "base" {
   coordinates = var.coordinates
   period      = var.period
 
-  defaults = {
-    MetricNamespace = "ContainerInsights"
-  }
-
   fillOpacity = 20
   unit        = "bytes"
 

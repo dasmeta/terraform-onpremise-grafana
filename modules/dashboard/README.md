@@ -97,6 +97,7 @@ module "this" {
 | <a name="module_container_restarts_widget"></a> [container\_restarts\_widget](#module\_container\_restarts\_widget) | ./modules/widgets/container/restarts | n/a |
 | <a name="module_deployment_errors_widget"></a> [deployment\_errors\_widget](#module\_deployment\_errors\_widget) | ./modules/widgets/deployment/errors | n/a |
 | <a name="module_deployment_replicas_widget"></a> [deployment\_replicas\_widget](#module\_deployment\_replicas\_widget) | ./modules/widgets/deployment/replicas | n/a |
+| <a name="module_deployment_warns_widget"></a> [deployment\_warns\_widget](#module\_deployment\_warns\_widget) | ./modules/widgets/deployment/warns | n/a |
 | <a name="module_ingress_connections_widget"></a> [ingress\_connections\_widget](#module\_ingress\_connections\_widget) | ./modules/widgets/ingress/connections | n/a |
 | <a name="module_ingress_cpu_widget"></a> [ingress\_cpu\_widget](#module\_ingress\_cpu\_widget) | ./modules/widgets/ingress/cpu | n/a |
 | <a name="module_ingress_latency_widget"></a> [ingress\_latency\_widget](#module\_ingress\_latency\_widget) | ./modules/widgets/ingress/latency | n/a |

@@ -4,9 +4,9 @@ module "deployment_replicas_widget" {
 
   for_each = { for index, item in try(local.widget_config["deployment/replicas"], []) : index => item }
 
-  data_source = try(each.value.data_source, {})
-  coordinates = each.value.coordinates
-  period      = each.value.period
+  datasource_uid = try(each.value.datasource_uid, {})
+  coordinates    = each.value.coordinates
+  period         = each.value.period
 
   # deployment
   deployment = each.value.deployment
@@ -17,6 +17,20 @@ module "deployment_errors_widget" {
   source = "./modules/widgets/deployment/errors"
 
   for_each = { for index, item in try(local.widget_config["deployment/errors"], []) : index => item }
+
+  datasource_uid = try(each.value.datasource_uid, {})
+  coordinates    = each.value.coordinates
+  period         = each.value.period
+  expr           = try(each.value.expr, "")
+
+  # deployment
+  deployment = each.value.deployment
+}
+
+module "deployment_warns_widget" {
+  source = "./modules/widgets/deployment/warns"
+
+  for_each = { for index, item in try(local.widget_config["deployment/warns"], []) : index => item }
 
   datasource_uid = try(each.value.datasource_uid, {})
   coordinates    = each.value.coordinates

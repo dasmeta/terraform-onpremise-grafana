@@ -1,9 +1,10 @@
 variable "datasource_uid" {
-  type    = string
-  default = "prometheus"
+  type        = string
+  default     = "loki"
+  description = "The custom datasource for widget item"
 }
 
-variable "pod" {
+variable "deployment" {
   type = string
 }
 
@@ -26,4 +27,10 @@ variable "coordinates" {
 variable "period" {
   type    = string
   default = "3"
+}
+
+variable "expr" {
+  type        = string
+  default     = ""
+  description = "LogQl expression to get the logs"
 }

@@ -41,7 +41,7 @@ resource "grafana_rule_group" "this" {
       exec_err_state = lookup(rule.value, "exec_err_state", "Error")
       annotations = {
         "Managed By" = "Terraform"
-        "Summary"    = coalesce(rule.value.summary, "${rule.value.name} alert, the evaluated value($B) is ${rule.value.condition != null ? rule.value.condition : "${local.comparison_operators[rule.value.equation].definition} ${rule.value.threshold}"}")
+        "summary"    = coalesce(rule.value.summary, "${rule.value.name} alert, the evaluated value($B) is ${rule.value.condition != null ? rule.value.condition : "${local.comparison_operators[rule.value.equation].definition} ${rule.value.threshold}"}")
       }
       labels    = lookup(rule.value, "labels", { "priority" : "P1" })
       is_paused = false

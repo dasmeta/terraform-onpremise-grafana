@@ -29,5 +29,7 @@ No inputs.
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_dashboard_blocks"></a> [dashboard\_blocks](#output\_dashboard\_blocks) | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
