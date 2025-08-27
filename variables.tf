@@ -14,9 +14,17 @@ variable "namespace" {
   default = "monitoring"
 }
 
+variable "skip_folder_creation" {
+  type        = bool
+  default     = false
+  description = "If true, folders are created in submodules. If false, folders are created centrally."
+}
+
 variable "application_dashboard" {
-  type = object({
+  type = list(object({
+    name        = string
     folder_name = optional(string, "application-dashboard") # the folder name for dashboard
+    namespace   = optional(string, "prod")
     rows        = optional(any, [])
     data_source = optional(object({
       uid  = optional(string, "prometheus")
@@ -38,12 +46,8 @@ variable "application_dashboard" {
       })), [])
     })), [])
     alerts = optional(any, { enabled = true }) # Allows to configure globally dashboard block/(sla|ingress|service) blocks/widgets related alerts
-  })
-  default = {
-    rows        = [],
-    data_source = null,
-    variables   = []
-  }
+  }))
+  default     = []
   description = "Dashboard for monitoring applications"
 }
 

@@ -12,8 +12,8 @@ variable "disable_provenance" {
 
 variable "create_folder" {
   type        = bool
-  default     = true
-  description = "Whether to create one general group folder for all alerts"
+  default     = false
+  description = "If true, create folder in this module. If false, use existing folder."
 }
 
 variable "folder_name" {

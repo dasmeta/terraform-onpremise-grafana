@@ -10,18 +10,20 @@ locals {
     lte = { operator = "<=", definition = "less than or equal to" },
     e   = { operator = "=", definition = "equal to" }
   }
-}
 
-resource "grafana_folder" "this" {
-  count = (var.folder_name != null) && var.create_folder ? 0 : 1
-
-  title = var.folder_name
+  folder_uids = {
+    for name, folder in data.grafana_folder.folders : name => folder.uid
+  }
 }
 
 data "grafana_folder" "this" {
-  count = (var.folder_name != null) && !var.create_folder ? 0 : 1
+  for_each = toset(concat([
+    for rule in var.alert_rules :
+    rule.folder_name != null ? rule.folder_name : var.folder_name
+    if rule.folder_name != null || var.folder_name != null
+  ], var.folder_name != null ? [var.folder_name] : []))
 
-  title = var.folder_name
+  title = each.value
 }
 
 resource "grafana_rule_group" "this" {
@@ -29,7 +31,7 @@ resource "grafana_rule_group" "this" {
 
   name               = each.key
   disable_provenance = var.disable_provenance
-  folder_uid         = try(grafana_folder.this[0].uid, data.grafana_folder.this[0].uid)
+  folder_uid         = each.value.folder_name != null ? local.folder_uids[each.value.folder_name] : local.folder_uids[var.folder_name]
   interval_seconds   = var.alert_interval_seconds
   dynamic "rule" {
     for_each = each.value

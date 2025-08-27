@@ -146,6 +146,7 @@ module "this" {
 | [grafana_dashboard.metrics](https://registry.terraform.io/providers/grafana/grafana/latest/docs/resources/dashboard) | resource |
 | [grafana_folder.this](https://registry.terraform.io/providers/grafana/grafana/latest/docs/resources/folder) | resource |
 | [random_string.grafana_dashboard_id](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
+| [grafana_folder.this](https://registry.terraform.io/providers/grafana/grafana/latest/docs/data-sources/folder) | data source |
 
 ## Inputs
 
@@ -157,6 +158,7 @@ module "this" {
 | <a name="input_folder_name"></a> [folder\_name](#input\_folder\_name) | The folder name to place grafana dashboard | `string` | `"application-dashboard"` | no |
 | <a name="input_name"></a> [name](#input\_name) | Dashboard name. Should not contain spaces and special chars. | `string` | n/a | yes |
 | <a name="input_rows"></a> [rows](#input\_rows) | List of widgets to be inserted into the dashboard. See ./modules/widgets folder to see list of available widgets. | `any` | n/a | yes |
+| <a name="input_skip_folder_creation"></a> [skip\_folder\_creation](#input\_skip\_folder\_creation) | If true, folders are created in submodules. If false, folders are created centrally. | `bool` | `false` | no |
 | <a name="input_variables"></a> [variables](#input\_variables) | Allows to define variables to be used in dashboard | <pre>list(object({<br/>    name        = string<br/>    type        = optional(string, "custom")<br/>    hide        = optional(number, 0)<br/>    includeAll  = optional(bool, false)<br/>    multi       = optional(bool, false)<br/>    query       = optional(string, "")<br/>    queryValue  = optional(string, "")<br/>    skipUrlSync = optional(bool, false)<br/>    options = optional(list(object({<br/>      selected = optional(bool, false)<br/>      value    = string<br/>      text     = optional(string, null)<br/>    })), [])<br/>    }<br/>  ))</pre> | `[]` | no |
 
 ## Outputs
@@ -164,7 +166,6 @@ module "this" {
 | Name | Description |
 |------|-------------|
 | <a name="output_blocks_results"></a> [blocks\_results](#output\_blocks\_results) | n/a |
-| <a name="output_folder"></a> [folder](#output\_folder) | n/a |
 | <a name="output_rows"></a> [rows](#output\_rows) | n/a |
 | <a name="output_widget_alert_rules"></a> [widget\_alert\_rules](#output\_widget\_alert\_rules) | n/a |
 | <a name="output_widget_result"></a> [widget\_result](#output\_widget\_result) | n/a |

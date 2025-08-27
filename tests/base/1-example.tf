@@ -3,7 +3,9 @@ module "this" {
 
   name = "Test-dashboard"
 
-  application_dashboard = {
+  application_dashboard = [{
+    name        = "Test-dashboard",
+    folder_name = "Test-dashboard",
     rows : [
       { type : "block/service", name = "worker", show_err_logs = true, loki_datasource_uid = "loki" }
     ]
@@ -25,7 +27,7 @@ module "this" {
         ],
       }
     ]
-  }
+  }]
   alerts = {
     rules = [
       {
@@ -114,13 +116,9 @@ module "this" {
     storage_size  = "20Gi"
     storage_class = "gp2"
   }
-  grafana_admin_password = "admin"
+  grafana_admin_password = "adminPass123"
   # dashboards_json_files = [
   #   "./dashboard_files/ALB_dashboard.json",
   #   "./dashboard_files/Application_main_dashboard.json"
   # ]
-}
-
-output "dashboard_blocks" {
-  value = module.this.dashboard_blocks
 }
