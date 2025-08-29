@@ -25,9 +25,6 @@ locals {
   # Loki configs
   limits_config = merge(var.configs.loki.limits_config, var.configs.loki.log_volume_enabled ? { "volume_enabled" : true } : {})
   ingress_annotations = merge(
-    {
-      "kubernetes.io/ingress.class" = var.configs.loki.ingress.type
-    },
     var.configs.loki.ingress.type == "alb" ? merge({
       "alb.ingress.kubernetes.io/target-type"      = "ip"
       "alb.ingress.kubernetes.io/scheme"           = var.configs.loki.ingress.public ? "internet-facing" : "internal"
