@@ -39,10 +39,22 @@ resource "grafana_rule_group" "this" {
       condition      = "C"
       no_data_state  = lookup(rule.value, "no_data_state", "NoData")
       exec_err_state = lookup(rule.value, "exec_err_state", "Error")
-      annotations = {
+      annotations = merge({
         "Managed By" = "Terraform"
         "summary"    = coalesce(rule.value.summary, "${rule.value.name} alert, the evaluated value($B) is ${rule.value.condition != null ? rule.value.condition : "${local.comparison_operators[rule.value.equation].definition} ${rule.value.threshold}"}")
-      }
+        "threshold"  = try(rule.value.threshold, "")
+        },
+        length(var.alert_format_params.owner) > 0 ? { "owner" : var.alert_format_params.owner } : {},
+        length(var.alert_format_params.issue_phrase) > 0 ? { "issue_phrase" : var.alert_format_params.owner } : {},
+        length(var.alert_format_params.provider) > 0 ? { "provider" : var.alert_format_params.provider } : {},
+        length(var.alert_format_params.issue_phrase) > 0 ? { "issue_phrase" : var.alert_format_params.owner } : {},
+        length(var.alert_format_params.issue_phrase) > 0 ? { "issue_phrase" : var.alert_format_params.owner } : {},
+        length(var.alert_format_params.issue_phrase) > 0 ? { "issue_phrase" : var.alert_format_params.owner } : {},
+        length(var.alert_format_params.issue_phrase) > 0 ? { "issue_phrase" : var.alert_format_params.owner } : {},
+        length(var.alert_format_params.issue_phrase) > 0 ? { "issue_phrase" : var.alert_format_params.owner } : {},
+        lookup(rule.value, "annotations", {}),
+
+      )
       labels    = lookup(rule.value, "labels", { "priority" : "P1" })
       is_paused = false
       data {

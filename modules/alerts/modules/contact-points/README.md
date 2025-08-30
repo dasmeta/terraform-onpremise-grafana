@@ -28,6 +28,8 @@ No modules.
 | [grafana_contact_point.slack_contact_point](https://registry.terraform.io/providers/grafana/grafana/latest/docs/resources/contact_point) | resource |
 | [grafana_contact_point.teams_contact_point](https://registry.terraform.io/providers/grafana/grafana/latest/docs/resources/contact_point) | resource |
 | [grafana_contact_point.webhook_contact_point](https://registry.terraform.io/providers/grafana/grafana/latest/docs/resources/contact_point) | resource |
+| [grafana_message_template.body_template](https://registry.terraform.io/providers/grafana/grafana/latest/docs/resources/message_template) | resource |
+| [grafana_message_template.title_template](https://registry.terraform.io/providers/grafana/grafana/latest/docs/resources/message_template) | resource |
 
 ## Inputs
 

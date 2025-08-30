@@ -8,6 +8,7 @@ module "alert_rules" {
   group                  = var.group
   alert_interval_seconds = var.alert_interval_seconds
   disable_provenance     = var.disable_provenance
+  alert_format_params    = var.alert_format_params
   alert_rules            = var.rules
 }
 

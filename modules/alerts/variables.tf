@@ -28,6 +28,21 @@ variable "group" {
   description = "The alerts general group name to attach all alerts to if no specific group set for alert rule item"
 }
 
+variable "alert_format_params" {
+  type = object({
+    component    = optional(string, "")
+    priority     = optional(string, "")
+    owner        = optional(string, "")
+    issue_phrase = optional(string, "")
+    impact       = optional(string, "")
+    runbook      = optional(string, "")
+    provider     = optional(string, "")
+    account      = optional(string, "")
+    env          = optional(string, "")
+  })
+  default = {}
+}
+
 variable "rules" {
   type = list(object({
     name                 = string                                    # The name of the alert rule
@@ -35,6 +50,7 @@ variable "rules" {
     exec_err_state       = optional(string, "Error")                 # Describes what state to enter when the rule's query is invalid and the rule cannot be executed
     summary              = optional(string, null)                    # Rule annotation as a summary, if not passed automatically generated based on data
     labels               = optional(map(any), { "priority" : "P1" }) # Labels help to define matchers in notification policy to control where to send each alert
+    annotations          = optional(map(string), {})                 # Annotations to set to the alert rule. Annotations will be used to customize the alart message in notifications template
     group                = optional(string, null)                    # Grafana group name in which the rule will be created/grouped
     datasource           = string                                    # Name of the datasource used for the alert
     expr                 = optional(string, null)                    # Full expression for the alert

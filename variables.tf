@@ -22,6 +22,7 @@ variable "application_dashboard" {
       uid  = optional(string, "prometheus")
       type = optional(string, "prometheus")
     }), {})
+    namespace = optional(string, "prod")
     variables = optional(list(object({ # Allows to define variables to be used in dashboard
       name        = string
       type        = optional(string, "custom")
@@ -54,6 +55,17 @@ variable "alerts" {
     create_folder          = optional(bool, false)      # whether to create folder to place app dashboard and alerts there, if folder with provided name exist already no need to create it again
     folder_name            = optional(string, null)     # The folder name for dashboard, if not set it defaults to var.application_dashboard.folder_name
     group                  = optional(string, "custom") # The alerts general group name
+    alert_format_params = optional(object({
+      component    = optional(string, "")
+      priority     = optional(string, "")
+      owner        = optional(string, "")
+      issue_phrase = optional(string, "")
+      impact       = optional(string, "")
+      runbook      = optional(string, "")
+      provider     = optional(string, "")
+      account      = optional(string, "")
+      env          = optional(string, "")
+    }), {})
     rules = optional(
       list(object({                                                      # Describes custom alert rules
         name                 = string                                    # The name of the alert rule
@@ -61,6 +73,7 @@ variable "alerts" {
         exec_err_state       = optional(string, "Error")                 # Describes what state to enter when the rule's query is invalid and the rule cannot be executed
         summary              = optional(string, null)                    # Rule annotation as a summary, if not passed automatically generated based on data
         labels               = optional(map(any), { "priority" : "P1" }) # Labels help to define matchers in notification policy to control where to send each alert
+        annotations          = optional(map(string), {})                 # Annotations to set to the alert rule. Annotations will be used to customize the alart message in notifications template
         group                = optional(string, "custom")                # Grafana alert group name in which the rule will be created/grouped
         datasource           = string                                    # Name of the datasource used for the alert
         expr                 = optional(string, null)                    # Full expression for the alert
