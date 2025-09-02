@@ -7,7 +7,7 @@ locals {
       access_mode = "proxy"
       uid         = "prometheus"
       url         = "http://prometheus-operated.${var.namespace}.svc.cluster.local:9090"
-      is_deafult  = true
+      is_default  = true
     }
     loki = {
       type        = "loki"

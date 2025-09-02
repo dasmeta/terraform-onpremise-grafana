@@ -8,6 +8,8 @@ module "alert_rules" {
   group                  = var.group
   alert_interval_seconds = var.alert_interval_seconds
   disable_provenance     = var.disable_provenance
+  annotations            = var.annotations
+  labels                 = var.labels
   alert_rules            = var.rules
 }
 
@@ -16,11 +18,12 @@ module "contact_points" {
 
   count = var.contact_points != null ? 1 : 0
 
-  disable_provenance = var.disable_provenance
-  slack_endpoints    = var.contact_points.slack
-  opsgenie_endpoints = var.contact_points.opsgenie
-  teams_endpoints    = var.contact_points.teams
-  webhook_endpoints  = var.contact_points.webhook
+  disable_provenance      = var.disable_provenance
+  enable_message_template = var.enable_message_template
+  slack_endpoints         = var.contact_points.slack
+  opsgenie_endpoints      = var.contact_points.opsgenie
+  teams_endpoints         = var.contact_points.teams
+  webhook_endpoints       = var.contact_points.webhook
 }
 
 module "notifications" {

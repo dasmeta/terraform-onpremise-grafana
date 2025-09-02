@@ -6,7 +6,7 @@ resource "helm_release" "grafana" {
   namespace        = var.namespace
   create_namespace = true
   version          = var.chart_version
-  timeout          = 600
+  timeout          = 300
 
   values = [
     templatefile("${path.module}/values/grafana-values.yaml.tpl", {
@@ -97,7 +97,7 @@ resource "grafana_data_source" "this" {
   basic_auth_enabled       = length(try(each.value.basic_auth_username, "")) > 0
   basic_auth_username      = try(each.value.basic_auth_username, null)
   database_name            = try(each.value.database_name, null)
-  is_default               = try(each.value.is_deafult, false)
+  is_default               = try(each.value.is_default, false)
   url                      = try(each.value.url, "")
   username                 = try(each.value.username, null)
   uid                      = try(each.value.uid, null)

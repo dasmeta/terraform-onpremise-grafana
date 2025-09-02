@@ -33,6 +33,8 @@ module "alerts" {
   folder_name            = coalesce(var.alerts.folder_name, var.application_dashboard.folder_name)
   group                  = var.alerts.group
   rules                  = var.alerts.rules
+  annotations            = var.alerts.annotations
+  labels                 = var.alerts.labels
   contact_points         = var.alerts.contact_points
   notifications          = var.alerts.notifications
 

@@ -13,13 +13,13 @@ locals {
 }
 
 resource "grafana_folder" "this" {
-  count = var.folder_name != null && var.create_folder && try(length(var.alert_rules), 0) > 0 ? 1 : 0
+  count = (var.folder_name != null) && var.create_folder ? 0 : 1
 
   title = var.folder_name
 }
 
 data "grafana_folder" "this" {
-  count = var.folder_name != null && !var.create_folder && try(length(var.alert_rules), 0) > 0 ? 1 : 0
+  count = (var.folder_name != null) && !var.create_folder ? 0 : 1
 
   title = var.folder_name
 }
@@ -39,11 +39,22 @@ resource "grafana_rule_group" "this" {
       condition      = "C"
       no_data_state  = lookup(rule.value, "no_data_state", "NoData")
       exec_err_state = lookup(rule.value, "exec_err_state", "Error")
-      annotations = {
+      annotations = merge({
         "Managed By" = "Terraform"
-        "summary"    = coalesce(rule.value.summary, "${rule.value.name} alert, the evaluated value($B) is ${rule.value.condition != null ? rule.value.condition : "${local.comparison_operators[rule.value.equation].definition} ${rule.value.threshold}"}")
-      }
-      labels    = lookup(rule.value, "labels", { "priority" : "P1" })
+        "summary"    = "${rule.value.name} alert, the evaluated value($B) is ${rule.value.condition != null ? rule.value.condition : "${local.comparison_operators[rule.value.equation].definition} ${rule.value.threshold}"}"
+        "threshold"  = try(rule.value.threshold, "")
+        },
+        # Merge predefined annotations (only non-empty values)
+        { for k, v in var.annotations : k => v if length(v) > 0 },
+        # Override with rule-specific annotations
+        lookup(rule.value, "annotations", {})
+      )
+      labels = merge(
+        # Merge predefined labels (only non-empty values)
+        { for k, v in var.labels : k => v if length(v) > 0 },
+        # Override with rule-specific labels
+        lookup(rule.value, "labels", {})
+      )
       is_paused = false
       data {
         ref_id     = "A"

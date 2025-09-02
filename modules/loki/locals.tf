@@ -40,7 +40,6 @@ locals {
           ["]"]
         )
       )
-
       }, var.configs.loki.ingress.tls.enabled ? {
       "alb.ingress.kubernetes.io/ssl-redirect" = "443"
       # "alb.ingress.kubernetes.io/certificate-arn" = var.configs.ingress.alb_certificate

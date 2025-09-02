@@ -3,11 +3,19 @@ locals {
     deployment = {
       defaults = {
         replicas_count_expr = "kube_deployment_status_replicas_available{deployment='${var.defaults.workload_prefix}${var.name}${var.defaults.workload_suffix}', namespace='${var.namespace}'}"
+        labels = {
+          priority = "P1"
+          slack    = "true"
+        }
       }
     }
     daemonset = {
       defaults = {
         replicas_count_expr = "kube_daemonset_status_number_ready{daemonset='${var.defaults.workload_prefix}${var.name}${var.defaults.workload_suffix}', namespace='${var.namespace}'}"
+        labels = {
+          priority = "P1"
+          slack    = "true"
+        }
       }
       alerts = {
         replicas_min = { enabled = false }
@@ -17,12 +25,20 @@ locals {
     statefulset = {
       defaults = {
         replicas_count_expr = "kube_statefulset_status_replicas_available{statefulset='${var.defaults.workload_prefix}${var.name}${var.defaults.workload_suffix}', namespace='${var.namespace}'}"
+        labels = {
+          priority = "P1"
+          slack    = "true"
+        }
       }
     }
     cronjob = {
       defaults = {
         enabled       = false
         no_data_state = "OK"
+        labels = {
+          priority = "P2"
+          slack    = "true"
+        }
       }
       alerts = {
         replicas_state = { enabled = true }
@@ -36,6 +52,10 @@ locals {
       defaults = {
         enabled       = false
         no_data_state = "OK"
+        labels = {
+          priority = "P2"
+          slack    = "true"
+        }
       }
       alerts = {
         replicas_state = { enabled = true }
