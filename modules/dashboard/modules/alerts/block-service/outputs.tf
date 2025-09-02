@@ -45,7 +45,7 @@ output "alert_rules" {
           "impact"    = "Service might response slower"
           "component" = "pod"
           "resource"  = "deployment"
-        }, try(var.alerts.replicas_max.annotations, {}), try(var.alerts.alert_format_params, {}))
+        }, try(var.alerts.replicas_max.annotations, {}), { for k, v in try(var.alerts.annotations, {}) : k => v if length(v) > 0 })
         settings_mode        = "replaceNN"
         settings_replaceWith = 0
       }
@@ -64,7 +64,7 @@ output "alert_rules" {
         threshold      = 0
         filters        = {}
         labels         = merge(local.defaults.labels, local.alerts.replicas_min.labels)
-        annotations = merge(try(var.alerts.alert_format_params, {}),
+        annotations = merge({ for k, v in try(var.alerts.annotations, {}) : k => v if length(v) > 0 },
           {
             "threshold" = 0,
             "metric"    = "replicas",
@@ -91,7 +91,7 @@ output "alert_rules" {
         threshold      = local.alerts.replicas_state.threshold
         filters        = {}
         labels         = merge(local.defaults.labels, local.alerts.replicas_state.labels)
-        annotations = merge(try(var.alerts.alert_format_params, {}),
+        annotations = merge({ for k, v in try(var.alerts.annotations, {}) : k => v if length(v) > 0 },
           {
             "threshold" = var.alerts.replicas_state.threshold,
             "metric"    = "replicas",
@@ -117,7 +117,7 @@ output "alert_rules" {
         threshold      = local.alerts.job_failed.threshold
         filters        = {}
         labels         = merge(local.defaults.labels, local.alerts.job_failed.labels)
-        annotations = merge(try(var.alerts.alert_format_params, {}),
+        annotations = merge({ for k, v in try(var.alerts.annotations, {}) : k => v if length(v) > 0 },
           {
             "threshold" = var.alerts.job_failed.threshold,
             "metric"    = "replicas",
@@ -146,7 +146,7 @@ output "alert_rules" {
         equation  = "gte"
         threshold = local.alerts.restarts.threshold
         labels    = merge(local.defaults.labels, local.alerts.restarts.labels)
-        annotations = merge(try(var.alerts.alert_format_params, {}),
+        annotations = merge({ for k, v in try(var.alerts.annotations, {}) : k => v if length(v) > 0 },
           {
             "threshold" = var.alerts.restarts.threshold,
             "metric"    = "replicas",
@@ -172,7 +172,7 @@ output "alert_rules" {
         equation       = "gte"
         threshold      = coalesce(local.alerts.network_in.deviation, local.defaults.deviation)
         labels         = merge(local.defaults.labels, local.alerts.network_in.labels)
-        annotations = merge(try(var.alerts.alert_format_params, {}),
+        annotations = merge({ for k, v in try(var.alerts.annotations, {}) : k => v if length(v) > 0 },
           {
             "threshold" = coalesce(local.alerts.network_in.deviation, local.defaults.deviation),
             "metric"    = "replicas",
@@ -198,7 +198,7 @@ output "alert_rules" {
         equation       = "gte"
         threshold      = coalesce(local.alerts.network_out.deviation, local.defaults.deviation)
         labels         = merge(local.defaults.labels, local.alerts.network_out.labels)
-        annotations = merge(try(var.alerts.alert_format_params, {}),
+        annotations = merge({ for k, v in try(var.alerts.annotations, {}) : k => v if length(v) > 0 },
           {
             "threshold" = coalesce(local.alerts.network_out.deviation, local.defaults.deviation),
             "metric"    = "replicas",
@@ -224,7 +224,7 @@ output "alert_rules" {
         equation       = "gte"
         threshold      = coalesce(local.alerts.cpu.threshold_percent, local.defaults.threshold_percent)
         labels         = merge(local.defaults.labels, local.alerts.cpu.labels)
-        annotations = merge(try(var.alerts.alert_format_params, {}),
+        annotations = merge({ for k, v in try(var.alerts.annotations, {}) : k => v if length(v) > 0 },
           {
             "threshold" = coalesce(local.alerts.cpu.threshold_percent, local.defaults.threshold_percent),
             "metric"    = "cpu",
@@ -252,7 +252,7 @@ output "alert_rules" {
         equation       = "gte"
         threshold      = coalesce(local.alerts.memory.threshold_percent, local.defaults.threshold_percent)
         labels         = merge(local.defaults.labels, local.alerts.memory.labels)
-        annotations = merge(try(var.alerts.alert_format_params, {}),
+        annotations = merge({ for k, v in try(var.alerts.annotations, {}) : k => v if length(v) > 0 },
           {
             "threshold" = coalesce(local.alerts.memory.threshold_percent, local.defaults.threshold_percent),
             "metric"    = "memory",

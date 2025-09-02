@@ -130,7 +130,8 @@ variable "alerts" {
       group              = optional(string, null)     # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
       annotations        = optional(any, {})          # define alert annotations to include in notifications
     }), {})
-    alert_format_params = optional(object({
+    # Predefined annotations structure for all alerts
+    annotations = optional(object({
       component    = optional(string, "")
       priority     = optional(string, "")
       owner        = optional(string, "")
@@ -142,8 +143,14 @@ variable "alerts" {
       env          = optional(string, "")
       threshold    = optional(string, "")
       metric       = optional(string, "")
-      resource     = optional(string, "")
       summary      = optional(string, "")
+    }), {})
+
+    # Predefined labels structure for all alerts
+    labels = optional(object({
+      priority = optional(string, "P2")
+      severity = optional(string, "warning")
+      env      = optional(string, "")
     }), {})
   })
   default     = {}

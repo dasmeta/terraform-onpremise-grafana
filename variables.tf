@@ -56,7 +56,8 @@ variable "alerts" {
     folder_name             = optional(string, null)     # The folder name for dashboard, if not set it defaults to var.application_dashboard.folder_name
     group                   = optional(string, "custom") # The alerts general group name
     enable_message_template = optional(bool, true)       # Whether to enable the message template for the alerts
-    alert_format_params = optional(object({
+    # Predefined annotations structure for all alerts
+    annotations = optional(object({
       component    = optional(string, "")
       priority     = optional(string, "")
       owner        = optional(string, "")
@@ -66,27 +67,37 @@ variable "alerts" {
       provider     = optional(string, "")
       account      = optional(string, "")
       env          = optional(string, "")
+      threshold    = optional(string, "")
+      metric       = optional(string, "")
+      summary      = optional(string, "")
+    }), {})
+
+    # Predefined labels structure for all alerts
+    labels = optional(object({
+      priority = optional(string, "P2")
+      severity = optional(string, "warning")
+      env      = optional(string, "")
     }), {})
     rules = optional(
-      list(object({                                                      # Describes custom alert rules
-        name                 = string                                    # The name of the alert rule
-        no_data_state        = optional(string, "NoData")                # Describes what state to enter when the rule's query returns No Data
-        exec_err_state       = optional(string, "Error")                 # Describes what state to enter when the rule's query is invalid and the rule cannot be executed
-        summary              = optional(string, null)                    # Rule annotation as a summary, if not passed automatically generated based on data
-        labels               = optional(map(any), { "priority" : "P1" }) # Labels help to define matchers in notification policy to control where to send each alert
-        annotations          = optional(map(string), {})                 # Annotations to set to the alert rule. Annotations will be used to customize the alart message in notifications template
-        group                = optional(string, "custom")                # Grafana alert group name in which the rule will be created/grouped
-        datasource           = string                                    # Name of the datasource used for the alert
-        expr                 = optional(string, null)                    # Full expression for the alert
-        metric_name          = optional(string, "")                      # Prometheus metric name which queries the data for the alert
-        metric_function      = optional(string, "")                      # Prometheus function used with metric for queries, like rate, sum etc.
-        metric_interval      = optional(string, "")                      # The time interval with using functions like rate
-        settings_mode        = optional(string, "replaceNN")             # The mode used in B block, possible values are Strict, replaceNN, dropNN
-        settings_replaceWith = optional(number, 0)                       # The value by which NaN results of the query will be replaced
-        filters              = optional(any, {})                         # Filters object to identify each service for alerting
-        function             = optional(string, "mean")                  # One of Reduce functions which will be used in B block for alerting
-        equation             = string                                    # The equation in the math expression which compares B blocks value with a number and generates an alert if needed. Possible values: gt, lt, gte, lte, e
-        threshold            = number                                    # The value against which B blocks are compared in the math expression
+      list(object({                                          # Describes custom alert rules
+        name                 = string                        # The name of the alert rule
+        no_data_state        = optional(string, "NoData")    # Describes what state to enter when the rule's query returns No Data
+        exec_err_state       = optional(string, "Error")     # Describes what state to enter when the rule's query is invalid and the rule cannot be executed
+        summary              = optional(string, null)        # Rule annotation as a summary, if not passed automatically generated based on data
+        labels               = optional(map(any), {})        # Labels help to define matchers in notification policy to control where to send each alert. Can be any key-value pairs
+        annotations          = optional(map(string), {})     # Annotations to set to the alert rule. Annotations will be used to customize the alert message in notifications template. Can be any key-value pairs
+        group                = optional(string, "custom")    # Grafana alert group name in which the rule will be created/grouped
+        datasource           = string                        # Name of the datasource used for the alert
+        expr                 = optional(string, null)        # Full expression for the alert
+        metric_name          = optional(string, "")          # Prometheus metric name which queries the data for the alert
+        metric_function      = optional(string, "")          # Prometheus function used with metric for queries, like rate, sum etc.
+        metric_interval      = optional(string, "")          # The time interval with using functions like rate
+        settings_mode        = optional(string, "replaceNN") # The mode used in B block, possible values are Strict, replaceNN, dropNN
+        settings_replaceWith = optional(number, 0)           # The value by which NaN results of the query will be replaced
+        filters              = optional(any, {})             # Filters object to identify each service for alerting
+        function             = optional(string, "mean")      # One of Reduce functions which will be used in B block for alerting
+        equation             = string                        # The equation in the math expression which compares B blocks value with a number and generates an alert if needed. Possible values: gt, lt, gte, lte, e
+        threshold            = number                        # The value against which B blocks are compared in the math expression
     })), [])
     contact_points = optional(object({
       slack = optional(list(object({                                                         # Slack contact points list

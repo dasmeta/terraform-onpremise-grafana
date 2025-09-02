@@ -13,10 +13,11 @@ locals {
 module "widget_alerts" {
   source = "../alerts/modules/rules"
 
-  create_folder       = false # we do not create folder in alert module as we will use dashboard folder
-  folder_name         = var.folder_name
-  alert_rules         = local.widget_alert_rules
-  alert_format_params = try(var.alerts.alert_format_params, {})
+  create_folder = false # we do not create folder in alert module as we will use dashboard folder
+  folder_name   = var.folder_name
+  alert_rules   = local.widget_alert_rules
+  annotations   = try(var.alerts.annotations, {})
+  labels        = try(var.alerts.labels, {})
 
   depends_on = [grafana_folder.this]
 }

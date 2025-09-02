@@ -44,22 +44,17 @@ resource "grafana_rule_group" "this" {
         "summary"    = coalesce(rule.value.summary, "${rule.value.name} alert, the evaluated value($B) is ${rule.value.condition != null ? rule.value.condition : "${local.comparison_operators[rule.value.equation].definition} ${rule.value.threshold}"}")
         "threshold"  = try(rule.value.threshold, "")
         },
-        length(var.alert_format_params.owner) > 0 ? { "owner" : var.alert_format_params.owner } : {},
-        length(var.alert_format_params.component) > 0 ? { "component" : var.alert_format_params.component } : {},
-        length(var.alert_format_params.priority) > 0 ? { "priority" : var.alert_format_params.priority } : {},
-        length(var.alert_format_params.issue_phrase) > 0 ? { "issue_phrase" : var.alert_format_params.issue_phrase } : {},
-        length(var.alert_format_params.impact) > 0 ? { "impact" : var.alert_format_params.impact } : {},
-        length(var.alert_format_params.runbook) > 0 ? { "runbook" : var.alert_format_params.runbook } : {},
-        length(var.alert_format_params.provider) > 0 ? { "provider" : var.alert_format_params.provider } : {},
-        length(var.alert_format_params.account) > 0 ? { "account" : var.alert_format_params.account } : {},
-        length(var.alert_format_params.env) > 0 ? { "env" : var.alert_format_params.env } : {},
-        length(var.alert_format_params.threshold) > 0 ? { "threshold" : var.alert_format_params.threshold } : {},
-        length(var.alert_format_params.metric) > 0 ? { "metric" : var.alert_format_params.metric } : {},
-        length(var.alert_format_params.resource) > 0 ? { "resource" : var.alert_format_params.resource } : {},
-        length(var.alert_format_params.summary) > 0 ? { "summary" : var.alert_format_params.summary } : {},
+        # Merge predefined annotations (only non-empty values)
+        { for k, v in var.annotations : k => v if length(v) > 0 },
+        # Override with rule-specific annotations
         lookup(rule.value, "annotations", {})
       )
-      labels    = lookup(rule.value, "labels", { "priority" : "P1" })
+      labels = merge(
+        # Merge predefined labels (only non-empty values)
+        { for k, v in var.labels : k => v if length(v) > 0 },
+        # Override with rule-specific labels
+        lookup(rule.value, "labels", {})
+      )
       is_paused = false
       data {
         ref_id     = "A"
