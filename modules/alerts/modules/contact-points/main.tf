@@ -82,7 +82,7 @@ resource "grafana_message_template" "body_template" {
 {{- $owner    := or (or .CommonAnnotations.owner    $a.Labels.owner)    "On-Call" -}}
 {{- $provider := or (or .CommonAnnotations.provider $a.Labels.provider) "-" -}}
 {{- $account  := or (or .CommonAnnotations.account  $a.Labels.account)  "-" -}}
-{{- $env      := or (or .CommonAnnotations.env      $a.Labels.env)      "-" -}}
+{{- $env      := or .CommonLabels.env      $a.Labels.env      "-" -}}
 
 {{- $currentFromB := "" -}}
 {{- with (index $a.Values "B") -}}

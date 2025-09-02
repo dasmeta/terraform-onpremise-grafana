@@ -22,7 +22,6 @@ variable "application_dashboard" {
       uid  = optional(string, "prometheus")
       type = optional(string, "prometheus")
     }), {})
-    namespace = optional(string, "prod")
     variables = optional(list(object({ # Allows to define variables to be used in dashboard
       name        = string
       type        = optional(string, "custom")
@@ -61,14 +60,12 @@ variable "alerts" {
     # Values provided here will also be available in notification templates
     annotations = optional(object({
       component    = optional(string, "") # Component or service name (e.g., "kubernetes", "database", "api")
-      priority     = optional(string, "") # Alert priority level (e.g., "P1", "P2", "P3")
       owner        = optional(string, "") # Team or person responsible for the alert (e.g., "Platform Team", "DevOps")
       issue_phrase = optional(string, "") # Brief description of the issue type (e.g., "Service Issue", "Infrastructure Alert")
       impact       = optional(string, "") # Description of the impact (e.g., "Service degradation", "Complete outage")
       runbook      = optional(string, "") # URL to runbook or documentation for resolving the issue
       provider     = optional(string, "") # Cloud provider or platform (e.g., "AWS EKS", "GCP", "Azure")
       account      = optional(string, "") # Account or environment identifier (e.g., "production", "staging")
-      env          = optional(string, "") # Environment name (e.g., "prod", "staging", "dev")
       threshold    = optional(string, "") # Threshold value that triggered the alert (e.g., "80%", "100ms")
       metric       = optional(string, "") # Metric name or type being monitored (e.g., "cpu-usage", "response-time")
     }), {})
