@@ -40,6 +40,7 @@ variable "alerts" {
       labels         = optional(any, { "priority" : "P1" }) # define alert labels to filter in notification policies, this extends with override the defaults labels. we set here P1 priority as if there are no any pods the service is down
       no_data_state  = optional(string, null)               # define how to handle if no data for query, if set `null` here it takes  defaults value
       group          = optional(string, null)               # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
+      annotations    = optional(any, {})                    # define alert annotations to include in notifications
     }), {})
     replicas_min = optional(object({
       enabled        = optional(bool, null)   # whether to have alert on min replicas/pods, so that if there are no at least min count of pods/replicas it will trigger alert
@@ -48,6 +49,7 @@ variable "alerts" {
       no_data_state  = optional(string, null) # define how to handle if no data for query, if set `null` here it takes  defaults value
       labels         = optional(any, {})      # define alert labels to filter in notification policies, if set `null` here it takes defaults labels.
       group          = optional(string, null) # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
+      annotations    = optional(any, {})      # define alert annotations to include in notifications
     }), {})
     replicas_max = optional(object({
       enabled        = optional(bool, null)   # whether to have alert on max replicas/pods, so that if it reached to max count of pods/replicas it will trigger alert
@@ -56,6 +58,7 @@ variable "alerts" {
       no_data_state  = optional(string, null) # define how to handle if no data for query, if set `null` here it takes  defaults value
       labels         = optional(any, {})      # define alert labels to filter in notification policies, this extends with override the defaults labels
       group          = optional(string, null) # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
+      annotations    = optional(any, {})      # define alert annotations to include in notifications
     }), {})
     replicas_state = optional(object({
       enabled        = optional(bool, null)   # whether to have alert on Failed/Pending/Unknown status/phase replicas/pods, so that if it already long time there pods on those phase we get notified
@@ -64,6 +67,7 @@ variable "alerts" {
       no_data_state  = optional(string, null) # define how to handle if no data for query, if set `null` here it takes  defaults value
       labels         = optional(any, {})      # define alert labels to filter in notification policies, this extends with override the defaults labels
       group          = optional(string, null) # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
+      annotations    = optional(any, {})      # define alert annotations to include in notifications
     }), {})
     job_failed = optional(object({
       enabled        = optional(bool, false)  # whether to have alert on job/cronjob failed status, we have this alert disabled by default as it is only job/cronjob related
@@ -72,6 +76,7 @@ variable "alerts" {
       no_data_state  = optional(string, null) # define how to handle if no data for query, if set `null` here it takes  defaults value
       labels         = optional(any, {})      # define alert labels to filter in notification policies, this extends with override the defaults labels
       group          = optional(string, null) # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
+      annotations    = optional(any, {})      # define alert annotations to include in notifications
     }), {})
     restarts = optional(object({             # configure service pod/container restart based alert
       enabled       = optional(bool, null)   # whether the restart based alert is enabled
@@ -80,6 +85,7 @@ variable "alerts" {
       no_data_state = optional(string, null) # define how to handle if no data for query, if set `null` here it takes  defaults value
       labels        = optional(any, {})      # define alert labels to filter in notification policies, this extends with override the defaults labels
       group         = optional(string, null) # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
+      annotations   = optional(any, {})      # define alert annotations to include in notifications
     }), {})
     network_in = optional(object({            # to configure network in/out traffic anomaly increase alerting
       enabled        = optional(bool, null)   # wether to create alert on network in/receive anomaly increase/decrease of traffic
@@ -89,6 +95,7 @@ variable "alerts" {
       no_data_state  = optional(string, null) # define how to handle if no data for query, if set `null` here it takes  defaults value
       labels         = optional(any, {})      # define alert labels to filter in notification policies, this extends with override the defaults labels
       group          = optional(string, null) # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
+      annotations    = optional(any, {})      # define alert annotations to include in notifications
     }), {})
     network_out = optional(object({           # to configure network in/out traffic anomaly increase alerting
       enabled        = optional(bool, null)   # wether to create alert on network out/transmit anomaly increase/decrease of traffic
@@ -98,6 +105,7 @@ variable "alerts" {
       no_data_state  = optional(string, null) # define how to handle if no data for query, if set `null` here it takes  defaults value
       labels         = optional(any, {})      # define alert labels to filter in notification policies, this extends with override the defaults labels
       group          = optional(string, null) # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
+      annotations    = optional(any, {})      # define alert annotations to include in notifications
     }), {})
     cpu = optional(object({                           # to configure cpu/memory overload based alerting
       enabled            = optional(bool, null)       # whether cpu high load based alerting is enabled
@@ -109,6 +117,7 @@ variable "alerts" {
       no_data_state      = optional(string, null)     # define how to handle if no data for query, if set `null` here it takes  defaults value
       labels             = optional(any, {})          # define alert labels to filter in notification policies, this extends with override the defaults labels
       group              = optional(string, null)     # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
+      annotations        = optional(any, {})          # define alert annotations to include in notifications
     }), {})
     memory = optional(object({                        # to configure cpu/memory overload based alerting
       enabled            = optional(bool, null)       # whether cpu high load based alerting is enabled
@@ -119,6 +128,22 @@ variable "alerts" {
       no_data_state      = optional(string, null)     # define how to handle if no data for query, if set `null` here it takes  defaults value
       labels             = optional(any, {})          # define alert labels to filter in notification policies, this extends with override the defaults labels
       group              = optional(string, null)     # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
+      annotations        = optional(any, {})          # define alert annotations to include in notifications
+    }), {})
+    alert_format_params = optional(object({
+      component    = optional(string, "")
+      priority     = optional(string, "")
+      owner        = optional(string, "")
+      issue_phrase = optional(string, "")
+      impact       = optional(string, "")
+      runbook      = optional(string, "")
+      provider     = optional(string, "")
+      account      = optional(string, "")
+      env          = optional(string, "")
+      threshold    = optional(string, "")
+      metric       = optional(string, "")
+      resource     = optional(string, "")
+      summary      = optional(string, "")
     }), {})
   })
   default     = {}

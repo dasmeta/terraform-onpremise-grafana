@@ -50,11 +50,12 @@ variable "application_dashboard" {
 
 variable "alerts" {
   type = object({
-    alert_interval_seconds = optional(number, 10)       # The interval, in seconds, at which all rules in the group are evaluated. If a group contains many rules, the rules are evaluated sequentially
-    disable_provenance     = optional(bool, true)       # Allow modifying resources from other sources than Terraform or the Grafana API
-    create_folder          = optional(bool, false)      # whether to create folder to place app dashboard and alerts there, if folder with provided name exist already no need to create it again
-    folder_name            = optional(string, null)     # The folder name for dashboard, if not set it defaults to var.application_dashboard.folder_name
-    group                  = optional(string, "custom") # The alerts general group name
+    alert_interval_seconds  = optional(number, 10)       # The interval, in seconds, at which all rules in the group are evaluated. If a group contains many rules, the rules are evaluated sequentially
+    disable_provenance      = optional(bool, true)       # Allow modifying resources from other sources than Terraform or the Grafana API
+    create_folder           = optional(bool, false)      # whether to create folder to place app dashboard and alerts there, if folder with provided name exist already no need to create it again
+    folder_name             = optional(string, null)     # The folder name for dashboard, if not set it defaults to var.application_dashboard.folder_name
+    group                   = optional(string, "custom") # The alerts general group name
+    enable_message_template = optional(bool, true)       # Whether to enable the message template for the alerts
     alert_format_params = optional(object({
       component    = optional(string, "")
       priority     = optional(string, "")

@@ -71,6 +71,8 @@ resource "grafana_contact_point" "webhook_contact_point" {
 }
 
 resource "grafana_message_template" "body_template" {
+
+  count    = var.enable_message_template ? 1 : 0
   name     = "Message Template"
   template = <<EOF
 {{ define "default.message" }}

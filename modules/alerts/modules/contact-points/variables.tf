@@ -63,3 +63,9 @@ variable "webhook_endpoints" {
   default     = []
   description = "Contact points that send notifications to an arbitrary webhook, using the Prometheus webhook format."
 }
+
+variable "enable_message_template" {
+  type        = bool
+  default     = true
+  description = "Whether to enable the message template for the alerts"
+}

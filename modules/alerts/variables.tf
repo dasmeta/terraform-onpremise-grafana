@@ -28,6 +28,12 @@ variable "group" {
   description = "The alerts general group name to attach all alerts to if no specific group set for alert rule item"
 }
 
+variable "enable_message_template" {
+  type        = bool
+  default     = true
+  description = "Whether to enable the message template for the alerts"
+}
+
 variable "alert_format_params" {
   type = object({
     component    = optional(string, "")
@@ -39,6 +45,10 @@ variable "alert_format_params" {
     provider     = optional(string, "")
     account      = optional(string, "")
     env          = optional(string, "")
+    threshold    = optional(string, "")
+    metric       = optional(string, "")
+    resource     = optional(string, "")
+    summary      = optional(string, "")
   })
   default = {}
 }

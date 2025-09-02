@@ -13,13 +13,13 @@ locals {
 }
 
 resource "grafana_folder" "this" {
-  count = var.folder_name != null && var.create_folder && try(length(var.alert_rules), 0) > 0 ? 1 : 0
+  count = (var.folder_name != null) && var.create_folder ? 0 : 1
 
   title = var.folder_name
 }
 
 data "grafana_folder" "this" {
-  count = var.folder_name != null && !var.create_folder && try(length(var.alert_rules), 0) > 0 ? 1 : 0
+  count = (var.folder_name != null) && !var.create_folder ? 0 : 1
 
   title = var.folder_name
 }
@@ -45,15 +45,19 @@ resource "grafana_rule_group" "this" {
         "threshold"  = try(rule.value.threshold, "")
         },
         length(var.alert_format_params.owner) > 0 ? { "owner" : var.alert_format_params.owner } : {},
-        length(var.alert_format_params.issue_phrase) > 0 ? { "issue_phrase" : var.alert_format_params.owner } : {},
+        length(var.alert_format_params.component) > 0 ? { "component" : var.alert_format_params.component } : {},
+        length(var.alert_format_params.priority) > 0 ? { "priority" : var.alert_format_params.priority } : {},
+        length(var.alert_format_params.issue_phrase) > 0 ? { "issue_phrase" : var.alert_format_params.issue_phrase } : {},
+        length(var.alert_format_params.impact) > 0 ? { "impact" : var.alert_format_params.impact } : {},
+        length(var.alert_format_params.runbook) > 0 ? { "runbook" : var.alert_format_params.runbook } : {},
         length(var.alert_format_params.provider) > 0 ? { "provider" : var.alert_format_params.provider } : {},
-        length(var.alert_format_params.issue_phrase) > 0 ? { "issue_phrase" : var.alert_format_params.owner } : {},
-        length(var.alert_format_params.issue_phrase) > 0 ? { "issue_phrase" : var.alert_format_params.owner } : {},
-        length(var.alert_format_params.issue_phrase) > 0 ? { "issue_phrase" : var.alert_format_params.owner } : {},
-        length(var.alert_format_params.issue_phrase) > 0 ? { "issue_phrase" : var.alert_format_params.owner } : {},
-        length(var.alert_format_params.issue_phrase) > 0 ? { "issue_phrase" : var.alert_format_params.owner } : {},
-        lookup(rule.value, "annotations", {}),
-
+        length(var.alert_format_params.account) > 0 ? { "account" : var.alert_format_params.account } : {},
+        length(var.alert_format_params.env) > 0 ? { "env" : var.alert_format_params.env } : {},
+        length(var.alert_format_params.threshold) > 0 ? { "threshold" : var.alert_format_params.threshold } : {},
+        length(var.alert_format_params.metric) > 0 ? { "metric" : var.alert_format_params.metric } : {},
+        length(var.alert_format_params.resource) > 0 ? { "resource" : var.alert_format_params.resource } : {},
+        length(var.alert_format_params.summary) > 0 ? { "summary" : var.alert_format_params.summary } : {},
+        lookup(rule.value, "annotations", {})
       )
       labels    = lookup(rule.value, "labels", { "priority" : "P1" })
       is_paused = false
