@@ -57,19 +57,20 @@ variable "alerts" {
     group                   = optional(string, "custom") # The alerts general group name
     enable_message_template = optional(bool, true)       # Whether to enable the message template for the alerts
     # Predefined annotations structure for all alerts
+    # These annotations will be applied to all alerts and can be overridden by rule-specific annotations
+    # Values provided here will also be available in notification templates
     annotations = optional(object({
-      component    = optional(string, "")
-      priority     = optional(string, "")
-      owner        = optional(string, "")
-      issue_phrase = optional(string, "")
-      impact       = optional(string, "")
-      runbook      = optional(string, "")
-      provider     = optional(string, "")
-      account      = optional(string, "")
-      env          = optional(string, "")
-      threshold    = optional(string, "")
-      metric       = optional(string, "")
-      summary      = optional(string, "")
+      component    = optional(string, "") # Component or service name (e.g., "kubernetes", "database", "api")
+      priority     = optional(string, "") # Alert priority level (e.g., "P1", "P2", "P3")
+      owner        = optional(string, "") # Team or person responsible for the alert (e.g., "Platform Team", "DevOps")
+      issue_phrase = optional(string, "") # Brief description of the issue type (e.g., "Service Issue", "Infrastructure Alert")
+      impact       = optional(string, "") # Description of the impact (e.g., "Service degradation", "Complete outage")
+      runbook      = optional(string, "") # URL to runbook or documentation for resolving the issue
+      provider     = optional(string, "") # Cloud provider or platform (e.g., "AWS EKS", "GCP", "Azure")
+      account      = optional(string, "") # Account or environment identifier (e.g., "production", "staging")
+      env          = optional(string, "") # Environment name (e.g., "prod", "staging", "dev")
+      threshold    = optional(string, "") # Threshold value that triggered the alert (e.g., "80%", "100ms")
+      metric       = optional(string, "") # Metric name or type being monitored (e.g., "cpu-usage", "response-time")
     }), {})
 
     # Predefined labels structure for all alerts
@@ -79,11 +80,11 @@ variable "alerts" {
       env      = optional(string, "")
     }), {})
     rules = optional(
-      list(object({                                          # Describes custom alert rules
-        name                 = string                        # The name of the alert rule
-        no_data_state        = optional(string, "NoData")    # Describes what state to enter when the rule's query returns No Data
-        exec_err_state       = optional(string, "Error")     # Describes what state to enter when the rule's query is invalid and the rule cannot be executed
-        summary              = optional(string, null)        # Rule annotation as a summary, if not passed automatically generated based on data
+      list(object({                                 # Describes custom alert rules
+        name           = string                     # The name of the alert rule
+        no_data_state  = optional(string, "NoData") # Describes what state to enter when the rule's query returns No Data
+        exec_err_state = optional(string, "Error")  # Describes what state to enter when the rule's query is invalid and the rule cannot be executed
+
         labels               = optional(map(any), {})        # Labels help to define matchers in notification policy to control where to send each alert. Can be any key-value pairs
         annotations          = optional(map(string), {})     # Annotations to set to the alert rule. Annotations will be used to customize the alert message in notifications template. Can be any key-value pairs
         group                = optional(string, "custom")    # Grafana alert group name in which the rule will be created/grouped

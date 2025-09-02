@@ -41,7 +41,7 @@ resource "grafana_rule_group" "this" {
       exec_err_state = lookup(rule.value, "exec_err_state", "Error")
       annotations = merge({
         "Managed By" = "Terraform"
-        "summary"    = coalesce(rule.value.summary, "${rule.value.name} alert, the evaluated value($B) is ${rule.value.condition != null ? rule.value.condition : "${local.comparison_operators[rule.value.equation].definition} ${rule.value.threshold}"}")
+        "summary"    = "${rule.value.name} alert, the evaluated value($B) is ${rule.value.condition != null ? rule.value.condition : "${local.comparison_operators[rule.value.equation].definition} ${rule.value.threshold}"}"
         "threshold"  = try(rule.value.threshold, "")
         },
         # Merge predefined annotations (only non-empty values)

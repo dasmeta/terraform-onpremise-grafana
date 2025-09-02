@@ -131,19 +131,20 @@ variable "alerts" {
       annotations        = optional(any, {})          # define alert annotations to include in notifications
     }), {})
     # Predefined annotations structure for all alerts
+    # These annotations will be applied to all alerts and can be overridden by rule-specific annotations
+    # Values provided here will also be available in notification templates
     annotations = optional(object({
-      component    = optional(string, "")
-      priority     = optional(string, "")
-      owner        = optional(string, "")
-      issue_phrase = optional(string, "")
-      impact       = optional(string, "")
-      runbook      = optional(string, "")
-      provider     = optional(string, "")
-      account      = optional(string, "")
-      env          = optional(string, "")
-      threshold    = optional(string, "")
-      metric       = optional(string, "")
-      summary      = optional(string, "")
+      component    = optional(string, "") # Component or service name (e.g., "kubernetes", "database", "api")
+      priority     = optional(string, "") # Alert priority level (e.g., "P1", "P2", "P3")
+      owner        = optional(string, "") # Team or person responsible for the alert (e.g., "Platform Team", "DevOps")
+      issue_phrase = optional(string, "") # Brief description of the issue type (e.g., "Service Issue", "Infrastructure Alert")
+      impact       = optional(string, "") # Description of the impact (e.g., "Service degradation", "Complete outage")
+      runbook      = optional(string, "") # URL to runbook or documentation for resolving the issue
+      provider     = optional(string, "") # Cloud provider or platform (e.g., "AWS EKS", "GCP", "Azure")
+      account      = optional(string, "") # Account or environment identifier (e.g., "production", "staging")
+      env          = optional(string, "") # Environment name (e.g., "prod", "staging", "dev")
+      threshold    = optional(string, "") # Threshold value that triggered the alert (e.g., "80%", "100ms")
+      metric       = optional(string, "") # Metric name or type being monitored (e.g., "cpu-usage", "response-time")
     }), {})
 
     # Predefined labels structure for all alerts
