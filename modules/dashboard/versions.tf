@@ -1,11 +1,11 @@
 terraform {
-  required_version = ">= 1.3.0"
+  required_version = ">= 1.8.0"
 
   required_providers {
 
     grafana = {
       source  = "grafana/grafana"
-      version = "~> 3.7"
+      version = "~> 4.0"
     }
 
     random = {

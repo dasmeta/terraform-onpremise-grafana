@@ -4,7 +4,7 @@ terraform {
   required_providers {
     grafana = {
       source  = "grafana/grafana"
-      version = "~>3.21"
+      version = "~> 4.5"
     }
     helm = {
       source  = "hashicorp/helm"
@@ -15,17 +15,17 @@ terraform {
 
 # you can start dev grafana server locally using `docker compose up -d` from `/tests` folder before running the test locally
 provider "grafana" {
-  url  = "https://grafana.dev.trysela.com"
-  auth = "admin:adminPass123"
-
+  url    = "https://grafana.example.com"
+  auth   = "admin:admin"
+  org_id = 1
 }
 
 provider "helm" {
   kubernetes {
-    config_path = "~/.kube/config"
+    config_path = "~/.kube/sela-dev-eks-dev"
   }
 }
 
 provider "kubernetes" {
-  config_path = "~/.kube/config"
+  config_path = "~/.kube/sela-dev-eks-dev"
 }

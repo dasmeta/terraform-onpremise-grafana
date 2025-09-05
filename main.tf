@@ -2,6 +2,8 @@
 resource "grafana_folder" "shared_folders" {
   for_each = var.skip_folder_creation ? toset([]) : toset(local.all_folder_names)
   title    = each.value
+
+  depends_on = [module.grafana]
 }
 
 module "application_dashboard" {
@@ -9,13 +11,14 @@ module "application_dashboard" {
 
   for_each = local.app_dash_map
 
-  name                 = each.value.name
-  folder_name          = each.value.folder_name
-  create_folder        = var.skip_folder_creation
-  rows                 = each.value.rows
-  data_source          = each.value.data_source
-  variables            = each.value.variables
-  alerts               = each.value.alerts
+  name             = each.value.name
+  folder_name      = each.value.folder_name
+  create_folder    = var.skip_folder_creation
+  rows             = each.value.rows
+  data_source      = each.value.data_source
+  variables        = each.value.variables
+  alerts           = each.value.alerts
+  folder_name_uids = local.folder_name_uids
 
   depends_on = [module.grafana, grafana_folder.shared_folders]
 
@@ -23,10 +26,10 @@ module "application_dashboard" {
 }
 
 module "application_dashboard_json" {
-  count  = length(var.dashboards_json_files) > 0 ? 1 : 0
+  count  = length(local.json_dashboards) > 0 ? 1 : 0
   source = "./modules/dashboard-json"
 
-  dashboard_json_files = var.dashboards_json_files
+  dashboard_json_files = local.json_dashboards
   depends_on           = [module.grafana]
 }
 
@@ -37,7 +40,7 @@ module "alerts" {
 
   alert_interval_seconds = var.alerts.alert_interval_seconds
   disable_provenance     = var.alerts.disable_provenance
-  create_folder    = var.skip_folder_creation
+  create_folder          = var.skip_folder_creation
   folder_name            = coalesce(var.alerts.folder_name, var.application_dashboard[0].folder_name)
   group                  = var.alerts.group
   rules                  = var.alerts.rules
@@ -45,6 +48,7 @@ module "alerts" {
   labels                 = var.alerts.labels
   contact_points         = var.alerts.contact_points
   notifications          = var.alerts.notifications
+  folder_name_uids       = local.folder_name_uids
 
   depends_on = [module.grafana, grafana_folder.shared_folders]
 }

@@ -26,8 +26,9 @@ variable "configs" {
         mem = optional(string, "1Gi")
       }), {})
     }), {})
-    replicas            = optional(number, 2)
-    enable_alertmanager = optional(bool, true)
+    replicas                     = optional(number, 2)
+    enable_alertmanager          = optional(bool, true)
+    scrape_helm_chart_components = optional(bool, false)
     ingress = optional(object({
       enabled     = optional(bool, false)
       type        = optional(string, "nginx")
@@ -39,6 +40,7 @@ variable "configs" {
       path        = optional(list(string), ["/"])
       path_type   = optional(string, "Prefix")
     }), {})
+    kubelet_labels = optional(list(string), [])
   })
 
   description = "Values to send to Prometheus template values file"

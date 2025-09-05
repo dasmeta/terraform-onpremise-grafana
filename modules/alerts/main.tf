@@ -21,6 +21,7 @@ module "alert_rules" {
   annotations            = var.annotations
   labels                 = var.labels
   alert_rules            = var.rules
+  folder_uids            = length(var.folder_name_uids) > 0 ? var.folder_name_uids : (var.create_folder ? { for name, folder in grafana_folder.rules_folders : name => folder.uid } : {})
 }
 
 module "contact_points" {

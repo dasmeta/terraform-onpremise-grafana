@@ -1,8 +1,3 @@
-variable "name" {
-  type        = string
-  description = "Dashboard name"
-}
-
 variable "grafana_admin_password" {
   type        = string
   description = "grafana admin user password"
@@ -281,8 +276,9 @@ variable "prometheus" {
         mem = optional(string, "1Gi")
       }), {})
     }), {})
-    replicas            = optional(number, 2)
-    enable_alertmanager = optional(bool, true)
+    replicas                     = optional(number, 2)
+    enable_alertmanager          = optional(bool, true)
+    scrape_helm_chart_components = optional(bool, false)
     ingress = optional(object({
       enabled     = optional(bool, false)
       type        = optional(string, "nginx")
@@ -294,6 +290,7 @@ variable "prometheus" {
       path        = optional(list(string), ["/"])
       path_type   = optional(string, "Prefix")
     }), {})
+    kubelet_labels = optional(list(string), [])
   })
   description = "values to be used as prometheus's chart values"
   default     = {}
@@ -418,5 +415,11 @@ variable "loki" {
 variable "dashboards_json_files" {
   type        = list(string)
   default     = []
-  description = "Json definition of dashboard. For quickly provisioning the dashboards"
+  description = "Json definition of dashboard. For quickly provisioning dashboards from files"
+}
+
+variable "deploy_grafana_stack_dashboard" {
+  type        = bool
+  default     = true
+  description = "Whether to deploy the grafana stack dashboard"
 }

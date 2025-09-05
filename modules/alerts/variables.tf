@@ -62,6 +62,13 @@ variable "labels" {
   default = {}
 }
 
+variable "folder_name_uids" {
+  type        = map(string)
+  default     = {}
+  description = "Map of folder names to folder UIDs. If provided, will be used instead of creating folders"
+
+}
+
 variable "rules" {
   type = list(object({
     name           = string                     # The name of the alert rule

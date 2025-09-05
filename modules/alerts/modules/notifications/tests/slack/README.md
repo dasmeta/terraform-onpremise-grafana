@@ -6,7 +6,7 @@ This example creates a default notification policy for the Slack contact point.
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
-| <a name="requirement_grafana"></a> [grafana](#requirement\_grafana) | >= 3.7.0 |
+| <a name="requirement_grafana"></a> [grafana](#requirement\_grafana) | >= 4.0.0 |
 
 ## Providers
 

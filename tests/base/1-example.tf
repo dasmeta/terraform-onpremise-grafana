@@ -1,33 +1,42 @@
 module "this" {
   source = "../.."
 
-  name = "Test-dashboard"
-
-  application_dashboard = [{
-    name        = "Test-dashboard",
-    folder_name = "Test-dashboard",
-    rows : [
-      { type : "block/service", name = "worker", show_err_logs = true, loki_datasource_uid = "loki" }
-    ]
-    data_source = {
-      uid = "prometheus"
-    }
-
-    variables = [
-      {
-        "name" : "namespace",
-        "options" : [
-          {
-            "value" : "prod"
-          },
-          {
-            "selected" : true,
-            "value" : "dev"
-          }
-        ],
+  application_dashboard = [
+    {
+      name        = "Test-dashboard",
+      folder_name = "Test-dashboard",
+      alerts      = { enabled = false },
+      rows : [
+        { type : "block/service", name = "worker", show_err_logs = true, loki_datasource_uid = "loki", namespace = "dev" }
+      ]
+      data_source = {
+        uid = "prometheus"
       }
-    ]
-  }]
+
+      variables = [
+        {
+          "name" : "namespace",
+          "options" : [
+            {
+              "value" : "prod"
+            },
+            {
+              "selected" : true,
+              "value" : "dev"
+            }
+          ],
+        }
+      ]
+    },
+    {
+      name        = "Test-dashboard-2",
+      folder_name = "Test-dashboard-2",
+      alerts      = { enabled = false },
+      rows = [
+        { type : "block/service", name = "worker2", show_err_logs = true, loki_datasource_uid = "loki", namespace = "dev" }
+      ]
+    }
+  ]
   alerts = {
     rules = [
       {
@@ -52,7 +61,7 @@ module "this" {
         "datasource" : "prometheus",
         "equation" : "gt",
         "expr" : "avg(increase(nginx_ingress_controller_request_duration_seconds_sum[3m])) / 10",
-        "folder_name" : "Nginx Alerts",
+        # "folder_name" : "Nginx Alerts",
         "function" : "mean",
         "name" : "Latency P2",
         "labels" : {
@@ -93,7 +102,7 @@ module "this" {
   }
 
   tempo = {
-    enabled = true
+    enabled = false
 
     metrics_generator = {
       enabled = true
@@ -108,7 +117,7 @@ module "this" {
   }
 
   loki = {
-    enabled = true
+    enabled = false
   }
 
   prometheus = {
@@ -116,7 +125,7 @@ module "this" {
     storage_size  = "20Gi"
     storage_class = "gp2"
   }
-  grafana_admin_password = "adminPass123"
+  grafana_admin_password = "admin"
   # dashboards_json_files = [
   #   "./dashboard_files/ALB_dashboard.json",
   #   "./dashboard_files/Application_main_dashboard.json"

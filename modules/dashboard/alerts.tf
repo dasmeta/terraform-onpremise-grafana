@@ -13,11 +13,11 @@ locals {
 module "widget_alerts" {
   source = "../alerts/modules/rules"
 
-  create_folder = false # we do not create folder in alert module as we will use dashboard folder
   folder_name   = var.folder_name
   alert_rules   = local.widget_alert_rules
   annotations   = try(var.alerts.annotations, {})
   labels        = try(var.alerts.labels, {})
+  folder_uids = var.folder_name_uids
 
   depends_on = [grafana_folder.this]
 }
@@ -50,7 +50,7 @@ module "block_service_alerts" {
   for_each = { for index, item in flatten([
     for service in try(local.blocks_by_type["service"], []) : [
       for namespace in distinct(concat(
-        try(service.block.namespace, null) == null || startswith(try(service.block.namespace, ""), "$") ? [] : [service.block.namespace],
+        try(service.block.namespace, null) == null || startswith(try(service.block.namespace, ""), "$") ? ["default"] : [service.block.namespace],
         try(service.block.alerts.namespaces, [])
       )) : merge(service, { namespace = namespace })
     ]]) : index => item if try(merge(var.alerts, try(item.block.alerts, {})).enabled, true)

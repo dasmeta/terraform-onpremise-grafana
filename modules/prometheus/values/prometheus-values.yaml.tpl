@@ -4,11 +4,35 @@ grafana:
 
 prometheusOperator:
   enabled: true
+  serviceMonitor:
+    metricRelabelings:
+      - sourceLabels: [__name__]
+        regex: ^go_.*
+        action: drop
   tls:
     enabled: false
 
+coreDns:
+  serviceMonitor:
+    metricRelabelings:
+      - sourceLabels: [__name__]
+        regex: ^go_.*
+        action: drop
+
+kubeProxy:
+  serviceMonitor:
+    metricRelabelings:
+      - sourceLabels: [__name__]
+        regex: ^go_.*
+        action: drop
+
 prometheus:
   enabled: true
+  serviceMonitor:
+    metricRelabelings:
+      - sourceLabels: [__name__]
+        regex: ^go_.*
+        action: drop
   prometheusSpec:
     scrapeInterval: "30s"
     scrapeTimeout: "10s"
@@ -17,8 +41,8 @@ prometheus:
     - --web.disable-exporter-metrics
     replicas: ${replicas}
     retention: ${retention_days}
-    serviceMonitorSelectorNilUsesHelmValues: false
-    podMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: ${scrape_helm_chart_components}
+    podMonitorSelectorNilUsesHelmValues: ${scrape_helm_chart_components}
     storageSpec:
       volumeClaimTemplate:
         spec:
@@ -57,6 +81,10 @@ prometheus:
           target_label: __address__
           regex: (.+):(?:\d+);(.+)
           replacement: $1:$2
+      metric_relabel_configs:
+        - source_labels: [__name__]
+          regex: ^go_.*
+          action: drop
     - job_name: 'kubernetes-service-monitor'
       kubernetes_sd_configs:
         - role: service
@@ -122,7 +150,24 @@ alertmanager:
 kubeApiServer:
   enabled: false
 
+kubelet:
+  serviceMonitor:
+    enabled: true
+    probes: false
+    metricRelabelings:
+      - sourceLabels: [__name__]
+        regex: ${kubelet_labels}
+        action: keep
+    cAdvisorMetricRelabelings:
+      - sourceLabels: [__name__]
+        regex: ${kubelet_labels}
+        action: keep
 kube-state-metrics:
+  serviceMonitor:
+    metricRelabelings:
+      - sourceLabels: [__name__]
+        regex: ^go_.*
+        action: drop
   enabled: true
   collectors:
     - configmaps
@@ -143,6 +188,12 @@ nodeExporter:
   enabled: true
 
 prometheus-node-exporter:
+  serviceMonitor:
+    metricRelabelings:
+      - sourceLabels: [__name__]
+        regex: ^go_.*
+        action: drop
+
   extraArgs:
     - --web.disable-exporter-metrics
   resources:
