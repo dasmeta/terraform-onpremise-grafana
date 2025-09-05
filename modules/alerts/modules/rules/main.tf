@@ -11,14 +11,9 @@ locals {
     lte = { operator = "<=", definition = "less than or equal to" },
     e   = { operator = "=", definition = "equal to" }
   }
-<<<<<<< HEAD
 
-  folder_uids = {
-    for name, folder in data.grafana_folder.folders : name => folder.uid
-=======
   folder_name_uids = length(var.folder_uids) > 0 ? var.folder_uids : {
     for name, folder in data.grafana_folder.this : name => folder.uid
->>>>>>> 62572cf (feat(DMVP-8225): filter metrics, make dashboards list)
   }
 }
 

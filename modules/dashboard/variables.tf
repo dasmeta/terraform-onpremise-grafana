@@ -19,8 +19,8 @@ variable "defaults" {
 }
 
 variable "create_folder" {
-  type        = bool
-  default     = false
+  type    = bool
+  default = false
 
   description = "If true, create folder in this module. If false, use existing folder."
 }
