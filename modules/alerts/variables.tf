@@ -12,8 +12,8 @@ variable "disable_provenance" {
 
 variable "create_folder" {
   type        = bool
-  default     = true
-  description = "Whether to create one general group folder for all alerts"
+  default     = false
+  description = "If true, create folder in this module. If false, use existing folder."
 }
 
 variable "folder_name" {
@@ -60,6 +60,13 @@ variable "labels" {
     env      = optional(string, "")
   })
   default = {}
+}
+
+variable "folder_name_uids" {
+  type        = map(string)
+  default     = {}
+  description = "Map of folder names to folder UIDs. If provided, will be used instead of creating folders"
+
 }
 
 variable "rules" {

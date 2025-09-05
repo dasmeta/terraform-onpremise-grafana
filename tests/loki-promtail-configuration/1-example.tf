@@ -1,10 +1,7 @@
 module "this" {
   source = "../.."
 
-  name         = "Loki-test"
-  cluster_name = "eks-dev"
-
-  application_dashboard = {
+  application_dashboard = [{
     rows : [
       { type : "block/service", name = "worker", show_err_logs = true, expr = "{pod=~\"worker.*\"}" },
     ]
@@ -25,7 +22,7 @@ module "this" {
         ],
       }
     ]
-  }
+  }]
 
   grafana = {
     resources = {
@@ -149,5 +146,4 @@ module "this" {
     enabled = true
   }
   grafana_admin_password = "admin"
-  aws_region             = "us-east-2"
 }

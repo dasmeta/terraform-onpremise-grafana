@@ -14,7 +14,3 @@ output "blocks_results" {
 output "widget_alert_rules" {
   value = local.widget_alert_rules
 }
-
-output "folder" {
-  value = grafana_folder.this.uid
-}

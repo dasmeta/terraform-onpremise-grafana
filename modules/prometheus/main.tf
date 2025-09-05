@@ -23,7 +23,9 @@ resource "helm_release" "prometheus" {
 
       replicas = var.configs.replicas
 
-      enable_alertmanager = var.configs.enable_alertmanager
+      enable_alertmanager          = var.configs.enable_alertmanager
+      scrape_helm_chart_components = var.configs.scrape_helm_chart_components
+      kubelet_labels               = local.kubelet_labels
 
       ingress_enabled     = var.configs.ingress.enabled
       ingress_class       = var.configs.ingress.type

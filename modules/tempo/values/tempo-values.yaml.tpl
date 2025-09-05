@@ -30,3 +30,11 @@ serviceAccount:
   %{for k, v in service_account_annotations }
     ${k}: "${v}"
   %{~ endfor }
+
+overrides:
+  defaults:
+    metrics_generator:
+      processors:
+        - service-graphs
+        - span-metrics
+        - local-blocks

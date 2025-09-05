@@ -1,7 +1,6 @@
 module "this" {
   source = "../.."
 
-  name                   = "annotation-examples-dashboard"
   grafana_admin_password = "admin"
 
   application_dashboard = {
