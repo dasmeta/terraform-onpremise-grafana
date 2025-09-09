@@ -1,7 +1,6 @@
 module "this" {
   source = "../.."
 
-  name                   = "dashboard-with-service-alerts-enabled"
   grafana_admin_password = "adminPass312"
   application_dashboard = [{
     name = "first-dashboard"

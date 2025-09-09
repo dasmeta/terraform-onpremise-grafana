@@ -19,8 +19,8 @@ terraform {
 
 # there is need to have grafana running and available by provider url and auth
 provider "grafana" {
-  url  = "http://grafana.dev.trysela.com"
-  auth = "admin:adminPass312"
+  url  = "http://grafana.example.com"
+  auth = "admin:admin"
 }
 
 provider "helm" {

@@ -22,10 +22,10 @@ provider "grafana" {
 
 provider "helm" {
   kubernetes {
-    config_path = "~/.kube/sela-dev-eks-dev"
+    config_path = "~/.kube/config"
   }
 }
 
 provider "kubernetes" {
-  config_path = "~/.kube/sela-dev-eks-dev"
+  config_path = "~/.kube/config"
 }
