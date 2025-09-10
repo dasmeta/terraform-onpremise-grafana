@@ -5,7 +5,7 @@ terraform {
 
     grafana = {
       source  = "grafana/grafana"
-      version = ">= 4.0.0"
+      version = "~> 4.0"
     }
 
     random = {

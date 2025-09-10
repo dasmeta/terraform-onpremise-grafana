@@ -22,9 +22,9 @@ locals {
   # Extract all unique folder names when using centralized approach
   all_folder_names = var.skip_folder_creation ? [] : distinct(compact(concat(
     # Dashboard folders (these are also used for dashboard submodule alerts)
-    [for dashboard in var.application_dashboard : dashboard.folder_name if dashboard.folder_name != null],
+    [for dashboard in var.application_dashboard : dashboard.folder_name if try(dashboard.folder_name, null) != null],
     # Main alerts module folder names
-    [for rule in try(var.alerts.rules, []) : rule.folder_name if rule.folder_name != null]
+    [for rule in try(var.alerts.rules, []) : rule.folder_name if try(rule.folder_name, null) != null]
   )))
 
   folder_name_uids = {

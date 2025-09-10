@@ -51,7 +51,7 @@ variable "labels" {
   default = {}
 }
 
-variable "folder_uids" {
+variable "folder_name_uids" {
   type        = map(string)
   default     = {}
   description = "Map of folder names to folder UIDs. If provided, will be used instead of data sources"
@@ -60,6 +60,7 @@ variable "folder_uids" {
 variable "alert_rules" {
   type = list(object({
     name           = string                     # The name of the alert rule
+    folder_name    = optional(string, null)     # The folder name for the alert rule, if not set it defaults to var.folder_name
     datasource     = string                     # Name of the datasource used for the alert
     no_data_state  = optional(string, "NoData") # Describes what state to enter when the rule's query returns No Data
     exec_err_state = optional(string, "Error")  # Describes what state to enter when the rule's query is invalid and the rule cannot be executed

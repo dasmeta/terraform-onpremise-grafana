@@ -8,17 +8,11 @@ tempo:
     enabled: ${metris_generator_enabled}
     remoteWriteUrl: ${metrics_generator_remote_url}
 
-  overrides:
-    defaults:
-      metrics_generator:
-        processors:
-          - service-graphs
-          - span-metrics
 
-  persistence:
-    enabled: ${persistence_enabled}
-    size: ${persistence_size}
-    storageClassName: ${persistence_class}
+persistence:
+  enabled: ${persistence_enabled}
+  size: ${persistence_size}
+  storageClassName: ${persistence_class}
 
 serviceMonitor:
   enabled: ${enable_service_monitor}

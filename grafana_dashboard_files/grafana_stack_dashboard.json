@@ -2390,7 +2390,7 @@
               "uid": "${data_source}"
             },
             "editorMode": "code",
-            "expr": "max(kube_pod_container_resource_limits{namespace=\"$prometheus_namespace\", pod=~\"loki-0\", resource=\"cpu\"})",
+            "expr": "max(kube_pod_container_resource_limits{namespace=\"$loki_namespace\", pod=~\"loki-0\", resource=\"cpu\"})",
             "hide": false,
             "instant": false,
             "legendFormat": "Limit",
@@ -3340,20 +3340,22 @@
     "templating": {
       "list": [
         {
-          "description": "",
-          "hide": 2,
-          "label": "Namespace",
+          "description": "Prometheus namespace",
+          "hide": 0,
+          "label": "Prometheus Namespace",
           "name": "prometheus_namespace",
-          "query": "prometheus",
+          "query": "monitoring",
           "skipUrlSync": true,
-          "type": "constant"
+          "type": "textbox"
         },
         {
-          "hide": 2,
+          "description": "Grafana namespace",
+          "hide": 0,
+          "label": "Grafana Namespace",
           "name": "grafana_namespace",
-          "query": "grafana",
+          "query": "monitoring",
           "skipUrlSync": true,
-          "type": "constant"
+          "type": "textbox"
         },
         {
           "current": {
@@ -3374,20 +3376,22 @@
           "type": "datasource"
         },
         {
-          "hide": 2,
+          "description": "Loki namespace",
+          "hide": 0,
           "label": "Loki Namespace",
           "name": "loki_namespace",
-          "query": "loki",
+          "query": "monitoring",
           "skipUrlSync": false,
-          "type": "constant"
+          "type": "textbox"
         },
         {
-          "hide": 2,
+          "description": "Tempo namespace",
+          "hide": 0,
           "label": "Tempo Namespace",
           "name": "tempo_namespace",
-          "query": "tempo",
+          "query": "monitoring",
           "skipUrlSync": false,
-          "type": "constant"
+          "type": "textbox"
         }
       ]
     },

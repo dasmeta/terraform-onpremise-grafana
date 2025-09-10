@@ -19,6 +19,7 @@ output "alerts" {
   description = "Information about created alert rule groups"
 }
 
+
 output "widget_alert_rules" {
   value       = try(module.application_dashboard[0].widget_alert_rules, [])
   description = "Information about created widget alert rules"

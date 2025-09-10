@@ -1,6 +1,6 @@
 
 resource "grafana_folder" "shared_folders" {
-  for_each = var.skip_folder_creation ? toset([]) : toset(local.all_folder_names)
+  for_each = var.skip_folder_creation && length(local.all_folder_names) > 0 ? toset([]) : toset(local.all_folder_names)
   title    = each.value
 
   depends_on = [module.grafana]
@@ -20,9 +20,8 @@ module "application_dashboard" {
   alerts           = each.value.alerts
   folder_name_uids = local.folder_name_uids
 
-  depends_on = [module.grafana, grafana_folder.shared_folders]
-
   # TODO: there is a bug/issue that brings to count/foreach related error in alert creation submodule when we just change something in grafana/prometheus, so it is recommended to disable alerts and apply things and then enable back alerts, check and fix this issue
+  depends_on = [module.grafana, grafana_folder.shared_folders]
 }
 
 module "application_dashboard_json" {
@@ -36,12 +35,12 @@ module "application_dashboard_json" {
 module "alerts" {
   source = "./modules/alerts"
 
-  count = length(var.alerts) > 0 ? 1 : 0
+  count = length(var.alerts.rules) > 0 ? 1 : 0
 
   alert_interval_seconds = var.alerts.alert_interval_seconds
   disable_provenance     = var.alerts.disable_provenance
   create_folder          = var.skip_folder_creation
-  folder_name            = coalesce(var.alerts.folder_name, var.application_dashboard[0].folder_name)
+  folder_name            = coalesce(var.alerts.folder_name, try(var.application_dashboard[0].folder_name, null), local.app_dash_defaults.folder_name)
   group                  = var.alerts.group
   rules                  = var.alerts.rules
   annotations            = var.alerts.annotations

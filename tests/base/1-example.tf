@@ -40,39 +40,39 @@ module "this" {
   alerts = {
     rules = [
       {
-        "datasource" : "prometheus",
-        "equation" : "gt",
-        "expr" : "avg(increase(nginx_ingress_controller_request_duration_seconds_sum[3m])) / 10",
-        "folder_name" : "Nginx Alerts",
-        "function" : "mean",
-        "name" : "Latency P1",
-        "labels" : {
-          "priority" : "P1",
-        }
-        "threshold" : 3
-        "summary" : "This is the summary1"
+        datasource  = "prometheus",
+        equation    = "gt",
+        expr        = "avg(increase(nginx_ingress_controller_request_duration_seconds_sum[3m])) / 10",
+        folder_name = "Nginx Alerts",
+        function    = "mean",
+        name        = "Latency P1",
+        labels = {
+          priority = "P1",
+        },
+        threshold = 3,
+        summary   = "This is the summary1",
 
         # we override no-data/exec-error state for this example/test only, it is supposed this values will not be set here so they get their default ones
-        "no_data_state" : "OK"
-        "exec_err_state" : "OK"
+        no_data_state  = "OK",
+        exec_err_state = "OK"
         # "exec_err_state" : "Alerting" # uncomment to trigger new alert
       },
       {
-        "datasource" : "prometheus",
-        "equation" : "gt",
-        "expr" : "avg(increase(nginx_ingress_controller_request_duration_seconds_sum[3m])) / 10",
-        # "folder_name" : "Nginx Alerts",
-        "function" : "mean",
-        "name" : "Latency P2",
-        "labels" : {
-          "priority" : "P2",
-        }
-        "threshold" : 3
-        "summary" : "This is the summary2"
+        datasource  = "prometheus",
+        equation    = "gt",
+        expr        = "avg(increase(nginx_ingress_controller_request_duration_seconds_sum[3m])) / 10",
+        folder_name = "Nginx Alerts",
+        function    = "mean",
+        name        = "Latency P2",
+        labels = {
+          priority = "P2",
+        },
+        threshold = 3,
+        summary   = "This is the summary2",
 
         # we override no-data/exec-error state for this example/test only, it is supposed this values will not be set here so they get their default ones
-        "no_data_state" : "OK"
-        "exec_err_state" : "OK"
+        no_data_state  = "OK",
+        exec_err_state = "OK"
         # "exec_err_state" : "Alerting" # uncomment to trigger new alert
       }
     ]
@@ -102,22 +102,11 @@ module "this" {
   }
 
   tempo = {
-    enabled = false
-
-    metrics_generator = {
-      enabled = true
-    }
-    enable_service_monitor = true
-
-    persistence = {
-      enabled       = true
-      size          = "10Gi"
-      storage_class = "gp2"
-    }
+    enabled = true
   }
 
   loki = {
-    enabled = false
+    enabled = true
   }
 
   prometheus = {
@@ -125,9 +114,13 @@ module "this" {
     storage_size  = "20Gi"
     storage_class = "gp2"
   }
-  grafana_admin_password = "admin"
-  # dashboards_json_files = [
-  #   "./dashboard_files/ALB_dashboard.json",
-  #   "./dashboard_files/Application_main_dashboard.json"
-  # ]
+  grafana_admin_password = "adminPass312"
+  dashboards_json_files = [
+    "./dashboard_files/ALB_dashboard.json",
+    "./dashboard_files/Application_main_dashboard.json"
+  ]
+}
+
+output "all_folder_names" {
+  value = module.this.all_folder_names
 }

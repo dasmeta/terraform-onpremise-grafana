@@ -72,6 +72,7 @@ variable "folder_name_uids" {
 variable "rules" {
   type = list(object({
     name           = string                     # The name of the alert rule
+    folder_name    = optional(string, null)     # The folder name for the alert rule, if not set it defaults to var.folder_name
     no_data_state  = optional(string, "NoData") # Describes what state to enter when the rule's query returns No Data
     exec_err_state = optional(string, "Error")  # Describes what state to enter when the rule's query is invalid and the rule cannot be executed
 

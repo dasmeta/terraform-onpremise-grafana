@@ -1,8 +1,8 @@
 locals {
-  groups = toset(distinct([for rule in var.alert_rules : coalesce(rule.group, var.group)]))
+  groups = toset([for rule in var.alert_rules : coalesce(rule.group, var.group)])
   alerts = { for member in local.groups : member => [for rule in var.alert_rules : merge(rule, {
     expr : coalesce(rule.expr, "${rule.metric_function}(${rule.metric_name}${rule.filters != null ? format("{%s}", replace(join(", ", [for k, v in rule.filters : "${k}=\"${v}\""]), "\"", "\\\"")) : ""}${rule.metric_interval})")
-    folder_name : coalesce(rule.folder_name, var.folder_name)
+    folder_name : try(rule.folder_name, var.folder_name)
   }) if coalesce(rule.group, var.group) == member] }
   comparison_operators = {
     gte = { operator = ">=", definition = "greater than or equal to" },
@@ -12,13 +12,13 @@ locals {
     e   = { operator = "=", definition = "equal to" }
   }
 
-  folder_name_uids = length(var.folder_uids) > 0 ? var.folder_uids : {
+  folder_name_uids = length(var.folder_name_uids) > 0 ? var.folder_name_uids : {
     for name, folder in data.grafana_folder.this : name => folder.uid
   }
 }
 
 data "grafana_folder" "this" {
-  for_each = length(var.folder_uids) > 0 ? toset([]) : toset(concat([
+  for_each = length(var.folder_name_uids) > 0 ? toset([]) : toset(concat([
     for rule in var.alert_rules :
     rule.folder_name != null ? rule.folder_name : var.folder_name
     if rule.folder_name != null || var.folder_name != null
@@ -33,7 +33,7 @@ resource "grafana_rule_group" "this" {
 
   name               = each.key
   disable_provenance = var.disable_provenance
-  folder_uid         = each.value[0].folder_name != null ? try(local.folder_name_uids[each.value[0].folder_name], "") : (var.folder_name != null ? try(local.folder_name_uids[var.folder_name], "") : "")
+  folder_uid         = each.value[0].folder_name != null ? local.folder_name_uids[each.value[0].folder_name] : (var.folder_name != null ? try(local.folder_name_uids[var.folder_name], "") : "")
   interval_seconds   = var.alert_interval_seconds
   dynamic "rule" {
     for_each = local.alerts[each.key]

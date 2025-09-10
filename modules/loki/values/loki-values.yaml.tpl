@@ -45,29 +45,29 @@ gateway:
 %{~ endfor ~}
 %{ endif }
 
+singleBinary:
+%{ if persistence_enabled }
+  persistence:
+    enabled: ${persistence_enabled}
+    accessModes:
+      - ${persistence_access_mode}
+    size: ${persistence_size}
+    storageClassName: ${persistence_storage_class}
+%{ endif }
+
+  replicas: ${num_replicas}
+  resources:
+    request:
+      cpu: ${request_cpu}
+      memory: ${request_mem}
+    limits:
+      cpu: ${limit_cpu}
+      memory: ${limit_mem}
 
 loki:
   auth_enabled: false
   commonConfig:
     replication_factor: 1
-  singleBinary:
-  %{ if persistence_enabled }
-    persistence:
-      enabled: ${persistence_enabled}
-      accessModes:
-        - ${persistence_access_mode}
-      size: ${persistence_size}
-      storageClassName: ${persistence_storage_class}
-  %{ endif }
-
-    replicas: ${num_replicas}
-    resources:
-      request:
-        cpu: ${request_cpu}
-        memory: ${request_mem}
-      limits:
-        cpu: ${limit_cpu}
-        memory: ${limit_mem}
 
   %{ if length(schema_configs) > 0 }
   schemaConfig:
@@ -79,8 +79,8 @@ loki:
 
   storage: ${storage}
 
-%{ for k, v in limits_config ~}
   limits_config:
+%{ for k, v in limits_config ~}
     ${k}: ${v}
 %{~ endfor }
 
