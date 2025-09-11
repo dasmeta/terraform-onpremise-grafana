@@ -18,6 +18,19 @@ variable "defaults" {
   description = "Default values to be supplied to all modules."
 }
 
+variable "create_folder" {
+  type    = bool
+  default = false
+
+  description = "If true, create folder in this module. If false, use existing folder."
+}
+
+variable "folder_name_uids" {
+  type        = map(string)
+  default     = {}
+  description = "Map of folder names to folder UIDs. If provided, will be used instead of data sources"
+}
+
 variable "rows" {
   type        = any
   description = "List of widgets to be inserted into the dashboard. See ./modules/widgets folder to see list of available widgets."

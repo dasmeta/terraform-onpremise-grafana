@@ -1,4 +1,5 @@
 locals {
+  kubelet_labels = format("^(%s)$", join("|", var.configs.kubelet_metrics))
 
   ingress_annotations = merge(
     {

@@ -57,16 +57,16 @@ module "this" {
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.8.0 |
 | <a name="requirement_deepmerge"></a> [deepmerge](#requirement\_deepmerge) | 1.0.2 |
-| <a name="requirement_grafana"></a> [grafana](#requirement\_grafana) | ~> 3.7 |
+| <a name="requirement_grafana"></a> [grafana](#requirement\_grafana) | ~> 4.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.6 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_grafana"></a> [grafana](#provider\_grafana) | ~> 3.7 |
+| <a name="provider_grafana"></a> [grafana](#provider\_grafana) | ~> 4.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | ~> 3.6 |
 
 ## Modules
@@ -146,15 +146,18 @@ module "this" {
 | [grafana_dashboard.metrics](https://registry.terraform.io/providers/grafana/grafana/latest/docs/resources/dashboard) | resource |
 | [grafana_folder.this](https://registry.terraform.io/providers/grafana/grafana/latest/docs/resources/folder) | resource |
 | [random_string.grafana_dashboard_id](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
+| [grafana_folder.this](https://registry.terraform.io/providers/grafana/grafana/latest/docs/data-sources/folder) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_alerts"></a> [alerts](#input\_alerts) | Allows to configure globally dashboard block/(sla\|ingress\|service) blocks/widgets related alerts | `any` | `{}` | no |
+| <a name="input_create_folder"></a> [create\_folder](#input\_create\_folder) | If true, create folder in this module. If false, use existing folder. | `bool` | `false` | no |
 | <a name="input_data_source"></a> [data\_source](#input\_data\_source) | The grafana dashboard global/default datasource, will be used in widget items if they have no their custom ones | <pre>object({<br/>    uid  = string<br/>    type = optional(string, "prometheus")<br/>  })</pre> | n/a | yes |
 | <a name="input_defaults"></a> [defaults](#input\_defaults) | Default values to be supplied to all modules. | `any` | `{}` | no |
 | <a name="input_folder_name"></a> [folder\_name](#input\_folder\_name) | The folder name to place grafana dashboard | `string` | `"application-dashboard"` | no |
+| <a name="input_folder_name_uids"></a> [folder\_name\_uids](#input\_folder\_name\_uids) | Map of folder names to folder UIDs. If provided, will be used instead of data sources | `map(string)` | `{}` | no |
 | <a name="input_name"></a> [name](#input\_name) | Dashboard name. Should not contain spaces and special chars. | `string` | n/a | yes |
 | <a name="input_rows"></a> [rows](#input\_rows) | List of widgets to be inserted into the dashboard. See ./modules/widgets folder to see list of available widgets. | `any` | n/a | yes |
 | <a name="input_variables"></a> [variables](#input\_variables) | Allows to define variables to be used in dashboard | <pre>list(object({<br/>    name        = string<br/>    type        = optional(string, "custom")<br/>    hide        = optional(number, 0)<br/>    includeAll  = optional(bool, false)<br/>    multi       = optional(bool, false)<br/>    query       = optional(string, "")<br/>    queryValue  = optional(string, "")<br/>    skipUrlSync = optional(bool, false)<br/>    options = optional(list(object({<br/>      selected = optional(bool, false)<br/>      value    = string<br/>      text     = optional(string, null)<br/>    })), [])<br/>    }<br/>  ))</pre> | `[]` | no |
@@ -164,7 +167,6 @@ module "this" {
 | Name | Description |
 |------|-------------|
 | <a name="output_blocks_results"></a> [blocks\_results](#output\_blocks\_results) | n/a |
-| <a name="output_folder"></a> [folder](#output\_folder) | n/a |
 | <a name="output_rows"></a> [rows](#output\_rows) | n/a |
 | <a name="output_widget_alert_rules"></a> [widget\_alert\_rules](#output\_widget\_alert\_rules) | n/a |
 | <a name="output_widget_result"></a> [widget\_result](#output\_widget\_result) | n/a |

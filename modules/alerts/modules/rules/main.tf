@@ -1,7 +1,8 @@
 locals {
-  groups = toset(distinct([for rule in var.alert_rules : coalesce(rule.group, var.group)]))
+  groups = toset([for rule in var.alert_rules : coalesce(rule.group, var.group)])
   alerts = { for member in local.groups : member => [for rule in var.alert_rules : merge(rule, {
     expr : coalesce(rule.expr, "${rule.metric_function}(${rule.metric_name}${rule.filters != null ? format("{%s}", replace(join(", ", [for k, v in rule.filters : "${k}=\"${v}\""]), "\"", "\\\"")) : ""}${rule.metric_interval})")
+    folder_name : try(rule.folder_name, var.folder_name)
   }) if coalesce(rule.group, var.group) == member] }
   comparison_operators = {
     gte = { operator = ">=", definition = "greater than or equal to" },
@@ -10,29 +11,32 @@ locals {
     lte = { operator = "<=", definition = "less than or equal to" },
     e   = { operator = "=", definition = "equal to" }
   }
-}
 
-resource "grafana_folder" "this" {
-  count = (var.folder_name != null) && var.create_folder ? 0 : 1
-
-  title = var.folder_name
+  folder_name_uids = length(var.folder_name_uids) > 0 ? var.folder_name_uids : {
+    for name, folder in data.grafana_folder.this : name => folder.uid
+  }
 }
 
 data "grafana_folder" "this" {
-  count = (var.folder_name != null) && !var.create_folder ? 0 : 1
+  for_each = length(var.folder_name_uids) > 0 ? toset([]) : toset(concat([
+    for rule in var.alert_rules :
+    rule.folder_name != null ? rule.folder_name : var.folder_name
+    if rule.folder_name != null || var.folder_name != null
+  ], var.folder_name != null ? [var.folder_name] : []))
 
-  title = var.folder_name
+  title = each.value
 }
+
 
 resource "grafana_rule_group" "this" {
   for_each = local.alerts
 
   name               = each.key
   disable_provenance = var.disable_provenance
-  folder_uid         = try(grafana_folder.this[0].uid, data.grafana_folder.this[0].uid)
+  folder_uid         = each.value[0].folder_name != null ? local.folder_name_uids[each.value[0].folder_name] : (var.folder_name != null ? try(local.folder_name_uids[var.folder_name], "") : "")
   interval_seconds   = var.alert_interval_seconds
   dynamic "rule" {
-    for_each = each.value
+    for_each = local.alerts[each.key]
     content {
       name           = rule.value["name"]
       for            = lookup(rule.value, "pending_period", "0")

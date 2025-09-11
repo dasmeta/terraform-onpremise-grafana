@@ -4,7 +4,7 @@ terraform {
   required_providers {
     grafana = {
       source  = "grafana/grafana"
-      version = "~>3.21"
+      version = "~> 4.0"
     }
     helm = {
       source  = "hashicorp/helm"
@@ -19,7 +19,7 @@ terraform {
 
 # there is need to have grafana running and available by provider url and auth
 provider "grafana" {
-  url  = "http://grafana.localhost"
+  url  = "http://grafana.example.com"
   auth = "admin:admin"
 }
 
@@ -30,5 +30,5 @@ provider "kubernetes" {
 }
 
 provider "aws" {
-  region = "eu-central-1"
+  region = "us-east-2"
 }

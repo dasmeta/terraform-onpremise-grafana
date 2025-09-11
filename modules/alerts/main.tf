@@ -1,16 +1,27 @@
+
+resource "grafana_folder" "rules_folders" {
+  for_each = var.create_folder ? toset(concat([
+    for rule in var.rules :
+    rule.folder_name != null ? rule.folder_name : var.folder_name
+    if rule.folder_name != null || var.folder_name != null
+  ], var.folder_name != null ? [var.folder_name] : [])) : toset([])
+
+  title = each.value
+}
+
 module "alert_rules" {
   source = "./modules/rules"
 
   count = var.rules != null ? 1 : 0
 
   folder_name            = var.folder_name
-  create_folder          = var.create_folder
   group                  = var.group
   alert_interval_seconds = var.alert_interval_seconds
   disable_provenance     = var.disable_provenance
   annotations            = var.annotations
   labels                 = var.labels
   alert_rules            = var.rules
+  folder_name_uids       = length(var.folder_name_uids) > 0 ? var.folder_name_uids : (var.create_folder ? { for name, folder in grafana_folder.rules_folders : name => folder.uid } : {})
 }
 
 module "contact_points" {

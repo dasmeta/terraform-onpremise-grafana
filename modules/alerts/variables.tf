@@ -12,8 +12,8 @@ variable "disable_provenance" {
 
 variable "create_folder" {
   type        = bool
-  default     = true
-  description = "Whether to create one general group folder for all alerts"
+  default     = false
+  description = "If true, create folder in this module. If false, use existing folder."
 }
 
 variable "folder_name" {
@@ -62,9 +62,17 @@ variable "labels" {
   default = {}
 }
 
+variable "folder_name_uids" {
+  type        = map(string)
+  default     = {}
+  description = "Map of folder names to folder UIDs. If provided, will be used instead of creating folders"
+
+}
+
 variable "rules" {
   type = list(object({
     name           = string                     # The name of the alert rule
+    folder_name    = optional(string, null)     # The folder name for the alert rule, if not set it defaults to var.folder_name
     no_data_state  = optional(string, "NoData") # Describes what state to enter when the rule's query returns No Data
     exec_err_state = optional(string, "Error")  # Describes what state to enter when the rule's query is invalid and the rule cannot be executed
 

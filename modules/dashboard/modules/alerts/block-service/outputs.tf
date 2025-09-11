@@ -3,6 +3,7 @@ output "alert_rules" {
     coalesce(local.alerts.replicas_no.enabled, local.defaults.enabled, false) ? [
       {
         name           = "`${var.namespace}/${var.name}` service has no any running replica/pod"
+        folder_name    = try(coalesce(local.alerts.replicas_no.folder_name, local.defaults.folder_name), null)
         summary        = "{{ .Labels.alertname }} it is already ${coalesce(local.alerts.replicas_no.pending_period, local.defaults.pending_period)}"
         group          = try(coalesce(local.alerts.replicas_no.group, local.defaults.group), "${var.namespace}/${var.name} service")
         datasource     = var.datasource
@@ -28,6 +29,7 @@ output "alert_rules" {
     coalesce(local.alerts.replicas_max.enabled, local.defaults.enabled, false) ? [
       {
         name           = "`${var.namespace}/${var.name}` service has reached to its max ${local.alerts.replicas_max.threshold != null ? local.alerts.replicas_max.threshold : "hpa"} replicas/pods"
+        folder_name    = try(coalesce(local.alerts.replicas_max.folder_name, local.defaults.folder_name), null)
         summary        = "{{ .Labels.alertname }} count it is already ${coalesce(local.alerts.replicas_max.pending_period, local.defaults.pending_period)}"
         group          = try(coalesce(local.alerts.replicas_max.group, local.defaults.group), "${var.namespace}/${var.name} service")
         no_data_state  = coalesce(local.alerts.replicas_max.no_data_state, local.defaults.no_data_state, "NoData")

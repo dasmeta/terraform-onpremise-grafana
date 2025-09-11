@@ -1,9 +1,15 @@
 resource "grafana_folder" "this" {
+  count = var.create_folder ? 1 : 0
+  title = var.folder_name
+}
+
+data "grafana_folder" "this" {
+  count = !var.create_folder && length(var.folder_name_uids) == 0 ? 1 : 0
   title = var.folder_name
 }
 
 resource "grafana_dashboard" "metrics" {
-  folder = grafana_folder.this.uid
+  folder = length(var.folder_name_uids) > 0 ? var.folder_name_uids[var.folder_name] : (var.create_folder ? grafana_folder.this[0].uid : data.grafana_folder.this[0].uid)
   config_json = jsonencode({
     uid                  = random_string.grafana_dashboard_id.result
     title                = local.dashboard_title

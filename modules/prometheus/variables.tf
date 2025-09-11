@@ -26,8 +26,9 @@ variable "configs" {
         mem = optional(string, "1Gi")
       }), {})
     }), {})
-    replicas            = optional(number, 2)
-    enable_alertmanager = optional(bool, true)
+    replicas                     = optional(number, 2)
+    enable_alertmanager          = optional(bool, true)
+    scrape_helm_chart_components = optional(bool, true)
     ingress = optional(object({
       enabled     = optional(bool, false)
       type        = optional(string, "nginx")
@@ -39,6 +40,11 @@ variable "configs" {
       path        = optional(list(string), ["/"])
       path_type   = optional(string, "Prefix")
     }), {})
+    kubelet_metrics = optional(list(string), ["container_cpu_.*", "container_memory_.*", "kube_pod_container_status_.*",
+      "kube_pod_container_resource_*", "container_network_.*", "kube_pod_resource_limit",
+      "kube_pod_resource_request", "pod_cpu_usage_seconds_total", "pod_memory_usage_bytes",
+      "kubelet_volume_stats", "volume_operation_total_seconds"]
+    )
   })
 
   description = "Values to send to Prometheus template values file"

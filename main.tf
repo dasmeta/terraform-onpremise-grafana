@@ -1,44 +1,55 @@
+
+resource "grafana_folder" "shared_folders" {
+  for_each = var.skip_folder_creation && length(local.all_folder_names) > 0 ? toset([]) : toset(local.all_folder_names)
+  title    = each.value
+
+  depends_on = [module.grafana]
+}
+
 module "application_dashboard" {
   source = "./modules/dashboard/"
 
-  count = length(var.application_dashboard.rows) > 0 ? 1 : 0
+  for_each = local.app_dash_map
 
-  name        = var.name
-  folder_name = var.application_dashboard.folder_name
-  rows        = var.application_dashboard.rows
-  data_source = var.application_dashboard.data_source
-  variables   = var.application_dashboard.variables
-  alerts      = var.application_dashboard.alerts
+  name             = each.value.name
+  folder_name      = each.value.folder_name
+  create_folder    = var.skip_folder_creation
+  rows             = each.value.rows
+  data_source      = each.value.data_source
+  variables        = each.value.variables
+  alerts           = each.value.alerts
+  folder_name_uids = local.folder_name_uids
 
   # TODO: there is a bug/issue that brings to count/foreach related error in alert creation submodule when we just change something in grafana/prometheus, so it is recommended to disable alerts and apply things and then enable back alerts, check and fix this issue
-  depends_on = [module.grafana, module.prometheus]
+  depends_on = [module.grafana, grafana_folder.shared_folders]
 }
 
 module "application_dashboard_json" {
-  count  = length(var.dashboards_json_files) > 0 ? 1 : 0
+  count  = length(local.json_dashboards) > 0 ? 1 : 0
   source = "./modules/dashboard-json"
 
-  dashboard_json_files = var.dashboards_json_files
-  depends_on           = [module.grafana, module.prometheus]
+  dashboard_json_files = local.json_dashboards
+  depends_on           = [module.grafana]
 }
 
 module "alerts" {
   source = "./modules/alerts"
 
-  count = length(var.alerts) > 0 ? 1 : 0
+  count = length(var.alerts.rules) > 0 ? 1 : 0
 
   alert_interval_seconds = var.alerts.alert_interval_seconds
   disable_provenance     = var.alerts.disable_provenance
-  create_folder          = var.alerts.create_folder ? true : (length(var.application_dashboard.rows) > 0 && (var.alerts.folder_name == null || var.alerts.folder_name != var.application_dashboard.folder_name) ? false : true)
-  folder_name            = coalesce(var.alerts.folder_name, var.application_dashboard.folder_name)
+  create_folder          = var.skip_folder_creation
+  folder_name            = coalesce(var.alerts.folder_name, try(var.application_dashboard[0].folder_name, null), local.app_dash_defaults.folder_name)
   group                  = var.alerts.group
   rules                  = var.alerts.rules
   annotations            = var.alerts.annotations
   labels                 = var.alerts.labels
   contact_points         = var.alerts.contact_points
   notifications          = var.alerts.notifications
+  folder_name_uids       = local.folder_name_uids
 
-  depends_on = [module.grafana, module.prometheus, module.application_dashboard]
+  depends_on = [module.grafana, grafana_folder.shared_folders]
 }
 
 module "grafana" {

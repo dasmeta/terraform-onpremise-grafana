@@ -1,9 +1,12 @@
 module "this" {
   source = "../.."
 
-  name = "dashboard-with-service-alerts-enabled"
-
-  application_dashboard = {
+  grafana_admin_password = "adminPass312"
+  application_dashboard = [{
+    name = "first-dashboard"
+    alerts = {
+      enabled = false
+    }
     rows : [
       { type : "block/sla", sla_ingress_type : "nginx", # no additional configs needed for sla block based on nginx ingress
         # alerts : { defaults : { metric_filter : "host!~'grafana.+'" } } # filter out grafana domain requests from nginx alerts(in real setup this also can be handy to have)
@@ -137,7 +140,7 @@ module "this" {
     #   }
     # }
 
-  }
+  }]
 
   ## the alerts separate block being used to configure channels(contact points), notification tag=>channel routing and custom alert rules
   alerts = {
@@ -213,7 +216,27 @@ module "this" {
 
   # for this test/example we disable all other components
   grafana = {
-    enabled = false
+    resources = {
+      request = {
+        cpu = "1"
+        mem = "1Gi"
+      }
+    }
+    ingress = {
+      type        = "alb"
+      tls_enabled = true
+      public      = true
+
+      hosts = ["grafana.example.com"]
+      annotations = {
+        "alb.ingress.kubernetes.io/certificate-arn" = "cert_arn",
+        "alb.ingress.kubernetes.io/group.name"      = "dev-ingress"
+      }
+    }
+    trace_log_mapping = {
+      enabled = true
+    }
+
   }
 
   tempo = {

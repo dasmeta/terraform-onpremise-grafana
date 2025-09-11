@@ -1,8 +1,3 @@
-variable "name" {
-  type        = string
-  description = "Dashboard name"
-}
-
 variable "grafana_admin_password" {
   type        = string
   description = "grafana admin user password"
@@ -14,9 +9,17 @@ variable "namespace" {
   default = "monitoring"
 }
 
+variable "skip_folder_creation" {
+  type        = bool
+  default     = false
+  description = "If true, folders are created in submodules. If false, folders are created centrally."
+}
+
 variable "application_dashboard" {
-  type = object({
+  type = list(object({
+    name        = string
     folder_name = optional(string, "application-dashboard") # the folder name for dashboard
+    namespace   = optional(string, "prod")
     rows        = optional(any, [])
     data_source = optional(object({
       uid  = optional(string, "prometheus")
@@ -38,12 +41,8 @@ variable "application_dashboard" {
       })), [])
     })), [])
     alerts = optional(any, { enabled = true }) # Allows to configure globally dashboard block/(sla|ingress|service) blocks/widgets related alerts
-  })
-  default = {
-    rows        = [],
-    data_source = null,
-    variables   = []
-  }
+  }))
+  default     = []
   description = "Dashboard for monitoring applications"
 }
 
@@ -79,6 +78,7 @@ variable "alerts" {
     rules = optional(
       list(object({                                 # Describes custom alert rules
         name           = string                     # The name of the alert rule
+        folder_name    = optional(string, null)     # The folder name for the alert rule, if not set it defaults to var.alerts.folder_name
         no_data_state  = optional(string, "NoData") # Describes what state to enter when the rule's query returns No Data
         exec_err_state = optional(string, "Error")  # Describes what state to enter when the rule's query is invalid and the rule cannot be executed
 
@@ -277,8 +277,9 @@ variable "prometheus" {
         mem = optional(string, "1Gi")
       }), {})
     }), {})
-    replicas            = optional(number, 2)
-    enable_alertmanager = optional(bool, true)
+    replicas                     = optional(number, 2)
+    enable_alertmanager          = optional(bool, true) # allows to enable alertmanager. By default, we enable it.
+    scrape_helm_chart_components = optional(bool, true) # allows to scrape helm chart components for prometheus operator. By default, we do not scrape them.
     ingress = optional(object({
       enabled     = optional(bool, false)
       type        = optional(string, "nginx")
@@ -290,6 +291,11 @@ variable "prometheus" {
       path        = optional(list(string), ["/"])
       path_type   = optional(string, "Prefix")
     }), {})
+    kubelet_metrics = optional(list(string), ["container_cpu_.*", "container_memory_.*", "kube_pod_container_status_.*",
+      "kube_pod_container_resource_*", "container_network_.*", "kube_pod_resource_limit",
+      "kube_pod_resource_request", "pod_cpu_usage_seconds_total", "pod_memory_usage_bytes",
+      "kubelet_volume_stats", "volume_operation_total_seconds"]
+    ) # allows to specify kubelet metrics to scrape. By default, we scrape the default ones.
   })
   description = "values to be used as prometheus's chart values"
   default     = {}
@@ -414,5 +420,11 @@ variable "loki" {
 variable "dashboards_json_files" {
   type        = list(string)
   default     = []
-  description = "Json definition of dashboard. For quickly provisioning the dashboards"
+  description = "Json definition of dashboard. For quickly provisioning dashboards from files"
+}
+
+variable "deploy_grafana_stack_dashboard" {
+  type        = bool
+  default     = true
+  description = "Whether to deploy the grafana stack dashboard"
 }

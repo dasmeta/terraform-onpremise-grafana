@@ -6,14 +6,14 @@
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
-| <a name="requirement_grafana"></a> [grafana](#requirement\_grafana) | >= 3.7.0 |
+| <a name="requirement_grafana"></a> [grafana](#requirement\_grafana) | ~> 4.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.6.2 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_grafana"></a> [grafana](#provider\_grafana) | >= 3.7.0 |
+| <a name="provider_grafana"></a> [grafana](#provider\_grafana) | ~> 4.0 |
 
 ## Modules
 

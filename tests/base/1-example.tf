@@ -1,67 +1,78 @@
 module "this" {
   source = "../.."
 
-  name = "Test-dashboard"
-
-  application_dashboard = {
-    rows : [
-      { type : "block/service", name = "worker", show_err_logs = true, loki_datasource_uid = "loki" }
-    ]
-    data_source = {
-      uid = "prometheus"
-    }
-
-    variables = [
-      {
-        "name" : "namespace",
-        "options" : [
-          {
-            "value" : "prod"
-          },
-          {
-            "selected" : true,
-            "value" : "dev"
-          }
-        ],
+  application_dashboard = [
+    {
+      name        = "Test-dashboard",
+      folder_name = "Test-dashboard",
+      alerts      = { enabled = false },
+      rows : [
+        { type : "block/service", name = "worker", show_err_logs = true, loki_datasource_uid = "loki", namespace = "dev" }
+      ]
+      data_source = {
+        uid = "prometheus"
       }
-    ]
-  }
+
+      variables = [
+        {
+          "name" : "namespace",
+          "options" : [
+            {
+              "value" : "prod"
+            },
+            {
+              "selected" : true,
+              "value" : "dev"
+            }
+          ],
+        }
+      ]
+    },
+    {
+      name        = "Test-dashboard-2",
+      folder_name = "Test-dashboard-2",
+      alerts      = { enabled = false },
+      rows = [
+        { type : "block/service", name = "worker2", show_err_logs = true, loki_datasource_uid = "loki", namespace = "dev" }
+      ]
+    }
+  ]
   alerts = {
     rules = [
       {
-        "datasource" : "prometheus",
-        "equation" : "gt",
-        "expr" : "avg(increase(nginx_ingress_controller_request_duration_seconds_sum[3m])) / 10",
-        "folder_name" : "Nginx Alerts",
-        "function" : "mean",
-        "name" : "Latency P1",
-        "labels" : {
-          "priority" : "P1",
-        }
-        "threshold" : 3
-        "summary" : "This is the summary1"
+        datasource  = "prometheus",
+        equation    = "gt",
+        expr        = "avg(increase(nginx_ingress_controller_request_duration_seconds_sum[3m])) / 10",
+        folder_name = "Nginx Alerts",
+        function    = "mean",
+        name        = "Latency P1",
+        labels = {
+          priority = "P1",
+        },
+        threshold = 3,
+        summary   = "This is the summary1",
 
         # we override no-data/exec-error state for this example/test only, it is supposed this values will not be set here so they get their default ones
-        "no_data_state" : "OK"
-        "exec_err_state" : "OK"
+        no_data_state  = "OK",
+        exec_err_state = "OK"
         # "exec_err_state" : "Alerting" # uncomment to trigger new alert
       },
       {
-        "datasource" : "prometheus",
-        "equation" : "gt",
-        "expr" : "avg(increase(nginx_ingress_controller_request_duration_seconds_sum[3m])) / 10",
-        "folder_name" : "Nginx Alerts",
-        "function" : "mean",
-        "name" : "Latency P2",
-        "labels" : {
-          "priority" : "P2",
-        }
-        "threshold" : 3
-        "summary" : "This is the summary2"
+        datasource  = "prometheus",
+        equation    = "gt",
+        expr        = "avg(increase(nginx_ingress_controller_request_duration_seconds_sum[3m])) / 10",
+        folder_name = "Nginx Alerts",
+        function    = "mean",
+        name        = "Latency P2",
+        labels = {
+          priority = "P2",
+        },
+        threshold = 3,
+        summary   = "This is the summary2",
 
         # we override no-data/exec-error state for this example/test only, it is supposed this values will not be set here so they get their default ones
-        "no_data_state" : "OK"
-        "exec_err_state" : "OK"
+        no_data_state  = "OK",
+        exec_err_state = "OK"
         # "exec_err_state" : "Alerting" # uncomment to trigger new alert
       }
     ]
@@ -92,17 +103,6 @@ module "this" {
 
   tempo = {
     enabled = true
-
-    metrics_generator = {
-      enabled = true
-    }
-    enable_service_monitor = true
-
-    persistence = {
-      enabled       = true
-      size          = "10Gi"
-      storage_class = "gp2"
-    }
   }
 
   loki = {
@@ -114,13 +114,13 @@ module "this" {
     storage_size  = "20Gi"
     storage_class = "gp2"
   }
-  grafana_admin_password = "admin"
-  # dashboards_json_files = [
-  #   "./dashboard_files/ALB_dashboard.json",
-  #   "./dashboard_files/Application_main_dashboard.json"
-  # ]
+  grafana_admin_password = "adminPass312"
+  dashboards_json_files = [
+    "./dashboard_files/ALB_dashboard.json",
+    "./dashboard_files/Application_main_dashboard.json"
+  ]
 }
 
-output "dashboard_blocks" {
-  value = module.this.dashboard_blocks
+output "all_folder_names" {
+  value = module.this.all_folder_names
 }

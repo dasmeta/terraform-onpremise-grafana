@@ -5,8 +5,8 @@
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
-| <a name="requirement_grafana"></a> [grafana](#requirement\_grafana) | ~>3.21 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.8.0 |
+| <a name="requirement_grafana"></a> [grafana](#requirement\_grafana) | ~> 4.0 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 2.17 |
 
 ## Providers
@@ -31,5 +31,5 @@ No inputs.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_dashboard_blocks"></a> [dashboard\_blocks](#output\_dashboard\_blocks) | n/a |
+| <a name="output_all_folder_names"></a> [all\_folder\_names](#output\_all\_folder\_names) | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

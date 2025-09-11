@@ -10,12 +10,6 @@ variable "disable_provenance" {
   description = "Allow modifying the rule groups from other sources than Terraform or the Grafana API."
 }
 
-variable "create_folder" {
-  type        = bool
-  default     = true
-  description = "Whether to create one general folder for all alerts"
-}
-
 variable "folder_name" {
   type        = string
   default     = "alerts"
@@ -27,6 +21,7 @@ variable "group" {
   default     = "group"
   description = "The alerts general group name to attach all alerts to if no specific group set for alert rule item"
 }
+
 
 # Predefined annotations structure for all alerts
 # These annotations will be applied to all alerts and can be overridden by rule-specific annotations
@@ -56,9 +51,16 @@ variable "labels" {
   default = {}
 }
 
+variable "folder_name_uids" {
+  type        = map(string)
+  default     = {}
+  description = "Map of folder names to folder UIDs. If provided, will be used instead of data sources"
+}
+
 variable "alert_rules" {
   type = list(object({
     name           = string                     # The name of the alert rule
+    folder_name    = optional(string, null)     # The folder name for the alert rule, if not set it defaults to var.folder_name
     datasource     = string                     # Name of the datasource used for the alert
     no_data_state  = optional(string, "NoData") # Describes what state to enter when the rule's query returns No Data
     exec_err_state = optional(string, "Error")  # Describes what state to enter when the rule's query is invalid and the rule cannot be executed
