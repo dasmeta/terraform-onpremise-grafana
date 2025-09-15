@@ -1,11 +1,10 @@
 resource "helm_release" "tempo" {
-  name                       = "tempo"
-  repository                 = "https://grafana.github.io/helm-charts"
-  chart                      = "tempo"
-  version                    = var.chart_version
-  namespace                  = var.namespace
-  create_namespace           = true
-  disable_openapi_validation = true
+  name             = "tempo"
+  repository       = "https://grafana.github.io/helm-charts"
+  chart            = "tempo"
+  version          = var.chart_version
+  namespace        = var.namespace
+  create_namespace = true
 
   values = [
     templatefile("${path.module}/values/tempo-values.yaml.tpl", {

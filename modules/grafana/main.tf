@@ -1,13 +1,12 @@
 # Deploy Grafana
 resource "helm_release" "grafana" {
-  name                       = "grafana"
-  repository                 = "https://grafana.github.io/helm-charts"
-  chart                      = "grafana"
-  namespace                  = var.namespace
-  create_namespace           = true
-  version                    = var.chart_version
-  timeout                    = 300
-  disable_openapi_validation = true
+  name             = "grafana"
+  repository       = "https://grafana.github.io/helm-charts"
+  chart            = "grafana"
+  namespace        = var.namespace
+  create_namespace = true
+  version          = var.chart_version
+  timeout          = 300
 
   values = [
     templatefile("${path.module}/values/grafana-values.yaml.tpl", {

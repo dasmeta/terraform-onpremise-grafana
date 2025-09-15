@@ -1,12 +1,11 @@
 resource "helm_release" "loki" {
-  chart                      = "loki"
-  repository                 = "https://grafana.github.io/helm-charts"
-  name                       = var.release_name
-  namespace                  = var.namespace
-  create_namespace           = true
-  version                    = var.chart_version
-  timeout                    = 600
-  disable_openapi_validation = true
+  chart            = "loki"
+  repository       = "https://grafana.github.io/helm-charts"
+  name             = var.release_name
+  namespace        = var.namespace
+  create_namespace = true
+  version          = var.chart_version
+  timeout          = 600
 
   values = [
     templatefile("${path.module}/values/loki-values.yaml.tpl", {
