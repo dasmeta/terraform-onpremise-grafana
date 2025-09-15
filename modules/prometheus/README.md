@@ -36,8 +36,5 @@ No modules.
 
 ## Outputs
 
-| Name | Description |
-|------|-------------|
-| <a name="output_additional_scrape_configs"></a> [additional\_scrape\_configs](#output\_additional\_scrape\_configs) | n/a |
-| <a name="output_debug_configs"></a> [debug\_configs](#output\_debug\_configs) | Debug: All configs passed to Prometheus module |
+No outputs.
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

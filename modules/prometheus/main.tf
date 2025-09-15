@@ -38,12 +38,3 @@ resource "helm_release" "prometheus" {
   ]
 
 }
-
-output "additional_scrape_configs" {
-  value = var.configs.additional_scrape_configs
-}
-
-output "debug_configs" {
-  value       = var.configs
-  description = "Debug: All configs passed to Prometheus module"
-}

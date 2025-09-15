@@ -27,8 +27,17 @@ module "this" {
           ],
         }
       ]
+    },
+    {
+      name        = "Test-dashboard-2",
+      folder_name = "Test-dashboard-2",
+      alerts      = { enabled = false },
+      rows = [
+        { type : "block/service", name = "worker2", show_err_logs = true, loki_datasource_uid = "loki", namespace = "dev" }
+      ]
     }
   ]
+
   alerts = {
     rules = [
       {
@@ -84,7 +93,7 @@ module "this" {
 
       hosts = ["grafana.example.com"]
       annotations = {
-        "alb.ingress.kubernetes.io/certificate-arn" = "arn:aws:acm:us-east-2:774305617028:certificate/0c7b32a5-cfd3-488b-800c-fe289f3bb040",
+        "alb.ingress.kubernetes.io/certificate-arn" = "cert_arn",
         "alb.ingress.kubernetes.io/group.name"      = "dev-ingress"
       }
     }
