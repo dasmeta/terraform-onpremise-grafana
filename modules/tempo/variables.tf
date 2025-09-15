@@ -7,7 +7,7 @@ variable "namespace" {
 variable "chart_version" {
   type        = string
   description = "Tempo chart version"
-  default     = "1.20.0"
+  default     = "1.23.3"
 }
 
 variable "configs" {

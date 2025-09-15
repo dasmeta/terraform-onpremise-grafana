@@ -33,3 +33,13 @@ output "all_folder_names" {
   value       = local.folder_name_uids
   description = "All folder names and uids"
 }
+
+# output "prometheus_debug" {
+#   value       = try(module.prometheus[0].debug_configs, {})
+#   description = "Debug: Prometheus module configs"
+# }
+
+# output "prometheus_additional_scrape_configs" {
+#   value       = try(module.prometheus[0].additional_scrape_configs, [])
+#   description = "Debug: Additional scrape configs passed to Prometheus"
+# }

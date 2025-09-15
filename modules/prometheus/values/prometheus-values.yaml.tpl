@@ -98,8 +98,54 @@ prometheus:
         - action: replace
           source_labels: [__meta_kubernetes_service_annotation_prometheus_io_port]
           target_label: __metrics_port__
-
-
+%{~ for job in additional_scrape_configs }
+    - job_name: ${job.job_name}
+%{~ if try(job.static_configs, null) != null }
+      static_configs:
+%{~ for config in job.static_configs }
+        - targets:
+%{~ for target in config.targets }
+            - ${target}
+%{~ endfor ~}
+%{~ endfor ~}
+%{~ endif ~}
+%{~ if try(job.kubernetes_sd_configs, null) != null }
+      kubernetes_sd_configs:
+%{~ for config in job.kubernetes_sd_configs }
+        - role: ${config.role}
+%{~ endfor ~}
+%{~ endif ~}
+%{~ if try(job.relabel_configs, null) != null }
+      relabel_configs:
+%{~ for config in job.relabel_configs }
+        - action: ${config.action}
+%{~ if try(config.source_labels, null) != null }
+          source_labels: ${jsonencode(config.source_labels)}
+%{~ endif ~}
+%{~ if try(config.target_label, null) != null }
+          target_label: ${config.target_label}
+%{~ endif ~}
+%{~ if try(config.regex, null) != null }
+          regex: ${config.regex}
+%{~ endif ~}
+%{~ if try(config.replacement, null) != null }
+          replacement: ${config.replacement}
+%{~ endif ~}
+%{~ endfor ~}
+%{~ endif ~}
+%{~ if try(job.metric_relabel_configs, null) != null }
+      metric_relabel_configs:
+%{~ for config in job.metric_relabel_configs }
+        - action: ${config.action}
+%{~ if try(config.source_labels, null) != null }
+          source_labels: ${jsonencode(config.source_labels)}
+%{~ endif ~}
+%{~ if try(config.regex, null) != null }
+          regex: ${config.regex}
+%{~ endif ~}
+%{~ endfor ~}
+%{~ endif ~}
+%{~ endfor ~}
 
 %{ if ingress_enabled }
   ingress:

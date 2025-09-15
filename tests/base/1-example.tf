@@ -27,14 +27,6 @@ module "this" {
           ],
         }
       ]
-    },
-    {
-      name        = "Test-dashboard-2",
-      folder_name = "Test-dashboard-2",
-      alerts      = { enabled = false },
-      rows = [
-        { type : "block/service", name = "worker2", show_err_logs = true, loki_datasource_uid = "loki", namespace = "dev" }
-      ]
     }
   ]
   alerts = {
@@ -92,12 +84,9 @@ module "this" {
 
       hosts = ["grafana.example.com"]
       annotations = {
-        "alb.ingress.kubernetes.io/certificate-arn" = "cert_arn",
+        "alb.ingress.kubernetes.io/certificate-arn" = "arn:aws:acm:us-east-2:774305617028:certificate/0c7b32a5-cfd3-488b-800c-fe289f3bb040",
         "alb.ingress.kubernetes.io/group.name"      = "dev-ingress"
       }
-    }
-    trace_log_mapping = {
-      enabled = true
     }
   }
 
@@ -110,17 +99,13 @@ module "this" {
   }
 
   prometheus = {
-    enabled       = true
-    storage_size  = "20Gi"
-    storage_class = "gp2"
-  }
-  grafana_admin_password = "adminPass312"
-  dashboards_json_files = [
-    "./dashboard_files/ALB_dashboard.json",
-    "./dashboard_files/Application_main_dashboard.json"
-  ]
-}
+    enabled = true
 
-output "all_folder_names" {
-  value = module.this.all_folder_names
+  }
+  grafana_admin_password = "admin"
+  # dashboards_json_files = [
+  #   "./dashboard_files/ALB_dashboard.json",
+  #   "./dashboard_files/Application_main_dashboard.json"
+  # ]
+
 }

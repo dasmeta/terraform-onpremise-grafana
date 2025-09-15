@@ -29,6 +29,7 @@ variable "configs" {
     replicas                     = optional(number, 2)
     enable_alertmanager          = optional(bool, true)
     scrape_helm_chart_components = optional(bool, true)
+    additional_scrape_configs    = optional(any, [])
     ingress = optional(object({
       enabled     = optional(bool, false)
       type        = optional(string, "nginx")

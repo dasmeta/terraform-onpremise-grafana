@@ -1,12 +1,13 @@
 # Deploy Grafana
 resource "helm_release" "grafana" {
-  name             = "grafana"
-  repository       = "https://grafana.github.io/helm-charts"
-  chart            = "grafana"
-  namespace        = var.namespace
-  create_namespace = true
-  version          = var.chart_version
-  timeout          = 300
+  name                       = "grafana"
+  repository                 = "https://grafana.github.io/helm-charts"
+  chart                      = "grafana"
+  namespace                  = var.namespace
+  create_namespace           = true
+  version                    = var.chart_version
+  timeout                    = 300
+  disable_openapi_validation = true
 
   values = [
     templatefile("${path.module}/values/grafana-values.yaml.tpl", {
@@ -57,15 +58,15 @@ resource "helm_release" "grafana" {
 }
 
 resource "helm_release" "mysql" {
-  count = var.configs.database.enabled && var.configs.database.create ? 1 : 0
-
-  name             = var.mysql_release_name
-  repository       = "oci://registry-1.docker.io/bitnamicharts"
-  chart            = "mysql"
-  namespace        = var.namespace
-  create_namespace = false
-  version          = var.mysql_chart_version
-  timeout          = 300
+  count                      = var.configs.database.enabled && var.configs.database.create ? 1 : 0
+  disable_openapi_validation = true
+  name                       = var.mysql_release_name
+  repository                 = "oci://registry-1.docker.io/bitnamicharts"
+  chart                      = "mysql"
+  namespace                  = var.namespace
+  create_namespace           = false
+  version                    = var.mysql_chart_version
+  timeout                    = 300
 
   values = [jsonencode({
     auth = {
