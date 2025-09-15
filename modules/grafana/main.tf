@@ -57,7 +57,8 @@ resource "helm_release" "grafana" {
 }
 
 resource "helm_release" "mysql" {
-  count            = var.configs.database.enabled && var.configs.database.create ? 1 : 0
+  count = var.configs.database.enabled && var.configs.database.create ? 1 : 0
+
   name             = var.mysql_release_name
   repository       = "oci://registry-1.docker.io/bitnamicharts"
   chart            = "mysql"
