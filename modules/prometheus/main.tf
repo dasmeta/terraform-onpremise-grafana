@@ -21,8 +21,8 @@ resource "helm_release" "prometheus" {
       limit_cpu   = var.configs.resources.limit.cpu
       limit_mem   = var.configs.resources.limit.mem
 
-      replicas = var.configs.replicas
-
+      replicas                     = var.configs.replicas
+      additional_scrape_configs    = var.configs.additional_scrape_configs
       enable_alertmanager          = var.configs.enable_alertmanager
       scrape_helm_chart_components = var.configs.scrape_helm_chart_components
       kubelet_labels               = local.kubelet_labels

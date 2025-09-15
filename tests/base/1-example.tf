@@ -37,6 +37,7 @@ module "this" {
       ]
     }
   ]
+
   alerts = {
     rules = [
       {
@@ -96,9 +97,6 @@ module "this" {
         "alb.ingress.kubernetes.io/group.name"      = "dev-ingress"
       }
     }
-    trace_log_mapping = {
-      enabled = true
-    }
   }
 
   tempo = {
@@ -110,17 +108,13 @@ module "this" {
   }
 
   prometheus = {
-    enabled       = true
-    storage_size  = "20Gi"
-    storage_class = "gp2"
-  }
-  grafana_admin_password = "adminPass312"
-  dashboards_json_files = [
-    "./dashboard_files/ALB_dashboard.json",
-    "./dashboard_files/Application_main_dashboard.json"
-  ]
-}
+    enabled = true
 
-output "all_folder_names" {
-  value = module.this.all_folder_names
+  }
+  grafana_admin_password = "admin"
+  # dashboards_json_files = [
+  #   "./dashboard_files/ALB_dashboard.json",
+  #   "./dashboard_files/Application_main_dashboard.json"
+  # ]
+
 }

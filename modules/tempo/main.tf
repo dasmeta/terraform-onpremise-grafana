@@ -15,7 +15,7 @@ resource "helm_release" "tempo" {
       persistence_size    = var.configs.persistence.size
       persistence_class   = var.configs.persistence.storage_class
 
-      metris_generator_enabled     = var.configs.metrics_generator.enabled
+      metrics_generator_enabled    = var.configs.metrics_generator.enabled
       metrics_generator_remote_url = var.configs.metrics_generator.remote_url
 
       enable_service_monitor = var.configs.enable_service_monitor

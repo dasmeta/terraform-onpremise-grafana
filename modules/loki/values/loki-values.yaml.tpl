@@ -52,7 +52,7 @@ singleBinary:
     accessModes:
       - ${persistence_access_mode}
     size: ${persistence_size}
-    storageClassName: ${persistence_storage_class}
+    storageClass: ${persistence_storage_class}
 %{ endif }
 
   replicas: ${num_replicas}

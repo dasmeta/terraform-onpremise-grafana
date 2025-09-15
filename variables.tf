@@ -280,6 +280,7 @@ variable "prometheus" {
     replicas                     = optional(number, 2)
     enable_alertmanager          = optional(bool, true) # allows to enable alertmanager. By default, we enable it.
     scrape_helm_chart_components = optional(bool, true) # allows to scrape helm chart components for prometheus operator. By default, we do not scrape them.
+    additional_scrape_configs    = optional(any, [])    # allows to specify additional scrape configs for prometheus. Example can be found in tests/prometheus-additional-scrape-configs/1-example.tf
     ingress = optional(object({
       enabled     = optional(bool, false)
       type        = optional(string, "nginx")
@@ -291,11 +292,11 @@ variable "prometheus" {
       path        = optional(list(string), ["/"])
       path_type   = optional(string, "Prefix")
     }), {})
-    kubelet_metrics = optional(list(string), ["container_cpu_.*", "container_memory_.*", "kube_pod_container_status_.*",
+    kubelet_metrics = optional(list(string), ["container_cpu_.*", "container_memory_.*", "kube_pod_container_status_.*", # allows to specify kubelet metrics to scrape. By default, we scrape the default ones.
       "kube_pod_container_resource_*", "container_network_.*", "kube_pod_resource_limit",
       "kube_pod_resource_request", "pod_cpu_usage_seconds_total", "pod_memory_usage_bytes",
       "kubelet_volume_stats", "volume_operation_total_seconds"]
-    ) # allows to specify kubelet metrics to scrape. By default, we scrape the default ones.
+    )
   })
   description = "values to be used as prometheus's chart values"
   default     = {}
@@ -304,7 +305,7 @@ variable "prometheus" {
 variable "tempo" {
   type = object({
     enabled       = optional(bool, false)
-    chart_version = optional(string, "1.20.0")
+    chart_version = optional(string, "1.23.3")
     service_account = optional(object({
       name        = optional(string, "tempo")
       annotations = optional(map(string), {})

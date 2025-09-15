@@ -5,9 +5,16 @@ tempo:
       ${indent(6, storage_backend_configurations)}
 
   metricsGenerator:
-    enabled: ${metris_generator_enabled}
+    enabled: ${metrics_generator_enabled}
     remoteWriteUrl: ${metrics_generator_remote_url}
 
+  overrides:
+    defaults:
+      metrics_generator:
+        processors:
+          - local-blocks
+          - service-graphs
+          - span-metrics
 
 persistence:
   enabled: ${persistence_enabled}
@@ -24,11 +31,3 @@ serviceAccount:
   %{for k, v in service_account_annotations }
     ${k}: "${v}"
   %{~ endfor }
-
-overrides:
-  defaults:
-    metrics_generator:
-      processors:
-        - service-graphs
-        - span-metrics
-        - local-blocks
