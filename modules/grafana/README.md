@@ -40,6 +40,7 @@ No modules.
 | <a name="input_mysql_chart_version"></a> [mysql\_chart\_version](#input\_mysql\_chart\_version) | mysql chart version | `string` | `"13.0.2"` | no |
 | <a name="input_mysql_release_name"></a> [mysql\_release\_name](#input\_mysql\_release\_name) | name of grafana mysql helm release | `string` | `"grafana-mysql"` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | namespace to use for deployment | `string` | `"monitoring"` | no |
+| <a name="input_release_name"></a> [release\_name](#input\_release\_name) | grafana release name | `string` | `"grafana"` | no |
 
 ## Outputs
 

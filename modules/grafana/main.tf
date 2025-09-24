@@ -1,6 +1,6 @@
 # Deploy Grafana
 resource "helm_release" "grafana" {
-  name             = "grafana"
+  name             = var.release_name
   repository       = "https://grafana.github.io/helm-charts"
   chart            = "grafana"
   namespace        = var.namespace
@@ -29,6 +29,7 @@ resource "helm_release" "grafana" {
       ingress_path        = var.configs.ingress.path
       ingress_path_type   = var.configs.ingress.path_type
       tls_secrets         = local.ingress_tls
+      ingress_class_name  = var.configs.ingress.type
 
       request_cpu    = var.configs.resources.request.cpu
       request_memory = var.configs.resources.request.mem

@@ -2,9 +2,6 @@ locals {
   kubelet_labels = format("^(%s)$", join("|", var.configs.kubelet_metrics))
 
   ingress_annotations = merge(
-    {
-      "kubernetes.io/ingress.class" = var.configs.ingress.type
-    },
     var.configs.ingress.type == "alb" ? merge({
       "alb.ingress.kubernetes.io/target-type"      = "ip"
       "alb.ingress.kubernetes.io/scheme"           = var.configs.ingress.public ? "internet-facing" : "internal"

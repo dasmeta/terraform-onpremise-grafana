@@ -33,7 +33,12 @@ variable "datasources" {
   type        = list(map(any))
   description = "A list of datasources configurations for grafana."
   default     = []
+}
 
+variable "release_name" {
+  type        = string
+  description = "grafana release name"
+  default     = "grafana"
 }
 
 variable "configs" {

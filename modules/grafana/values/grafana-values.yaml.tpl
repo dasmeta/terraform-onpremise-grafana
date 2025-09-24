@@ -37,6 +37,7 @@ ingress:
 %{~ for h in ingress_hosts }
     - ${h}
 %{~ endfor }
+  ingressClassName: ${ingress_class_name}
   path: ${ingress_path}
   pathType: ${ingress_path_type }
 %{ if length(tls_secrets) > 0 }

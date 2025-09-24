@@ -58,13 +58,14 @@ module "grafana" {
   count = var.grafana.enabled ? 1 : 0
 
   chart_version          = var.grafana.chart_version
+  release_name           = var.grafana.release_name
   grafana_admin_password = var.grafana_admin_password
   configs                = var.grafana
   datasources = concat(
     var.grafana.datasources == null ? [] : var.grafana.datasources,
-    var.prometheus.enabled ? [{ type = "prometheus", name = "Prometheus" }] : [],
-    var.tempo.enabled ? [{ type = "tempo", name = "Tempo" }] : [],
-    var.loki.enabled ? [{ type = "loki", name = "Loki" }] : []
+    var.prometheus.enabled ? [{ type = "prometheus", name = "Prometheus", url = "http://${var.prometheus.release_name}-kube-prometheus-prometheus.${var.namespace}.svc.cluster.local:9090" }] : [],
+    var.tempo.enabled ? [{ type = "tempo", name = "Tempo", url = "http://${var.tempo.release_name}.${var.namespace}.svc.cluster.local:3200" }] : [],
+    var.loki.enabled ? [{ type = "loki", name = "Loki", url = "http://${var.loki.release_name}.${var.namespace}.svc.cluster.local:3100" }] : []
   )
 
   namespace = var.namespace
@@ -76,6 +77,7 @@ module "prometheus" {
   count = var.prometheus.enabled ? 1 : 0
 
   chart_version = var.prometheus.chart_version
+  release_name  = var.prometheus.release_name
   configs       = var.prometheus
   namespace     = var.namespace
 }
@@ -86,6 +88,7 @@ module "tempo" {
   count = var.tempo.enabled ? 1 : 0
 
   chart_version = var.tempo.chart_version
+  release_name  = var.tempo.release_name
   configs       = var.tempo
   namespace     = var.namespace
 }
@@ -96,6 +99,7 @@ module "loki" {
   count = var.loki.enabled ? 1 : 0
 
   chart_version = var.loki.chart_version
+  release_name  = var.loki.release_name
   configs       = var.loki
   namespace     = var.namespace
 }
