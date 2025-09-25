@@ -1,7 +1,7 @@
 # Deploy Prometheus
 resource "helm_release" "prometheus" {
 
-  name             = "prometheus"
+  name             = var.release_name
   repository       = "https://prometheus-community.github.io/helm-charts"
   chart            = "kube-prometheus-stack"
   namespace        = var.namespace
@@ -23,6 +23,7 @@ resource "helm_release" "prometheus" {
 
       replicas                     = var.configs.replicas
       additional_scrape_configs    = var.configs.additional_scrape_configs
+      additional_args              = var.configs.additional_args
       enable_alertmanager          = var.configs.enable_alertmanager
       scrape_helm_chart_components = var.configs.scrape_helm_chart_components
       kubelet_labels               = local.kubelet_labels

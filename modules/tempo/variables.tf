@@ -10,6 +10,12 @@ variable "chart_version" {
   default     = "1.23.3"
 }
 
+variable "release_name" {
+  type        = string
+  description = "tempo release name"
+  default     = "tempo"
+}
+
 variable "configs" {
   type = object({
     storage = optional(object({

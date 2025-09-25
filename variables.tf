@@ -193,6 +193,7 @@ variable "grafana" {
   type = object({
     enabled       = optional(bool, true)
     chart_version = optional(string, "9.2.9")
+    release_name  = optional(string, "grafana")
     resources = optional(object({
       request = optional(object({
         cpu = optional(string, "1")
@@ -262,6 +263,7 @@ variable "grafana" {
 variable "prometheus" {
   type = object({
     enabled        = optional(bool, true)
+    release_name   = optional(string, "prometheus")
     chart_version  = optional(string, "75.8.0")
     retention_days = optional(string, "15d")
     storage_class  = optional(string, "")
@@ -269,15 +271,15 @@ variable "prometheus" {
     access_modes   = optional(list(string), ["ReadWriteOnce"])
     resources = optional(object({
       request = optional(object({
-        cpu = optional(string, "500m")
-        mem = optional(string, "500Mi")
+        cpu = optional(string, "1")
+        mem = optional(string, "2500Mi")
       }), {})
       limit = optional(object({
-        cpu = optional(string, "1")
-        mem = optional(string, "1Gi")
+        cpu = optional(string, "2")
+        mem = optional(string, "3Gi")
       }), {})
     }), {})
-    replicas                     = optional(number, 2)
+    replicas                     = optional(number, 1)
     enable_alertmanager          = optional(bool, true) # allows to enable alertmanager. By default, we enable it.
     scrape_helm_chart_components = optional(bool, true) # allows to scrape helm chart components for prometheus operator. By default, we do not scrape them.
     additional_scrape_configs    = optional(any, [])    # allows to specify additional scrape configs for prometheus. Example can be found in tests/prometheus-additional-scrape-configs/1-example.tf
@@ -297,6 +299,23 @@ variable "prometheus" {
       "kube_pod_resource_request", "pod_cpu_usage_seconds_total", "pod_memory_usage_bytes",
       "kubelet_volume_stats", "volume_operation_total_seconds"]
     )
+    additional_args = optional(list(object({
+      name  = string
+      value = string
+      })), [
+      {
+        name  = "query.max-concurrency"
+        value = "64"
+      },
+      {
+        name  = "query.timeout"
+        value = "2m"
+      },
+      {
+        name  = "query.max-samples"
+        value = "75000000"
+      }
+    ])
   })
   description = "values to be used as prometheus's chart values"
   default     = {}
@@ -306,6 +325,7 @@ variable "tempo" {
   type = object({
     enabled       = optional(bool, false)
     chart_version = optional(string, "1.23.3")
+    release_name  = optional(string, "tempo")
     service_account = optional(object({
       name        = optional(string, "tempo")
       annotations = optional(map(string), {})
@@ -339,6 +359,7 @@ variable "loki" {
   type = object({
     enabled       = optional(bool, false)
     chart_version = optional(string, "6.30.1")
+    release_name  = optional(string, "loki")
     loki = optional(object({
       url            = optional(string, "")
       volume_enabled = optional(bool, true)

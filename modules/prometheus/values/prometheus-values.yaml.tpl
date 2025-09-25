@@ -34,11 +34,16 @@ prometheus:
         regex: ^go_.*
         action: drop
   prometheusSpec:
+%{~ if length(additional_args) > 0 }
+    additionalArgs:
+%{~ for arg in additional_args }
+    - name: ${arg.name}
+      value: "${arg.value}"
+%{~ endfor }
+%{~ endif }
     scrapeInterval: "30s"
     scrapeTimeout: "10s"
     evaluationInterval: "30s"
-    extraArgs:
-    - --web.disable-exporter-metrics
     replicas: ${replicas}
     retention: ${retention_days}
     serviceMonitorSelectorNilUsesHelmValues: ${scrape_helm_chart_components}

@@ -35,7 +35,7 @@ locals {
       name        = "Tempo"
       access_mode = "proxy"
       uid         = "tempo"
-      url         = "http://tempo.${var.namespace}.svc.cluster.local:3100"
+      url         = "http://tempo.${var.namespace}.svc.cluster.local:3200"
       is_default  = false
 
       encoded_json = jsonencode({
@@ -58,9 +58,6 @@ locals {
   }
 
   ingress_annotations = merge(
-    {
-      "kubernetes.io/ingress.class" = var.configs.ingress.type
-    },
     var.configs.ingress.type == "alb" ? merge({
       "alb.ingress.kubernetes.io/target-type"      = "ip"
       "alb.ingress.kubernetes.io/scheme"           = var.configs.ingress.public ? "internet-facing" : "internal"
