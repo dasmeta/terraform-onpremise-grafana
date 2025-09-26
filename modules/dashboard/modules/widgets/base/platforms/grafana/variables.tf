@@ -19,6 +19,12 @@ variable "coordinates" {
   })
 }
 
+variable "legend_format" {
+  type        = string
+  default     = ""
+  description = "Legend format"
+}
+
 variable "metrics" {
   type        = any
   default     = []

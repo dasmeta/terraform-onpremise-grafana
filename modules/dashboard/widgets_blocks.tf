@@ -17,6 +17,7 @@ module "block_service" {
   name                      = each.value.block.name
   namespace                 = try(each.value.block.namespace, "$namespace")
   host                      = try(each.value.block.host, null)
+  pvc_name                  = try(each.value.block.pvc_name, "")
   prometheus_datasource_uid = try(each.value.block.prometheus_datasource_uid, var.data_source.uid, null)
   loki_datasource_uid       = try(each.value.block.loki_datasource_uid, var.data_source.uid, null)
   show_err_logs             = try(each.value.block.show_err_logs, true)

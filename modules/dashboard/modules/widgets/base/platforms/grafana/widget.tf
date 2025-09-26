@@ -68,8 +68,6 @@ locals {
     } if metric.color != null
   ]
 
-
-  common_fields    = ["MetricNamespace", "MetricName"]
   attribute_fields = ["accountId", "period", "stat", "label", "visible", "color", "yAxis"]
   metrics_local    = var.metrics == null ? [] : var.metrics
 
@@ -100,7 +98,7 @@ locals {
   metric_targets = [for row in local.metrics_with_defaults : {
     expr         = row.expression
     id           = ""
-    legendFormat = row.label,
+    legendFormat = length(try(row.legend_format, "")) > 0 ? row.legend_format : "${row.label}",
     editorMode   = "code",
     }
   ]

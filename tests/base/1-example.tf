@@ -7,7 +7,7 @@ module "this" {
       folder_name = "Test-dashboard",
       alerts      = { enabled = false },
       rows : [
-        { type : "block/service", name = "worker", show_err_logs = true, loki_datasource_uid = "loki", namespace = "dev" }
+        { type : "block/service", name = "worker", show_err_logs = true, loki_datasource_uid = "loki", namespace = "dev", pvc_name = "pvc_name" }
       ]
       data_source = {
         uid = "prometheus"
@@ -108,7 +108,9 @@ module "this" {
   }
 
   prometheus = {
-    enabled = true
+    enabled      = true
+    storage_size = "10Gi"
+
   }
   grafana_admin_password = "admin"
   # dashboards_json_files = [

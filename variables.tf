@@ -294,10 +294,10 @@ variable "prometheus" {
       path        = optional(list(string), ["/"])
       path_type   = optional(string, "Prefix")
     }), {})
-    kubelet_metrics = optional(list(string), ["container_cpu_.*", "container_memory_.*", "kube_pod_container_status_.*", # allows to specify kubelet metrics to scrape. By default, we scrape the default ones.
-      "kube_pod_container_resource_*", "container_network_.*", "kube_pod_resource_limit",
+    kubelet_metrics = optional(list(string), ["container_cpu_.*", "container_memory_.*", "kube_pod_container_status_.*",
+      "kube_pod_container_resource_.*", "container_network_.*", "kube_pod_resource_limit",
       "kube_pod_resource_request", "pod_cpu_usage_seconds_total", "pod_memory_usage_bytes",
-      "kubelet_volume_stats", "volume_operation_total_seconds"]
+      "kubelet_volume_stats.*", "volume_operation_total_seconds.*", "container_fs_.*"]
     )
     additional_args = optional(list(object({
       name  = string
