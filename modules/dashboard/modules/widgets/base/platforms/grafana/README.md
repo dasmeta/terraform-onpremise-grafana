@@ -31,6 +31,7 @@ No resources.
 | <a name="input_defaults"></a> [defaults](#input\_defaults) | Default values that will be passed to all metrics. | `any` | `{}` | no |
 | <a name="input_description"></a> [description](#input\_description) | Description for the widget | `string` | `""` | no |
 | <a name="input_fillOpacity"></a> [fillOpacity](#input\_fillOpacity) | The fillOpacity value | `number` | `0` | no |
+| <a name="input_legend_format"></a> [legend\_format](#input\_legend\_format) | Legend format | `string` | `""` | no |
 | <a name="input_loki_targets"></a> [loki\_targets](#input\_loki\_targets) | Target section of Loki based widget | <pre>list(object({<br/>    expr          = string<br/>    refId         = optional(string, "A")<br/>    direction     = optional(string, "backward")<br/>    legend_format = optional(string, "")<br/>    queryType     = optional(string, "range")<br/>    hide          = optional(bool, false)<br/>    label         = optional(string, "Logs")<br/>  }))</pre> | `[]` | no |
 | <a name="input_metrics"></a> [metrics](#input\_metrics) | Metrics to be displayed on the widget. | `any` | `[]` | no |
 | <a name="input_name"></a> [name](#input\_name) | n/a | `string` | n/a | yes |
