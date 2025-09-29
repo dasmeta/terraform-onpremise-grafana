@@ -18,6 +18,7 @@ resource "helm_release" "loki" {
       storage                     = jsonencode(var.configs.loki.storage)
       schema_configs              = jsonencode(var.configs.loki.schema_configs)
       create_service_account      = var.configs.loki.service_account.enable
+      enable_service_monitor      = var.configs.loki.enable_service_monitor
       service_account_name        = var.configs.loki.service_account.name
       service_account_annotations = var.configs.loki.service_account.annotations
       request_cpu                 = var.configs.loki.resources.request.cpu

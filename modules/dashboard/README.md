@@ -95,8 +95,8 @@ module "this" {
 | <a name="module_container_request_count_widget"></a> [container\_request\_count\_widget](#module\_container\_request\_count\_widget) | ./modules/widgets/container/request-count | n/a |
 | <a name="module_container_response_time_widget"></a> [container\_response\_time\_widget](#module\_container\_response\_time\_widget) | ./modules/widgets/container/response-time | n/a |
 | <a name="module_container_restarts_widget"></a> [container\_restarts\_widget](#module\_container\_restarts\_widget) | ./modules/widgets/container/restarts | n/a |
-| <a name="module_container_volume_IOPS_widget"></a> [container\_volume\_IOPS\_widget](#module\_container\_volume\_IOPS\_widget) | ./modules/widgets/container/volume-IOPS | n/a |
 | <a name="module_container_volume_capacity_widget"></a> [container\_volume\_capacity\_widget](#module\_container\_volume\_capacity\_widget) | ./modules/widgets/container/volume-capacity | n/a |
+| <a name="module_container_volume_iops_widget"></a> [container\_volume\_iops\_widget](#module\_container\_volume\_iops\_widget) | ./modules/widgets/container/volume-iops | n/a |
 | <a name="module_container_volume_throughput_widget"></a> [container\_volume\_throughput\_widget](#module\_container\_volume\_throughput\_widget) | ./modules/widgets/container/volume-throughput | n/a |
 | <a name="module_deployment_errors_widget"></a> [deployment\_errors\_widget](#module\_deployment\_errors\_widget) | ./modules/widgets/deployment/errors | n/a |
 | <a name="module_deployment_replicas_widget"></a> [deployment\_replicas\_widget](#module\_deployment\_replicas\_widget) | ./modules/widgets/deployment/replicas | n/a |

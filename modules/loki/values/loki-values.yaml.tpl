@@ -10,6 +10,11 @@ serviceAccount:
 %{~ endfor }
 %{ endif ~}
 
+monitoring:
+  serviceMonitor:
+    enabled: ${enable_service_monitor}
+    labels:
+      release: prometheus
 
 # disable chart test and related canary setup(TODO: check this components, maybe they are something to have enabled)
 test:

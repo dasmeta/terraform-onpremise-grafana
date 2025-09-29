@@ -148,10 +148,10 @@ module "container_volume_capacity_widget" {
   namespace      = each.value.namespace
 }
 
-module "container_volume_IOPS_widget" {
-  source = "./modules/widgets/container/volume-IOPS"
+module "container_volume_iops_widget" {
+  source = "./modules/widgets/container/volume-iops"
 
-  for_each = { for index, item in try(local.widget_config["container/volume-IOPS"], []) : index => item }
+  for_each = { for index, item in try(local.widget_config["container/volume-iops"], []) : index => item }
 
   datasource_uid = try(each.value.datasource_uid, null)
   coordinates    = each.value.coordinates

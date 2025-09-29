@@ -361,8 +361,9 @@ variable "loki" {
     chart_version = optional(string, "6.30.1")
     release_name  = optional(string, "loki")
     loki = optional(object({
-      url            = optional(string, "")
-      volume_enabled = optional(bool, true)
+      url                    = optional(string, "")
+      volume_enabled         = optional(bool, true)
+      enable_service_monitor = optional(bool, false)
       service_account = optional(object({
         enable      = optional(bool, true)
         name        = optional(string, "loki")

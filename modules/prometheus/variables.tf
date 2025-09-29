@@ -25,11 +25,7 @@ variable "configs" {
     resources = optional(object({
       request = optional(object({
         cpu = optional(string, "1")
-<<<<<<< HEAD
         mem = optional(string, "2500Mi")
-=======
-        mem = optional(string, "2Gi")
->>>>>>> 966e18c (fix(DMVP-8288): add volume widgets to service, allow legend formatting)
       }), {})
       limit = optional(object({
         cpu = optional(string, "2")
@@ -54,11 +50,7 @@ variable "configs" {
     kubelet_metrics = optional(list(string), ["container_cpu_.*", "container_memory_.*", "kube_pod_container_status_.*",
       "kube_pod_container_resource_.*", "container_network_.*", "kube_pod_resource_limit",
       "kube_pod_resource_request", "pod_cpu_usage_seconds_total", "pod_memory_usage_bytes",
-<<<<<<< HEAD
-      "kubelet_volume_stats.*", "volume_operation_total_seconds"]
-=======
       "kubelet_volume_stats.*", "volume_operation_total_seconds.*", "container_fs_.*"]
->>>>>>> 966e18c (fix(DMVP-8288): add volume widgets to service, allow legend formatting)
     )
     additional_args = optional(list(object({
       name  = string
