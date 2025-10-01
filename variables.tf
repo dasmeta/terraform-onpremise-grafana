@@ -363,7 +363,7 @@ variable "loki" {
     loki = optional(object({
       url                    = optional(string, "")
       volume_enabled         = optional(bool, true)
-      enable_service_monitor = optional(bool, false)
+      enable_service_monitor = optional(bool, true)
       service_account = optional(object({
         enable      = optional(bool, true)
         name        = optional(string, "loki")
