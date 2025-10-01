@@ -134,3 +134,42 @@ module "container_network_error_widget" {
   pod       = each.value.pod
   namespace = each.value.namespace
 }
+
+module "container_volume_capacity_widget" {
+  source = "./modules/widgets/container/volume-capacity"
+
+  for_each = { for index, item in try(local.widget_config["container/volume-capacity"], []) : index => item }
+
+  datasource_uid = try(each.value.datasource_uid, null)
+  coordinates    = each.value.coordinates
+  period         = each.value.period
+  pvc_name       = each.value.pvc_name
+  container      = each.value.container
+  namespace      = each.value.namespace
+}
+
+module "container_volume_iops_widget" {
+  source = "./modules/widgets/container/volume-iops"
+
+  for_each = { for index, item in try(local.widget_config["container/volume-iops"], []) : index => item }
+
+  datasource_uid = try(each.value.datasource_uid, null)
+  coordinates    = each.value.coordinates
+  period         = each.value.period
+  pvc_name       = each.value.pvc_name
+  pod            = each.value.pod
+  namespace      = each.value.namespace
+}
+
+module "container_volume_throughput_widget" {
+  source = "./modules/widgets/container/volume-throughput"
+
+  for_each = { for index, item in try(local.widget_config["container/volume-throughput"], []) : index => item }
+
+  datasource_uid = try(each.value.datasource_uid, null)
+  coordinates    = each.value.coordinates
+  period         = each.value.period
+  pvc_name       = each.value.pvc_name
+  pod            = each.value.pod
+  namespace      = each.value.namespace
+}

@@ -13,6 +13,12 @@ variable "region" {
   default = ""
 }
 
+variable "pvc_name" {
+  type        = string
+  description = "PVC name"
+  default     = ""
+}
+
 variable "host" {
   type        = string
   default     = null

@@ -113,6 +113,9 @@ locals {
     values(module.container_response_time_widget).*.data,
     values(module.container_network_traffic_widget).*.data,
     values(module.container_network_error_widget).*.data,
+    values(module.container_volume_capacity_widget).*.data,
+    values(module.container_volume_iops_widget).*.data,
+    values(module.container_volume_throughput_widget).*.data,
 
     # Pod widgets
     values(module.pod_cpu_widget).*.data,

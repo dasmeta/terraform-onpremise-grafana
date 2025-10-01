@@ -21,12 +21,12 @@ output "alerts" {
 
 
 output "widget_alert_rules" {
-  value       = try(module.application_dashboard[0].widget_alert_rules, [])
+  value       = try(values(module.application_dashboard)[0].widget_alert_rules, [])
   description = "Information about created widget alert rules"
 }
 
 output "blocks_by_type" {
-  value = try(module.application_dashboard[0].blocks_by_type, {})
+  value = try(values(module.application_dashboard)[0].blocks_by_type, {})
 }
 
 output "all_folder_names" {

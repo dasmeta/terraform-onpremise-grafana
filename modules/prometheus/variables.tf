@@ -34,8 +34,8 @@ variable "configs" {
     }), {})
     replicas                     = optional(number, 1)
     enable_alertmanager          = optional(bool, true)
-    scrape_helm_chart_components = optional(bool, true)
-    additional_scrape_configs    = optional(any, []) # allows to specify additional scrape configs for prometheus. Example can be found in tests/prometheus-additional-scrape-configs/1-example.tf
+    scrape_helm_chart_components = optional(bool, false) # enable scraping all servicemonitors. The chart by default has disabled scraping all servicemonitors. https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack#prometheus-io-scrape
+    additional_scrape_configs    = optional(any, [])     # allows to specify additional scrape configs for prometheus. Example can be found in tests/prometheus-additional-scrape-configs/1-example.tf
     ingress = optional(object({
       enabled     = optional(bool, false)
       type        = optional(string, "nginx")
@@ -48,9 +48,9 @@ variable "configs" {
       path_type   = optional(string, "Prefix")
     }), {})
     kubelet_metrics = optional(list(string), ["container_cpu_.*", "container_memory_.*", "kube_pod_container_status_.*",
-      "kube_pod_container_resource_*", "container_network_.*", "kube_pod_resource_limit",
+      "kube_pod_container_resource_.*", "container_network_.*", "kube_pod_resource_limit",
       "kube_pod_resource_request", "pod_cpu_usage_seconds_total", "pod_memory_usage_bytes",
-      "kubelet_volume_stats.*", "volume_operation_total_seconds"]
+      "kubelet_volume_stats.*", "volume_operation_total_seconds.*", "container_fs_.*"]
     )
     additional_args = optional(list(object({
       name  = string

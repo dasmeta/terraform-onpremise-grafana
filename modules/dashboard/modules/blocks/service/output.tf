@@ -27,5 +27,10 @@ output "result" {
         { type : "container/response-time", host : var.host, container : var.name, namespace = var.namespace, width : 4, datasource_uid = var.prometheus_datasource_uid },
       ] : [],
     ),
+    [
+      { type : "container/volume-capacity", container : var.name, namespace = var.namespace, datasource_uid = var.prometheus_datasource_uid, pvc_name = var.pvc_name, width : 8 },
+      { type : "container/volume-iops", pod : var.name, namespace = var.namespace, datasource_uid = var.prometheus_datasource_uid, pvc_name = var.pvc_name, width : 8 },
+      { type : "container/volume-throughput", pod : var.name, namespace = var.namespace, datasource_uid = var.prometheus_datasource_uid, pvc_name = var.pvc_name, width : 8 },
+    ]
   ]
 }

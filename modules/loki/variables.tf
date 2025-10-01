@@ -24,8 +24,9 @@ variable "release_name" {
 variable "configs" {
   type = object({
     loki = optional(object({
-      url                = optional(string, "")
-      log_volume_enabled = optional(bool, true)
+      url                    = optional(string, "")
+      log_volume_enabled     = optional(bool, true)
+      enable_service_monitor = optional(bool, true)
       service_account = optional(object({
         enable      = optional(bool, true)
         name        = optional(string, "loki")
