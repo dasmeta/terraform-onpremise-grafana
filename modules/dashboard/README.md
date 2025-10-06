@@ -169,6 +169,7 @@ module "this" {
 
 | Name | Description |
 |------|-------------|
+| <a name="output_blocks_by_type"></a> [blocks\_by\_type](#output\_blocks\_by\_type) | n/a |
 | <a name="output_blocks_results"></a> [blocks\_results](#output\_blocks\_results) | n/a |
 | <a name="output_rows"></a> [rows](#output\_rows) | n/a |
 | <a name="output_widget_alert_rules"></a> [widget\_alert\_rules](#output\_widget\_alert\_rules) | n/a |

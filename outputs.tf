@@ -33,3 +33,11 @@ output "all_folder_names" {
   value       = local.folder_name_uids
   description = "All folder names and uids"
 }
+
+output "service_alert_defaults" {
+  value = try(values(module.application_dashboard)[0].service_alert_defaults, {})
+}
+
+output "service_alert_configs" {
+  value = try(values(module.application_dashboard)[0].service_alert_configs, {})
+}

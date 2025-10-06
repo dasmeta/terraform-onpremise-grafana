@@ -1,7 +1,7 @@
 module "this" {
   source = "../.."
 
-  grafana_admin_password = "adminPass312"
+  grafana_admin_password = "admin"
   application_dashboard = [{
     name = "first-dashboard"
     alerts = {
@@ -23,7 +23,16 @@ module "this" {
         cpu : { threshold : 0.256 }, memory : { threshold : 128 }
       } },
       { type : "block/service", name : "only-cpu-memory-request-set-service", namespace : "prod", alerts : { # set cpu/memory alerts to be based on this resources requests instead of limits, can be used when limits are not set but requests are set, by default it uses pod cpu/memory resources limits values
-        cpu : { threshold_resource : "requests" }, memory : { threshold_resource : "requests" }
+        cpu : { threshold_resource : "requests" }, memory : { threshold_resource : "requests" },
+        replicas_no : {
+          exec_err_state : "OK"
+        },
+        replicas_min : {
+          exec_err_state : "OK"
+        },
+        replicas_max : {
+          exec_err_state : "OK"
+        },
       } },
       { type : "block/service", name : "all-possible-alert-options", namespace : "prod", alerts : { # here we have service block alerts all possible configs with defaults and descriptions
         defaults : {
@@ -36,8 +45,7 @@ module "this" {
           interval : "5m"                # the time interval to use to evaluate/aggregate/rate metric for comparison
           deviation : 10                 # the deviation threshold to consider increase/decrease of metric as anomaly and fire alert, we use this now for network alert (in this case 10 means that the metric got increased x10 times withing provided interval)
           threshold_percent : 99         # the percent threshold to use when triggering alerts on resources like cpu/memory
-          no_data_state : "NoData"       # define how to handle if no data for query, by default it will fire alert with no data info
-          group : null                   # grafana alert group name which used for grouping, if null the group name will be based on service name/namespace in format `Service {namespace}/{name}`
+          no_data_state : "NoData"       # define how to handle if no data for query, by default it will fire alert with no data info          group : null                   # grafana alert group name which used for grouping, if null the group name will be based on service name/namespace in format `Service {namespace}/{name}`
         }
 
         replicas_no : {
@@ -45,21 +53,25 @@ module "this" {
           pending_period : "0s"          # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire), if set `null` here it takes  defaults value
           labels : { "priority" : "P1" } # define alert labels to filter in notification policies, this extends with override the defaults labels. we set here P1 priority as if there are no any pods the service is down
           no_data_state : null           # define how to handle if no data for query, if set `null` here it takes  defaults value
-          group : null                   # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
+          annotations : {
+            "impact" : "Service will go down, maybe it is just a test..."
+          } # define alert annotations to filter in notification policies, this extends with override the defaults annotations          group : null                   # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
         }
         replicas_min : {
           enabled : null        # whether to have alert on min replicas/pods, so that if there are no at least min count of pods/replicas it will trigger alert
           pending_period : null # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire), if set `null` here it takes  defaults value
           threshold : null      # for manually set min replica count, if not specified it will automatically get this based on hpa min, recommended to not set this if hpa is enabled, but if prometheus horizontalpodautoscaler metrics are not enable there may be need to set this manually
-          no_data_state : null  # define how to handle if no data for query, if set `null` here it takes  defaults value
-          labels : {}           # define alert labels to filter in notification policies, if set `null` here it takes defaults labels.
-          group : null          # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
+          no_data_state : "OK"  # define how to handle if no data for query, if set `null` here it takes  defaults value
+          annotations : {
+            "impact" : "Service will go down, maybe it is just a test..."
+          }            # define alert annotations to filter in notification policies, this extends with override the defaults annotations          labels : {}           # define alert labels to filter in notification policies, if set `null` here it takes defaults labels.
+          group : null # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
         }
         replicas_max = {
           enabled : null        # whether to have alert on max replicas/pods, so that if it reached to max count of pods/replicas it will trigger alert
           pending_period : null # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire), if set `null` here it takes  defaults value
           threshold : null      # for manually set max replica count, if not specified it will automatically get this based on hpa min, recommended to not set this if hpa is enabled, but if prometheus horizontalpodautoscaler metrics are not enable there may be need to set this manually
-          no_data_state : null  # define how to handle if no data for query, if set `null` here it takes  defaults value
+          no_data_state : "OK"  # define how to handle if no data for query, if set `null` here it takes  defaults value
           labels : {}           # define alert labels to filter in notification policies, this extends with override the defaults labels
           group : null          # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
         }
@@ -67,7 +79,7 @@ module "this" {
           enabled : null        # whether to have alert on Failed/Pending/Unknown status/phase replicas/pods, so that if it already long time there pods on those phase we get notified
           pending_period : null # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire), if set `null` here it takes  defaults value
           threshold : 1         # the min count of replicas/pods with Failed/Pending/Unknown status/phase to trigger alert
-          no_data_state : null  # define how to handle if no data for query, if set `null` here it takes  defaults value
+          no_data_state : "OK"  # define how to handle if no data for query, if set `null` here it takes  defaults value
           labels : {}           # define alert labels to filter in notification policies, this extends with override the defaults labels
           group : null          # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
         }
@@ -178,7 +190,7 @@ module "this" {
     }
     rules = [ # to create extra custom alerts beside dashboard widget block attached ones
       {
-        "datasource" : "deqww6ykqpr7kf", # "prometheus",
+        "datasource" : "prometheus",
         "equation" : "gt",
         "expr" : "avg(increase(nginx_ingress_controller_request_duration_seconds_sum[3m])) / 10",
         "function" : "mean",
@@ -195,7 +207,7 @@ module "this" {
         # "exec_err_state" : "Alerting" # uncomment to trigger new alert
       },
       {
-        "datasource" : "deqww6ykqpr7kf", # "prometheus",
+        "datasource" : "prometheus",
         "equation" : "gt",
         "expr" : "avg(increase(nginx_ingress_controller_request_duration_seconds_sum[3m])) / 10",
         "function" : "mean",
@@ -227,9 +239,9 @@ module "this" {
       tls_enabled = true
       public      = true
 
-      hosts = ["grafana.example.com"]
+      hosts = ["grafana.dev.trysela.com"]
       annotations = {
-        "alb.ingress.kubernetes.io/certificate-arn" = "cert_arn",
+        "alb.ingress.kubernetes.io/certificate-arn" = "arn:aws:acm:us-east-2:774305617028:certificate/0c7b32a5-cfd3-488b-800c-fe289f3bb040",
         "alb.ingress.kubernetes.io/group.name"      = "dev-ingress"
       }
     }
@@ -248,6 +260,6 @@ module "this" {
   }
 
   prometheus = {
-    enabled = false
+    enabled = true
   }
 }

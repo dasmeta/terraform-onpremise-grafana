@@ -280,9 +280,9 @@ variable "prometheus" {
       }), {})
     }), {})
     replicas                     = optional(number, 1)
-    enable_alertmanager          = optional(bool, true) # allows to enable alertmanager. By default, we enable it.
-    scrape_helm_chart_components = optional(bool, true) # allows to scrape helm chart components for prometheus operator. By default, we do not scrape them.
-    additional_scrape_configs    = optional(any, [])    # allows to specify additional scrape configs for prometheus. Example can be found in tests/prometheus-additional-scrape-configs/1-example.tf
+    enable_alertmanager          = optional(bool, true)  # allows to enable alertmanager. By default, we enable it.
+    scrape_helm_chart_components = optional(bool, false) # enable scraping all servicemonitors. The chart by default has disabled scraping all servicemonitors. https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack#prometheus-io-scrape
+    additional_scrape_configs    = optional(any, [])     # allows to specify additional scrape configs for prometheus. Example can be found in tests/prometheus-additional-scrape-configs/1-example.tf
     ingress = optional(object({
       enabled     = optional(bool, false)
       type        = optional(string, "nginx")
@@ -406,7 +406,7 @@ variable "loki" {
         tls_enabled = optional(bool, true)
 
         annotations = optional(map(string), {})
-        hosts       = optional(list(string), ["loki.exampleeee.com"])
+        hosts       = optional(list(string), ["loki.example.com"])
         path        = optional(string, "/")
         path_type   = optional(string, "Prefix")
       }), {})

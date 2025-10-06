@@ -26,6 +26,7 @@ variable "defaults" {
     deviation         = optional(number, 10)                 # the deviation threshold to consider increase/decrease of metric as anomaly and fire alert, we use this now for network alert (in this case 10 means that the metric got increased x10 times withing provided interval)
     threshold_percent = optional(number, 99)                 # the percent threshold to use when triggering alerts on resources like cpu/memory
     no_data_state     = optional(string, "NoData")           # define how to handle if no data for query, by default it will fire alert with no data info
+    exec_err_state    = optional(string, "Error")            # define how to handle if query execution error, by default it will fire alert with error info
     group             = optional(string, null)               # grafana alert group name which used for grouping, if null the group name will be based on service name/namespace in format `Service {namespace}/{name}`
   })
   default     = {}
@@ -38,6 +39,7 @@ variable "alerts" {
       enabled        = optional(bool, null)                 # whether to have alert if no any replica/pod available
       pending_period = optional(string, "0s")               # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire), if set `null` here it takes  defaults value
       labels         = optional(any, { "priority" : "P1" }) # define alert labels to filter in notification policies, this extends with override the defaults labels. we set here P1 priority as if there are no any pods the service is down
+      exec_err_state = optional(string, null)               # define how to handle if query execution error, if set `null` here it takes  defaults value
       no_data_state  = optional(string, null)               # define how to handle if no data for query, if set `null` here it takes  defaults value
       group          = optional(string, null)               # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
       annotations    = optional(any, {})                    # define alert annotations to include in notifications
@@ -47,6 +49,7 @@ variable "alerts" {
       pending_period = optional(string, null) # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire), if set `null` here it takes  defaults value
       threshold      = optional(number, null) # for manually set min replica count, if not specified it will automatically get this based on hpa min, recommended to not set this if hpa is enabled, but if prometheus horizontalpodautoscaler metrics are not enable there may be need to set this manually
       no_data_state  = optional(string, null) # define how to handle if no data for query, if set `null` here it takes  defaults value
+      exec_err_state = optional(string, null) # define how to handle if query execution error, if set `null` here it takes  defaults value
       labels         = optional(any, {})      # define alert labels to filter in notification policies, if set `null` here it takes defaults labels.
       group          = optional(string, null) # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
       annotations    = optional(any, {})      # define alert annotations to include in notifications
@@ -56,6 +59,7 @@ variable "alerts" {
       pending_period = optional(string, null) # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire), if set `null` here it takes  defaults value
       threshold      = optional(number, null) # for manually set max replica count, if not specified it will automatically get this based on hpa min, recommended to not set this if hpa is enabled, but if prometheus horizontalpodautoscaler metrics are not enable there may be need to set this manually
       no_data_state  = optional(string, null) # define how to handle if no data for query, if set `null` here it takes  defaults value
+      exec_err_state = optional(string, null) # define how to handle if query execution error, if set `null` here it takes  defaults value
       labels         = optional(any, {})      # define alert labels to filter in notification policies, this extends with override the defaults labels
       group          = optional(string, null) # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
       annotations    = optional(any, {})      # define alert annotations to include in notifications
@@ -65,6 +69,7 @@ variable "alerts" {
       pending_period = optional(string, null) # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire), if set `null` here it takes  defaults value
       threshold      = optional(number, 1)    # the min count of replicas/pods with Failed/Pending/Unknown status/phase to trigger alert
       no_data_state  = optional(string, null) # define how to handle if no data for query, if set `null` here it takes  defaults value
+      exec_err_state = optional(string, null) # define how to handle if query execution error, if set `null` here it takes  defaults value
       labels         = optional(any, {})      # define alert labels to filter in notification policies, this extends with override the defaults labels
       group          = optional(string, null) # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
       annotations    = optional(any, {})      # define alert annotations to include in notifications
@@ -74,18 +79,20 @@ variable "alerts" {
       pending_period = optional(string, null) # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire), if set `null` here it takes  defaults value
       threshold      = optional(number, 1)    # the min count of failed jobs to trigger alert
       no_data_state  = optional(string, null) # define how to handle if no data for query, if set `null` here it takes  defaults value
+      exec_err_state = optional(string, null) # define how to handle if query execution error, if set `null` here it takes  defaults value
       labels         = optional(any, {})      # define alert labels to filter in notification policies, this extends with override the defaults labels
       group          = optional(string, null) # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
       annotations    = optional(any, {})      # define alert annotations to include in notifications
     }), {})
-    restarts = optional(object({             # configure service pod/container restart based alert
-      enabled       = optional(bool, null)   # whether the restart based alert is enabled
-      interval      = optional(string, null) # the time interval used to evaluate/aggregate restart count, if set `null` here it takes  defaults value
-      threshold     = optional(number, 3)    # the count of restarts that it will consider as read line to fire alert if exceeded
-      no_data_state = optional(string, null) # define how to handle if no data for query, if set `null` here it takes  defaults value
-      labels        = optional(any, {})      # define alert labels to filter in notification policies, this extends with override the defaults labels
-      group         = optional(string, null) # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
-      annotations   = optional(any, {})      # define alert annotations to include in notifications
+    restarts = optional(object({              # configure service pod/container restart based alert
+      enabled        = optional(bool, null)   # whether the restart based alert is enabled
+      interval       = optional(string, null) # the time interval used to evaluate/aggregate restart count, if set `null` here it takes  defaults value
+      threshold      = optional(number, 3)    # the count of restarts that it will consider as read line to fire alert if exceeded
+      no_data_state  = optional(string, null) # define how to handle if no data for query, if set `null` here it takes  defaults value
+      exec_err_state = optional(string, null) # define how to handle if query execution error, if set `null` here it takes  defaults value
+      labels         = optional(any, {})      # define alert labels to filter in notification policies, this extends with override the defaults labels
+      group          = optional(string, null) # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
+      annotations    = optional(any, {})      # define alert annotations to include in notifications
     }), {})
     network_in = optional(object({            # to configure network in/out traffic anomaly increase alerting
       enabled        = optional(bool, null)   # wether to create alert on network in/receive anomaly increase/decrease of traffic
@@ -93,6 +100,7 @@ variable "alerts" {
       interval       = optional(string, null) # the time interval to use to evaluate/aggregate/rate network avg traffic to compare with previous same interval value, if set `null` here it takes  defaults value
       deviation      = optional(number, null) # the threshold to consider increase/decrease of traffic as anomaly and fire alert (in this case 10 means that the traffic got increased x10 times withing provided interval)
       no_data_state  = optional(string, null) # define how to handle if no data for query, if set `null` here it takes  defaults value
+      exec_err_state = optional(string, null) # define how to handle if query execution error, if set `null` here it takes  defaults value
       labels         = optional(any, {})      # define alert labels to filter in notification policies, this extends with override the defaults labels
       group          = optional(string, null) # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
       annotations    = optional(any, {})      # define alert annotations to include in notifications
@@ -103,6 +111,7 @@ variable "alerts" {
       interval       = optional(string, null) # the time interval to use to evaluate/aggregate/rate network avg traffic to compare with previous same interval value, if set `null` here it takes  defaults value
       deviation      = optional(number, null) # the threshold to consider increase/decrease of traffic as anomaly and fire alert (in this case 10 means that the traffic got increased x10 times withing provided interval)
       no_data_state  = optional(string, null) # define how to handle if no data for query, if set `null` here it takes  defaults value
+      exec_err_state = optional(string, null) # define how to handle if query execution error, if set `null` here it takes  defaults value
       labels         = optional(any, {})      # define alert labels to filter in notification policies, this extends with override the defaults labels
       group          = optional(string, null) # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
       annotations    = optional(any, {})      # define alert annotations to include in notifications
@@ -115,6 +124,7 @@ variable "alerts" {
       threshold_resource = optional(string, "limits") # the read line limit metric to use, allowed values are "limits" or "requests"
       threshold          = optional(number, null)     # the read line limit in number of cores(0.256 means 256m) to calculate threshold_percent against, by default it uses deployment limit for this but in case no limit set this can be used to configure custom limit for alert
       no_data_state      = optional(string, null)     # define how to handle if no data for query, if set `null` here it takes  defaults value
+      exec_err_state     = optional(string, null)     # define how to handle if query execution error, if set `null` here it takes  defaults value
       labels             = optional(any, {})          # define alert labels to filter in notification policies, this extends with override the defaults labels
       group              = optional(string, null)     # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
       annotations        = optional(any, {})          # define alert annotations to include in notifications
@@ -126,6 +136,7 @@ variable "alerts" {
       threshold_resource = optional(string, "limits") # the read line limit metric to use, allowed values are "limits" or "requests"
       threshold          = optional(number, null)     # the read line limit in megabytes to calculate threshold_percent against, by default it uses deployment limit for this but in case no limit set this can be used to configure custom limit for alert
       no_data_state      = optional(string, null)     # define how to handle if no data for query, if set `null` here it takes  defaults value
+      exec_err_state     = optional(string, null)     # define how to handle if query execution error, if set `null` here it takes  defaults value
       labels             = optional(any, {})          # define alert labels to filter in notification policies, this extends with override the defaults labels
       group              = optional(string, null)     # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
       annotations        = optional(any, {})          # define alert annotations to include in notifications

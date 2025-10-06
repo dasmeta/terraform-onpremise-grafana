@@ -8,6 +8,7 @@ output "alert_rules" {
         group          = try(coalesce(local.alerts.replicas_no.group, local.defaults.group), "${var.namespace}/${var.name} service")
         datasource     = var.datasource
         no_data_state  = coalesce(local.alerts.replicas_no.no_data_state, local.defaults.no_data_state, "NoData")
+        exec_err_state = coalesce(local.alerts.replicas_no.exec_err_state, local.defaults.exec_err_state, "Error")
         expr           = local.defaults.replicas_count_expr
         pending_period = coalesce(local.alerts.replicas_no.pending_period, local.defaults.pending_period)
         function       = "last"
@@ -21,7 +22,7 @@ output "alert_rules" {
           "impact"    = "Service will go down"
           "component" = "pod"
           "resource"  = "deployment"
-        }, try(var.alerts.replicas_no.annotations, {}))
+        }, try(local.alerts.replicas_no.annotations, {}))
         settings_mode        = "replaceNN"
         settings_replaceWith = 0
       }
@@ -33,6 +34,7 @@ output "alert_rules" {
         summary        = "{{ .Labels.alertname }} count it is already ${coalesce(local.alerts.replicas_max.pending_period, local.defaults.pending_period)}"
         group          = try(coalesce(local.alerts.replicas_max.group, local.defaults.group), "${var.namespace}/${var.name} service")
         no_data_state  = coalesce(local.alerts.replicas_max.no_data_state, local.defaults.no_data_state, "NoData")
+        exec_err_state = coalesce(local.alerts.replicas_max.exec_err_state, local.defaults.exec_err_state, "Error")
         datasource     = var.datasource
         expr           = "${local.alerts.replicas_max.threshold != null ? "${local.alerts.replicas_max.threshold} -" : "(kube_horizontalpodautoscaler_spec_max_replicas{namespace='${var.namespace}', horizontalpodautoscaler='${var.name}'}) - on(namespace) group_left(${local.defaults.workload_type})"} (${local.defaults.replicas_count_expr})"
         pending_period = coalesce(local.alerts.replicas_max.pending_period, local.defaults.pending_period)
@@ -47,7 +49,7 @@ output "alert_rules" {
           "impact"    = "Service might response slower"
           "component" = "pod"
           "resource"  = "deployment"
-        }, try(var.alerts.replicas_max.annotations, {}), { for k, v in try(var.alerts.annotations, {}) : k => v if length(v) > 0 })
+        }, try(local.alerts.replicas_max.annotations, {}), { for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 })
         settings_mode        = "replaceNN"
         settings_replaceWith = 0
       }
@@ -58,6 +60,7 @@ output "alert_rules" {
         summary        = "{{ .Labels.alertname }} it is already ${coalesce(local.alerts.replicas_min.pending_period, local.defaults.pending_period)}"
         group          = try(coalesce(local.alerts.replicas_min.group, local.defaults.group), "${var.namespace}/${var.name} service")
         no_data_state  = coalesce(local.alerts.replicas_min.no_data_state, local.defaults.no_data_state, "NoData")
+        exec_err_state = coalesce(local.alerts.replicas_min.exec_err_state, local.defaults.exec_err_state, "Error")
         datasource     = var.datasource
         expr           = "(${local.defaults.replicas_count_expr}) - on(namespace) group_right(${local.defaults.workload_type}) ${local.alerts.replicas_min.threshold != null ? "${local.alerts.replicas_min.threshold}" : "(kube_horizontalpodautoscaler_spec_min_replicas{namespace='${var.namespace}', horizontalpodautoscaler='${var.name}'})"}"
         pending_period = coalesce(local.alerts.replicas_min.pending_period, local.defaults.pending_period)
@@ -66,7 +69,7 @@ output "alert_rules" {
         threshold      = 0
         filters        = {}
         labels         = merge(local.defaults.labels, local.alerts.replicas_min.labels)
-        annotations = merge({ for k, v in try(var.alerts.annotations, {}) : k => v if length(v) > 0 },
+        annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
           {
             "threshold" = 0,
             "metric"    = "replicas",
@@ -74,7 +77,7 @@ output "alert_rules" {
             "component" = "pod"
             "resource"  = "deployment"
           },
-        try(var.alerts.replicas_min.annotations, {}))
+        try(local.alerts.replicas_min.annotations, {}))
         settings_mode        = "replaceNN"
         settings_replaceWith = 0
       }
@@ -85,6 +88,7 @@ output "alert_rules" {
         summary        = "{{ .Labels.alertname }} it is already ${coalesce(local.alerts.replicas_state.pending_period, local.defaults.pending_period)}"
         group          = try(coalesce(local.alerts.replicas_state.group, local.defaults.group), "${var.namespace}/${var.name} service")
         no_data_state  = coalesce(local.alerts.replicas_state.no_data_state, local.defaults.no_data_state, "NoData")
+        exec_err_state = coalesce(local.alerts.replicas_state.exec_err_state, local.defaults.exec_err_state, "Error")
         datasource     = var.datasource
         expr           = "sum(kube_pod_status_phase{namespace='${var.namespace}', pod=~'^${var.defaults.workload_prefix}${var.name}${var.defaults.workload_suffix}(-[^-]+)?-[^-]+$', phase!='Succeeded', phase!='Running'}) by (phase)"
         pending_period = coalesce(local.alerts.replicas_state.pending_period, local.defaults.pending_period)
@@ -100,7 +104,7 @@ output "alert_rules" {
             "impact"    = "Service might become unresponsive or go down"
             "component" = "pod"
             "resource"  = "deployment"
-        }, try(var.alerts.replicas_state.annotations, {}))
+        }, try(local.alerts.replicas_state.annotations, {}))
         settings_mode        = "replaceNN"
         settings_replaceWith = 0
       }
@@ -111,6 +115,7 @@ output "alert_rules" {
         summary        = "{{ .Labels.alertname }} it is already ${coalesce(local.alerts.job_failed.pending_period, local.defaults.pending_period)}"
         group          = try(coalesce(local.alerts.job_failed.group, local.defaults.group), "${var.namespace}/${var.name} service")
         no_data_state  = coalesce(local.alerts.job_failed.no_data_state, local.defaults.no_data_state, "NoData")
+        exec_err_state = coalesce(local.alerts.job_failed.exec_err_state, local.defaults.exec_err_state, "Error")
         datasource     = var.datasource
         expr           = "sum(kube_job_status_failed{namespace='${var.namespace}', job_name=~'${var.defaults.workload_prefix}${var.name}${var.defaults.workload_suffix}-[^-]+$'}) by (reason)"
         pending_period = coalesce(local.alerts.job_failed.pending_period, local.defaults.pending_period)
@@ -136,6 +141,7 @@ output "alert_rules" {
         name            = "`${var.namespace}/${var.name}` service has too many restarts for ${coalesce(local.alerts.restarts.interval, local.defaults.interval)} interval"
         group           = try(coalesce(local.alerts.restarts.group, local.defaults.group), "${var.namespace}/${var.name} service")
         no_data_state   = coalesce(local.alerts.restarts.no_data_state, local.defaults.no_data_state, "NoData")
+        exec_err_state  = coalesce(local.alerts.restarts.exec_err_state, local.defaults.exec_err_state, "Error")
         datasource      = var.datasource
         metric_name     = "kube_pod_container_status_restarts_total"
         metric_function = "increase"
@@ -166,6 +172,7 @@ output "alert_rules" {
         summary        = "{{ .Labels.alertname }} it is already ${coalesce(local.alerts.network_in.pending_period, local.defaults.pending_period)}"
         group          = try(coalesce(local.alerts.network_in.group, local.defaults.group), "${var.namespace}/${var.name} service")
         no_data_state  = coalesce(local.alerts.network_in.no_data_state, local.defaults.no_data_state, "NoData")
+        exec_err_state = coalesce(local.alerts.network_in.exec_err_state, local.defaults.exec_err_state, "Error")
         datasource     = var.datasource
         expr           = "abs(sum(rate(container_network_receive_bytes_total{pod=~'^${var.defaults.workload_prefix}${var.name}${var.defaults.workload_suffix}(-[^-]+)?-[^-]+$', namespace='${var.namespace}'}[${coalesce(local.alerts.network_in.interval, local.defaults.interval)}])) by (namespace) / (sum(rate(container_network_receive_bytes_total{pod=~'^${var.defaults.workload_prefix}${var.name}${var.defaults.workload_suffix}(-[^-]+)?-[^-]+$', namespace='${var.namespace}'}[${coalesce(local.alerts.network_in.interval, local.defaults.interval)}] offset ${coalesce(local.alerts.network_in.interval, local.defaults.interval)})) by (namespace) > 0) - 1)"
         pending_period = coalesce(local.alerts.network_in.pending_period, local.defaults.pending_period)
@@ -192,6 +199,7 @@ output "alert_rules" {
         summary        = "{{ .Labels.alertname }} it is already ${coalesce(local.alerts.network_out.pending_period, local.defaults.pending_period)}"
         group          = try(coalesce(local.alerts.network_out.group, local.defaults.group), "${var.namespace}/${var.name} service")
         no_data_state  = coalesce(local.alerts.network_out.no_data_state, local.defaults.no_data_state, "NoData")
+        exec_err_state = coalesce(local.alerts.network_out.exec_err_state, local.defaults.exec_err_state, "Error")
         datasource     = var.datasource
         expr           = "abs(sum(rate(container_network_transmit_bytes_total{pod=~'^${var.defaults.workload_prefix}${var.name}${var.defaults.workload_suffix}(-[^-]+)?-[^-]+$', namespace='${var.namespace}'}[${coalesce(local.alerts.network_out.interval, local.defaults.interval)}])) by (namespace) / (sum(rate(container_network_transmit_bytes_total{pod=~'^${var.defaults.workload_prefix}${var.name}${var.defaults.workload_suffix}(-[^-]+)?-[^-]+$', namespace='${var.namespace}'}[${coalesce(local.alerts.network_out.interval, local.defaults.interval)}] offset ${coalesce(local.alerts.network_out.interval, local.defaults.interval)})) by (namespace) > 0) - 1)"
         pending_period = coalesce(local.alerts.network_out.pending_period, local.defaults.pending_period)
@@ -218,6 +226,7 @@ output "alert_rules" {
         summary        = "{{ .Labels.alertname }} it is already ${coalesce(local.alerts.cpu.pending_period, local.defaults.pending_period)}"
         group          = try(coalesce(local.alerts.cpu.group, local.defaults.group), "${var.namespace}/${var.name} service")
         no_data_state  = coalesce(local.alerts.cpu.no_data_state, local.defaults.no_data_state, "NoData")
+        exec_err_state = coalesce(local.alerts.cpu.exec_err_state, local.defaults.exec_err_state, "Error")
         datasource     = var.datasource
         expr           = "(max(rate(container_cpu_usage_seconds_total{container='${var.name}', namespace='${var.namespace}'}[${coalesce(local.alerts.cpu.interval, local.defaults.interval)}])) by (pod) / ${local.alerts.cpu.threshold != null ? "${local.alerts.cpu.threshold}" : "max(kube_pod_container_resource_${local.alerts.cpu.threshold_resource}{container='${var.name}', namespace='${var.namespace}', resource='cpu'}) by (pod)"}) * 100"
         pending_period = coalesce(local.alerts.cpu.pending_period, local.defaults.pending_period)
@@ -246,6 +255,7 @@ output "alert_rules" {
         summary        = "{{ .Labels.alertname }} it is already ${coalesce(local.alerts.memory.pending_period, local.defaults.pending_period)}"
         group          = try(coalesce(local.alerts.memory.group, local.defaults.group), "${var.namespace}/${var.name} service")
         no_data_state  = coalesce(local.alerts.memory.no_data_state, local.defaults.no_data_state, "NoData")
+        exec_err_state = coalesce(local.alerts.memory.exec_err_state, local.defaults.exec_err_state, "Error")
         datasource     = var.datasource
         expr           = "(sum(container_memory_usage_bytes{container='${var.name}', namespace='${var.namespace}'}) by (pod) / ${local.alerts.memory.threshold != null ? "(${local.alerts.memory.threshold} * 1048576 )" : "max(kube_pod_container_resource_${local.alerts.memory.threshold_resource}{container='${var.name}', namespace='${var.namespace}', resource='memory'}) by (pod)"}) * 100"
         pending_period = coalesce(local.alerts.memory.pending_period, local.defaults.pending_period)

@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.3.0"
+  required_version = ">= 1.8.0"
 
   required_providers {
     grafana = {
@@ -19,14 +19,18 @@ terraform {
 
 # there is need to have grafana running and available by provider url and auth
 provider "grafana" {
-  url  = "http://grafana.example.com"
+  url  = "https://grafana.example.com"
   auth = "admin:admin"
 }
 
 provider "helm" {
+  kubernetes {
+    config_path = "~/.kube/config"
+  }
 }
 
 provider "kubernetes" {
+  config_path = "~/.kube/config"
 }
 
 provider "aws" {
