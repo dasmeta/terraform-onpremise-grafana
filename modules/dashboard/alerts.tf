@@ -48,17 +48,17 @@ module "block_service_alerts" {
   source = "./modules/alerts/block-service"
 
   for_each = { for index, item in flatten([
-    for service in try(local.blocks_by_type["service"], []) : [
+    for service_index, service in try(local.blocks_by_type["service"], []) : [
       for namespace in distinct(concat(
         try(service.block.namespace, null) == null || startswith(try(service.block.namespace, ""), "$") ? [] : [service.block.namespace],
         try(service.block.alerts.namespaces, [])
-      )) : merge(service, { namespace = namespace })
+      )) : merge(service, { namespace = namespace, service_index = service_index })
     ]]) : index => item if try(merge(var.alerts, try(item.block.alerts, {})).enabled, true)
   }
 
   name       = each.value.block.name
   namespace  = each.value.namespace
-  defaults   = try(local.deep_merge_alert_configs["${each.key}_service"].defaults, {})
-  alerts     = try(local.deep_merge_alert_configs["${each.key}_service"], {})
+  defaults   = try(local.deep_merge_alert_configs["${each.value.service_index}_service"].defaults, {})
+  alerts     = try(local.deep_merge_alert_configs["${each.value.service_index}_service"], {})
   datasource = try(each.value.block.datasource_uid, var.data_source.uid)
 }

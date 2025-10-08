@@ -14,3 +14,7 @@ output "blocks_results" {
 output "widget_alert_rules" {
   value = local.widget_alert_rules
 }
+
+output "blocks_by_type" {
+  value = local.blocks_by_type
+}
