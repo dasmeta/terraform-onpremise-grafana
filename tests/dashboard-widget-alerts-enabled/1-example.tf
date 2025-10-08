@@ -45,7 +45,8 @@ module "this" {
           interval : "5m"                # the time interval to use to evaluate/aggregate/rate metric for comparison
           deviation : 10                 # the deviation threshold to consider increase/decrease of metric as anomaly and fire alert, we use this now for network alert (in this case 10 means that the metric got increased x10 times withing provided interval)
           threshold_percent : 99         # the percent threshold to use when triggering alerts on resources like cpu/memory
-          no_data_state : "NoData"       # define how to handle if no data for query, by default it will fire alert with no data info          group : null                   # grafana alert group name which used for grouping, if null the group name will be based on service name/namespace in format `Service {namespace}/{name}`
+          exec_err_state : "OK"
+          no_data_state : "NoData" # define how to handle if no data for query, by default it will fire alert with no data info          group : null                   # grafana alert group name which used for grouping, if null the group name will be based on service name/namespace in format `Service {namespace}/{name}`
         }
 
         replicas_no : {
@@ -53,6 +54,7 @@ module "this" {
           pending_period : "0s"          # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire), if set `null` here it takes  defaults value
           labels : { "priority" : "P1" } # define alert labels to filter in notification policies, this extends with override the defaults labels. we set here P1 priority as if there are no any pods the service is down
           no_data_state : null           # define how to handle if no data for query, if set `null` here it takes  defaults value
+          exec_err_state : "OK"
           annotations : {
             "impact" : "Service will go down, maybe it is just a test..."
           } # define alert annotations to filter in notification policies, this extends with override the defaults annotations          group : null                   # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
@@ -239,9 +241,9 @@ module "this" {
       tls_enabled = true
       public      = true
 
-      hosts = ["grafana.dev.trysela.com"]
+      hosts = ["grafana.example.com"]
       annotations = {
-        "alb.ingress.kubernetes.io/certificate-arn" = "arn:aws:acm:us-east-2:774305617028:certificate/0c7b32a5-cfd3-488b-800c-fe289f3bb040",
+        "alb.ingress.kubernetes.io/certificate-arn" = "cert_arn",
         "alb.ingress.kubernetes.io/group.name"      = "dev-ingress"
       }
     }

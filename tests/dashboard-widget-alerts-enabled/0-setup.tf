@@ -19,18 +19,18 @@ terraform {
 
 # there is need to have grafana running and available by provider url and auth
 provider "grafana" {
-  url  = "https://grafana.example.com"
-  auth = "admin:admin"
+  url  = "https://grafana.dev.trysela.com"
+  auth = "admin:adminPass321"
 }
 
 provider "helm" {
   kubernetes {
-    config_path = "~/.kube/config"
+    config_path = "~/.kube/sela-dev-eks-dev"
   }
 }
 
 provider "kubernetes" {
-  config_path = "~/.kube/config"
+  config_path = "~/.kube/sela-dev-eks-dev"
 }
 
 provider "aws" {

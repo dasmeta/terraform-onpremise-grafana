@@ -221,6 +221,7 @@ kube-state-metrics:
         action: drop
   enabled: true
   collectors:
+    - horizontalpodautoscalers
     - configmaps
     - pods
     - cronjobs
@@ -231,6 +232,7 @@ kube-state-metrics:
     - nodes
     - persistentvolumeclaims
     - persistentvolumes
+    - volumeattachments
     - poddisruptionbudgets
     - replicasets
     - storageclasses
