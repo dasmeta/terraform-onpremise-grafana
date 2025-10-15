@@ -2,10 +2,11 @@ output "alert_rules" {
   value = concat(
     coalesce(var.alerts.latency.enabled, var.defaults.enabled, false) ? [
       {
-        name           = "nginx ingress requests latency(by host, path) for ${coalesce(var.alerts.latency.interval, var.defaults.interval)} interval is > ${var.alerts.latency.threshold} seconds"
-        summary        = "{{ $labels.alertname }} on host={{ $labels.host }} path={{ $labels.path }} it is already ${coalesce(var.alerts.latency.pending_period, var.defaults.pending_period)}"
-        group          = try(coalesce(var.alerts.latency.group, var.defaults.group), null)
-        datasource     = var.datasource
+        name       = "nginx ingress requests latency(by host, path) for ${coalesce(var.alerts.latency.interval, var.defaults.interval)} interval is > ${var.alerts.latency.threshold} seconds"
+        summary    = "{{ $labels.alertname }} on host={{ $labels.host }} path={{ $labels.path }} it is already ${coalesce(var.alerts.latency.pending_period, var.defaults.pending_period)}"
+        group      = try(coalesce(var.alerts.latency.group, var.defaults.group), null)
+        datasource = var.datasource
+
         no_data_state  = coalesce(var.alerts.latency.no_data_state, var.defaults.no_data_state, "NoData")
         exec_err_state = coalesce(var.alerts.latency.exec_err_state, var.defaults.exec_err_state, "Error")
         expr           = "avg(rate(nginx_ingress_controller_request_duration_seconds_sum{status=~'[^1]..', ${coalesce(var.alerts.latency.metric_filter, var.defaults.metric_filter)}}[${coalesce(var.alerts.latency.interval, var.defaults.interval)}])) by (host, path)/avg(rate(nginx_ingress_controller_request_duration_seconds_count{${coalesce(var.alerts.latency.metric_filter, var.defaults.metric_filter)}}[${coalesce(var.alerts.latency.interval, var.defaults.interval)}])) by (host, path)"
@@ -33,7 +34,7 @@ output "alert_rules" {
         group          = try(coalesce(var.alerts.failed.group, var.defaults.group), null)
         datasource     = var.datasource
         no_data_state  = coalesce(var.alerts.failed.no_data_state, var.defaults.no_data_state, "NoData")
-        exec_err_state = coalesce(var.alerts.failed.exec_err_state, var.defaults.exec_err_state, "Error")
+        exec_err_state = coalesce(var.alerts.latency.exec_err_state, var.defaults.exec_err_state, "Error")
         expr           = "(sum(rate(nginx_ingress_controller_requests{status=~'5..|499', ${coalesce(var.alerts.failed.metric_filter, var.defaults.metric_filter)}}[${coalesce(var.alerts.failed.interval, var.defaults.interval)}])) by (host, path) / sum(rate(nginx_ingress_controller_requests{${coalesce(var.alerts.failed.metric_filter, var.defaults.metric_filter)}}[${coalesce(var.alerts.failed.interval, var.defaults.interval)}])) by (host, path)) * 100"
         pending_period = coalesce(var.alerts.failed.pending_period, var.defaults.pending_period)
         function       = "last"

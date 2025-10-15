@@ -9,6 +9,7 @@ output "alert_rules" {
         datasource     = var.datasource
         no_data_state  = coalesce(local.alerts.replicas_no.no_data_state, local.defaults.no_data_state, "NoData")
         exec_err_state = coalesce(local.alerts.replicas_no.exec_err_state, local.defaults.exec_err_state, "Error")
+        exec_err_state = coalesce(var.alerts.latency.exec_err_state, var.defaults.exec_err_state, "Error")
         expr           = local.defaults.replicas_count_expr
         pending_period = coalesce(local.alerts.replicas_no.pending_period, local.defaults.pending_period)
         function       = "last"
