@@ -65,6 +65,7 @@ variable "alert_rules" {
     no_data_state  = optional(string, "NoData") # Describes what state to enter when the rule's query returns No Data
     exec_err_state = optional(string, "Error")  # Describes what state to enter when the rule's query is invalid and the rule cannot be executed
 
+    type                 = optional(string, "metric")    # The type of the alert rule, possible values are metric or log
     labels               = optional(map(any), {})        # Labels help to define matchers in notification policy to control where to send each alert. Can be any key-value pairs
     annotations          = optional(map(string), {})     # Annotations to set to the alert rule. Annotations will be used to customize the alert message in notifications template. Can be any key-value pairs
     group                = optional(string, null)        # Grafana alert rule group name, if this set null it will place rule into general var.group folder
@@ -72,6 +73,7 @@ variable "alert_rules" {
     metric_name          = optional(string, "")          # Prometheus metric name which queries the data for the alert
     metric_function      = optional(string, "")          # Prometheus function used with metric for queries, like rate, sum etc.
     metric_interval      = optional(string, "")          # The time interval with using functions like rate
+    log_query            = optional(string, null)        # used for log type
     settings_mode        = optional(string, "replaceNN") # The mode used in B block, possible values are Strict, replaceNN, dropNN
     settings_replaceWith = optional(number, 0)           # The value by which NaN results of the query will be replaced
     filters              = optional(any, null)           # Filters object to identify each service for alerting

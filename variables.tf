@@ -86,6 +86,8 @@ variable "alerts" {
         annotations          = optional(map(string), {})     # Annotations to set to the alert rule. Annotations will be used to customize the alert message in notifications template. Can be any key-value pairs
         group                = optional(string, "custom")    # Grafana alert group name in which the rule will be created/grouped
         datasource           = string                        # Name of the datasource used for the alert
+        type                 = optional(string, "metric")    # The type of the alert rule, possible values are metric or log
+        log_query            = optional(string, null)        # used for log type
         expr                 = optional(string, null)        # Full expression for the alert
         metric_name          = optional(string, "")          # Prometheus metric name which queries the data for the alert
         metric_function      = optional(string, "")          # Prometheus function used with metric for queries, like rate, sum etc.
