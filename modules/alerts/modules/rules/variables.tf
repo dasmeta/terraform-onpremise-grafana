@@ -73,7 +73,6 @@ variable "alert_rules" {
     metric_name          = optional(string, "")          # Prometheus metric name which queries the data for the alert
     metric_function      = optional(string, "")          # Prometheus function used with metric for queries, like rate, sum etc.
     metric_interval      = optional(string, "")          # The time interval with using functions like rate
-    log_query            = optional(string, null)        # used for log type
     settings_mode        = optional(string, "replaceNN") # The mode used in B block, possible values are Strict, replaceNN, dropNN
     settings_replaceWith = optional(number, 0)           # The value by which NaN results of the query will be replaced
     filters              = optional(any, null)           # Filters object to identify each service for alerting

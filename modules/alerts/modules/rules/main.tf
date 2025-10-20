@@ -74,7 +74,7 @@ resource "grafana_rule_group" "this" {
             intervalMs = 1000
             datasource = {
               uid  = try(rule.value.datasource, "")
-              type = "prometheus"
+              type = rule.value.type == "log" ? "loki" : "prometheus"
             }
             expr = rule.value.expr
           })
