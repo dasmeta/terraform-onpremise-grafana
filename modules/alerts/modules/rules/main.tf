@@ -71,12 +71,13 @@ resource "grafana_rule_group" "this" {
         model = (
           jsonencode({
             refId      = "A"
-            intervalMs = 1000
+            intervalMs = rule.value.interval_ms
             datasource = {
               uid  = try(rule.value.datasource, "")
-              type = rule.value.type == "log" ? "loki" : "prometheus"
+              type = try(rule.value.datasource_type, "prometheus")
             }
-            expr = rule.value.expr
+            expr       = rule.value.expr
+            editorMode = "code"
           })
         )
       }
