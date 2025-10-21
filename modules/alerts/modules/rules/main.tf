@@ -68,16 +68,18 @@ resource "grafana_rule_group" "this" {
           to   = 0
         }
         datasource_uid = rule.value.datasource
-        model          = <<EOT
-{
-    "editorMode": "code",
-    "expr": "${rule.value.expr}",
-    "hide": false,
-    "legendFormat": "__auto",
-    "range": true,
-    "refId": "A"
-}
-EOT
+        model = (
+          jsonencode({
+            refId      = "A"
+            intervalMs = rule.value.interval_ms
+            datasource = {
+              uid  = try(rule.value.datasource, "")
+              type = try(rule.value.datasource_type, "prometheus")
+            }
+            expr       = rule.value.expr
+            editorMode = "code"
+          })
+        )
       }
       data {
         ref_id     = "B"

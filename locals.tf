@@ -31,5 +31,5 @@ locals {
     for name, folder in grafana_folder.shared_folders : name => folder.uid
   }
 
-  json_dashboards = concat(var.dashboards_json_files, [var.deploy_grafana_stack_dashboard ? "${path.module}/grafana_dashboard_files/grafana_stack_dashboard.json" : ""])
+  json_dashboards = concat(var.dashboards_json_files, var.deploy_grafana_stack_dashboard ? ["${path.module}/grafana_dashboard_files/grafana_stack_dashboard.json"] : [])
 }
