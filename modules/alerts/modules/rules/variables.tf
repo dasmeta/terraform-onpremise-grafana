@@ -65,7 +65,6 @@ variable "alert_rules" {
     no_data_state  = optional(string, "NoData") # Describes what state to enter when the rule's query returns No Data
     exec_err_state = optional(string, "Error")  # Describes what state to enter when the rule's query is invalid and the rule cannot be executed
 
-    type                 = optional(string, "metric")     # The type of the alert rule, possible values are metric or log
     datasource_type      = optional(string, "prometheus") # The type of the datasource, possible values are prometheus or loki
     interval_ms          = optional(number, 1000)         # The interval in milliseconds for the alert rule
     labels               = optional(map(any), {})         # Labels help to define matchers in notification policy to control where to send each alert. Can be any key-value pairs

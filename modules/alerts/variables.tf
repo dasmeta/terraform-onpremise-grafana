@@ -80,7 +80,6 @@ variable "rules" {
     annotations          = optional(map(string), {})      # Annotations to set to the alert rule. Annotations will be used to customize the alert message in notifications template. Can be any key-value pairs
     group                = optional(string, null)         # Grafana group name in which the rule will be created/grouped
     datasource           = string                         # Name of the datasource used for the alert
-    type                 = optional(string, "metric")     # The type of the alert rule, possible values are metric or log
     datasource_type      = optional(string, "prometheus") # The type of the datasource, possible values are prometheus or loki
     interval_ms          = optional(number, 1000)         # The interval in milliseconds for the alert rule
     expr                 = optional(string, null)         # Full expression for the alert

@@ -88,7 +88,6 @@ variable "alerts" {
         datasource           = string                         # Name of the datasource used for the alert
         datasource_type      = optional(string, "prometheus") # The type of the datasource, possible values are prometheus or loki
         interval_ms          = optional(number, 1000)         # The interval in milliseconds for the alert rule
-        type                 = optional(string, "metric")     # The type of the alert rule, possible values are metric or log
         expr                 = optional(string, null)         # Full expression for the alert
         metric_name          = optional(string, "")           # Prometheus metric name which queries the data for the alert
         metric_function      = optional(string, "")           # Prometheus function used with metric for queries, like rate, sum etc.
