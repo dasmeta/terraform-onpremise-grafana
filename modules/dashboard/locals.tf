@@ -59,7 +59,7 @@ locals {
   # default values from module and provided from outside
   widget_default_values = merge(
     {
-      period      = "$__rate_interval" # in minutes
+      period      = "$__rate_interval"
       stat        = "Sum"
       width       = 6
       height      = 5

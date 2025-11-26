@@ -11,6 +11,7 @@ module "base" {
   region      = var.region
 
   defaults = {}
+  unit     = "reqps"
 
   metrics = var.by_host ? [
     { label : "__auto", color : "3ECE76", expression : "sum(rate(nginx_ingress_controller_requests{${var.filter}}[${var.period}])) by (host)" },

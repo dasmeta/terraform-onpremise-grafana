@@ -1,44 +1,42 @@
 locals {
-  field_config_defaults = merge(
-    { decimals = var.decimals != 0 ? var.decimals : null },
-    {
-      mappings   = []
-      thresholds = var.thresholds
-      unit       = var.unit
-      color = {
-        "mode" : try(var.color_mode, "palette-classic")
-      }
-      custom = {
-        "axisLabel" : "",
-        "axisPlacement" : "auto",
-        "noValue" : "No Input Data",
-        "barAlignment" : 0,
-        "drawStyle" : "line",
-        "fillOpacity" : var.fillOpacity,
-        "gradientMode" : "none",
-        "hideFrom" : {
-          "legend" : false,
-          "tooltip" : false,
-          "viz" : false
-        },
-        "lineInterpolation" : "linear",
-        "lineWidth" : 1,
-        "pointSize" : 5,
-        "scaleDistribution" : {
-          "type" : "linear"
-        },
-        "showPoints" : "auto",
-        "spanNulls" : false,
-        "stacking" : {
-          "group" : "A",
-          "mode" : "none"
-        },
-        "thresholdsStyle" : {
-          "mode" : "off"
-        }
+  field_config_defaults = {
+    decimals   = var.decimals != 0 ? var.decimals : null
+    mappings   = []
+    thresholds = var.thresholds
+    unit       = var.unit
+    color = {
+      "mode" : try(var.color_mode, "palette-classic")
+    }
+    custom = {
+      "axisLabel" : "",
+      "axisPlacement" : "auto",
+      "noValue" : "No Input Data",
+      "barAlignment" : 0,
+      "drawStyle" : "line",
+      "fillOpacity" : var.fillOpacity,
+      "gradientMode" : "none",
+      "hideFrom" : {
+        "legend" : false,
+        "tooltip" : false,
+        "viz" : false
+      },
+      "lineInterpolation" : "linear",
+      "lineWidth" : 1,
+      "pointSize" : 5,
+      "scaleDistribution" : {
+        "type" : "linear"
+      },
+      "showPoints" : "auto",
+      "spanNulls" : false,
+      "stacking" : {
+        "group" : "A",
+        "mode" : "none"
+      },
+      "thresholdsStyle" : {
+        "mode" : "off"
       }
     }
-  )
+  }
 
   field_config_overrides = [
     for metric in local.metrics_with_defaults : {

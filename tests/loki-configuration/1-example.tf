@@ -5,8 +5,8 @@ module "this" {
     name = "example-dashboard"
     # alerts = { enabled : false } # allows to disable all auto created alerts
     rows : [
-      { type : "block/sla", sla_ingress_type : "nginx" },
-      { type : "block/ingress" },
+      { type : "block/sla", sla_ingress_type : "nginx", filter = "host!='grafana.localhost'" },
+      { type : "block/ingress", filter = "host!='grafana.localhost'" },
       { type : "block/service", name = "http-echo", alerts = { namespaces = ["dev", "prod"] } /* show_err_logs = true */ }, # `show_err_logs = true` is default and it allows to have loki logs widgets on `block/service` block
     ]
     variables = [

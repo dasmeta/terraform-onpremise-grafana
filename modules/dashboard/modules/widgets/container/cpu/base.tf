@@ -14,6 +14,8 @@ module "base" {
     PodName   = var.container
   }
 
+  unit = "s"
+
   metrics = var.by_pod ? [
     { label = "__auto", color = "FFC300", expression = "avg(rate(container_cpu_usage_seconds_total{container=\"${var.container}\", namespace=\"${var.namespace}\"}[${var.period}])) by (pod)" },
     { label = "__auto", color = "FF774D", expression = "max(rate(container_cpu_usage_seconds_total{container=\"${var.container}\", namespace=\"${var.namespace}\"}[${var.period}])) by (pod)" },

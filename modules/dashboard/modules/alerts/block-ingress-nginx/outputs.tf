@@ -59,7 +59,7 @@ output "alert_rules" {
   description = "The generated alert rules"
 }
 
-# The nginx supposed be also as standard service and here we pulled the nginx as service alerts
+# the nginx as block/service alerts
 module "nginx_service_alerts" {
   source = "../block-service"
 

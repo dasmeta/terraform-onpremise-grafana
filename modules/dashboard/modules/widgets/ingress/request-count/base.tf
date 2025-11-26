@@ -20,6 +20,8 @@ module "base" {
     }
   }
 
+  unit = "reqps"
+
   metrics = var.only_5xx ? [
     { label : "5XX", color : "FF0F3C", expression : "sum(rate(nginx_ingress_controller_requests{status=~\"5..|499\", ${var.filter}}[${var.period}]))" },
     { label : var.by_path ? "{{path}}" : var.by_status_path ? "{{status}},{{path}}" : "__auto", color : "D400BF", expression : "sum(rate(nginx_ingress_controller_requests{status=~\"5..|499\", ${var.filter}}[${var.period}]))${var.by_path ? " by (path) > 0.01" : var.by_status_path ? "by (status, path, host) > 0.01" : " by (status)"}" }
