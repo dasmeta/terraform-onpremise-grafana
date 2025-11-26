@@ -213,9 +213,9 @@ module "this" {
   # for this test/example we disable all other components
   grafana = {
     resources = {
-      request = {
-        cpu = "1"
-        mem = "1Gi"
+      requests = {
+        cpu    = "1"
+        memory = "1Gi"
       }
     }
     ingress = {

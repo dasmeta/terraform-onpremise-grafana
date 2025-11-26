@@ -4,7 +4,7 @@ resource "helm_release" "grafana" {
   repository       = "https://grafana.github.io/helm-charts"
   chart            = "grafana"
   namespace        = var.namespace
-  create_namespace = true
+  create_namespace = var.create_namespace
   version          = var.chart_version
   timeout          = 300
 
@@ -31,10 +31,10 @@ resource "helm_release" "grafana" {
       tls_secrets         = local.ingress_tls
       ingress_class_name  = var.configs.ingress.type
 
-      request_cpu    = var.configs.resources.request.cpu
-      request_memory = var.configs.resources.request.mem
-      limit_cpu      = var.configs.resources.limit.cpu
-      limit_memory   = var.configs.resources.limit.mem
+      request_cpu    = var.configs.resources.requests.cpu
+      request_memory = var.configs.resources.requests.memory
+      limit_cpu      = var.configs.resources.limits.cpu
+      limit_memory   = var.configs.resources.limits.memory
 
       replicas = var.configs.replicas
 
@@ -46,7 +46,8 @@ resource "helm_release" "grafana" {
       create_service_account      = var.configs.service_account.enable
       service_account_name        = var.configs.service_account.name
       service_account_annotations = var.configs.service_account.annotations
-    })
+    }),
+    jsonencode(var.extra_configs)
   ]
 
   set {
@@ -68,22 +69,28 @@ resource "helm_release" "mysql" {
   version          = var.mysql_chart_version
   timeout          = 300
 
-  values = [jsonencode({
-    auth = {
-      username     = local.database.username
-      database     = local.database.name,
-      password     = local.database.password
-      rootPassword = local.database.root_password
-    }
-    primary = {
-      extraFlags = var.configs.database.extra_flags
-      persistence = {
-        enabled      = var.configs.database.persistence.enabled
-        size         = var.configs.database.persistence.size
-        storageClass = var.configs.database.persistence.storage_class
+  values = [
+    jsonencode(local.switchBitnamiChartRegistry),
+    jsonencode(
+      {
+        auth = {
+          username     = local.database.username
+          database     = local.database.name,
+          password     = local.database.password
+          rootPassword = local.database.root_password
+        }
+        primary = {
+          extraFlags = var.configs.database.extra_flags
+          persistence = {
+            enabled      = var.configs.database.persistence.enabled
+            size         = var.configs.database.persistence.size
+            storageClass = var.configs.database.persistence.storage_class
+          }
+        }
       }
-    }
-  })]
+    ),
+    jsonencode(var.mysql_extra_configs)
+  ]
 }
 
 resource "grafana_data_source" "this" {

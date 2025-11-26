@@ -26,8 +26,9 @@ No resources.
 | <a name="input_coordinates"></a> [coordinates](#input\_coordinates) | position | <pre>object({<br/>    x : number<br/>    y : number<br/>    width : number<br/>    height : number<br/>  })</pre> | n/a | yes |
 | <a name="input_datasource_type"></a> [datasource\_type](#input\_datasource\_type) | n/a | `string` | `"prometheus"` | no |
 | <a name="input_datasource_uid"></a> [datasource\_uid](#input\_datasource\_uid) | n/a | `string` | `"prometheus"` | no |
+| <a name="input_filter"></a> [filter](#input\_filter) | Allows to define additional filter on metric | `string` | `""` | no |
 | <a name="input_ingress_type"></a> [ingress\_type](#input\_ingress\_type) | n/a | `string` | `"nginx"` | no |
-| <a name="input_period"></a> [period](#input\_period) | stats | `string` | `"3"` | no |
+| <a name="input_period"></a> [period](#input\_period) | stats | `string` | `"$__rate_interval"` | no |
 | <a name="input_region"></a> [region](#input\_region) | n/a | `string` | `""` | no |
 
 ## Outputs

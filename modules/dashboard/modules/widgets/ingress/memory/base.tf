@@ -1,7 +1,7 @@
 module "base" {
   source = "../../base"
 
-  name = "Memory (${var.ingress_type}) [${var.period}m]"
+  name = "Memory (${var.ingress_type})"
   data_source = {
     uid  = var.datasource_uid
     type = var.datasource_type

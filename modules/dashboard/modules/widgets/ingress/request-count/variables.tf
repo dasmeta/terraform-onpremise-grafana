@@ -39,7 +39,7 @@ variable "coordinates" {
 # stats
 variable "period" {
   type    = string
-  default = "3"
+  default = "$__rate_interval"
 }
 
 variable "only_5xx" {
@@ -60,4 +60,10 @@ variable "by_path" {
 variable "by_status_path" {
   type    = bool
   default = false
+}
+
+variable "filter" {
+  type        = string
+  default     = ""
+  description = "Allows to define additional filter on metric"
 }

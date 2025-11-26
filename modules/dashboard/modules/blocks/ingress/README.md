@@ -22,6 +22,7 @@ No resources.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_datasource_uid"></a> [datasource\_uid](#input\_datasource\_uid) | datasource uid for the metrics | `string` | `"prometheus"` | no |
+| <a name="input_filter"></a> [filter](#input\_filter) | Allows to define additional filter on metrics | `string` | `""` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | The namespace where nginx ingress controller is deployed | `string` | `"ingress-nginx"` | no |
 | <a name="input_pod"></a> [pod](#input\_pod) | The name identifier/prefix of nginx ingress controller pods | `string` | `"ingress-nginx-controller"` | no |
 

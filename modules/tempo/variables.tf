@@ -4,6 +4,12 @@ variable "namespace" {
   default     = "monitoring"
 }
 
+variable "create_namespace" {
+  type        = bool
+  description = "Whether create namespace if not exist"
+  default     = true
+}
+
 variable "chart_version" {
   type        = string
   description = "Tempo chart version"
@@ -45,4 +51,10 @@ variable "configs" {
       annotations = optional(map(string), {})
     }), {})
   })
+}
+
+variable "extra_configs" {
+  type        = any
+  default     = {}
+  description = "Allows to pass extra/custom configs to tempo helm chart, this configs will deep-merged with all generated internal configs and can override the default set ones. All available options can be found in for the specified chart version here: https://artifacthub.io/packages/helm/grafana/tempo?modal=values"
 }

@@ -2,23 +2,23 @@ module "this" {
   source = "../.."
 
   application_dashboard = [{
-    name = "Loki-test"
+    name = "example-dashboard"
+    # alerts = { enabled : false } # allows to disable all auto created alerts
     rows : [
-      { type : "block/service", name = "worker", show_err_logs = true, expr = "{pod=~\"worker.*\"}" },
+      { type : "block/sla", sla_ingress_type : "nginx" },
+      { type : "block/ingress" },
+      { type : "block/service", name = "http-echo", alerts = { namespaces = ["dev", "prod"] } /* show_err_logs = true */ }, # `show_err_logs = true` is default and it allows to have loki logs widgets on `block/service` block
     ]
-    data_source = {
-      uid : "loki"
-    }
     variables = [
       {
         "name" : "namespace",
         "options" : [
           {
-            "value" : "prod"
-          },
-          {
             "selected" : true,
             "value" : "dev"
+          },
+          {
+            "value" : "prod"
           }
         ],
       }
@@ -27,103 +27,55 @@ module "this" {
 
   grafana = {
     resources = {
-      request = {
-        cpu = "1"
-        mem = "1Gi"
+      requests = {
+        cpu    = "256m"
+        memory = "256Mi"
       }
     }
     ingress = {
-      type            = "alb"
-      tls_enabled     = true
-      public          = true
-      alb_certificate = "cert_arn"
-
-      hosts = ["grafana.example.com"]
-      annotations = {
-        "alb.ingress.kubernetes.io/group.name" = "dev-ingress"
-      }
+      type        = "nginx"
+      tls_enabled = false
+      hosts       = ["grafana.localhost"]
     }
   }
 
-  loki = {
+  loki_stack = {
     enabled = true
-    loki = {
-      volume_enabled = true
-      send_logs_s3 = {
-        enable = true
-      }
-      schema_configs = [{
-        from         = "2023-01-01"
-        store        = "boltdb-shipper"
-        object_store = "filesystem"
-        schema       = "v12"
-        index = {
-          prefix = "index_"
-          period = "24h"
+    loki = { # here we set some tiny cpu/memory/data resources configs for local test env only, in real live environments this options are the common ones which will be used to improve performance of loki
+      resources = {
+        requests = {
+          cpu    = "500m"
+          memory = "500Mi"
         }
-      }]
-      storage_configs = {
-        tsdb_shipper = {
-          active_index_directory = "/data/loki/index"
-          cache_location         = "/data/loki/index_cache"
-        }
-        aws = {
-          bucketnames      = "mycustomlokibucket-djalsd"
-          region           = "us-east-2"
-          s3forcepathstyle = true
+        limits = {
+          cpu    = "2"
+          memory = "2500Mi"
         }
       }
-      service_account = {
-        annotations = {
-          "eks.amazonaws.com/role-arn-test" = "test-annotation-value"
-        }
+      chunksCache = {
+        allocatedMemory = 500
       }
-      retention_period = "12h"
+      resultsCache = {
+        allocatedMemory = 500
+      }
 
-      replicas = 2
+      ## this values allow to configure loki chart retention and queries periods, here we have defaults which possibly will be needed to change on dev/prod setups
+      # limits_config = {
+      #   max_query_length = "7d1h"
+      #   retention_period = "360h"
+      # }
     }
     promtail = {
       ignored_namespaces = ["kube-system", "monitoring"]
       ignored_containers = ["loki", "manager"]
-      extra_scrape_configs = [
+      extra_pipeline_stages = [ # have transformation stages to handle multiline json logs correctly
+        { docker = {} },
         {
-          job_name = "test-scrape-job"
-          kubernetes_sd_configs = [
-            { role = "pod" }
-          ]
-          relabel_configs = [
-            {
-              source_labels = ["__meta_kubernetes_pod_name"]
-              regex         = ".*"
-              target_label  = "env"
-              replacement   = "test-scrape"
-            },
-            {
-              source_labels = [
-                "__meta_kubernetes_pod_uid",
-                "__meta_kubernetes_pod_container_name"
-              ]
-              separator    = "/"
-              target_label = "__path__"
-              replacement  = "/var/log/pods/*$1/*.log"
-              action       = "replace"
-            }
-          ]
-          pipeline_stages = [
-            {
-              json = {
-                expressions = {
-                  msg = "message"
-                }
-              }
-            },
-            {
-              timestamp = {
-                source = "time"
-                format = "RFC3339"
-              }
-            }
-          ]
+          multiline = {
+            firstline     = "^\\s*{\\s*$"
+            lastline      = "^\\s*}\\s*$"
+            max_wait_time = "3s"
+          }
         }
       ]
     }
@@ -131,6 +83,37 @@ module "this" {
 
   prometheus = {
     enabled = true
+    extra_configs = {
+      prometheus-node-exporter = { # we set this block configs to have the prometheus-node-exporter be run ok on Docker Desktop k8s, this is for this test/example only on local Docker Desktop k8s setup
+        hostRootFsMount = {
+          enabled = false
+        }
+      }
+    }
   }
   grafana_admin_password = "admin"
+}
+
+# we deploy same app on two different namespaces: prod and dev
+resource "helm_release" "http_echo" {
+  for_each = toset(["prod", "dev"])
+
+  name             = "http-echo"
+  repository       = "https://dasmeta.github.io/helm"
+  chart            = "base"
+  namespace        = each.value
+  create_namespace = true
+  version          = "0.3.15"
+  wait             = true
+
+  values = [
+    file("${path.module}/http-echo.yaml"),
+    <<-EOT
+    ingress:
+      hosts:
+        - host: http-echo.localhost
+          paths:
+            - path: "/${each.value}"
+    EOT
+  ]
 }

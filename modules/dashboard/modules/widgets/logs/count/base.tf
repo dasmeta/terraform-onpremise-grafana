@@ -1,7 +1,7 @@
 module "base" {
   source = "../../base"
 
-  name              = "Logs [${var.period}m]"
+  name              = "Logs"
   data_source       = var.data_source
   coordinates       = var.coordinates
   period            = var.period
@@ -14,8 +14,6 @@ module "base" {
   }
 
   metrics = [
-    { label = "error", expression = "count_over_time({__aggregated_metric__=\"${var.aggregated_metric}\",level=~\"error|fatal|exception\"}[$__range])" },
-    { label = "error", expression = "count_over_time({__aggregated_metric__=\"${var.aggregated_metric}\",level=~\"error|fatal|exception\"}[$__range])" },
     { label = "error", expression = "count_over_time({__aggregated_metric__=\"${var.aggregated_metric}\",level=~\"error|fatal|exception\"}[$__range])" }
   ]
 }

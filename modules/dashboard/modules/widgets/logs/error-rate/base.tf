@@ -1,7 +1,7 @@
 module "base" {
   source = "../../base"
 
-  name        = "Error Rate in Logs [${var.period}m]"
+  name        = "Error Rate in Logs"
   data_source = var.data_source
   coordinates = var.coordinates
   period      = var.period

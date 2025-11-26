@@ -23,7 +23,6 @@ locals {
   extra_pipeline_stages_yaml = yamlencode(concat(local.default_promtail_pipelines_stages, var.configs.promtail.extra_pipeline_stages))
 
   # Loki configs
-  limits_config = merge(var.configs.loki.limits_config, var.configs.loki.log_volume_enabled ? { "volume_enabled" : true } : {})
   ingress_annotations = merge(
     var.configs.loki.ingress.type == "alb" ? merge({
       "alb.ingress.kubernetes.io/target-type"      = "ip"

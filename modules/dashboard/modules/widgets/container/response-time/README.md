@@ -28,7 +28,7 @@ No resources.
 | <a name="input_datasource_type"></a> [datasource\_type](#input\_datasource\_type) | n/a | `string` | `"prometheus"` | no |
 | <a name="input_datasource_uid"></a> [datasource\_uid](#input\_datasource\_uid) | n/a | `string` | `"prometheus"` | no |
 | <a name="input_host"></a> [host](#input\_host) | n/a | `string` | `null` | no |
-| <a name="input_period"></a> [period](#input\_period) | stats | `string` | `"3"` | no |
+| <a name="input_period"></a> [period](#input\_period) | stats | `string` | `"$__rate_interval"` | no |
 | <a name="input_problem"></a> [problem](#input\_problem) | The number which indicates the max timeout above which we have problem | `number` | `2` | no |
 
 ## Outputs

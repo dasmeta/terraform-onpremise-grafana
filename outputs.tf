@@ -41,3 +41,28 @@ output "service_alert_defaults" {
 output "service_alert_configs" {
   value = try(values(module.application_dashboard)[0].service_alert_configs, {})
 }
+
+output "application_dashboards" {
+  value       = module.application_dashboard
+  description = "application_dashboard sub-module outputs"
+}
+
+output "grafana" {
+  value       = try(module.grafana[0], null)
+  description = "grafana sub-module outputs"
+}
+
+output "prometheus" {
+  value       = try(module.prometheus[0], null)
+  description = "prometheus sub-module outputs"
+}
+
+output "tempo" {
+  value       = try(module.tempo[0], null)
+  description = "tempo sub-module outputs"
+}
+
+output "loki" {
+  value       = try(module.loki[0], null)
+  description = "loki sub-module outputs"
+}

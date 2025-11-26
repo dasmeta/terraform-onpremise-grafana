@@ -156,7 +156,6 @@ module "container_volume_iops_widget" {
   datasource_uid = try(each.value.datasource_uid, null)
   coordinates    = each.value.coordinates
   period         = each.value.period
-  pvc_name       = each.value.pvc_name
   pod            = each.value.pod
   namespace      = each.value.namespace
 }
@@ -169,7 +168,6 @@ module "container_volume_throughput_widget" {
   datasource_uid = try(each.value.datasource_uid, null)
   coordinates    = each.value.coordinates
   period         = each.value.period
-  pvc_name       = each.value.pvc_name
   pod            = each.value.pod
   namespace      = each.value.namespace
 }

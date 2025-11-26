@@ -1,7 +1,7 @@
 module "base" {
   source = "../../base"
 
-  name = "Disk [${var.period}m]"
+  name = "Disk"
   data_source = {
     uid  = var.datasource_uid
     type = "Cloudwatch"

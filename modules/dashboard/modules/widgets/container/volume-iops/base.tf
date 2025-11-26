@@ -12,7 +12,9 @@ module "base" {
 
 
   metrics = [
-    { label = "Reads", color = "FFC300", legend_format = "Reads({{pod}})", expression = "container_fs_reads_total{pod=~\"${var.pod}-.*\", namespace=\"${var.namespace}\"}" },
-    { label = "Writes", color = "FF774D", legend_format = "Writes({{pod}})", expression = "container_fs_writes_total{pod=~\"${var.pod}-.*\", namespace=\"${var.namespace}\"}" },
+    { label = "Reads", expression = "sum(rate(container_fs_reads_total{pod=~\"${var.pod}-.*\", namespace=\"${var.namespace}\"}[${var.period}]))" },
+    { label = "Writes", expression = "-sum(rate(container_fs_writes_total{pod=~\"${var.pod}-.*\", namespace=\"${var.namespace}\"}[${var.period}]))" },
+    { label = "Reads ({{pod}})", expression = "sum(rate(container_fs_reads_total{pod=~\"${var.pod}-.*\", namespace=\"${var.namespace}\"}[${var.period}])) by (pod)" },
+    { label = "Writes ({{pod}})", expression = "-sum(rate(container_fs_writes_total{pod=~\"${var.pod}-.*\", namespace=\"${var.namespace}\"}[${var.period}])) by (pod)" },
   ]
 }

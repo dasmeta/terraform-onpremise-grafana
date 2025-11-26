@@ -1,16 +1,12 @@
 variable "datasource_uid" {
   type        = string
-  default     = "loki"
-  description = "The custom datasource for widget item"
+  default     = "prometheus"
+  description = "prometheus datasource type uid to use for widget"
 }
 
-variable "deployment" {
-  type = string
-}
-
-variable "namespace" {
-  type    = string
-  default = "default"
+variable "histogram" {
+  type    = bool
+  default = false
 }
 
 # position
@@ -29,8 +25,8 @@ variable "period" {
   default = "3"
 }
 
-variable "expr" {
+variable "filter" {
   type        = string
   default     = ""
-  description = "LogQl expression to get the logs"
+  description = "Allows to define additional filter on metrics"
 }

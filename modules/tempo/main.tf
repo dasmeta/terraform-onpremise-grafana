@@ -4,7 +4,7 @@ resource "helm_release" "tempo" {
   chart            = "tempo"
   version          = var.chart_version
   namespace        = var.namespace
-  create_namespace = true
+  create_namespace = var.create_namespace
 
   values = [
     templatefile("${path.module}/values/tempo-values.yaml.tpl", {
@@ -22,6 +22,7 @@ resource "helm_release" "tempo" {
 
       service_account_name        = var.configs.service_account.name
       service_account_annotations = var.configs.service_account.annotations
-    })
+    }),
+    jsonencode(var.extra_configs)
   ]
 }

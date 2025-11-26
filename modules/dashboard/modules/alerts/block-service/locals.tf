@@ -67,22 +67,6 @@ locals {
     }
   }
 
-  defaults = module.defaults_deep.merged.defaults
-  alerts   = module.defaults_deep.merged.alerts
-}
-
-module "defaults_deep" {
-  source  = "cloudposse/config/yaml//modules/deepmerge"
-  version = "1.0.2"
-
-  maps = [
-    {
-      defaults = var.defaults
-      alerts   = var.alerts
-    },
-    {
-      defaults = try(local.type_specific_defaults[var.defaults.workload_type].defaults, {})
-      alerts   = try(local.type_specific_defaults[var.defaults.workload_type].alerts, {})
-    }
-  ]
+  defaults = provider::deepmerge::mergo(var.defaults, try(local.type_specific_defaults[var.defaults.workload_type].defaults, {}))
+  alerts   = provider::deepmerge::mergo(var.alerts, try(local.type_specific_defaults[var.defaults.workload_type].alerts, {}))
 }

@@ -4,19 +4,9 @@ variable "datasource_uid" {
   description = "prometheus datasource type uid to use for widget"
 }
 
-variable "balancer_name" {
-  type    = string
-  default = null
-}
-
 variable "histogram" {
   type    = bool
   default = false
-}
-
-variable "account_id" {
-  type    = string
-  default = null
 }
 
 variable "region" {
@@ -37,5 +27,11 @@ variable "coordinates" {
 # stats
 variable "period" {
   type    = string
-  default = "3"
+  default = "$__rate_interval"
+}
+
+variable "filter" {
+  type        = string
+  default     = ""
+  description = "Allows to define additional filter on metric"
 }

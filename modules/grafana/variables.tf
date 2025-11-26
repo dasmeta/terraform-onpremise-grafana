@@ -5,6 +5,12 @@ variable "namespace" {
   default     = "monitoring"
 }
 
+variable "create_namespace" {
+  type        = bool
+  description = "Whether create namespace if not exist"
+  default     = true
+}
+
 variable "grafana_admin_password" {
   type        = string
   description = "admin password"
@@ -44,13 +50,13 @@ variable "release_name" {
 variable "configs" {
   type = object({
     resources = optional(object({
-      request = optional(object({
-        cpu = optional(string, "1")
-        mem = optional(string, "2Gi")
+      requests = optional(object({
+        cpu    = optional(string, "1")
+        memory = optional(string, "2Gi")
       }), {})
-      limit = optional(object({
-        cpu = optional(string, "2")
-        mem = optional(string, "3Gi")
+      limits = optional(object({
+        cpu    = optional(string, "2")
+        memory = optional(string, "3Gi")
       }), {})
     }), {})
     database = optional(object({           # configure external(or in helm created) database base storing/persisting grafana data
@@ -78,12 +84,9 @@ variable "configs" {
       storage_class = optional(string, "")
     }), {})
     ingress = optional(object({
-      type   = optional(string, "nginx")
-      public = optional(bool, true)
-      tls = optional(object({
-        enabled       = optional(bool, true)
-        cert_provider = optional(string, "letsencrypt-prod")
-      }), {})
+      type        = optional(string, "nginx")
+      public      = optional(bool, true)
+      tls_enabled = optional(bool, true)
 
       annotations = optional(map(string), {})
       hosts       = optional(list(string), ["grafana.example.com"])
@@ -114,4 +117,16 @@ variable "configs" {
 
   description = "Values to construct the values file for Grafana Helm chart"
   default     = {}
+}
+
+variable "extra_configs" {
+  type        = any
+  default     = {}
+  description = "Allows to pass extra/custom configs to grafana helm chart, this configs will deep-merged with all generated internal configs and can override the default set ones. All available options can be found in for the specified chart version here: https://artifacthub.io/packages/helm/grafana/grafana?modal=values"
+}
+
+variable "mysql_extra_configs" {
+  type        = any
+  default     = {}
+  description = "Allows to pass extra/custom configs to grafana-mysql created helm chart, this configs will deep-merged with all generated internal configs and can override the default set ones. All available options can be found in for the specified chart version here: https://artifacthub.io/packages/helm/bitnami/mysql?modal=values"
 }
