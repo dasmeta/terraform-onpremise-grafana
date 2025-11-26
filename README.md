@@ -139,6 +139,7 @@ Check `./tests`, `modules/alert-rules/tests`, `modules/alert-contact-points/test
 - <1.27.0 to >=1.27.0
   In this release several changes arrived mostly related to loki, make sure you check the loki configs before upgrade
   - BREAKING: loki config have renamed to loki_stack and several underlying sub-configs in new renamed var.loki_stack got renamed/moved, here is short list of such configs:
+    - issues related not getting impact on loki parameters changes have been fixed
     - old  loki.chart_version and loki.release_name config items moved into loki_stack.loki.chart_version and loki_stack.loki.release_name
     - old loki.loki.url, loki.loki.volume_enabled, loki.loki.enable_service_monitor, loki.loki.service_account, loki.loki.retention_period, loki.loki.storage, loki.loki.persistence, and several other loki.loki.* configs have been removed (the options which not been used) or rename/moved into another config item which you can find in new loki_stack.loki.* configs options list, carefully check your old using configs and options/sub-options naming to map to right ones when using module new version
     - old loki.loki.limits_config type got changed from any to exact options list with their defaults(fields are max_query_length, volume_enabled, allow_structured_metadata, discover_log_levels, deletion_mode, retention_period), if additional config needed it can be added into list via code change/PR or by just passing by using extra_configs options
