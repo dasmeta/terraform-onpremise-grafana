@@ -26,9 +26,9 @@ module "this" {
 
   grafana = {
     resources = {
-      request = {
-        cpu = "1"
-        mem = "1Gi"
+      requests = {
+        cpu    = "1"
+        memory = "1Gi"
       }
     }
     ingress = {
@@ -49,10 +49,12 @@ module "this" {
     }
   }
 
-  loki = {
+  loki_stack = {
     enabled = true
     loki = {
-      volume_enabled = true
+      limits_config = {
+        volume_enabled = true
+      }
     }
     promtail = {
       ignored_namespaces = ["kube-system", "monitoring"]

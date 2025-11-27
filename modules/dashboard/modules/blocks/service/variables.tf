@@ -8,15 +8,10 @@ variable "namespace" {
   description = "EKS namespace name"
 }
 
-variable "region" {
-  type    = string
-  default = ""
-}
-
-variable "pvc_name" {
-  type        = string
-  description = "PVC name"
-  default     = ""
+variable "columns" {
+  type        = number
+  default     = 4
+  description = "The number of widgets to place in each line"
 }
 
 variable "host" {
@@ -39,14 +34,26 @@ variable "loki_datasource_uid" {
   description = "datasource uid for the logs widgets"
 }
 
-variable "show_err_logs" {
-  type        = bool
-  default     = true
-  description = "Wether to show the error and warning logs for the deployment"
+variable "log_widgets" {
+  type = object({
+    enabled       = optional(bool, true)                         # whether log widgets are enabled, by default only size of total/error/warn logs will be shown
+    show_logs     = optional(bool, false)                        # whether total/error/warn logs showing widgets are enabled, this widgets usually are heavy in terms of load on loki so we have them disabled by default
+    parser        = optional(string, "logfmt")                   # parser to use to format logs before applying filter
+    error_filter  = optional(string, "detected_level=\"error\"") # error logs widget filter
+    warn_filter   = optional(string, "detected_level=\"warn\"")  # warn logs widget filter
+    latest_filter = optional(string, "")                         # latest logs widget filter
+    direction     = optional(string, "backward")                 # the direction search of log entries
+    limit         = optional(number, 10)                         # count of items to fetch for each log widget
+  })
+  default     = {}
+  description = "The logs widgets configs"
 }
 
-variable "expr" {
-  type        = string
-  default     = ""
-  description = "logql query used to query logs"
+variable "disk_widgets" {
+  type = object({
+    enabled   = optional(bool, true)
+    pvc_names = optional(list(string), [])
+  })
+  default     = {}
+  description = "The configs allow to manage the volumes related widgets"
 }

@@ -7,7 +7,7 @@ There are numerous integrations available for Grafana, but currently, this modul
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.3 |
 | <a name="requirement_grafana"></a> [grafana](#requirement\_grafana) | ~> 4.0 |
 
 ## Providers

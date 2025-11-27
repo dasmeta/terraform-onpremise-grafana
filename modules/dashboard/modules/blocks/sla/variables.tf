@@ -27,3 +27,15 @@ variable "load_balancer_arn" {
   description = "AWS Application LB arn"
   default     = ""
 }
+
+variable "height" {
+  type        = number
+  default     = 6
+  description = "The height of widgets"
+}
+
+variable "filter" {
+  type        = string
+  default     = ""
+  description = "Allows to define additional filter on metrics"
+}

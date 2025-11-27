@@ -31,7 +31,7 @@ variable "coordinates" {
 # stats
 variable "period" {
   type    = string
-  default = ""
+  default = "$__rate_interval"
 }
 
 variable "by_pod" {

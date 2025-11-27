@@ -5,7 +5,7 @@ resource "helm_release" "prometheus" {
   repository       = "https://prometheus-community.github.io/helm-charts"
   chart            = "kube-prometheus-stack"
   namespace        = var.namespace
-  create_namespace = true
+  create_namespace = var.create_namespace
   timeout          = 600
   version          = var.chart_version
 
@@ -16,10 +16,10 @@ resource "helm_release" "prometheus" {
       storage_size       = var.configs.storage_size
       access_modes       = var.configs.access_modes
 
-      request_cpu = var.configs.resources.request.cpu
-      request_mem = var.configs.resources.request.mem
-      limit_cpu   = var.configs.resources.limit.cpu
-      limit_mem   = var.configs.resources.limit.mem
+      request_cpu = var.configs.resources.requests.cpu
+      request_mem = var.configs.resources.requests.memory
+      limit_cpu   = var.configs.resources.limits.cpu
+      limit_mem   = var.configs.resources.limits.memory
 
       replicas                     = var.configs.replicas
       additional_scrape_configs    = var.configs.additional_scrape_configs
@@ -35,7 +35,8 @@ resource "helm_release" "prometheus" {
       ingress_paths       = var.configs.ingress.path
       tls_secrets         = local.ingress_tls
       ingress_path_type   = var.configs.ingress.path_type
-    })
+    }),
+    jsonencode(var.extra_configs)
   ]
 
 }

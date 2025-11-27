@@ -38,22 +38,30 @@ variable "rows" {
 
 variable "data_source" {
   type = object({
-    uid  = string
+    uid  = optional(string, "prometheus")
     type = optional(string, "prometheus")
   })
   description = "The grafana dashboard global/default datasource, will be used in widget items if they have no their custom ones"
 }
 
+variable "loki_datasource_uid" {
+  nullable    = false
+  type        = string
+  default     = "loki"
+  description = "The default datasource uid for the logs widgets"
+}
+
 variable "variables" {
   type = list(object({
-    name        = string
-    type        = optional(string, "custom")
-    hide        = optional(number, 0)
-    includeAll  = optional(bool, false)
-    multi       = optional(bool, false)
-    query       = optional(string, "")
-    queryValue  = optional(string, "")
-    skipUrlSync = optional(bool, false)
+    name             = string
+    type             = optional(string, "custom")
+    hide             = optional(number, 0)
+    includeAll       = optional(bool, false)
+    multi            = optional(bool, false)
+    query            = optional(string, "")
+    queryValue       = optional(string, "")
+    skipUrlSync      = optional(bool, false)
+    allowCustomValue = optional(bool, false)
     options = optional(list(object({
       selected = optional(bool, false)
       value    = string

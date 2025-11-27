@@ -16,3 +16,9 @@ variable "datasource_uid" {
   default     = "prometheus"
   description = "datasource uid for the metrics"
 }
+
+variable "filter" {
+  type        = string
+  default     = ""
+  description = "Allows to define additional filter on metrics"
+}

@@ -29,7 +29,7 @@ No resources.
 | <a name="input_datasource_uid"></a> [datasource\_uid](#input\_datasource\_uid) | n/a | `string` | `"prometheus"` | no |
 | <a name="input_host"></a> [host](#input\_host) | n/a | `string` | `null` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | n/a | `string` | `"default"` | no |
-| <a name="input_period"></a> [period](#input\_period) | stats | `string` | `"3"` | no |
+| <a name="input_period"></a> [period](#input\_period) | stats | `string` | `"$__rate_interval"` | no |
 
 ## Outputs
 

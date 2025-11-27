@@ -1,7 +1,7 @@
 module "base" {
   source = "../../base"
 
-  name              = "Latency [${var.period}m]"
+  name              = "Latency"
   data_source       = var.data_source
   coordinates       = var.coordinates
   period            = var.period
@@ -10,7 +10,7 @@ module "base" {
   anomaly_deviation = var.anomaly_deviation
 
   metrics = [
-    { label = "Percentile", color : "3ece76", expression = "sum(rate(redis_latency_percentiles_usec_sum{service=\"${var.redis_name}\", namespace=\"${var.namespace}\"}[${var.period}m])) / 60 / 60 / 60" },
-    { label = "Command Duration", color : "d400bf", expression = "sum(rate(redis_commands_duration_seconds_total{service=\"${var.redis_name}\", namespace=\"${var.namespace}\"}[${var.period}m]))" }
+    { label = "Percentile", color : "3ece76", expression = "sum(rate(redis_latency_percentiles_usec_sum{service=\"${var.redis_name}\", namespace=\"${var.namespace}\"}[${var.period}])) / 60 / 60 / 60" },
+    { label = "Command Duration", color : "d400bf", expression = "sum(rate(redis_commands_duration_seconds_total{service=\"${var.redis_name}\", namespace=\"${var.namespace}\"}[${var.period}]))" }
   ]
 }

@@ -39,10 +39,16 @@ variable "coordinates" {
 # stats
 variable "period" {
   type    = string
-  default = "3"
+  default = "$__rate_interval"
 }
 
 variable "by_host" {
   type    = bool
   default = false
+}
+
+variable "filter" {
+  type        = string
+  default     = ""
+  description = "Allows to define additional filter on metric"
 }

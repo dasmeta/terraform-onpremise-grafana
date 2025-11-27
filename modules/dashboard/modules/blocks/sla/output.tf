@@ -6,13 +6,14 @@ output "result" {
     ],
     var.sla_ingress_type == "nginx" ?
     [
-      { type = "sla-slo-sli/nginx_main", width : 5, height : 6, balancer_name = var.balancer_name, datasource_uid = var.datasource_uid },
-      { type = "sla-slo-sli/nginx_latency", width : 5, height : 6, balancer_name = var.balancer_name, datasource_uid = var.datasource_uid },
-      { type = "sla-slo-sli/nginx_latency", width : 14, height : 6, balancer_name = var.balancer_name, histogram : true, datasource_uid = var.datasource_uid }
+      { type = "sla-slo-sli/nginx_availability", filter = var.filter, width = 3, height = var.height, datasource_uid = var.datasource_uid },
+      { type = "sla-slo-sli/nginx_latency", filter = var.filter, width = 3, height = var.height, datasource_uid = var.datasource_uid },
+      { type = "sla-slo-sli/nginx_availability", filter = var.filter, width = 8, height = var.height, histogram : true, datasource_uid = var.datasource_uid },
+      { type = "sla-slo-sli/nginx_latency", filter = var.filter, width = 10, height = var.height, histogram : true, datasource_uid = var.datasource_uid }
     ] :
     [
-      { type = "sla-slo-sli/alb_availability", width : 5, height : 6, load_balancer_arn = var.load_balancer_arn, datasource_uid = var.datasource_uid, region = var.region },
-      { type = "sla-slo-sli/alb_latency", width : 5, height : 6, load_balancer_arn = var.load_balancer_arn, datasource_uid = var.datasource_uid, region = var.region }
+      { type = "sla-slo-sli/alb_availability", width = 12, height = var.height, load_balancer_arn = var.load_balancer_arn, datasource_uid = var.datasource_uid, region = var.region },
+      { type = "sla-slo-sli/alb_latency", width = 12, height = var.height, load_balancer_arn = var.load_balancer_arn, datasource_uid = var.datasource_uid, region = var.region }
     ]
   ]
 }

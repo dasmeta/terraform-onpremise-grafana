@@ -4,6 +4,12 @@ variable "namespace" {
   default     = "monitoring"
 }
 
+variable "create_namespace" {
+  type        = bool
+  description = "Whether create namespace if not exist"
+  default     = true
+}
+
 variable "chart_version" {
   type        = string
   description = "prometheus chart version"
@@ -23,13 +29,13 @@ variable "configs" {
     storage_size   = optional(string, "100Gi")
     access_modes   = optional(list(string), ["ReadWriteOnce"])
     resources = optional(object({
-      request = optional(object({
-        cpu = optional(string, "1")
-        mem = optional(string, "2500Mi")
+      requests = optional(object({
+        cpu    = optional(string, "1")
+        memory = optional(string, "2500Mi")
       }), {})
-      limit = optional(object({
-        cpu = optional(string, "2")
-        mem = optional(string, "3Gi")
+      limits = optional(object({
+        cpu    = optional(string, "2")
+        memory = optional(string, "3Gi")
       }), {})
     }), {})
     replicas                     = optional(number, 1)
@@ -74,4 +80,10 @@ variable "configs" {
   description = "Values to send to Prometheus template values file"
 
   default = {}
+}
+
+variable "extra_configs" {
+  type        = any
+  default     = {}
+  description = "Allows to pass extra/custom configs to prometheus helm chart, this configs will deep-merged with all generated internal configs and can override the default set ones. All available options can be found in for the specified chart version here: https://artifacthub.io/packages/helm/prometheus-community/prometheus?modal=values"
 }

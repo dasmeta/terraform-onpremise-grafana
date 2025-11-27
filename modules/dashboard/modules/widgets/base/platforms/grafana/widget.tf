@@ -1,54 +1,42 @@
 locals {
-  field_config_defaults = merge(
-    {
-      "color" : {
-        "mode" : try(var.color_mode, "palette-classic")
+  field_config_defaults = {
+    decimals   = var.decimals != 0 ? var.decimals : null
+    mappings   = []
+    thresholds = var.thresholds
+    unit       = var.unit
+    color = {
+      "mode" : try(var.color_mode, "palette-classic")
+    }
+    custom = {
+      "axisLabel" : "",
+      "axisPlacement" : "auto",
+      "noValue" : "No Input Data",
+      "barAlignment" : 0,
+      "drawStyle" : "line",
+      "fillOpacity" : var.fillOpacity,
+      "gradientMode" : "none",
+      "hideFrom" : {
+        "legend" : false,
+        "tooltip" : false,
+        "viz" : false
+      },
+      "lineInterpolation" : "linear",
+      "lineWidth" : 1,
+      "pointSize" : 5,
+      "scaleDistribution" : {
+        "type" : "linear"
+      },
+      "showPoints" : "auto",
+      "spanNulls" : false,
+      "stacking" : {
+        "group" : "A",
+        "mode" : "none"
+      },
+      "thresholdsStyle" : {
+        "mode" : "off"
       }
-    },
-    { var.decimals != 0 ? "decimals" : var.decimals : {} },
-    {
-      "custom" : {
-        "axisLabel" : "",
-        "axisPlacement" : "auto",
-        "noValue" : "No Input Data",
-        "barAlignment" : 0,
-        "drawStyle" : "line",
-        "fillOpacity" : var.fillOpacity,
-        "gradientMode" : "none",
-        "hideFrom" : {
-          "legend" : false,
-          "tooltip" : false,
-          "viz" : false
-        },
-        "lineInterpolation" : "linear",
-        "lineWidth" : 1,
-        "pointSize" : 5,
-        "scaleDistribution" : {
-          "type" : "linear"
-        },
-        "showPoints" : "auto",
-        "spanNulls" : false,
-        "stacking" : {
-          "group" : "A",
-          "mode" : "none"
-        },
-        "thresholdsStyle" : {
-          "mode" : "off"
-        }
-      }
-    },
-    { mappings = [] },
-    {
-      thresholds = try(var.thresholds, {
-        mode = "absolute",
-        steps = [
-          { color = "green", value = null },
-          { color = "red", value = 80 }
-        ]
-      })
-    },
-    { unit = var.unit }
-  )
+    }
+  }
 
   field_config_overrides = [
     for metric in local.metrics_with_defaults : {
@@ -76,12 +64,14 @@ locals {
     color = lookup(metric, "color", null)
   })]
 
+  # TODO: why we need this mapping here, consider to remove this to allow all types of widgets
   type_map = {
     timeSeries = "timeseries"
     gauge      = "gauge"
     histogram  = "histogram"
     stat       = "stat"
     logs       = "logs"
+    bargauge   = "bargauge"
   }
 
   # create query and metric based targets
@@ -100,6 +90,7 @@ locals {
     id           = ""
     legendFormat = length(try(row.legend_format, "")) > 0 ? row.legend_format : "${row.label}",
     editorMode   = "code",
+    format       = try(row.format, null)
     }
   ]
 
@@ -122,12 +113,12 @@ locals {
   }]
 
   loki_targets = [for row in var.loki_targets : {
-    direction     = row.direction
-    expr          = row.expr
-    queryType     = "range"
-    refId         = row.refId
-    label         = row.label
-    legend_format = row.legend_format
+    direction    = row.direction
+    expr         = row.expr
+    queryType    = row.queryType
+    legendFormat = length(try(row.legend_format, "")) > 0 ? row.legend_format : "${row.label}"
+    refId        = row.refId
+    maxLines     = row.limit
   }]
 
   data = {

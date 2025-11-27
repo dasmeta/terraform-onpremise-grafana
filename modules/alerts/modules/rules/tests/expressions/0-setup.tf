@@ -1,10 +1,10 @@
 terraform {
-  required_version = ">= 1.3.0"
+  required_version = "~> 1.3"
 
   required_providers {
     grafana = {
       source  = "grafana/grafana"
-      version = ">= 4.0.0"
+      version = "~> 4.0"
     }
   }
 }

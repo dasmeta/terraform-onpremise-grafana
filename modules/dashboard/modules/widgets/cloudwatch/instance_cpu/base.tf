@@ -1,7 +1,7 @@
 module "base" {
   source = "../../base"
 
-  name = "CPU [${var.period}m]"
+  name = "CPU"
   data_source = {
     uid  = var.datasource_uid
     type = "Cloudwatch"

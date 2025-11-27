@@ -28,7 +28,7 @@ No resources.
 | <a name="input_datasource_uid"></a> [datasource\_uid](#input\_datasource\_uid) | n/a | `string` | `"prometheus"` | no |
 | <a name="input_host"></a> [host](#input\_host) | n/a | `string` | `null` | no |
 | <a name="input_only_5xx"></a> [only\_5xx](#input\_only\_5xx) | n/a | `bool` | `false` | no |
-| <a name="input_period"></a> [period](#input\_period) | stats | `string` | `"3"` | no |
+| <a name="input_period"></a> [period](#input\_period) | stats | `string` | `"$__rate_interval"` | no |
 | <a name="input_target_group_name"></a> [target\_group\_name](#input\_target\_group\_name) | n/a | `string` | `null` | no |
 
 ## Outputs

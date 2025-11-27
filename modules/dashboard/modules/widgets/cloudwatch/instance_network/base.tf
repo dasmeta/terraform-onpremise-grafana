@@ -1,7 +1,7 @@
 module "base" {
   source = "../../base"
 
-  name = "Instance network [${var.period}m]"
+  name = "Instance network"
   data_source = {
     uid  = var.datasource_uid
     type = "Cloudwatch"

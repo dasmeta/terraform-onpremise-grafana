@@ -9,6 +9,7 @@ module "ingress_connections_widget" {
   datasource_uid  = try(each.value.datasource_uid, null)
   coordinates     = each.value.coordinates
   period          = each.value.period
+  filter          = try(each.value.filter, "")
 
   region = each.value.region
 }
@@ -23,6 +24,7 @@ module "ingress_request_rate_widget" {
   coordinates     = each.value.coordinates
   period          = each.value.period
   by_host         = try(each.value.by_host, false)
+  filter          = try(each.value.filter, "")
 
   region = each.value.region
 }
@@ -40,6 +42,7 @@ module "ingress_request_count_widget" {
   by_path         = try(each.value.by_path, false)
   by_status_path  = try(each.value.by_status_path, false)
   only_5xx        = try(each.value.only_5xx, false)
+  filter          = try(each.value.filter, "")
 
   region = each.value.region
 }
@@ -86,6 +89,7 @@ module "ingress_latency_widget" {
   by_host         = try(each.value.by_host, false)
   acceptable      = try(each.value.acceptable, 1)
   problem         = try(each.value.problem, 2)
+  filter          = try(each.value.filter, "")
 
   region = each.value.region
 }

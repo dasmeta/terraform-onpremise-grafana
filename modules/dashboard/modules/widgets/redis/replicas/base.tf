@@ -1,7 +1,7 @@
 module "base" {
   source = "../../base"
 
-  name              = "Replicas [${var.period}m]"
+  name              = "Replicas"
   data_source       = var.data_source
   coordinates       = var.coordinates
   period            = var.period

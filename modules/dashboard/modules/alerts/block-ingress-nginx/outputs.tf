@@ -59,6 +59,7 @@ output "alert_rules" {
   description = "The generated alert rules"
 }
 
+# the nginx as block/service alerts
 module "nginx_service_alerts" {
   source = "../block-service"
 

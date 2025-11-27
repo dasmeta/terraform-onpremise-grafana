@@ -222,16 +222,11 @@ variable "description" {
 
 variable "thresholds" {
   type = object({
-    mode = string
-    steps = list(object({
+    mode = optional(string, "absolute")
+    steps = optional(list(object({
       color = string
       value = number
-    }))
-  })
-  description = "Thresholds defined for a widget"
-  default = {
-    mode = "absolute"
-    steps = [
+      })), [
       {
         color = "green"
         value = null
@@ -240,8 +235,10 @@ variable "thresholds" {
         color = "red"
         value = 80
       },
-    ]
-  }
+    ])
+  })
+  description = "Thresholds defined for a widget"
+  default     = {}
 }
 
 variable "color_mode" {
@@ -272,13 +269,13 @@ variable "cloudwatch_targets" {
 
 variable "loki_targets" {
   type = list(object({
-    expr          = string
-    refId         = optional(string, "A")
-    direction     = optional(string, "backward")
-    legend_format = optional(string, "")
-    queryType     = optional(string, "range")
-    hide          = optional(bool, false)
-    label         = optional(string, "Logs")
+    expr      = string
+    refId     = optional(string, "")
+    direction = optional(string, "backward")
+    queryType = optional(string, "range")
+    hide      = optional(bool, false)
+    label     = optional(string, "Logs")
+    limit     = optional(number, 10)
   }))
   description = "Target section of Loki based widget"
   default     = []

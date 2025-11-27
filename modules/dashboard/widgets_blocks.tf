@@ -7,6 +7,7 @@ module "block_ingress" {
   namespace = try(each.value.block.namespace, "ingress-nginx")
 
   datasource_uid = try(each.value.block.datasource_uid, var.data_source.uid, null)
+  filter         = try(each.value.block.filter, "")
 }
 
 module "block_service" {
@@ -16,12 +17,12 @@ module "block_service" {
 
   name                      = each.value.block.name
   namespace                 = try(each.value.block.namespace, "$namespace")
+  columns                   = try(each.value.block.columns, 4)
   host                      = try(each.value.block.host, null)
-  pvc_name                  = try(each.value.block.pvc_name, "")
-  prometheus_datasource_uid = try(each.value.block.prometheus_datasource_uid, var.data_source.uid, null)
-  loki_datasource_uid       = try(each.value.block.loki_datasource_uid, var.data_source.uid, null)
-  show_err_logs             = try(each.value.block.show_err_logs, true)
-  expr                      = try(each.value.block.expr, "")
+  prometheus_datasource_uid = try(each.value.block.prometheus_datasource_uid, var.data_source.uid)
+  loki_datasource_uid       = try(each.value.block.loki_datasource_uid, var.loki_datasource_uid)
+  disk_widgets              = try(each.value.block.disk_widgets, {})
+  log_widgets               = try(each.value.block.log_widgets, {})
 }
 
 module "block_sla" {
@@ -34,6 +35,7 @@ module "block_sla" {
   load_balancer_arn = try(each.value.block.load_balancer_arn, null)
   datasource_uid    = try(each.value.block.datasource_uid, var.data_source.uid, null)
   region            = try(each.value.block.region, null)
+  filter            = try(each.value.block.filter, "")
 }
 
 module "block_redis" {

@@ -97,9 +97,9 @@ output "alert_rules" {
         threshold      = local.alerts.replicas_state.threshold
         filters        = {}
         labels         = merge(local.defaults.labels, local.alerts.replicas_state.labels)
-        annotations = merge({ for k, v in try(var.alerts.annotations, {}) : k => v if length(v) > 0 },
+        annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
           {
-            "threshold" = var.alerts.replicas_state.threshold,
+            "threshold" = local.alerts.replicas_state.threshold,
             "metric"    = "replicas",
             "impact"    = "Service might become unresponsive or go down"
             "component" = "pod"
@@ -124,14 +124,14 @@ output "alert_rules" {
         threshold      = local.alerts.job_failed.threshold
         filters        = {}
         labels         = merge(local.defaults.labels, local.alerts.job_failed.labels)
-        annotations = merge({ for k, v in try(var.alerts.annotations, {}) : k => v if length(v) > 0 },
+        annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
           {
-            "threshold" = var.alerts.job_failed.threshold,
+            "threshold" = local.alerts.job_failed.threshold,
             "metric"    = "replicas",
             "impact"    = "Jobs not being executed"
             "component" = "pod"
             "resource"  = "deployment"
-        }, try(var.alerts.job_failed.annotations, {}))
+        }, try(local.alerts.job_failed.annotations, {}))
         settings_mode        = "replaceNN"
         settings_replaceWith = 0
       }
@@ -154,14 +154,14 @@ output "alert_rules" {
         equation  = "gte"
         threshold = local.alerts.restarts.threshold
         labels    = merge(local.defaults.labels, local.alerts.restarts.labels)
-        annotations = merge({ for k, v in try(var.alerts.annotations, {}) : k => v if length(v) > 0 },
+        annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
           {
-            "threshold" = var.alerts.restarts.threshold,
+            "threshold" = local.alerts.restarts.threshold,
             "metric"    = "replicas",
             "impact"    = "Service will go down"
             "component" = "pod"
             "resource"  = "deployment"
-        }, try(var.alerts.restarts.annotations, {}))
+        }, try(local.alerts.restarts.annotations, {}))
         settings_mode        = "replaceNN"
         settings_replaceWith = 0
       }
@@ -181,14 +181,14 @@ output "alert_rules" {
         equation       = "gte"
         threshold      = coalesce(local.alerts.network_in.deviation, local.defaults.deviation)
         labels         = merge(local.defaults.labels, local.alerts.network_in.labels)
-        annotations = merge({ for k, v in try(var.alerts.annotations, {}) : k => v if length(v) > 0 },
+        annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
           {
             "threshold" = coalesce(local.alerts.network_in.deviation, local.defaults.deviation),
             "metric"    = "replicas",
             "impact"    = "Service will go down"
             "component" = "pod"
             "resource"  = "deployment"
-        }, try(var.alerts.network_in.annotations, {}))
+        }, try(local.alerts.network_in.annotations, {}))
         settings_mode        = "replaceNN"
         settings_replaceWith = 0
       }
@@ -208,14 +208,14 @@ output "alert_rules" {
         equation       = "gte"
         threshold      = coalesce(local.alerts.network_out.deviation, local.defaults.deviation)
         labels         = merge(local.defaults.labels, local.alerts.network_out.labels)
-        annotations = merge({ for k, v in try(var.alerts.annotations, {}) : k => v if length(v) > 0 },
+        annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
           {
             "threshold" = coalesce(local.alerts.network_out.deviation, local.defaults.deviation),
             "metric"    = "replicas",
             "impact"    = "Service will go down"
             "component" = "pod"
             "resource"  = "deployment"
-        }, try(var.alerts.network_out.annotations, {}))
+        }, try(local.alerts.network_out.annotations, {}))
         settings_mode        = "replaceNN"
         settings_replaceWith = 0
       }
@@ -235,7 +235,7 @@ output "alert_rules" {
         equation       = "gte"
         threshold      = coalesce(local.alerts.cpu.threshold_percent, local.defaults.threshold_percent)
         labels         = merge(local.defaults.labels, local.alerts.cpu.labels)
-        annotations = merge({ for k, v in try(var.alerts.annotations, {}) : k => v if length(v) > 0 },
+        annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
           {
             "threshold" = coalesce(local.alerts.cpu.threshold_percent, local.defaults.threshold_percent),
             "metric"    = "cpu",
@@ -243,7 +243,7 @@ output "alert_rules" {
             "component" = "pod"
             "resource"  = "deployment"
           },
-          try(var.alerts.cpu.annotations, {})
+          try(local.alerts.cpu.annotations, {})
         )
         settings_mode        = "replaceNN"
         settings_replaceWith = 0
@@ -264,7 +264,7 @@ output "alert_rules" {
         equation       = "gte"
         threshold      = coalesce(local.alerts.memory.threshold_percent, local.defaults.threshold_percent)
         labels         = merge(local.defaults.labels, local.alerts.memory.labels)
-        annotations = merge({ for k, v in try(var.alerts.annotations, {}) : k => v if length(v) > 0 },
+        annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
           {
             "threshold" = coalesce(local.alerts.memory.threshold_percent, local.defaults.threshold_percent),
             "metric"    = "memory",
@@ -272,7 +272,7 @@ output "alert_rules" {
             "component" = "pod"
             "resource"  = "deployment"
           },
-          try(var.alerts.memory.annotations, {})
+          try(local.alerts.memory.annotations, {})
         )
         settings_mode        = "replaceNN"
         settings_replaceWith = 0

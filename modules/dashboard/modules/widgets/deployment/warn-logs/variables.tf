@@ -34,3 +34,27 @@ variable "expr" {
   default     = ""
   description = "LogQl expression to get the logs"
 }
+
+variable "parser" {
+  type        = string
+  default     = "logfmt"
+  description = "The logs parser to use before filtration"
+}
+
+variable "filter" {
+  type        = string
+  default     = "detected_level=\"warn\""
+  description = "The logs filter expression"
+}
+
+variable "direction" {
+  type        = string
+  default     = "backward"
+  description = "The direction search of log entries"
+}
+
+variable "limit" {
+  type        = number
+  default     = 10
+  description = "The number of log items to fetch"
+}

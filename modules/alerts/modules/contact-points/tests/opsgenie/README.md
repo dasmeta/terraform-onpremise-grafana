@@ -7,8 +7,8 @@ OpsGenie authentication can be done using OpsGenie API Key by passing the value 
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
-| <a name="requirement_grafana"></a> [grafana](#requirement\_grafana) | >= 4.0.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.3 |
+| <a name="requirement_grafana"></a> [grafana](#requirement\_grafana) | ~> 4.0 |
 
 ## Providers
 

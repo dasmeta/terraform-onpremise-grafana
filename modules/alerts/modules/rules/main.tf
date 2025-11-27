@@ -1,7 +1,7 @@
 locals {
   groups = toset([for rule in var.alert_rules : coalesce(rule.group, var.group)])
   alerts = { for member in local.groups : member => [for rule in var.alert_rules : merge(rule, {
-    expr : coalesce(rule.expr, "${rule.metric_function}(${rule.metric_name}${rule.filters != null ? format("{%s}", replace(join(", ", [for k, v in rule.filters : "${k}=\"${v}\""]), "\"", "\\\"")) : ""}${rule.metric_interval})")
+    expr : coalesce(rule.expr, "${rule.metric_function}(${rule.metric_name}${rule.filters != null ? replace(jsonencode(rule.filters), "\":\"", "\"=\"") : ""}${rule.metric_interval})")
     folder_name : try(rule.folder_name, var.folder_name)
   }) if coalesce(rule.group, var.group) == member] }
   comparison_operators = {

@@ -1,7 +1,7 @@
 module "base" {
   source = "../../base"
 
-  name              = "Errors [${var.period}m]"
+  name              = "Errors"
   data_source       = var.data_source
   coordinates       = var.coordinates
   period            = var.period
@@ -10,7 +10,7 @@ module "base" {
   anomaly_deviation = var.anomaly_deviation
 
   metrics = [
-    { label = "__auto", expression = "sum(rate(redis_errors_total{service=\"${var.redis_name}\", namespace=\"${var.namespace}\"}[${var.period}m])) by (err)" },
-    { label = "__auto", expression = "sum(rate(redis_errors_total{service=\"${var.redis_name}\", namespace=\"${var.namespace}\"}[${var.period}m]))" }
+    { label = "__auto", expression = "sum(rate(redis_errors_total{service=\"${var.redis_name}\", namespace=\"${var.namespace}\"}[${var.period}])) by (err)" },
+    { label = "__auto", expression = "sum(rate(redis_errors_total{service=\"${var.redis_name}\", namespace=\"${var.namespace}\"}[${var.period}]))" }
   ]
 }

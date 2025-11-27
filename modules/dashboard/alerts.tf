@@ -1,7 +1,7 @@
 # Widget alerts
 
 locals {
-  widget_alert_rules = concat(concat([], values(module.block_sla_nginx_alerts).*.alert_rules...), concat([], values(module.block_ingress_nginx_alerts).*.alert_rules...), concat([], values(module.block_service_alerts).*.alert_rules...))
+  widget_alert_rules = concat(flatten(values(module.block_sla_nginx_alerts).*.alert_rules), flatten(values(module.block_ingress_nginx_alerts).*.alert_rules), flatten(values(module.block_service_alerts).*.alert_rules))
 
   deep_merge_alert_configs = merge(
     { for index, item in try(local.blocks_by_type["sla"], []) : "${index}_sla" => provider::deepmerge::mergo(var.alerts, try(item.block.alerts, {})) },

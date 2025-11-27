@@ -57,8 +57,8 @@ module "this" {
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.8.0 |
-| <a name="requirement_deepmerge"></a> [deepmerge](#requirement\_deepmerge) | 1.0.2 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.3 |
+| <a name="requirement_deepmerge"></a> [deepmerge](#requirement\_deepmerge) | ~> 1.1 |
 | <a name="requirement_grafana"></a> [grafana](#requirement\_grafana) | ~> 4.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.6 |
 
@@ -98,9 +98,11 @@ module "this" {
 | <a name="module_container_volume_capacity_widget"></a> [container\_volume\_capacity\_widget](#module\_container\_volume\_capacity\_widget) | ./modules/widgets/container/volume-capacity | n/a |
 | <a name="module_container_volume_iops_widget"></a> [container\_volume\_iops\_widget](#module\_container\_volume\_iops\_widget) | ./modules/widgets/container/volume-iops | n/a |
 | <a name="module_container_volume_throughput_widget"></a> [container\_volume\_throughput\_widget](#module\_container\_volume\_throughput\_widget) | ./modules/widgets/container/volume-throughput | n/a |
-| <a name="module_deployment_errors_widget"></a> [deployment\_errors\_widget](#module\_deployment\_errors\_widget) | ./modules/widgets/deployment/errors | n/a |
+| <a name="module_deployment_error_logs_widget"></a> [deployment\_error\_logs\_widget](#module\_deployment\_error\_logs\_widget) | ./modules/widgets/deployment/error-logs | n/a |
+| <a name="module_deployment_latest_logs_widget"></a> [deployment\_latest\_logs\_widget](#module\_deployment\_latest\_logs\_widget) | ./modules/widgets/deployment/latest-logs | n/a |
+| <a name="module_deployment_logs_size_widget"></a> [deployment\_logs\_size\_widget](#module\_deployment\_logs\_size\_widget) | ./modules/widgets/deployment/logs-size | n/a |
 | <a name="module_deployment_replicas_widget"></a> [deployment\_replicas\_widget](#module\_deployment\_replicas\_widget) | ./modules/widgets/deployment/replicas | n/a |
-| <a name="module_deployment_warns_widget"></a> [deployment\_warns\_widget](#module\_deployment\_warns\_widget) | ./modules/widgets/deployment/warns | n/a |
+| <a name="module_deployment_warn_logs_widget"></a> [deployment\_warn\_logs\_widget](#module\_deployment\_warn\_logs\_widget) | ./modules/widgets/deployment/warn-logs | n/a |
 | <a name="module_ingress_connections_widget"></a> [ingress\_connections\_widget](#module\_ingress\_connections\_widget) | ./modules/widgets/ingress/connections | n/a |
 | <a name="module_ingress_cpu_widget"></a> [ingress\_cpu\_widget](#module\_ingress\_cpu\_widget) | ./modules/widgets/ingress/cpu | n/a |
 | <a name="module_ingress_latency_widget"></a> [ingress\_latency\_widget](#module\_ingress\_latency\_widget) | ./modules/widgets/ingress/latency | n/a |
@@ -139,8 +141,8 @@ module "this" {
 | <a name="module_widget_custom"></a> [widget\_custom](#module\_widget\_custom) | ./modules/widgets/custom | n/a |
 | <a name="module_widget_sla_slo_sli_alb_availability"></a> [widget\_sla\_slo\_sli\_alb\_availability](#module\_widget\_sla\_slo\_sli\_alb\_availability) | ./modules/widgets/sla-slo-sli/alb_availability | n/a |
 | <a name="module_widget_sla_slo_sli_alb_latency"></a> [widget\_sla\_slo\_sli\_alb\_latency](#module\_widget\_sla\_slo\_sli\_alb\_latency) | ./modules/widgets/sla-slo-sli/alb_latency | n/a |
+| <a name="module_widget_sla_slo_sli_nginx_availability"></a> [widget\_sla\_slo\_sli\_nginx\_availability](#module\_widget\_sla\_slo\_sli\_nginx\_availability) | ./modules/widgets/sla-slo-sli/nginx_availability | n/a |
 | <a name="module_widget_sla_slo_sli_nginx_latency"></a> [widget\_sla\_slo\_sli\_nginx\_latency](#module\_widget\_sla\_slo\_sli\_nginx\_latency) | ./modules/widgets/sla-slo-sli/nginx_latency | n/a |
-| <a name="module_widget_sla_slo_sli_nginx_main"></a> [widget\_sla\_slo\_sli\_nginx\_main](#module\_widget\_sla\_slo\_sli\_nginx\_main) | ./modules/widgets/sla-slo-sli/nginx_main | n/a |
 
 ## Resources
 
@@ -157,13 +159,14 @@ module "this" {
 |------|-------------|------|---------|:--------:|
 | <a name="input_alerts"></a> [alerts](#input\_alerts) | Allows to configure globally dashboard block/(sla\|ingress\|service) blocks/widgets related alerts | `any` | `{}` | no |
 | <a name="input_create_folder"></a> [create\_folder](#input\_create\_folder) | If true, create folder in this module. If false, use existing folder. | `bool` | `false` | no |
-| <a name="input_data_source"></a> [data\_source](#input\_data\_source) | The grafana dashboard global/default datasource, will be used in widget items if they have no their custom ones | <pre>object({<br/>    uid  = string<br/>    type = optional(string, "prometheus")<br/>  })</pre> | n/a | yes |
+| <a name="input_data_source"></a> [data\_source](#input\_data\_source) | The grafana dashboard global/default datasource, will be used in widget items if they have no their custom ones | <pre>object({<br/>    uid  = optional(string, "prometheus")<br/>    type = optional(string, "prometheus")<br/>  })</pre> | n/a | yes |
 | <a name="input_defaults"></a> [defaults](#input\_defaults) | Default values to be supplied to all modules. | `any` | `{}` | no |
 | <a name="input_folder_name"></a> [folder\_name](#input\_folder\_name) | The folder name to place grafana dashboard | `string` | `"application-dashboard"` | no |
 | <a name="input_folder_name_uids"></a> [folder\_name\_uids](#input\_folder\_name\_uids) | Map of folder names to folder UIDs. If provided, will be used instead of data sources | `map(string)` | `{}` | no |
+| <a name="input_loki_datasource_uid"></a> [loki\_datasource\_uid](#input\_loki\_datasource\_uid) | The default datasource uid for the logs widgets | `string` | `"loki"` | no |
 | <a name="input_name"></a> [name](#input\_name) | Dashboard name. Should not contain spaces and special chars. | `string` | n/a | yes |
 | <a name="input_rows"></a> [rows](#input\_rows) | List of widgets to be inserted into the dashboard. See ./modules/widgets folder to see list of available widgets. | `any` | n/a | yes |
-| <a name="input_variables"></a> [variables](#input\_variables) | Allows to define variables to be used in dashboard | <pre>list(object({<br/>    name        = string<br/>    type        = optional(string, "custom")<br/>    hide        = optional(number, 0)<br/>    includeAll  = optional(bool, false)<br/>    multi       = optional(bool, false)<br/>    query       = optional(string, "")<br/>    queryValue  = optional(string, "")<br/>    skipUrlSync = optional(bool, false)<br/>    options = optional(list(object({<br/>      selected = optional(bool, false)<br/>      value    = string<br/>      text     = optional(string, null)<br/>    })), [])<br/>    }<br/>  ))</pre> | `[]` | no |
+| <a name="input_variables"></a> [variables](#input\_variables) | Allows to define variables to be used in dashboard | <pre>list(object({<br/>    name             = string<br/>    type             = optional(string, "custom")<br/>    hide             = optional(number, 0)<br/>    includeAll       = optional(bool, false)<br/>    multi            = optional(bool, false)<br/>    query            = optional(string, "")<br/>    queryValue       = optional(string, "")<br/>    skipUrlSync      = optional(bool, false)<br/>    allowCustomValue = optional(bool, false)<br/>    options = optional(list(object({<br/>      selected = optional(bool, false)<br/>      value    = string<br/>      text     = optional(string, null)<br/>    })), [])<br/>    }<br/>  ))</pre> | `[]` | no |
 
 ## Outputs
 

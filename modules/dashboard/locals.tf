@@ -6,7 +6,11 @@ locals {
     options = [for option in variable.options : merge(option, { text = coalesce(option.text, option.value) })]
   })]
   grafana_templating_list_variables = [for variable in local.grafana_templating_list_variables_options_fill : merge(variable, {
-    current = try(variable.options[index(variable.options.*.selected, true)], null)
+    query = (variable.type == "custom" && variable.query == "") ? join(",", [for option in variable.options : option.value]) : variable.query
+    current = try({
+      text  = variable.options[index(variable.options.*.selected, true)].text
+      value = variable.options[index(variable.options.*.selected, true)].value
+    }, null)
   })]
 
 
@@ -55,7 +59,7 @@ locals {
   # default values from module and provided from outside
   widget_default_values = merge(
     {
-      period      = 5 # in minutes
+      period      = "$__rate_interval"
       stat        = "Sum"
       width       = 6
       height      = 5
@@ -93,7 +97,7 @@ locals {
       # calculate coordinates based on defaults and row/column details
       {
         coordinates = {
-          x      = item.column * item.width
+          x      = sum(concat([0], [for prevIndex, prevItem in try(local.widget_config_with_raw_column_data_and_defaults[item.row], []) : prevItem.width if prevIndex < item.column]))
           y      = item.row
           width  = item.width
           height = item.height
@@ -124,8 +128,10 @@ locals {
 
     # Deployment widgets
     values(module.deployment_replicas_widget).*.data,
-    values(module.deployment_errors_widget).*.data,
-    values(module.deployment_warns_widget).*.data,
+    values(module.deployment_logs_size_widget).*.data,
+    values(module.deployment_error_logs_widget).*.data,
+    values(module.deployment_warn_logs_widget).*.data,
+    values(module.deployment_latest_logs_widget).*.data,
 
     # Ingress widgets
     values(module.ingress_connections_widget).*.data,
@@ -141,7 +147,7 @@ locals {
     values(module.text_title_with_collapse).*.data,
 
     # sla/slo/sli widgets
-    values(module.widget_sla_slo_sli_nginx_main).*.data,
+    values(module.widget_sla_slo_sli_nginx_availability).*.data,
     values(module.widget_sla_slo_sli_nginx_latency).*.data,
     values(module.widget_sla_slo_sli_alb_availability).*.data,
     values(module.widget_sla_slo_sli_alb_latency).*.data,

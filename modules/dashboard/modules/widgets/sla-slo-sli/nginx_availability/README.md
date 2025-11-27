@@ -1,4 +1,4 @@
-# replicas
+# main
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -24,10 +24,9 @@ No resources.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_coordinates"></a> [coordinates](#input\_coordinates) | position | <pre>object({<br/>    x : number<br/>    y : number<br/>    width : number<br/>    height : number<br/>  })</pre> | n/a | yes |
-| <a name="input_datasource_uid"></a> [datasource\_uid](#input\_datasource\_uid) | The custom datasource for widget item | `string` | `"loki"` | no |
-| <a name="input_deployment"></a> [deployment](#input\_deployment) | n/a | `string` | n/a | yes |
-| <a name="input_expr"></a> [expr](#input\_expr) | LogQl expression to get the logs | `string` | `""` | no |
-| <a name="input_namespace"></a> [namespace](#input\_namespace) | n/a | `string` | `"default"` | no |
+| <a name="input_datasource_uid"></a> [datasource\_uid](#input\_datasource\_uid) | prometheus datasource type uid to use for widget | `string` | `"prometheus"` | no |
+| <a name="input_filter"></a> [filter](#input\_filter) | Allows to define additional filter on metrics | `string` | `""` | no |
+| <a name="input_histogram"></a> [histogram](#input\_histogram) | n/a | `bool` | `false` | no |
 | <a name="input_period"></a> [period](#input\_period) | stats | `string` | `"3"` | no |
 
 ## Outputs

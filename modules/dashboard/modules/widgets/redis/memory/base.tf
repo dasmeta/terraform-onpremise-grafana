@@ -1,7 +1,7 @@
 module "base" {
   source = "../../base"
 
-  name        = "Memory Usage [${var.period}m]"
+  name        = "Memory Usage"
   data_source = var.data_source
   coordinates = var.coordinates
   period      = var.period

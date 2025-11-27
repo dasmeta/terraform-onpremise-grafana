@@ -25,6 +25,7 @@ variable "defaults" {
     labels            = optional(any, { "priority" : "P2" })     # the service level monitoring alarms generally are considered as P2 priority and desired to be sent to slack channel)
     pending_period    = optional(string, "1m")                   # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire)
     interval          = optional(string, "5m")                   # the time interval to use to evaluate/aggregate/rate metric for comparison
+    deviation         = optional(number, 10)                     # the deviation threshold to consider increase/decrease of metric as anomaly and fire alert, we use this now for network alert (in this case 10 means that the metric got increased x10 times withing provided interval)
     threshold_percent = optional(number, 99)                     # the min percent threshold to use when triggering alerts on percent based expressions, higher values are good
     no_data_state     = optional(string, "NoData")               # define how to handle if no data for query, by default it will fire alert with no data info
     exec_err_state    = optional(string, "Error")                # define how to handle if query execution error, by default it will fire alert with error info

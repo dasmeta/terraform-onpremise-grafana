@@ -1,7 +1,7 @@
 module "base" {
   source = "../../base"
 
-  name              = "Restarts [${var.period}m]"
+  name              = "Restarts"
   data_source       = var.data_source
   coordinates       = var.coordinates
   stat              = "Maximum"
@@ -19,6 +19,6 @@ module "base" {
   }
 
   metrics = [
-    { label = "Restarts", color = "d62728", expression = "sum(rate(kube_pod_container_status_restarts_total{pod=\"${var.redis_pod}\", namespace=\"${var.redis_namespace}\"}[${var.period}m]))" },
+    { label = "Restarts", color = "d62728", expression = "sum(rate(kube_pod_container_status_restarts_total{pod=\"${var.redis_pod}\", namespace=\"${var.redis_namespace}\"}[${var.period}]))" },
   ]
 }

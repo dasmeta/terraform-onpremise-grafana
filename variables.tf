@@ -25,15 +25,17 @@ variable "application_dashboard" {
       uid  = optional(string, "prometheus")
       type = optional(string, "prometheus")
     }), {})
-    variables = optional(list(object({ # Allows to define variables to be used in dashboard
-      name        = string
-      type        = optional(string, "custom")
-      hide        = optional(number, 0)
-      includeAll  = optional(bool, false)
-      multi       = optional(bool, false)
-      query       = optional(string, "")
-      queryValue  = optional(string, "")
-      skipUrlSync = optional(bool, false)
+    loki_datasource_uid = optional(string, "loki") # the default datasource that will be used on loki/logs related widgets/blocks, "block/service" block allows to pass custom value for this variable
+    variables = optional(list(object({             # Allows to define variables to be used in dashboard
+      name             = string
+      type             = optional(string, "custom")
+      hide             = optional(number, 0)
+      includeAll       = optional(bool, false)
+      multi            = optional(bool, false)
+      query            = optional(string, "")
+      queryValue       = optional(string, "")
+      skipUrlSync      = optional(bool, false)
+      allowCustomValue = optional(bool, false)
       options = optional(list(object({
         selected = optional(bool, false)
         value    = string
@@ -193,17 +195,19 @@ variable "alerts" {
 
 variable "grafana" {
   type = object({
-    enabled       = optional(bool, true)
-    chart_version = optional(string, "9.2.9")
-    release_name  = optional(string, "grafana")
+    enabled          = optional(bool, true)
+    namespace        = optional(string, null) # the namespace fallbacks to var.namespace if not specified
+    create_namespace = optional(bool, true)   # whether create namespace if not exist
+    chart_version    = optional(string, "9.2.9")
+    release_name     = optional(string, "grafana")
     resources = optional(object({
-      request = optional(object({
-        cpu = optional(string, "1")
-        mem = optional(string, "2Gi")
+      requests = optional(object({
+        cpu    = optional(string, "1")
+        memory = optional(string, "2Gi")
       }), {})
-      limit = optional(object({
-        cpu = optional(string, "2")
-        mem = optional(string, "3Gi")
+      limits = optional(object({
+        cpu    = optional(string, "2")
+        memory = optional(string, "3Gi")
       }), {})
     }), {})
     database = optional(object({           # configure external(or in helm created) database base storing/persisting grafana data
@@ -234,7 +238,7 @@ variable "grafana" {
       hosts       = optional(list(string), ["grafana.example.com"])
       path        = optional(string, "/")
       path_type   = optional(string, "Prefix")
-      type        = optional(string, "alb")
+      type        = optional(string, "nginx")
       public      = optional(bool, true)
       tls_enabled = optional(bool, true)
     }))
@@ -255,7 +259,9 @@ variable "grafana" {
       trace_pattern = optional(string, "trace_id=(\\w+)")
     }), {})
 
-    replicas = optional(number, 1)
+    replicas            = optional(number, 1)
+    extra_configs       = optional(any, {}) # allows to pass extra/custom configs to grafana helm chart, this configs will deep-merged with all generated internal configs and can override the default set ones. All available options can be found in for the specified chart version here: https://artifacthub.io/packages/helm/grafana/grafana?modal=values
+    mysql_extra_configs = optional(any, {}) # allows to pass extra/custom configs to grafana-mysql created helm chart, this configs will deep-merged with all generated internal configs and can override the default set ones. All available options can be found in for the specified chart version here: https://artifacthub.io/packages/helm/bitnami/mysql?modal=values
   })
 
   description = "Values to construct the values file for Grafana Helm chart"
@@ -264,21 +270,23 @@ variable "grafana" {
 
 variable "prometheus" {
   type = object({
-    enabled        = optional(bool, true)
-    release_name   = optional(string, "prometheus")
-    chart_version  = optional(string, "75.8.0")
-    retention_days = optional(string, "15d")
-    storage_class  = optional(string, "")
-    storage_size   = optional(string, "100Gi")
-    access_modes   = optional(list(string), ["ReadWriteOnce"])
+    enabled          = optional(bool, true)
+    namespace        = optional(string, null) # the namespace fallbacks to var.namespace if not specified
+    create_namespace = optional(bool, true)   # whether create namespace if not exist
+    release_name     = optional(string, "prometheus")
+    chart_version    = optional(string, "75.8.0")
+    retention_days   = optional(string, "15d")
+    storage_class    = optional(string, "")
+    storage_size     = optional(string, "100Gi")
+    access_modes     = optional(list(string), ["ReadWriteOnce"])
     resources = optional(object({
-      request = optional(object({
-        cpu = optional(string, "1")
-        mem = optional(string, "2500Mi")
+      requests = optional(object({
+        cpu    = optional(string, "1")
+        memory = optional(string, "2500Mi")
       }), {})
-      limit = optional(object({
-        cpu = optional(string, "2")
-        mem = optional(string, "3Gi")
+      limits = optional(object({
+        cpu    = optional(string, "2")
+        memory = optional(string, "3Gi")
       }), {})
     }), {})
     replicas                     = optional(number, 1)
@@ -318,6 +326,7 @@ variable "prometheus" {
         value = "75000000"
       }
     ])
+    extra_configs = optional(any, {}) # allows to pass extra/custom configs to prometheus helm chart, this configs will deep-merged with all generated internal configs and can override the default set ones. All available options can be found in for the specified chart version here: https://artifacthub.io/packages/helm/prometheus-community/prometheus?modal=values
   })
   description = "values to be used as prometheus's chart values"
   default     = {}
@@ -325,9 +334,11 @@ variable "prometheus" {
 
 variable "tempo" {
   type = object({
-    enabled       = optional(bool, false)
-    chart_version = optional(string, "1.23.3")
-    release_name  = optional(string, "tempo")
+    enabled          = optional(bool, false)
+    namespace        = optional(string, null) # the namespace fallbacks to var.namespace if not specified
+    create_namespace = optional(bool, true)   # whether create namespace if not exist
+    chart_version    = optional(string, "1.23.3")
+    release_name     = optional(string, "tempo")
     service_account = optional(object({
       name        = optional(string, "tempo")
       annotations = optional(map(string), {})
@@ -352,34 +363,62 @@ variable "tempo" {
       size          = optional(string, "20Gi")
       storage_class = optional(string, "")
     }), {})
+    extra_configs = optional(any, {}) # allows to pass extra/custom configs to tempo helm chart, this configs will deep-merged with all generated internal configs and can override the default set ones. All available options can be found in for the specified chart version here: https://artifacthub.io/packages/helm/grafana/tempo?modal=values
   })
-  description = "confgis for tempo deployment"
+  description = "Configs for tempo deployment"
   default     = {}
 }
 
-variable "loki" {
+variable "loki_stack" {
   type = object({
-    enabled       = optional(bool, false)
-    chart_version = optional(string, "6.30.1")
-    release_name  = optional(string, "loki")
+    enabled          = optional(bool, false)  # whether loki-stack is enabled which brings loki and promtail components(promtail can be separately disabled if needed )
+    namespace        = optional(string, null) # the namespace fallbacks to var.namespace if not specified
+    create_namespace = optional(bool, true)   # whether create namespace if not exist
     loki = optional(object({
-      url                    = optional(string, "")
-      volume_enabled         = optional(bool, true)
-      enable_service_monitor = optional(bool, true)
-      service_account = optional(object({
+      chart_version    = optional(string, "6.34.0")       # the loki chart version, NOTE: the helm versions >=6.35.0 bring loki-0 pod crash-loops with default configs, makes ure you test things before helm upgrade to newer versions
+      release_name     = optional(string, "loki")         # the loki chart release name
+      deploymentMode   = optional(string, "SingleBinary") # we have SingleBinary mode by default, and in this mode distributor, ingester, querier, ... and several other components are within single binary loki app
+      replicas         = optional(number, 1)              # number of main loki replicas in SingleBinary mode
+      auth_enabled     = optional(bool, false)            # should authentication be enabled
+      structuredConfig = optional(any, {})                # this provide structured way to pass the loki all configs that available in https://grafana.com/docs/loki/latest/configure/ , for additional field support here code change may be needed or one can use extra_configs option
+      commonConfig = optional(object({                    # for more info check https://grafana.com/docs/loki/latest/configuration/#common_config
+        replication_factor = optional(number, 1)          # the number of ingesters to write to and read from.
+      }), {})
+      resources = optional(object({ # resources of loki in SingleBinary mode
+        requests = optional(object({
+          cpu    = optional(string, "1000m")
+          memory = optional(string, "1000Mi")
+        }), {})
+        limits = optional(object({
+          cpu    = optional(string, "1500m")
+          memory = optional(string, "2500Mi")
+        }), {})
+      }), {})
+      serviceAccount = optional(object({ # the service account configs that will be assigned to loki main component
         enable      = optional(bool, true)
         name        = optional(string, "loki")
         annotations = optional(map(string), {})
       }), {})
-      persistence = optional(object({
-        enabled       = optional(bool, true)
-        size          = optional(string, "20Gi")
-        storage_class = optional(string, "")
-        access_mode   = optional(string, "ReadWriteOnce")
+      monitoring = optional(object({ # monitoring related configs
+        serviceMonitor = optional(object({
+          enabled = optional(bool, true) # whether service monitor is enabled
+        }), {})
       }), {})
-      limits_config = optional(map(string), {}) # This allows setting limitations and enabling some features for loki. https://grafana.com/docs/loki/latest/configure/#limits_config
-      schema_configs = optional(list(object({
-        from         = optional(string, "2025-01-01") # defines starting at which date this storage schema will be applied
+      ingress = optional(object({ # allows to have loki service accessible from external
+        enabled = optional(bool, false)
+        type    = optional(string, "nginx")
+        public  = optional(bool, true)
+        tls = optional(object({
+          enabled       = optional(bool, true)
+          cert_provider = optional(string, "letsencrypt-prod")
+        }), {})
+        annotations = optional(map(string), {})
+        hosts       = optional(list(string), ["loki.example.com"])
+        path        = optional(string, "/")
+        path_type   = optional(string, "Prefix")
+      }), {})
+      schemaConfig = optional(list(object({           # Configures the chunk index schema and where it is stored. for more info check https://grafana.com/docs/loki/latest/configure/#schema_config
+        from         = optional(string, "2025-01-01") # defines starting at which date this storage schema will be applied        from         = optional(string, "2025-01-01")
         object_store = optional(string, "filesystem")
         store        = optional(string, "tsdb")
         schema       = optional(string, "v13")
@@ -388,7 +427,27 @@ variable "loki" {
           period = optional(string, "24h")
         }), {})
       })), [{}])
-      storage = optional(any, {
+      limits_config = optional(object({                                   # this allows setting limitations and enabling some features for loki. https://grafana.com/docs/loki/latest/configure/#limits_config
+        max_query_length          = optional(string, "7d1h")              # the limit to length of chunk store queries. 0 to disable.
+        volume_enabled            = optional(bool, true)                  # enables Loki log-volume index queries what can be used in grafana visualize log volume (LogQL → bytes_over_time)
+        allow_structured_metadata = optional(bool, true)                  # allow user to send structured metadata in push payload.
+        discover_log_levels       = optional(bool, true)                  # discover and add log levels(detected_level) during ingestion, if not present already.
+        deletion_mode             = optional(string, "filter-and-delete") # the Deletion mode, Can be one of 'disabled','filter-only', "filter-and-delete". When set to 'filter-only' or 'filter-and-delete', and if retention_enabled=true in the compactor config, then the log entry deletion API endpoints are available
+        retention_period          = optional(string, "360h")              # retention period to apply to stored data, only applies if retention_enabled=true in the compactor config. Must be either 0(disabled) or a multiple of 24h, 360h=15days
+      }), {})
+      compactor_options = optional(object({ # compactor component options, for retention the compactor must run/configured, in "SingleBinary" mode compactor runs in loki single binary and there is no need for compactor separate component so we need only
+        retention_enabled    = optional(bool, true)
+        working_directory    = optional(string, "/var/loki/compactor")
+        delete_request_store = optional(string, "filesystem")
+      }), {})
+      persistence = optional(object({ # enable persistent disk and configure
+        enabled      = optional(bool, true)
+        size         = optional(string, "20Gi")
+        storageClass = optional(string, "")
+        selector     = optional(string, null)
+        annotations  = optional(any, {})
+      }), {})
+      storage = optional(any, { # the storage where loki will place its data, Loki requires a bucket for chunks and the ruler
         type = "filesystem",
         filesystem = {
           chunks_directory    = "/var/loki/chunks"
@@ -401,32 +460,39 @@ variable "loki" {
           admin  = "unused-for-filesystem"
         }
       })
-      ingress = optional(object({
-        enabled     = optional(bool, false)
-        type        = optional(string, "nginx")
-        public      = optional(bool, true)
-        tls_enabled = optional(bool, true)
 
-        annotations = optional(map(string), {})
-        hosts       = optional(list(string), ["loki.example.com"])
-        path        = optional(string, "/")
-        path_type   = optional(string, "Prefix")
+      # loki stack other components configs(in SingleBinary mode most of them as separate component are disabled)
+      chunksCache = optional(object({            # memcached based cache service which being used for chunks caching and improves loki performance when querying data
+        enabled         = optional(bool, true)   # whether enabled, we have this enabled by default, but can be disabled manually
+        allocatedMemory = optional(number, 8192) # the memory in MBs we attach to this component, the pods requested memory being calculated based on expression round(allocatedMemory * 1.2)
       }), {})
-      replicas         = optional(number, 1)
-      retention_period = optional(string, "168h")
-      resources = optional(object({
-        request = optional(object({
-          cpu = optional(string, "200m")
-          mem = optional(string, "250Mi")
-        }), {})
-        limit = optional(object({
-          cpu = optional(string, "400m")
-          mem = optional(string, "500Mi")
-        }), {})
+      resultsCache = optional(object({           # memcached based cache service which being used for chunks caching and improves loki performance when querying data
+        enabled         = optional(bool, true)   # whether enabled, we have this enabled by default, but can be disabled manually
+        allocatedMemory = optional(number, 1024) # the memory in MBs we attach to this component, the pods requested memory being calculated based on expression round(allocatedMemory * 1.2)
       }), {})
+      test           = optional(any, { enabled = false })               # helm tests configs
+      lokiCanary     = optional(any, { enabled = false })               # the Loki canary pushes logs to and queries from this loki installation to test that it's working correctly
+      ruler          = optional(any, { enabled = false, replicas = 0 }) # the internal loki alerting module, which we do not need as we are going to use grafana alerting mechanism
+      compactor      = optional(any, { replicas = 0 })                  # compactor component, in SingleBinary mode this included in loki
+      read           = optional(any, { replicas = 0 })                  # read component, in SingleBinary mode this included in loki
+      write          = optional(any, { replicas = 0 })                  # write component, in SingleBinary mode this included in loki
+      backend        = optional(any, { replicas = 0 })                  # backend component, in SingleBinary mode this included in loki
+      ingester       = optional(any, { replicas = 0 })                  # ingester component, in SingleBinary mode this included in loki
+      querier        = optional(any, { replicas = 0 })                  # querier component, in SingleBinary mode this included in loki
+      queryFrontend  = optional(any, { replicas = 0 })                  # queryFrontend component, in SingleBinary mode this included in loki
+      queryScheduler = optional(any, { replicas = 0 })                  # queryScheduler component, in SingleBinary mode this included in loki
+      distributor    = optional(any, { replicas = 0 })                  # distributor component, in SingleBinary mode this included in loki
+      indexGateway   = optional(any, { replicas = 0 })                  # indexGateway component, in SingleBinary mode this included in loki
+      bloomBuilder   = optional(any, { replicas = 0 })                  # bloomBuilder component, in SingleBinary mode this included in loki
+      bloomPlanner   = optional(any, { replicas = 0 })                  # bloomPlanner component, in SingleBinary mode this included in loki
+      bloomGateway   = optional(any, { replicas = 0 })                  # bloomGateway component, in SingleBinary mode this included in loki
+
+      extra_configs = optional(any, {}) # allows to pass extra/custom configs to loki helm chart, this configs will deep-merged with all generated internal configs and can override the default set ones. All available options can be found in for the specified chart version here: https://artifacthub.io/packages/helm/grafana/loki?modal=values
     }), {})
+    # TODO: the promtail deprecated, consider to have this replaced with for example fluent/fluent-bit
     promtail = optional(object({
       enabled               = optional(bool, true)
+      chart_version         = optional(string, "6.17.1")
       log_level             = optional(string, "info")
       server_port           = optional(string, "3101")
       clients               = optional(list(string), [])
@@ -436,6 +502,7 @@ variable "loki" {
       extra_pipeline_stages = optional(any, [])
       ignored_containers    = optional(list(string), [])
       ignored_namespaces    = optional(list(string), [])
+      extra_configs         = optional(any, {}) # allows to pass extra/custom configs to promtail helm chart, this configs will deep-merged with all generated internal configs and can override the default set ones. All available options can be found in for the specified chart version here: https://artifacthub.io/packages/helm/grafana/promtail?modal=values
     }), {})
   })
   description = "Values to pass to loki helm chart"

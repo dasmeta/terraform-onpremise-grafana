@@ -68,13 +68,13 @@ locals {
           ["["],
           [join(",", compact([
             "{\\\"HTTP\\\": 80}",
-            var.configs.ingress.tls.enabled ? "{\\\"HTTPS\\\": 443}" : null
+            var.configs.ingress.tls_enabled ? "{\\\"HTTPS\\\": 443}" : null
           ]))],
           ["]"]
         )
       )
 
-      }, var.configs.ingress.tls.enabled ? {
+      }, var.configs.ingress.tls_enabled ? {
       "alb.ingress.kubernetes.io/ssl-redirect" = "443"
     } : {}) : {},
     var.configs.ingress.type == "nginx" ? merge({
@@ -82,15 +82,14 @@ locals {
       "nginx.ingress.kubernetes.io/proxy-buffer-size"  = "128k"
       "nginx.ingress.kubernetes.io/proxy-read-timeout" = "60"
       "nginx.ingress.kubernetes.io/proxy-send-timeout" = "60"
-      }, var.configs.ingress.tls.enabled ? {
+      }, var.configs.ingress.tls_enabled ? {
       "nginx.ingress.kubernetes.io/ssl-redirect"       = "true"
       "nginx.ingress.kubernetes.io/force-ssl-redirect" = "true"
-      # "cert-manager.io/cluster-issuer"                 = var.configs.ingress.tls.cert_provider
     } : {}) : {},
     var.configs.ingress.annotations
   )
 
-  ingress_tls = var.configs.ingress.tls.enabled && var.configs.ingress.type == "nginx" ? [{
+  ingress_tls = var.configs.ingress.tls_enabled && var.configs.ingress.type == "nginx" ? [{
     hosts       = var.configs.ingress.hosts
     secret_name = join("-", [replace(var.configs.ingress.hosts[0], ".", "-"), "tls"])
   }] : []
@@ -105,4 +104,16 @@ locals {
   }
 
   grafana_root_url = "https://${var.configs.ingress.hosts[0]}"
+
+  # TODO: As of https://github.com/bitnami/containers/issues/83267 announcement to be able to use bitnami charts there is need to switch image repository to `/bitnamilegacy/{app}` or use own/external docker image registry, for now we use bitnamilegacy but this repo images are static and will no longer maintained, so consider switching more reliable/maintained one
+  switchBitnamiChartRegistry = {
+    global = {
+      security = {
+        allowInsecureImages = true
+      }
+    }
+    image = {
+      repository = "bitnamilegacy/mysql"
+    }
+  }
 }

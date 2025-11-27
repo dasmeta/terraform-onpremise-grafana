@@ -47,7 +47,7 @@ variable "coordinates" {
 # stats
 variable "period" {
   type    = string
-  default = "3"
+  default = "$__rate_interval"
 }
 
 variable "anomaly_detection" {

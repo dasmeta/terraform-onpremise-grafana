@@ -1,16 +1,15 @@
 # SLA/SLO/SLI widgets
 
-module "widget_sla_slo_sli_nginx_main" {
-  source = "./modules/widgets/sla-slo-sli/nginx_main"
+module "widget_sla_slo_sli_nginx_availability" {
+  source = "./modules/widgets/sla-slo-sli/nginx_availability"
 
-  for_each = { for index, item in try(local.widget_config["sla-slo-sli/nginx_main"], []) : index => item }
+  for_each = { for index, item in try(local.widget_config["sla-slo-sli/nginx_availability"], []) : index => item }
 
   datasource_uid = try(each.value.datasource_uid, null)
   coordinates    = each.value.coordinates
   period         = each.value.period
-
-  balancer_name = try(each.value.balancer_name, null)
-
+  histogram      = try(each.value.histogram, false)
+  filter         = try(each.value.filter, "")
 }
 
 module "widget_sla_slo_sli_nginx_latency" {
@@ -22,9 +21,7 @@ module "widget_sla_slo_sli_nginx_latency" {
   coordinates    = each.value.coordinates
   period         = each.value.period
   histogram      = try(each.value.histogram, false)
-
-  balancer_name = try(each.value.balancer_name, null)
-
+  filter         = try(each.value.filter, "")
 }
 
 module "widget_sla_slo_sli_alb_availability" {
