@@ -57,9 +57,9 @@ locals {
 
   ## Widgets
   # default values from module and provided from outside
-  widget_default_values = merge(
+  widget_default_values = provider::deepmerge::mergo(
     {
-      period      = "$__rate_interval"
+      period      = ""
       stat        = "Sum"
       width       = 6
       height      = 5
@@ -69,7 +69,26 @@ locals {
       deployment  = "$deployment"
       namespace   = "$namespace"
       cluster     = "$cluster"
-      region      = null
+
+      prometheus = {                  # prometheus data source specific defaults
+        datasource_uid = "prometheus" # the data source name fallback
+        period         = "$__rate_interval"
+      }
+      loki = {                  # loki data source specific defaults
+        datasource_uid = "loki" # the data source name fallback
+        period         = "$__interval"
+        parser         = "logfmt"
+        direction      = "backward"
+        error_filter   = "detected_level=\"error\""
+        warn_filter    = "detected_level=\"warn\""
+        limit          = 10
+      }
+      cloudwatch = {                     # cloudwatch data source specific defaults
+        datasource_uid    = "cloudwatch" # the data source name fallback
+        period            = "auto"       # period default for aws cloudwatch data source
+        region            = null         # aws region
+        load_balancer_arn = null         # the ingress load balancer arn
+      }
     },
     var.defaults
   )

@@ -22,3 +22,8 @@ variable "filter" {
   default     = ""
   description = "Allows to define additional filter on metrics"
 }
+
+variable "period" {
+  type    = string
+  default = "$__rate_interval"
+}

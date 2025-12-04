@@ -8,10 +8,9 @@ module "ingress_connections_widget" {
   datasource_type = try(each.value.datasource_type, null)
   datasource_uid  = try(each.value.datasource_uid, null)
   coordinates     = each.value.coordinates
-  period          = each.value.period
+  period          = try(each.value.period, local.widget_default_values.prometheus.period)
   filter          = try(each.value.filter, "")
-
-  region = each.value.region
+  region          = try(each.value.region, local.widget_default_values.cloudwatch.region)
 }
 
 module "ingress_request_rate_widget" {
@@ -22,11 +21,9 @@ module "ingress_request_rate_widget" {
   datasource_type = try(each.value.datasource_type, null)
   datasource_uid  = try(each.value.datasource_uid, null)
   coordinates     = each.value.coordinates
-  period          = each.value.period
+  period          = try(each.value.period, local.widget_default_values.prometheus.period)
   by_host         = try(each.value.by_host, false)
   filter          = try(each.value.filter, "")
-
-  region = each.value.region
 }
 
 module "ingress_request_count_widget" {
@@ -37,14 +34,12 @@ module "ingress_request_count_widget" {
   datasource_type = try(each.value.datasource_type, null)
   datasource_uid  = try(each.value.datasource_uid, null)
   coordinates     = each.value.coordinates
-  period          = each.value.period
+  period          = try(each.value.period, local.widget_default_values.prometheus.period)
   by_host         = try(each.value.by_host, false)
   by_path         = try(each.value.by_path, false)
   by_status_path  = try(each.value.by_status_path, false)
   only_5xx        = try(each.value.only_5xx, false)
   filter          = try(each.value.filter, "")
-
-  region = each.value.region
 }
 
 module "ingress_cpu_widget" {
@@ -55,12 +50,10 @@ module "ingress_cpu_widget" {
   datasource_type = try(each.value.datasource_type, null)
   datasource_uid  = try(each.value.datasource_uid, null)
   coordinates     = each.value.coordinates
-  period          = each.value.period
+  period          = try(each.value.period, local.widget_default_values.prometheus.period)
 
   pod       = each.value.pod
   namespace = each.value.namespace
-
-  region = each.value.region
 }
 
 module "ingress_memory_widget" {
@@ -71,7 +64,7 @@ module "ingress_memory_widget" {
   datasource_type = try(each.value.datasource_type, null)
   datasource_uid  = try(each.value.datasource_uid, null)
   coordinates     = each.value.coordinates
-  period          = each.value.period
+  period          = try(each.value.period, local.widget_default_values.prometheus.period)
 
   pod       = each.value.pod
   namespace = each.value.namespace
@@ -85,11 +78,9 @@ module "ingress_latency_widget" {
   datasource_type = try(each.value.datasource_type, null)
   datasource_uid  = try(each.value.datasource_uid, null)
   coordinates     = each.value.coordinates
-  period          = each.value.period
+  period          = try(each.value.period, local.widget_default_values.prometheus.period)
   by_host         = try(each.value.by_host, false)
   acceptable      = try(each.value.acceptable, 1)
   problem         = try(each.value.problem, 2)
   filter          = try(each.value.filter, "")
-
-  region = each.value.region
 }

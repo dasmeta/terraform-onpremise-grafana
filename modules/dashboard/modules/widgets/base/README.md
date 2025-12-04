@@ -54,6 +54,7 @@ No resources.
 | <a name="input_stat"></a> [stat](#input\_stat) | n/a | `string` | `"Average"` | no |
 | <a name="input_tempo_targets"></a> [tempo\_targets](#input\_tempo\_targets) | Target section of tempo based widget | <pre>list(object({<br/>    filters = optional(list(any), [])<br/>    limit   = optional(number, 20)<br/>    query   = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_thresholds"></a> [thresholds](#input\_thresholds) | Thresholds defined for a widget | <pre>object({<br/>    mode = optional(string, "absolute")<br/>    steps = optional(list(object({<br/>      color = string<br/>      value = number<br/>      })), [<br/>      {<br/>        color = "green"<br/>        value = null<br/>      },<br/>      {<br/>        color = "red"<br/>        value = 80<br/>      },<br/>    ])<br/>  })</pre> | `{}` | no |
+| <a name="input_transformations"></a> [transformations](#input\_transformations) | Custom transformations to use | `any` | `null` | no |
 | <a name="input_trend"></a> [trend](#input\_trend) | trend of widget | `bool` | `null` | no |
 | <a name="input_type"></a> [type](#input\_type) | The type of widget to be prepared | `string` | `"metric"` | no |
 | <a name="input_unit"></a> [unit](#input\_unit) | Unit used for widget metric | `string` | `""` | no |

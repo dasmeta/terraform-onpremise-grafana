@@ -6,7 +6,7 @@ module "container_cpu_widget" {
 
   datasource_uid = try(each.value.datasource_uid, null)
   coordinates    = each.value.coordinates
-  period         = each.value.period
+  period         = try(each.value.period, local.widget_default_values.prometheus.period)
 
   # container
   container = each.value.container
@@ -21,7 +21,7 @@ module "container_memory_widget" {
 
   datasource_uid = try(each.value.datasource_uid, null)
   coordinates    = each.value.coordinates
-  period         = each.value.period
+  period         = try(each.value.period, local.widget_default_values.prometheus.period)
 
   # container
   container = each.value.container
@@ -35,7 +35,7 @@ module "container_network_widget" {
 
   datasource_uid = try(each.value.datasource_uid, null)
   coordinates    = each.value.coordinates
-  period         = each.value.period
+  period         = try(each.value.period, local.widget_default_values.prometheus.period)
 
   # container
   container = each.value.container
@@ -52,7 +52,7 @@ module "container_replicas_widget" {
   datasource_type = try(each.value.datasource_type, null)
   datasource_uid  = try(each.value.datasource_uid, null)
   coordinates     = each.value.coordinates
-  period          = each.value.period
+  period          = try(each.value.period, local.widget_default_values.prometheus.period)
 
   # container
   container = each.value.container
@@ -68,7 +68,7 @@ module "container_restarts_widget" {
   datasource_type = try(each.value.datasource_type, null)
   datasource_uid  = try(each.value.datasource_uid, null)
   coordinates     = each.value.coordinates
-  period          = each.value.period
+  period          = try(each.value.period, local.widget_default_values.prometheus.period)
 
   # container
   container = each.value.container
@@ -84,7 +84,7 @@ module "container_request_count_widget" {
   datasource_type = try(each.value.datasource_type, null)
   datasource_uid  = try(each.value.datasource_uid, null)
   coordinates     = each.value.coordinates
-  period          = each.value.period
+  period          = try(each.value.period, local.widget_default_values.prometheus.period)
 
   # container
   host              = each.value.host
@@ -101,7 +101,7 @@ module "container_response_time_widget" {
   datasource_type = try(each.value.datasource_type, null)
   datasource_uid  = try(each.value.datasource_uid, null)
   coordinates     = each.value.coordinates
-  period          = each.value.period
+  period          = try(each.value.period, local.widget_default_values.prometheus.period)
   acceptable      = try(each.value.acceptable, 1)
   problem         = try(each.value.problem, 2)
 
@@ -116,7 +116,7 @@ module "container_network_traffic_widget" {
 
   datasource_uid = try(each.value.datasource_uid, null)
   coordinates    = each.value.coordinates
-  period         = each.value.period
+  period         = try(each.value.period, local.widget_default_values.prometheus.period)
 
   pod       = each.value.pod
   namespace = each.value.namespace
@@ -129,7 +129,7 @@ module "container_network_error_widget" {
 
   datasource_uid = try(each.value.datasource_uid, null)
   coordinates    = each.value.coordinates
-  period         = each.value.period
+  period         = try(each.value.period, local.widget_default_values.prometheus.period)
 
   pod       = each.value.pod
   namespace = each.value.namespace
@@ -142,7 +142,7 @@ module "container_volume_capacity_widget" {
 
   datasource_uid = try(each.value.datasource_uid, null)
   coordinates    = each.value.coordinates
-  period         = each.value.period
+  period         = try(each.value.period, local.widget_default_values.prometheus.period)
   pvc_name       = each.value.pvc_name
   container      = each.value.container
   namespace      = each.value.namespace
@@ -155,7 +155,7 @@ module "container_volume_iops_widget" {
 
   datasource_uid = try(each.value.datasource_uid, null)
   coordinates    = each.value.coordinates
-  period         = each.value.period
+  period         = try(each.value.period, local.widget_default_values.prometheus.period)
   pod            = each.value.pod
   namespace      = each.value.namespace
 }
@@ -167,7 +167,7 @@ module "container_volume_throughput_widget" {
 
   datasource_uid = try(each.value.datasource_uid, null)
   coordinates    = each.value.coordinates
-  period         = each.value.period
+  period         = try(each.value.period, local.widget_default_values.prometheus.period)
   pod            = each.value.pod
   namespace      = each.value.namespace
 }

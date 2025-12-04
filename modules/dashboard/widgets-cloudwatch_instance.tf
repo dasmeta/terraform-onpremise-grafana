@@ -4,11 +4,11 @@ module "instance_cpu_widget" {
 
   for_each = { for index, item in try(local.widget_config["cloudwatch/instance_cpu"], []) : index => item }
 
-  datasource_uid = try(each.value.datasource_uid, null)
   coordinates    = each.value.coordinates
-  period         = each.value.period
   namespace      = each.value.namespace
-  region         = each.value.region
+  region         = try(each.value.region, local.widget_default_values.cloudwatch.region)
+  period         = try(each.value.period, local.widget_default_values.cloudwatch.period)
+  datasource_uid = try(each.value.datasource_uid, local.widget_default_values.cloudwatch.datasource_uid)
 }
 
 module "instance_disk_widget" {
@@ -16,12 +16,11 @@ module "instance_disk_widget" {
 
   for_each = { for index, item in try(local.widget_config["cloudwatch/instance_disk"], []) : index => item }
 
-  datasource_uid = try(each.value.datasource_uid, null)
   coordinates    = each.value.coordinates
-  period         = each.value.period
   namespace      = each.value.namespace
-
-  region = each.value.region
+  region         = try(each.value.region, local.widget_default_values.cloudwatch.region)
+  period         = try(each.value.period, local.widget_default_values.cloudwatch.period)
+  datasource_uid = try(each.value.datasource_uid, local.widget_default_values.cloudwatch.datasource_uid)
 }
 
 module "instance_network_widget" {
@@ -29,10 +28,9 @@ module "instance_network_widget" {
 
   for_each = { for index, item in try(local.widget_config["cloudwatch/instance_network"], []) : index => item }
 
-  datasource_uid = try(each.value.datasource_uid, null)
   coordinates    = each.value.coordinates
-  period         = each.value.period
   namespace      = each.value.namespace
-
-  region = each.value.region
+  region         = try(each.value.region, local.widget_default_values.cloudwatch.region)
+  period         = try(each.value.period, local.widget_default_values.cloudwatch.period)
+  datasource_uid = try(each.value.datasource_uid, local.widget_default_values.cloudwatch.datasource_uid)
 }

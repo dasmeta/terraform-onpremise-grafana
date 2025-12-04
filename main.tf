@@ -12,6 +12,7 @@ module "application_dashboard" {
   for_each = local.app_dash_map
 
   name                = each.value.name
+  defaults            = each.value.defaults
   folder_name         = each.value.folder_name
   create_folder       = var.skip_folder_creation
   rows                = each.value.rows
@@ -20,6 +21,7 @@ module "application_dashboard" {
   variables           = each.value.variables
   alerts              = each.value.alerts
   folder_name_uids    = local.folder_name_uids
+
 
   # TODO: there is a bug/issue that brings to count/foreach related error in alert creation submodule when we just change something in grafana/prometheus, so it is recommended to disable alerts and apply things and then enable back alerts, check and fix this issue
   depends_on = [module.grafana, grafana_folder.shared_folders]

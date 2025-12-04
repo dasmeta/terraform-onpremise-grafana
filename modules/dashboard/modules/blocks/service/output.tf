@@ -4,6 +4,6 @@ output "result" {
     [
       [{ type : "text/title-with-collapse", text : var.name }]
     ],
-    local.all_widgets_positions_fixed
+    local.all_widgets
   )
 }

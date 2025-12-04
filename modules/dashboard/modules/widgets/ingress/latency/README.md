@@ -32,7 +32,6 @@ No resources.
 | <a name="input_ingress_type"></a> [ingress\_type](#input\_ingress\_type) | n/a | `string` | `"nginx"` | no |
 | <a name="input_period"></a> [period](#input\_period) | stats | `string` | `"$__rate_interval"` | no |
 | <a name="input_problem"></a> [problem](#input\_problem) | The number which indicates the max timeout above which we have problem | `number` | `2` | no |
-| <a name="input_region"></a> [region](#input\_region) | n/a | `string` | `""` | no |
 
 ## Outputs
 

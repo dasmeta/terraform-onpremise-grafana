@@ -11,25 +11,26 @@ module "base" {
   period      = var.period
   region      = var.region
   type        = "gauge"
+  unit        = "percent"
   decimals    = 2
   thresholds = {
     mode = "absolute"
     steps = [
       {
-        color = "red"
-        value = null
+        "value" = null,
+        "color" = "red"
       },
       {
-        color = "yellow"
-        value = 80.00
+        "value" = 90,
+        "color" = "orange"
       },
       {
-        color = "light-green"
-        value = 90.00
+        "value" = 96,
+        "color" = "yellow"
       },
       {
-        color = "dark-green"
-        value = 99.00
+        "value" = 99,
+        "color" = "green"
       }
     ]
   }
@@ -55,7 +56,7 @@ module "base" {
     {
       region      = var.region
       namespace   = "AWS/ApplicationELB"
-      metric_name = "HTTPCode_ELB_5xx_Count"
+      metric_name = "HTTPCode_Target_5XX_Count"
       period      = var.period
       statistic   = "Sum"
       refId       = "B"

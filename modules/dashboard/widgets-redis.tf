@@ -6,7 +6,7 @@ module "redis_max_uptime_widget" {
 
   data_source = each.value.data_source
   coordinates = each.value.coordinates
-  period      = each.value.period
+  period      = try(each.value.period, local.widget_default_values.prometheus.period)
   cluster     = each.value.cluster
 
   redis_name = each.value.redis_name
@@ -20,7 +20,7 @@ module "redis_memory_widget" {
 
   data_source = each.value.data_source
   coordinates = each.value.coordinates
-  period      = each.value.period
+  period      = try(each.value.period, local.widget_default_values.prometheus.period)
   cluster     = each.value.cluster
 
   redis_name = each.value.redis_name
@@ -34,7 +34,7 @@ module "redis_total_memory_widget" {
 
   data_source = each.value.data_source
   coordinates = each.value.coordinates
-  period      = each.value.period
+  period      = try(each.value.period, local.widget_default_values.prometheus.period)
   cluster     = each.value.cluster
 
   redis_name = each.value.redis_name
@@ -48,7 +48,7 @@ module "redis_cpu_widget" {
 
   data_source = each.value.data_source
   coordinates = each.value.coordinates
-  period      = each.value.period
+  period      = try(each.value.period, local.widget_default_values.prometheus.period)
   cluster     = each.value.cluster
 
   redis_name = each.value.redis_name
@@ -62,7 +62,7 @@ module "redis_hits_misses_widget" {
 
   data_source = each.value.data_source
   coordinates = each.value.coordinates
-  period      = each.value.period
+  period      = try(each.value.period, local.widget_default_values.prometheus.period)
   cluster     = each.value.cluster
 
   redis_name = each.value.redis_name
@@ -76,7 +76,7 @@ module "redis_restarts_widget" {
 
   data_source = each.value.data_source
   coordinates = each.value.coordinates
-  period      = each.value.period
+  period      = try(each.value.period, local.widget_default_values.prometheus.period)
   cluster     = each.value.cluster
 
   redis_pod       = each.value.redis_pod
@@ -90,7 +90,7 @@ module "redis_errors_widget" {
 
   data_source = each.value.data_source
   coordinates = each.value.coordinates
-  period      = each.value.period
+  period      = try(each.value.period, local.widget_default_values.prometheus.period)
   cluster     = each.value.cluster
 
   redis_name = each.value.redis_name
@@ -104,7 +104,7 @@ module "redis_clients_widget" {
 
   data_source = each.value.data_source
   coordinates = each.value.coordinates
-  period      = each.value.period
+  period      = try(each.value.period, local.widget_default_values.prometheus.period)
   cluster     = each.value.cluster
 
   redis_name = each.value.redis_name
@@ -118,7 +118,7 @@ module "redis_connections_widget" {
 
   data_source = each.value.data_source
   coordinates = each.value.coordinates
-  period      = each.value.period
+  period      = try(each.value.period, local.widget_default_values.prometheus.period)
   cluster     = each.value.cluster
 
   redis_name = each.value.redis_name
@@ -132,7 +132,7 @@ module "redis_latency_widget" {
 
   data_source = each.value.data_source
   coordinates = each.value.coordinates
-  period      = each.value.period
+  period      = try(each.value.period, local.widget_default_values.prometheus.period)
   cluster     = each.value.cluster
 
   redis_name = each.value.redis_name
@@ -146,7 +146,7 @@ module "redis_network_widget" {
 
   data_source = each.value.data_source
   coordinates = each.value.coordinates
-  period      = each.value.period
+  period      = try(each.value.period, local.widget_default_values.prometheus.period)
   cluster     = each.value.cluster
 
   redis_name = each.value.redis_name
@@ -160,7 +160,7 @@ module "redis_replicas_widget" {
 
   data_source = each.value.data_source
   coordinates = each.value.coordinates
-  period      = each.value.period
+  period      = try(each.value.period, local.widget_default_values.prometheus.period)
   cluster     = each.value.cluster
 
   redis_name = each.value.redis_name
@@ -174,7 +174,7 @@ module "redis_total_commands_widget" {
 
   data_source = each.value.data_source
   coordinates = each.value.coordinates
-  period      = each.value.period
+  period      = try(each.value.period, local.widget_default_values.prometheus.period)
   cluster     = each.value.cluster
 
   redis_name = each.value.redis_name
@@ -188,7 +188,7 @@ module "redis_keys_widget" {
 
   data_source = each.value.data_source
   coordinates = each.value.coordinates
-  period      = each.value.period
+  period      = try(each.value.period, local.widget_default_values.prometheus.period)
   cluster     = each.value.cluster
 
   redis_name = each.value.redis_name
@@ -202,7 +202,7 @@ module "redis_expired_evicted_keys_widget" {
 
   data_source = each.value.data_source
   coordinates = each.value.coordinates
-  period      = each.value.period
+  period      = try(each.value.period, local.widget_default_values.prometheus.period)
   cluster     = each.value.cluster
 
   redis_name = each.value.redis_name
@@ -216,7 +216,7 @@ module "redis_expiring_notexpiring_keys_widget" {
 
   data_source = each.value.data_source
   coordinates = each.value.coordinates
-  period      = each.value.period
+  period      = try(each.value.period, local.widget_default_values.prometheus.period)
   cluster     = each.value.cluster
 
   redis_name = each.value.redis_name

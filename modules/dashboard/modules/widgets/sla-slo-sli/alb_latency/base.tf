@@ -1,7 +1,7 @@
 module "base" {
   source = "../../base"
 
-  name = "Availability"
+  name = "Latency"
   data_source = {
     uid  = var.datasource_uid
     type = "Cloudwatch"
@@ -11,6 +11,29 @@ module "base" {
   region      = var.region
   type        = "gauge"
   decimals    = 2
+  color_mode  = "thresholds"
+
+  thresholds = {
+    mode = "absolute"
+    steps = [
+      {
+        "value" = null,
+        "color" = "green"
+      },
+      {
+        "value" = 2,
+        "color" = "orange"
+      },
+      {
+        "value" = 2.5,
+        "color" = "yellow"
+      },
+      {
+        "value" = 3,
+        "color" = "red"
+      }
+    ]
+  }
 
   defaults = {
     MetricNamespace = "AWS/EC2"

@@ -24,4 +24,5 @@ module "base_grafana" {
   cloudwatch_targets = var.cloudwatch_targets
   loki_targets       = var.loki_targets
   legend_format      = var.legend_format
+  transformations    = var.transformations
 }

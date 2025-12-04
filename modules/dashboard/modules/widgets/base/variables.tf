@@ -290,3 +290,9 @@ variable "tempo_targets" {
   description = "Target section of tempo based widget"
   default     = []
 }
+
+variable "transformations" {
+  type        = any
+  description = "Custom transformations to use"
+  default     = null
+}

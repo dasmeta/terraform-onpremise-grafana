@@ -22,22 +22,22 @@ module "base" {
 
   color_mode = var.histogram ? "palette-classic" : "thresholds"
   thresholds = var.histogram ? {} : {
-    "steps" : [
+    "steps" = [
       {
-        "value" : null,
-        "color" : "red"
+        "value" = null,
+        "color" = "red"
       },
       {
-        "value" : 90,
-        "color" : "orange"
+        "value" = 90,
+        "color" = "orange"
       },
       {
-        "value" : 96,
-        "color" : "yellow"
+        "value" = 96,
+        "color" = "yellow"
       },
       {
-        "value" : 99,
-        "color" : "green"
+        "value" = 99,
+        "color" = "green"
       }
     ]
   }

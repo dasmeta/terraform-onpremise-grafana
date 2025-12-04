@@ -33,7 +33,6 @@ No resources.
 | <a name="input_ingress_type"></a> [ingress\_type](#input\_ingress\_type) | n/a | `string` | `"nginx"` | no |
 | <a name="input_only_5xx"></a> [only\_5xx](#input\_only\_5xx) | n/a | `bool` | `false` | no |
 | <a name="input_period"></a> [period](#input\_period) | stats | `string` | `"$__rate_interval"` | no |
-| <a name="input_region"></a> [region](#input\_region) | n/a | `string` | `""` | no |
 
 ## Outputs
 

@@ -213,8 +213,8 @@ variable "color_mode" {
   default     = "palette-classic"
 }
 
-variable "targets" {
+variable "transformations" {
   type        = any
-  description = "Custom targets to use"
+  description = "Custom transformations to use"
   default     = null
 }

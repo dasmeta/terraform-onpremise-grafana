@@ -57,3 +57,13 @@ variable "disk_widgets" {
   default     = {}
   description = "The configs allow to manage the volumes related widgets"
 }
+
+variable "period" {
+  type    = string
+  default = "$__rate_interval"
+}
+
+variable "period_loki" {
+  type    = string
+  default = "$__interval"
+}
