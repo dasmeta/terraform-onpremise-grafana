@@ -32,11 +32,6 @@ variable "acceptable" {
   description = "The number which indicates the acceptable timeout"
 }
 
-variable "region" {
-  type    = string
-  default = ""
-}
-
 # position
 variable "coordinates" {
   type = object({

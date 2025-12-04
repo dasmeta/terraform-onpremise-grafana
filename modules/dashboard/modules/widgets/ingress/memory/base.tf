@@ -7,9 +7,6 @@ module "base" {
     type = var.datasource_type
   }
   coordinates = var.coordinates
-  period      = var.period
-  defaults    = {}
-
   options = {
     legend = {
       show_legend = false

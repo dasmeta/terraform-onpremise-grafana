@@ -1,7 +1,7 @@
 module "base" {
   source = "../../base"
 
-  name = "Target Respons Time"
+  name = "Target Response Time"
   data_source = {
     uid  = var.datasource_uid
     type = "Cloudwatch"

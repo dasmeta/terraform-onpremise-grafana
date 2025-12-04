@@ -148,6 +148,7 @@ locals {
         sort = lookup(var.options.tooltip, "sort", "none")
       }
     }
-    targets = concat(local.query_targets, local.metric_targets, local.cloudwatch_targets, local.loki_targets)
+    targets         = concat(local.query_targets, local.metric_targets, local.cloudwatch_targets, local.loki_targets)
+    transformations = var.transformations
   }
 }

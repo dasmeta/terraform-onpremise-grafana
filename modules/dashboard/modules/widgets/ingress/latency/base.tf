@@ -8,9 +8,6 @@ module "base" {
   }
   coordinates = var.coordinates
   period      = var.period
-  region      = var.region
-
-  defaults = {}
 
   metrics = var.by_host ? [
     { label : "Avg", color : "7AAFF9", expression : "avg(increase(nginx_ingress_controller_request_duration_seconds_sum{${var.filter}}[${var.period}]))" },

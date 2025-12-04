@@ -74,7 +74,7 @@ module "this" {
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_alb_ingress_connections_widget"></a> [alb\_ingress\_connections\_widget](#module\_alb\_ingress\_connections\_widget) | ./modules/widgets/alb_ingress/connections | n/a |
-| <a name="module_alb_ingress_request_count_widget"></a> [alb\_ingress\_request\_count\_widget](#module\_alb\_ingress\_request\_count\_widget) | ./modules/widgets/alb_ingress/connections | n/a |
+| <a name="module_alb_ingress_request_count_widget"></a> [alb\_ingress\_request\_count\_widget](#module\_alb\_ingress\_request\_count\_widget) | ./modules/widgets/alb_ingress/request_count | n/a |
 | <a name="module_alb_ingress_target_http_response_widget"></a> [alb\_ingress\_target\_http\_response\_widget](#module\_alb\_ingress\_target\_http\_response\_widget) | ./modules/widgets/alb_ingress/target_http_response | n/a |
 | <a name="module_alb_ingress_target_response_time_widget"></a> [alb\_ingress\_target\_response\_time\_widget](#module\_alb\_ingress\_target\_response\_time\_widget) | ./modules/widgets/alb_ingress/target_response_time | n/a |
 | <a name="module_block_alb_ingress"></a> [block\_alb\_ingress](#module\_block\_alb\_ingress) | ./modules/blocks/alb_ingress | n/a |
@@ -98,11 +98,11 @@ module "this" {
 | <a name="module_container_volume_capacity_widget"></a> [container\_volume\_capacity\_widget](#module\_container\_volume\_capacity\_widget) | ./modules/widgets/container/volume-capacity | n/a |
 | <a name="module_container_volume_iops_widget"></a> [container\_volume\_iops\_widget](#module\_container\_volume\_iops\_widget) | ./modules/widgets/container/volume-iops | n/a |
 | <a name="module_container_volume_throughput_widget"></a> [container\_volume\_throughput\_widget](#module\_container\_volume\_throughput\_widget) | ./modules/widgets/container/volume-throughput | n/a |
-| <a name="module_deployment_error_logs_widget"></a> [deployment\_error\_logs\_widget](#module\_deployment\_error\_logs\_widget) | ./modules/widgets/deployment/error-logs | n/a |
-| <a name="module_deployment_latest_logs_widget"></a> [deployment\_latest\_logs\_widget](#module\_deployment\_latest\_logs\_widget) | ./modules/widgets/deployment/latest-logs | n/a |
-| <a name="module_deployment_logs_size_widget"></a> [deployment\_logs\_size\_widget](#module\_deployment\_logs\_size\_widget) | ./modules/widgets/deployment/logs-size | n/a |
+| <a name="module_deployment_error_logs_widget"></a> [deployment\_error\_logs\_widget](#module\_deployment\_error\_logs\_widget) | ./modules/widgets/loki/error-logs | n/a |
+| <a name="module_deployment_latest_logs_widget"></a> [deployment\_latest\_logs\_widget](#module\_deployment\_latest\_logs\_widget) | ./modules/widgets/loki/latest-logs | n/a |
+| <a name="module_deployment_logs_size_widget"></a> [deployment\_logs\_size\_widget](#module\_deployment\_logs\_size\_widget) | ./modules/widgets/loki/logs-size | n/a |
 | <a name="module_deployment_replicas_widget"></a> [deployment\_replicas\_widget](#module\_deployment\_replicas\_widget) | ./modules/widgets/deployment/replicas | n/a |
-| <a name="module_deployment_warn_logs_widget"></a> [deployment\_warn\_logs\_widget](#module\_deployment\_warn\_logs\_widget) | ./modules/widgets/deployment/warn-logs | n/a |
+| <a name="module_deployment_warn_logs_widget"></a> [deployment\_warn\_logs\_widget](#module\_deployment\_warn\_logs\_widget) | ./modules/widgets/loki/warn-logs | n/a |
 | <a name="module_ingress_connections_widget"></a> [ingress\_connections\_widget](#module\_ingress\_connections\_widget) | ./modules/widgets/ingress/connections | n/a |
 | <a name="module_ingress_cpu_widget"></a> [ingress\_cpu\_widget](#module\_ingress\_cpu\_widget) | ./modules/widgets/ingress/cpu | n/a |
 | <a name="module_ingress_latency_widget"></a> [ingress\_latency\_widget](#module\_ingress\_latency\_widget) | ./modules/widgets/ingress/latency | n/a |
@@ -112,9 +112,9 @@ module "this" {
 | <a name="module_instance_cpu_widget"></a> [instance\_cpu\_widget](#module\_instance\_cpu\_widget) | ./modules/widgets/cloudwatch/instance_cpu | n/a |
 | <a name="module_instance_disk_widget"></a> [instance\_disk\_widget](#module\_instance\_disk\_widget) | ./modules/widgets/cloudwatch/instance_disk | n/a |
 | <a name="module_instance_network_widget"></a> [instance\_network\_widget](#module\_instance\_network\_widget) | ./modules/widgets/cloudwatch/instance_network | n/a |
-| <a name="module_logs_count_widget"></a> [logs\_count\_widget](#module\_logs\_count\_widget) | ./modules/widgets/logs/count | n/a |
-| <a name="module_logs_error_rate_widget"></a> [logs\_error\_rate\_widget](#module\_logs\_error\_rate\_widget) | ./modules/widgets/logs/error-rate | n/a |
-| <a name="module_logs_warning_rate_widget"></a> [logs\_warning\_rate\_widget](#module\_logs\_warning\_rate\_widget) | ./modules/widgets/logs/warning-rate | n/a |
+| <a name="module_logs_count_widget"></a> [logs\_count\_widget](#module\_logs\_count\_widget) | ./modules/widgets/loki/count | n/a |
+| <a name="module_logs_error_rate_widget"></a> [logs\_error\_rate\_widget](#module\_logs\_error\_rate\_widget) | ./modules/widgets/loki/error-rate | n/a |
+| <a name="module_logs_warning_rate_widget"></a> [logs\_warning\_rate\_widget](#module\_logs\_warning\_rate\_widget) | ./modules/widgets/loki/warning-rate | n/a |
 | <a name="module_pod_cpu_widget"></a> [pod\_cpu\_widget](#module\_pod\_cpu\_widget) | ./modules/widgets/pod/cpu | n/a |
 | <a name="module_pod_memory_widget"></a> [pod\_memory\_widget](#module\_pod\_memory\_widget) | ./modules/widgets/pod/memory | n/a |
 | <a name="module_pod_restarts_widget"></a> [pod\_restarts\_widget](#module\_pod\_restarts\_widget) | ./modules/widgets/pod/restarts | n/a |

@@ -7,6 +7,7 @@ module "block_ingress" {
   namespace = try(each.value.block.namespace, "ingress-nginx")
 
   datasource_uid = try(each.value.block.datasource_uid, var.data_source.uid, null)
+  period         = try(each.value.block.period, local.widget_default_values.prometheus.period)
   filter         = try(each.value.block.filter, "")
 }
 
@@ -30,11 +31,10 @@ module "block_sla" {
 
   for_each = { for index, item in try(local.blocks_by_type["sla"], []) : index => item }
 
-  balancer_name     = try(each.value.block.balancer_name, null)
   sla_ingress_type  = try(each.value.block.sla_ingress_type, null)
-  load_balancer_arn = try(each.value.block.load_balancer_arn, null)
-  datasource_uid    = try(each.value.block.datasource_uid, var.data_source.uid, null)
-  region            = try(each.value.block.region, null)
+  datasource_uid    = try(each.value.block.datasource_uid, local.widget_default_values[each.value.block.sla_ingress_type == "nginx" ? "prometheus" : "cloudwatch"].datasource_uid)
+  load_balancer_arn = try(each.value.block.load_balancer_arn, local.widget_default_values.cloudwatch.load_balancer_arn)
+  region            = try(each.value.block.region, local.widget_default_values.cloudwatch.region)
   filter            = try(each.value.block.filter, "")
 }
 
@@ -54,8 +54,9 @@ module "block_cloudwatch" {
 
   for_each = { for index, item in try(local.blocks_by_type["cloudwatch"], []) : index => item }
 
-  region         = try(each.value.block.region, "")
-  datasource_uid = try(each.value.block.datasource_uid, "cloudwatch")
+  region         = try(each.value.block.region, local.widget_default_values.cloudwatch.region)
+  period         = try(each.value.block.period, local.widget_default_values.cloudwatch.period)
+  datasource_uid = try(each.value.block.datasource_uid, local.widget_default_values.cloudwatch.datasource_uid)
 }
 
 module "block_alb_ingress" {
@@ -63,7 +64,8 @@ module "block_alb_ingress" {
 
   for_each = { for index, item in try(local.blocks_by_type["alb_ingress"], []) : index => item }
 
-  load_balancer_arn = try(each.value.block.load_balancer_arn, "")
-  region            = try(each.value.block.region, "")
-  datasource_uid    = try(each.value.block.datasource_uid, var.data_source.uid, "cloudwatch")
+  load_balancer_arn = try(each.value.block.load_balancer_arn, local.widget_default_values.cloudwatch.load_balancer_arn)
+  region            = try(each.value.block.region, local.widget_default_values.cloudwatch.region)
+  period            = try(each.value.block.period, local.widget_default_values.cloudwatch.period)
+  datasource_uid    = try(each.value.block.datasource_uid, local.widget_default_values.cloudwatch.datasource_uid)
 }

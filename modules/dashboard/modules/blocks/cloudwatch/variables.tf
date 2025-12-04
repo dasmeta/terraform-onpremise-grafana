@@ -4,6 +4,11 @@ variable "region" {
   description = "AWS region"
 }
 
+variable "period" {
+  type    = string
+  default = "auto"
+}
+
 variable "datasource_uid" {
   nullable    = false
   type        = string

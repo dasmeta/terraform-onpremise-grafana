@@ -94,7 +94,7 @@ module "this" {
   grafana_admin_password = "admin"
 }
 
-# we deploy same app on two different namespaces: prod and dev
+# we deploy same app in two different namespaces: prod and dev to check $namespace variable dashboard
 resource "helm_release" "http_echo" {
   for_each = toset(["prod", "dev"])
 

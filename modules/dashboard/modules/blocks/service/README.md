@@ -28,6 +28,8 @@ No resources.
 | <a name="input_loki_datasource_uid"></a> [loki\_datasource\_uid](#input\_loki\_datasource\_uid) | datasource uid for the logs widgets | `string` | `"loki"` | no |
 | <a name="input_name"></a> [name](#input\_name) | Service name | `string` | n/a | yes |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | EKS namespace name | `string` | n/a | yes |
+| <a name="input_period"></a> [period](#input\_period) | n/a | `string` | `"$__rate_interval"` | no |
+| <a name="input_period_loki"></a> [period\_loki](#input\_period\_loki) | n/a | `string` | `"$__interval"` | no |
 | <a name="input_prometheus_datasource_uid"></a> [prometheus\_datasource\_uid](#input\_prometheus\_datasource\_uid) | datasource uid for the metrics widgets | `string` | `"prometheus"` | no |
 
 ## Outputs

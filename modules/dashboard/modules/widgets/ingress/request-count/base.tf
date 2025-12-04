@@ -8,9 +8,6 @@ module "base" {
   }
   coordinates = var.coordinates
   period      = var.period
-  region      = var.region
-
-  defaults = {}
 
   options = {
     legend = {

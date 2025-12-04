@@ -30,7 +30,6 @@ No resources.
 | <a name="input_filter"></a> [filter](#input\_filter) | Allows to define additional filter on metric | `string` | `""` | no |
 | <a name="input_ingress_type"></a> [ingress\_type](#input\_ingress\_type) | n/a | `string` | `"nginx"` | no |
 | <a name="input_period"></a> [period](#input\_period) | stats | `string` | `"$__rate_interval"` | no |
-| <a name="input_region"></a> [region](#input\_region) | n/a | `string` | `""` | no |
 
 ## Outputs
 

@@ -10,6 +10,11 @@ variable "region" {
   default = "eu-central-1"
 }
 
+variable "period" {
+  type    = string
+  default = "auto"
+}
+
 variable "datasource_uid" {
   nullable    = false
   type        = string

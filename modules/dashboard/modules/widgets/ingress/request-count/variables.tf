@@ -21,11 +21,6 @@ variable "ingress_type" {
   default = "nginx"
 }
 
-variable "region" {
-  type    = string
-  default = ""
-}
-
 # position
 variable "coordinates" {
   type = object({

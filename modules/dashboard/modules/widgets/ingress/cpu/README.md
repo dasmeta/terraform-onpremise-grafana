@@ -30,7 +30,6 @@ No resources.
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | n/a | `string` | `"default"` | no |
 | <a name="input_period"></a> [period](#input\_period) | stats | `string` | `"$__rate_interval"` | no |
 | <a name="input_pod"></a> [pod](#input\_pod) | n/a | `string` | n/a | yes |
-| <a name="input_region"></a> [region](#input\_region) | n/a | `string` | `""` | no |
 
 ## Outputs
 

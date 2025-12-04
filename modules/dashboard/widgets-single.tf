@@ -15,5 +15,4 @@ module "widget_custom" {
   title       = each.value.title
   metrics     = each.value.metrics
   expressions = each.value.expressions
-
 }
