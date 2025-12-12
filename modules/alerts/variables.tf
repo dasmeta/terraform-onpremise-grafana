@@ -58,6 +58,7 @@ variable "labels" {
     priority = optional(string, "P2")
     severity = optional(string, "warning")
     env      = optional(string, "")
+    team     = optional(string, "")
   })
   default = {}
 }

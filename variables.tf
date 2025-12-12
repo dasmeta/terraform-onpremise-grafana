@@ -77,6 +77,7 @@ variable "alerts" {
       priority = optional(string, "P2")
       severity = optional(string, "warning")
       env      = optional(string, "")
+      team      = optional(string, "")
     }), {})
     rules = optional(
       list(object({                                 # Describes custom alert rules
