@@ -43,7 +43,7 @@ resource "helm_release" "loki" {
             }]
             tls = [for item in local.ingress_tls : {
               secretName = item.secret_name
-              hosts      = [for host in var.configs.loki.ingress.hosts : [host]]
+              hosts      = var.configs.loki.ingress.hosts
             }]
           }
         }
