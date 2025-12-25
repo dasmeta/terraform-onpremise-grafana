@@ -9,8 +9,8 @@ module "this" {
     # Service Block
     { "name" : "dev-deployment1", "namespace" : "dev", "type" : "block/service" },
     # Elasticache Redis Block
-    { "type" : "block/elasticache_redis", "block_name" : "Elasticache Redis", "cache_cluster_ids" : ["redis-001", "redis-002"] },
+    { "type" : "block/elasticache_redis", "block_name" : "Elasticache Redis", "cache_cluster_ids" : ["redis-name-001", "redis-name-002"] },
     # RDS Block
-    { "type" : "block/rds", "block_name" : "RDS", "db_identifiers" : ["rds"] }
+    { "type" : "block/rds", "block_name" : "RDS", "db_identifiers" : ["rds-name"] }
   ]
 }
