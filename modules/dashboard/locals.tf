@@ -30,12 +30,14 @@ locals {
 
   # bring all module results together
   blocks_results = {
-    ingress     = values(module.block_ingress).*.result
-    service     = values(module.block_service).*.result
-    sla         = values(module.block_sla).*.result
-    redis       = values(module.block_redis).*.result
-    cloudwatch  = values(module.block_cloudwatch).*.result
-    alb_ingress = values(module.block_alb_ingress).*.result
+    ingress           = values(module.block_ingress).*.result
+    service           = values(module.block_service).*.result
+    sla               = values(module.block_sla).*.result
+    redis             = values(module.block_redis).*.result
+    cloudwatch        = values(module.block_cloudwatch).*.result
+    alb_ingress       = values(module.block_alb_ingress).*.result
+    elasticache_redis = values(module.block_elasticache_redis).*.result
+    rds               = values(module.block_rds).*.result
   }
 
   blocks_by_type_results = concat([], [
@@ -207,5 +209,25 @@ locals {
     values(module.alb_ingress_request_count_widget).*.data,
     values(module.alb_ingress_target_response_time_widget).*.data,
     values(module.alb_ingress_target_http_response_widget).*.data,
+
+    # ElastiCache Redis widgets
+    values(module.elasticache_redis_cpu_widget).*.data,
+    values(module.elasticache_redis_memory_widget).*.data,
+    values(module.elasticache_redis_capacity_widget).*.data,
+    values(module.elasticache_redis_latency_widget).*.data,
+    values(module.elasticache_redis_connections_widget).*.data,
+    values(module.elasticache_redis_new_connections_widget).*.data,
+    values(module.elasticache_redis_hit_rate_widget).*.data,
+    values(module.elasticache_redis_writes_widget).*.data,
+    values(module.elasticache_redis_reads_widget).*.data,
+
+    # RDS widgets
+    values(module.rds_cpu_widget).*.data,
+    values(module.rds_memory_widget).*.data,
+    values(module.rds_network_widget).*.data,
+    values(module.rds_connections_widget).*.data,
+    values(module.rds_read_latency_widget).*.data,
+    values(module.rds_write_latency_widget).*.data,
+    values(module.rds_read_iops_widget).*.data,
   )
 }
