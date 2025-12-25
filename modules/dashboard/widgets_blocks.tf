@@ -69,3 +69,27 @@ module "block_alb_ingress" {
   period            = try(each.value.block.period, local.widget_default_values.cloudwatch.period)
   datasource_uid    = try(each.value.block.datasource_uid, local.widget_default_values.cloudwatch.datasource_uid)
 }
+
+module "block_elasticache_redis" {
+  source = "./modules/blocks/elasticache_redis"
+
+  for_each = { for index, item in try(local.blocks_by_type["elasticache_redis"], []) : index => item }
+
+  cache_cluster_ids = try(each.value.block.cache_cluster_ids, [])
+  region            = try(each.value.block.region, local.widget_default_values.cloudwatch.region)
+  period            = try(each.value.block.period, local.widget_default_values.cloudwatch.period)
+  datasource_uid    = try(each.value.block.datasource_uid, local.widget_default_values.cloudwatch.datasource_uid)
+  block_name        = try(each.value.block.block_name, "Redis (Queue)")
+}
+
+module "block_rds" {
+  source = "./modules/blocks/rds"
+
+  for_each = { for index, item in try(local.blocks_by_type["rds"], []) : index => item }
+
+  db_identifiers = try(each.value.block.db_identifiers, [])
+  region         = try(each.value.block.region, local.widget_default_values.cloudwatch.region)
+  period         = try(each.value.block.period, local.widget_default_values.cloudwatch.period)
+  datasource_uid = try(each.value.block.datasource_uid, local.widget_default_values.cloudwatch.datasource_uid)
+  block_name     = try(each.value.block.block_name, "RDS")
+}
