@@ -101,6 +101,7 @@ variable "alerts" {
         filters              = optional(any, {})              # Filters object to identify each service for alerting
         function             = optional(string, "mean")       # One of Reduce functions which will be used in B block for alerting
         equation             = string                         # The equation in the math expression which compares B blocks value with a number and generates an alert if needed. Possible values: gt, lt, gte, lte, e
+        pending_period       = optional(string, "0")          # Define for how long to wait to trigger alert if condition satisfies(how long it should last), for example valid values can be "5m", "30s" or "5m30s"
         threshold            = number                         # The value against which B blocks are compared in the math expression
     })), [])
     contact_points = optional(object({
