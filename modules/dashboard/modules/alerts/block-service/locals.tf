@@ -4,8 +4,7 @@ locals {
       defaults = {
         replicas_count_expr = "kube_deployment_status_replicas_available{deployment='${var.defaults.workload_prefix}${var.name}${var.defaults.workload_suffix}', namespace='${var.namespace}'}"
         labels = {
-          priority = "P1"
-          slack    = "true"
+          slack = "true"
         }
       }
     }
@@ -13,8 +12,7 @@ locals {
       defaults = {
         replicas_count_expr = "kube_daemonset_status_number_ready{daemonset='${var.defaults.workload_prefix}${var.name}${var.defaults.workload_suffix}', namespace='${var.namespace}'}"
         labels = {
-          priority = "P1"
-          slack    = "true"
+          slack = "true"
         }
       }
       alerts = {
@@ -26,8 +24,7 @@ locals {
       defaults = {
         replicas_count_expr = "kube_statefulset_status_replicas_available{statefulset='${var.defaults.workload_prefix}${var.name}${var.defaults.workload_suffix}', namespace='${var.namespace}'}"
         labels = {
-          priority = "P1"
-          slack    = "true"
+          slack = "true"
         }
       }
     }
@@ -36,8 +33,7 @@ locals {
         enabled       = false
         no_data_state = "OK"
         labels = {
-          priority = "P2"
-          slack    = "true"
+          slack = "true"
         }
       }
       alerts = {
@@ -53,8 +49,7 @@ locals {
         enabled       = false
         no_data_state = "OK"
         labels = {
-          priority = "P2"
-          slack    = "true"
+          slack = "true"
         }
       }
       alerts = {
