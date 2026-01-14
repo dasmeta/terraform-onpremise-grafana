@@ -20,7 +20,7 @@ variable "defaults" {
     workload_type     = optional(string, "deployment")       # the workload type of app setup, can be "daemonset", "deployment", "statefulset" and "cronjob"
     workload_suffix   = optional(string, "")                 # allows to filter workload or pod via {var.name}{var.defaults.workload_suffix} filtration, can be used for example in case we have flagger canary deployment to add "-primary" suffix to filter deployment
     workload_prefix   = optional(string, "")                 # allows to filter workload or pod via {var.defaults.workload_suffix}{var.name} filtration, can be used for example in case we have a deployment which name differs from container name with custom suffix like in nginx ingress container named "controller" and daemonset named "ingress-nginx-controller"
-    labels            = optional(any, { "priority" : "P2" }) # the service level monitoring alarms generally are considered as P2 priority and desired to be sent to slack channel)
+    labels            = optional(any, { "priority" : "P1" }) # the service level monitoring alarms generally are considered as P1 priority
     pending_period    = optional(string, "1m")               # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire)
     interval          = optional(string, "5m")               # the time interval to use to evaluate/aggregate/rate metric for comparison
     deviation         = optional(number, 10)                 # the deviation threshold to consider increase/decrease of metric as anomaly and fire alert, we use this now for network alert (in this case 10 means that the metric got increased x10 times withing provided interval)
@@ -36,13 +36,13 @@ variable "defaults" {
 variable "alerts" {
   type = object({
     replicas_no = optional(object({
-      enabled        = optional(bool, null)                 # whether to have alert if no any replica/pod available
-      pending_period = optional(string, "0s")               # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire), if set `null` here it takes  defaults value
-      labels         = optional(any, { "priority" : "P1" }) # define alert labels to filter in notification policies, this extends with override the defaults labels. we set here P1 priority as if there are no any pods the service is down
-      exec_err_state = optional(string, null)               # define how to handle if query execution error, if set `null` here it takes  defaults value
-      no_data_state  = optional(string, null)               # define how to handle if no data for query, if set `null` here it takes  defaults value
-      group          = optional(string, null)               # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
-      annotations    = optional(any, {})                    # define alert annotations to include in notifications
+      enabled        = optional(bool, null)   # whether to have alert if no any replica/pod available
+      pending_period = optional(string, "0s") # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire), if set `null` here it takes  defaults value
+      labels         = optional(any, {})      # define alert labels to filter in notification policies, this extends with override the defaults labels. we set here P1 priority as if there are no any pods the service is down
+      exec_err_state = optional(string, null) # define how to handle if query execution error, if set `null` here it takes  defaults value
+      no_data_state  = optional(string, null) # define how to handle if no data for query, if set `null` here it takes  defaults value
+      group          = optional(string, null) # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
+      annotations    = optional(any, {})      # define alert annotations to include in notifications
     }), {})
     replicas_min = optional(object({
       enabled        = optional(bool, null)   # whether to have alert on min replicas/pods, so that if there are no at least min count of pods/replicas it will trigger alert
