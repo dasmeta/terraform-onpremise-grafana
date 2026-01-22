@@ -94,7 +94,7 @@ resource "helm_release" "mysql" {
 }
 
 resource "grafana_data_source" "this" {
-  for_each = local.merged_datasources
+  for_each = nonsensitive(local.merged_datasources)
 
   name = each.value.name
   type = each.value.type
