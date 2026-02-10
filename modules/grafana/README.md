@@ -7,15 +7,16 @@
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.3 |
 | <a name="requirement_grafana"></a> [grafana](#requirement\_grafana) | ~> 4.0 |
-| <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 2.0 |
-| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | ~>2.3 |
+| <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 2.17 |
+| <a name="requirement_time"></a> [time](#requirement\_time) | ~> 0.13 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_grafana"></a> [grafana](#provider\_grafana) | ~> 4.0 |
-| <a name="provider_helm"></a> [helm](#provider\_helm) | ~> 2.0 |
+| <a name="provider_helm"></a> [helm](#provider\_helm) | ~> 2.17 |
+| <a name="provider_time"></a> [time](#provider\_time) | ~> 0.13 |
 
 ## Modules
 
@@ -26,8 +27,10 @@ No modules.
 | Name | Type |
 |------|------|
 | [grafana_data_source.this](https://registry.terraform.io/providers/grafana/grafana/latest/docs/resources/data_source) | resource |
+| [grafana_sso_settings.this](https://registry.terraform.io/providers/grafana/grafana/latest/docs/resources/sso_settings) | resource |
 | [helm_release.grafana](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.mysql](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
+| [time_sleep.wait_for_grafana](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
 
 ## Inputs
 
@@ -39,11 +42,13 @@ No modules.
 | <a name="input_datasources"></a> [datasources](#input\_datasources) | A list of datasources configurations for grafana. | `list(map(any))` | `[]` | no |
 | <a name="input_extra_configs"></a> [extra\_configs](#input\_extra\_configs) | Allows to pass extra/custom configs to grafana helm chart, this configs will deep-merged with all generated internal configs and can override the default set ones. All available options can be found in for the specified chart version here: https://artifacthub.io/packages/helm/grafana/grafana?modal=values | `any` | `{}` | no |
 | <a name="input_grafana_admin_password"></a> [grafana\_admin\_password](#input\_grafana\_admin\_password) | admin password | `string` | `""` | no |
+| <a name="input_grafana_wait_duration"></a> [grafana\_wait\_duration](#input\_grafana\_wait\_duration) | Duration to wait after Grafana deployment before applying datasources and SSO settings | `string` | `"10s"` | no |
 | <a name="input_mysql_chart_version"></a> [mysql\_chart\_version](#input\_mysql\_chart\_version) | mysql chart version | `string` | `"13.0.2"` | no |
 | <a name="input_mysql_extra_configs"></a> [mysql\_extra\_configs](#input\_mysql\_extra\_configs) | Allows to pass extra/custom configs to grafana-mysql created helm chart, this configs will deep-merged with all generated internal configs and can override the default set ones. All available options can be found in for the specified chart version here: https://artifacthub.io/packages/helm/bitnami/mysql?modal=values | `any` | `{}` | no |
 | <a name="input_mysql_release_name"></a> [mysql\_release\_name](#input\_mysql\_release\_name) | name of grafana mysql helm release | `string` | `"grafana-mysql"` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | namespace to use for deployment | `string` | `"monitoring"` | no |
 | <a name="input_release_name"></a> [release\_name](#input\_release\_name) | grafana release name | `string` | `"grafana"` | no |
+| <a name="input_sso_settings"></a> [sso\_settings](#input\_sso\_settings) | SSO settings for Grafana. Supports OAuth2 providers (gitlab, github, google, azuread, okta, generic\_oauth), SAML, and LDAP. The map key should be the provider name (e.g., 'gitlab', 'github', 'saml', 'ldap'). | <pre>map(object({<br/>    oauth2_settings = optional(object({<br/>      name                       = string                # Display name shown on the login page as "Sign in with...". This is different from the provider name (which is the map key like "gitlab", "github", "google", "azuread", "okta", "generic_oauth", "saml", "ldap"). The provider name determines the OAuth2 endpoints, while this name is just the label shown to users (e.g., "GitLab", "GitHub", "Company SSO")<br/>      client_id                  = string                # The client ID of your OAuth2 application<br/>      client_secret              = string                # The client secret of your OAuth2 application<br/>      auth_url                   = optional(string)      # OAuth2 authorization URL (not needed for built-in providers: gitlab, github, google, azuread, okta)<br/>      token_url                  = optional(string)      # OAuth2 token URL (not needed for built-in providers: gitlab, github, google, azuread, okta)<br/>      api_url                    = optional(string)      # OAuth2 API URL (not needed for built-in providers: gitlab, github, google, azuread, okta)<br/>      allow_sign_up              = optional(bool, true)  # If true, new users can automatically create Grafana accounts on first login<br/>      auto_login                 = optional(bool, false) # If true, automatically logs in users, skipping the login screen<br/>      scopes                     = optional(string)      # Comma or space-separated list of OAuth2 scopes (e.g., "openid email profile" for GitLab)<br/>      allowed_groups             = optional(string)      # Comma or space-separated list of GitLab group names (e.g., "org-1", "org-2", "dev-team"). In GitLab, "group" is the organizational unit (like "organization" in GitHub). User must be a MEMBER of at least one of these groups to log in. This checks GROUP MEMBERSHIP, NOT the user's role within the group (Maintainer/Developer/Guest). For GitHub: organization names. Requires OAuth scope "read_api" for GitLab or "read:org" for GitHub.<br/>      allowed_domains            = optional(string)      # Comma or space-separated list of email domains. User must belong to at least one domain to log in. For GitHub: requires "user:email" scope and the user's email must be verified in GitHub. Email privacy settings in GitHub may prevent this from working.<br/>      role_attribute_path        = optional(string)      # JSONPath expression to map OAuth provider groups to Grafana roles. Checks if user is a member of SPECIFIC groups (not org names). Example: "contains(groups[*], 'grafana-admin') && 'Admin' || contains(groups[*], 'grafana-editor') && 'Editor' || 'Viewer'" means: if user is in "grafana-admin" group → Admin role, if in "grafana-editor" group → Editor role, otherwise → Viewer. These groups (e.g., "grafana-admin", "grafana-editor") must exist in your GitLab/GitHub and users must be added to them. Different from allowed_groups which checks org membership.<br/>      role_attribute_strict      = optional(bool)        # If true, requires role_attribute_path to be set and valid<br/>      allow_assign_grafana_admin = optional(bool)        # If true, allows assigning Grafana Admin role via OAuth<br/>      skip_org_role_sync         = optional(bool)        # If true, skips syncing organization roles from OAuth<br/>    }))<br/>    saml_settings = optional(object({<br/>      name             = string                # Display name shown on the login page as "Sign in with..."<br/>      idp_metadata_url = optional(string)      # URL to the SAML Identity Provider metadata XML file<br/>      allow_sign_up    = optional(bool, true)  # If true, new users can automatically create Grafana accounts on first login<br/>      auto_login       = optional(bool, false) # If true, automatically logs in users, skipping the login screen<br/>    }))<br/>    ldap_settings = optional(object({<br/>      allow_sign_up = optional(bool, true) # If true, new users can automatically create Grafana accounts on first login<br/>      config = object({<br/>        servers = list(object({<br/>          host            = string                # LDAP server hostname or IP address<br/>          port            = optional(number, 389) # LDAP server port (default: 389 for LDAP, 636 for LDAPS)<br/>          search_base_dns = list(string)          # Base DNs to search for users (e.g., ["ou=users,dc=example,dc=com"])<br/>          search_filter   = string                # LDAP search filter to find users (e.g., "(cn=%s)" or "(uid=%s)")<br/>        }))<br/>      })<br/>    }))<br/>  }))</pre> | `{}` | no |
 
 ## Outputs
 

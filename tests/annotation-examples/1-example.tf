@@ -238,7 +238,7 @@ module "this" {
     enabled = false
   }
 
-  loki = {
+  loki_stack = {
     enabled = false
   }
 

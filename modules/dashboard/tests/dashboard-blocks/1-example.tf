@@ -1,6 +1,7 @@
 module "this" {
-  source = "../../dashboard"
+  source = "../.."
   name   = "Dashboard Example"
+
   rows = [
     # SLA Block
     { "type" : "block/sla", "sla_ingress_type" : "nginx" },

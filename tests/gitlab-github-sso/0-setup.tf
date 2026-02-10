@@ -13,6 +13,32 @@ terraform {
   }
 }
 
+# set the following env: `export TF_VAR_gitlab_client_id=your_gitlab_client_id` and `export TF_VAR_gitlab_client_secret=your_gitlab_client_secret`
+variable "gitlab_client_id" {
+  type        = string
+  description = "GitLab OAuth application client ID"
+  sensitive   = true
+}
+
+variable "gitlab_client_secret" {
+  type        = string
+  description = "GitLab OAuth application client secret"
+  sensitive   = true
+}
+
+# set the following env: `export TF_VAR_github_client_id=your_github_client_id` and `export TF_VAR_github_client_secret=your_github_client_secret`
+variable "github_client_id" {
+  type        = string
+  description = "GitHub OAuth application client ID"
+  sensitive   = true
+}
+
+variable "github_client_secret" {
+  type        = string
+  description = "GitHub OAuth application client secret"
+  sensitive   = true
+}
+
 # to customize the grafana hostname, scheme, and admin password set the following env: `export TF_VAR_grafana_hostname=your_grafana_hostname`, `export TF_VAR_grafana_scheme=https`, and `export TF_VAR_grafana_admin_password=your_grafana_admin_password`
 variable "grafana_scheme" {
   type        = string

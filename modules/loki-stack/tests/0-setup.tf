@@ -6,19 +6,8 @@ terraform {
       source  = "hashicorp/helm"
       version = "~> 2.17"
     }
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
   }
 }
 
-provider "helm" {
-  kubernetes {
-    config_path = "~/.kube/config"
-  }
-}
-
-provider "aws" {
-  region = "us-east-2"
-}
+# to run this example and have helm provider configured with existing k8s cluster set the following env: `export KUBE_CONFIG_PATH=/path/to/eks/cluster.kubeconfig`
+provider "helm" {}

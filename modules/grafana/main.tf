@@ -50,7 +50,7 @@ resource "helm_release" "grafana" {
     jsonencode(var.extra_configs)
   ]
 
-  set {
+  set_sensitive {
     name  = "adminPassword"
     value = var.grafana_admin_password
   }
@@ -110,5 +110,77 @@ resource "grafana_data_source" "this" {
   username                 = try(each.value.username, null)
   uid                      = try(each.value.uid, null)
 
+  depends_on = [time_sleep.wait_for_grafana]
+}
+
+# Wait for Grafana to be fully up before applying datasources and SSO settings
+resource "time_sleep" "wait_for_grafana" {
   depends_on = [helm_release.grafana]
+
+  create_duration = var.grafana_wait_duration
+}
+
+resource "grafana_sso_settings" "this" {
+  for_each = toset(nonsensitive(keys(var.sso_settings)))
+
+  provider_name = each.key
+
+  dynamic "oauth2_settings" {
+    for_each = var.sso_settings[each.key].oauth2_settings != null ? [var.sso_settings[each.key].oauth2_settings] : []
+    content {
+      name          = oauth2_settings.value.name
+      client_id     = oauth2_settings.value.client_id
+      client_secret = oauth2_settings.value.client_secret
+      # For built-in providers (gitlab, github, google, azuread, okta), URLs are auto-configured by Grafana
+      # Only set these for generic_oauth or self-hosted instances
+      auth_url                   = contains(["gitlab", "github", "google", "azuread", "okta"], each.key) ? null : try(oauth2_settings.value.auth_url, null)
+      token_url                  = contains(["gitlab", "github", "google", "azuread", "okta"], each.key) ? null : try(oauth2_settings.value.token_url, null)
+      api_url                    = contains(["gitlab", "github", "google", "azuread", "okta"], each.key) ? null : try(oauth2_settings.value.api_url, null)
+      allow_sign_up              = try(oauth2_settings.value.allow_sign_up, true)
+      auto_login                 = try(oauth2_settings.value.auto_login, false)
+      scopes                     = try(oauth2_settings.value.scopes, null)
+      allowed_groups             = try(oauth2_settings.value.allowed_groups, null)
+      allowed_domains            = try(oauth2_settings.value.allowed_domains, null)
+      role_attribute_path        = try(oauth2_settings.value.role_attribute_path, null)
+      role_attribute_strict      = try(oauth2_settings.value.role_attribute_strict, null)
+      allow_assign_grafana_admin = try(oauth2_settings.value.allow_assign_grafana_admin, null)
+      skip_org_role_sync         = try(oauth2_settings.value.skip_org_role_sync, null)
+    }
+  }
+
+  dynamic "saml_settings" {
+    for_each = var.sso_settings[each.key].saml_settings != null ? [var.sso_settings[each.key].saml_settings] : []
+    content {
+      name             = saml_settings.value.name
+      idp_metadata_url = try(saml_settings.value.idp_metadata_url, null)
+      allow_sign_up    = try(saml_settings.value.allow_sign_up, true)
+      auto_login       = try(saml_settings.value.auto_login, false)
+    }
+  }
+
+  # Note: LDAP support structure may vary by Grafana provider version
+  # LDAP is in preview (Grafana v11.3+) and the exact structure should be verified
+  # against the provider documentation
+  dynamic "ldap_settings" {
+    for_each = var.sso_settings[each.key].ldap_settings != null ? [var.sso_settings[each.key].ldap_settings] : []
+    content {
+      allow_sign_up = try(ldap_settings.value.allow_sign_up, true)
+      dynamic "config" {
+        for_each = try(ldap_settings.value.config != null, false) ? [ldap_settings.value.config] : []
+        content {
+          dynamic "servers" {
+            for_each = config.value.servers
+            content {
+              host            = servers.value.host
+              port            = try(servers.value.port, 389)
+              search_base_dns = servers.value.search_base_dns
+              search_filter   = servers.value.search_filter
+            }
+          }
+        }
+      }
+    }
+  }
+
+  depends_on = [time_sleep.wait_for_grafana]
 }

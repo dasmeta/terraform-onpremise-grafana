@@ -17,6 +17,12 @@ variable "grafana_admin_password" {
   default     = ""
 }
 
+variable "grafana_wait_duration" {
+  type        = string
+  description = "Duration to wait after Grafana deployment before applying datasources and SSO settings"
+  default     = "10s"
+}
+
 variable "chart_version" {
   type        = string
   description = "grafana chart version"
@@ -129,4 +135,46 @@ variable "mysql_extra_configs" {
   type        = any
   default     = {}
   description = "Allows to pass extra/custom configs to grafana-mysql created helm chart, this configs will deep-merged with all generated internal configs and can override the default set ones. All available options can be found in for the specified chart version here: https://artifacthub.io/packages/helm/bitnami/mysql?modal=values"
+}
+
+variable "sso_settings" {
+  type = map(object({
+    oauth2_settings = optional(object({
+      name                       = string                # Display name shown on the login page as "Sign in with...". This is different from the provider name (which is the map key like "gitlab", "github", "google", "azuread", "okta", "generic_oauth", "saml", "ldap"). The provider name determines the OAuth2 endpoints, while this name is just the label shown to users (e.g., "GitLab", "GitHub", "Company SSO")
+      client_id                  = string                # The client ID of your OAuth2 application
+      client_secret              = string                # The client secret of your OAuth2 application
+      auth_url                   = optional(string)      # OAuth2 authorization URL (not needed for built-in providers: gitlab, github, google, azuread, okta)
+      token_url                  = optional(string)      # OAuth2 token URL (not needed for built-in providers: gitlab, github, google, azuread, okta)
+      api_url                    = optional(string)      # OAuth2 API URL (not needed for built-in providers: gitlab, github, google, azuread, okta)
+      allow_sign_up              = optional(bool, true)  # If true, new users can automatically create Grafana accounts on first login
+      auto_login                 = optional(bool, false) # If true, automatically logs in users, skipping the login screen
+      scopes                     = optional(string)      # Comma or space-separated list of OAuth2 scopes (e.g., "openid email profile" for GitLab)
+      allowed_groups             = optional(string)      # Comma or space-separated list of GitLab group names (e.g., "org-1", "org-2", "dev-team"). In GitLab, "group" is the organizational unit (like "organization" in GitHub). User must be a MEMBER of at least one of these groups to log in. This checks GROUP MEMBERSHIP, NOT the user's role within the group (Maintainer/Developer/Guest). For GitHub: organization names. Requires OAuth scope "read_api" for GitLab or "read:org" for GitHub.
+      allowed_domains            = optional(string)      # Comma or space-separated list of email domains. User must belong to at least one domain to log in. For GitHub: requires "user:email" scope and the user's email must be verified in GitHub. Email privacy settings in GitHub may prevent this from working.
+      role_attribute_path        = optional(string)      # JSONPath expression to map OAuth provider groups to Grafana roles. Checks if user is a member of SPECIFIC groups (not org names). Example: "contains(groups[*], 'grafana-admin') && 'Admin' || contains(groups[*], 'grafana-editor') && 'Editor' || 'Viewer'" means: if user is in "grafana-admin" group → Admin role, if in "grafana-editor" group → Editor role, otherwise → Viewer. These groups (e.g., "grafana-admin", "grafana-editor") must exist in your GitLab/GitHub and users must be added to them. Different from allowed_groups which checks org membership.
+      role_attribute_strict      = optional(bool)        # If true, requires role_attribute_path to be set and valid
+      allow_assign_grafana_admin = optional(bool)        # If true, allows assigning Grafana Admin role via OAuth
+      skip_org_role_sync         = optional(bool)        # If true, skips syncing organization roles from OAuth
+    }))
+    saml_settings = optional(object({
+      name             = string                # Display name shown on the login page as "Sign in with..."
+      idp_metadata_url = optional(string)      # URL to the SAML Identity Provider metadata XML file
+      allow_sign_up    = optional(bool, true)  # If true, new users can automatically create Grafana accounts on first login
+      auto_login       = optional(bool, false) # If true, automatically logs in users, skipping the login screen
+    }))
+    ldap_settings = optional(object({
+      allow_sign_up = optional(bool, true) # If true, new users can automatically create Grafana accounts on first login
+      config = object({
+        servers = list(object({
+          host            = string                # LDAP server hostname or IP address
+          port            = optional(number, 389) # LDAP server port (default: 389 for LDAP, 636 for LDAPS)
+          search_base_dns = list(string)          # Base DNs to search for users (e.g., ["ou=users,dc=example,dc=com"])
+          search_filter   = string                # LDAP search filter to find users (e.g., "(cn=%s)" or "(uid=%s)")
+        }))
+      })
+    }))
+  }))
+  default     = {}
+  description = "SSO settings for Grafana. Supports OAuth2 providers (gitlab, github, google, azuread, okta, generic_oauth), SAML, and LDAP. The map key should be the provider name (e.g., 'gitlab', 'github', 'saml', 'ldap')."
+  sensitive   = true
 }
