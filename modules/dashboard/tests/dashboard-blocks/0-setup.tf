@@ -29,7 +29,7 @@ variable "grafana_admin_password" {
   sensitive   = true
 }
 
-# you can start dev grafana server locally using `docker compose up -d` from `/tests` folder before running the test locally
+# it is supposed to have docker desktop with kubernetes enabled, so that grafana will be created and provider will be able to connect to it
 provider "grafana" {
   url                  = "${var.grafana_scheme}://${var.grafana_hostname}"
   auth                 = "admin:${var.grafana_admin_password}"

@@ -1,8 +1,6 @@
 module "this" {
   source = "../.."
 
-  name = "example-with-cb-webhook-endpoint-configuration"
-
   ## NOTE: this may reset and/or duplicate your manually created contact_points/notification_policies so make sure you check/test things after apply
   alerts = {
     contact_points = {
@@ -75,7 +73,7 @@ module "this" {
     enabled = false
   }
 
-  loki = {
+  loki_stack = {
     enabled = false
   }
 

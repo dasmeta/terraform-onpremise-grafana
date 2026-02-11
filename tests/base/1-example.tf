@@ -103,7 +103,7 @@ module "this" {
     enabled = true
   }
 
-  loki = {
+  loki_stack = {
     enabled = true
   }
 

@@ -68,6 +68,7 @@ module "grafana" {
   mysql_extra_configs    = var.grafana.mysql_extra_configs
   namespace              = coalesce(var.grafana.namespace, var.namespace)
   create_namespace       = var.grafana.create_namespace
+  sso_settings           = var.grafana.sso_settings
 
   datasources = concat(
     var.grafana.datasources == null ? [] : var.grafana.datasources,

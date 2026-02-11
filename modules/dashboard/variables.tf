@@ -41,6 +41,7 @@ variable "data_source" {
     uid  = optional(string, "prometheus")
     type = optional(string, "prometheus")
   })
+  default     = {}
   description = "The grafana dashboard global/default datasource, will be used in widget items if they have no their custom ones"
 }
 
