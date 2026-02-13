@@ -65,7 +65,7 @@ resource "helm_release" "mysql" {
   repository       = "oci://registry-1.docker.io/bitnamicharts"
   chart            = "mysql"
   namespace        = var.namespace
-  create_namespace = false
+  create_namespace = var.create_namespace
   version          = var.mysql_chart_version
   timeout          = 300
 
