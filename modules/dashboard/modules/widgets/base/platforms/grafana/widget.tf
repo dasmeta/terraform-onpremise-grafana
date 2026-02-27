@@ -1,5 +1,5 @@
 locals {
-  field_config_defaults = {
+  field_config_defaults = merge({
     decimals   = var.decimals != 0 ? var.decimals : null
     mappings   = []
     thresholds = var.thresholds
@@ -36,7 +36,7 @@ locals {
         "mode" : "off"
       }
     }
-  }
+  }, try(var.standard_options.min, null) != null ? { min = try(var.standard_options.min, null) } : {}, try(var.standard_options.max, null) != null ? { max = try(var.standard_options.max, null) } : {})
 
   field_config_overrides = [
     for metric in local.metrics_with_defaults : {
@@ -136,7 +136,7 @@ locals {
     }
     title = var.name
     type  = try(local.type_map[var.type], local.type_map.timeSeries)
-    options = {
+    options = merge({
       legend = {
         calcs       = lookup(var.options.legend, "calcs", [])
         displayMode = lookup(var.options.legend, "displayMode", "list")
@@ -147,7 +147,7 @@ locals {
         mode = lookup(var.options.tooltip, "mode", "single")
         sort = lookup(var.options.tooltip, "sort", "none")
       }
-    }
+    }, var.reduce_options != null ? { reduceOptions = var.reduce_options } : {})
     targets         = concat(local.query_targets, local.metric_targets, local.cloudwatch_targets, local.loki_targets)
     transformations = var.transformations
   }

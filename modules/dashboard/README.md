@@ -86,6 +86,7 @@ module "this" {
 | <a name="module_block_redis"></a> [block\_redis](#module\_block\_redis) | ./modules/blocks/redis | n/a |
 | <a name="module_block_service"></a> [block\_service](#module\_block\_service) | ./modules/blocks/service | n/a |
 | <a name="module_block_service_alerts"></a> [block\_service\_alerts](#module\_block\_service\_alerts) | ./modules/alerts/block-service | n/a |
+| <a name="module_block_ses"></a> [block\_ses](#module\_block\_ses) | ./modules/blocks/ses | n/a |
 | <a name="module_block_sla"></a> [block\_sla](#module\_block\_sla) | ./modules/blocks/sla | n/a |
 | <a name="module_block_sla_nginx_alerts"></a> [block\_sla\_nginx\_alerts](#module\_block\_sla\_nginx\_alerts) | ./modules/alerts/block-sla-nginx | n/a |
 | <a name="module_container_cpu_widget"></a> [container\_cpu\_widget](#module\_container\_cpu\_widget) | ./modules/widgets/container/cpu | n/a |
@@ -152,6 +153,13 @@ module "this" {
 | <a name="module_redis_restarts_widget"></a> [redis\_restarts\_widget](#module\_redis\_restarts\_widget) | ./modules/widgets/redis/restarts | n/a |
 | <a name="module_redis_total_commands_widget"></a> [redis\_total\_commands\_widget](#module\_redis\_total\_commands\_widget) | ./modules/widgets/redis/total-commands | n/a |
 | <a name="module_redis_total_memory_widget"></a> [redis\_total\_memory\_widget](#module\_redis\_total\_memory\_widget) | ./modules/widgets/redis/total-memory | n/a |
+| <a name="module_ses_bounce_rate_widget"></a> [ses\_bounce\_rate\_widget](#module\_ses\_bounce\_rate\_widget) | ./modules/widgets/ses/bounce_rate | n/a |
+| <a name="module_ses_bounce_reject_widget"></a> [ses\_bounce\_reject\_widget](#module\_ses\_bounce\_reject\_widget) | ./modules/widgets/ses/bounce_reject | n/a |
+| <a name="module_ses_bounces_timeseries_widget"></a> [ses\_bounces\_timeseries\_widget](#module\_ses\_bounces\_timeseries\_widget) | ./modules/widgets/ses/bounces_timeseries | n/a |
+| <a name="module_ses_complaint_rate_widget"></a> [ses\_complaint\_rate\_widget](#module\_ses\_complaint\_rate\_widget) | ./modules/widgets/ses/complaint_rate | n/a |
+| <a name="module_ses_send_delivery_widget"></a> [ses\_send\_delivery\_widget](#module\_ses\_send\_delivery\_widget) | ./modules/widgets/ses/send_delivery | n/a |
+| <a name="module_ses_sending_quota_widget"></a> [ses\_sending\_quota\_widget](#module\_ses\_sending\_quota\_widget) | ./modules/widgets/ses/sending_quota | n/a |
+| <a name="module_ses_sending_rate_widget"></a> [ses\_sending\_rate\_widget](#module\_ses\_sending\_rate\_widget) | ./modules/widgets/ses/sending_rate | n/a |
 | <a name="module_text_title"></a> [text\_title](#module\_text\_title) | ./modules/widgets/text/title | n/a |
 | <a name="module_text_title_with_collapse"></a> [text\_title\_with\_collapse](#module\_text\_title\_with\_collapse) | ./modules/widgets/text/title-with-collapse | n/a |
 | <a name="module_text_title_with_link"></a> [text\_title\_with\_link](#module\_text\_title\_with\_link) | ./modules/widgets/text/title-with-link | n/a |
@@ -184,6 +192,7 @@ module "this" {
 | <a name="input_loki_datasource_uid"></a> [loki\_datasource\_uid](#input\_loki\_datasource\_uid) | The default datasource uid for the logs widgets | `string` | `"loki"` | no |
 | <a name="input_name"></a> [name](#input\_name) | Dashboard name. Should not contain spaces and special chars. | `string` | n/a | yes |
 | <a name="input_rows"></a> [rows](#input\_rows) | List of widgets to be inserted into the dashboard. See ./modules/widgets folder to see list of available widgets. | `any` | n/a | yes |
+| <a name="input_time_range_hours"></a> [time\_range\_hours](#input\_time\_range\_hours) | Dashboard time range in hours (e.g. 6, 12, 18, 24). Converts to now-{N}h. Set when creating the module. | `number` | `6` | no |
 | <a name="input_variables"></a> [variables](#input\_variables) | Allows to define variables to be used in dashboard | <pre>list(object({<br/>    name             = string<br/>    type             = optional(string, "custom")<br/>    hide             = optional(number, 0)<br/>    includeAll       = optional(bool, false)<br/>    multi            = optional(bool, false)<br/>    query            = optional(string, "")<br/>    queryValue       = optional(string, "")<br/>    skipUrlSync      = optional(bool, false)<br/>    allowCustomValue = optional(bool, false)<br/>    options = optional(list(object({<br/>      selected = optional(bool, false)<br/>      value    = string<br/>      text     = optional(string, null)<br/>    })), [])<br/>    }<br/>  ))</pre> | `[]` | no |
 
 ## Outputs

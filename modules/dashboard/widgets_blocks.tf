@@ -93,3 +93,15 @@ module "block_rds" {
   datasource_uid = try(each.value.block.datasource_uid, local.widget_default_values.cloudwatch.datasource_uid)
   block_name     = try(each.value.block.block_name, "RDS")
 }
+
+module "block_ses" {
+  source = "./modules/blocks/ses"
+
+  for_each = { for index, item in try(local.blocks_by_type["ses"], []) : index => item }
+
+  region                         = try(each.value.block.region, local.widget_default_values.cloudwatch.region)
+  period                         = try(each.value.block.period, local.widget_default_values.cloudwatch.period)
+  datasource_uid                 = try(each.value.block.datasource_uid, local.widget_default_values.cloudwatch.datasource_uid)
+  block_name                     = try(each.value.block.block_name, "AWS SES")
+  sending_quota_standard_options = try(each.value.block.sending_quota_standard_options, { max = 100000 })
+}

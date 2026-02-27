@@ -45,11 +45,13 @@ No resources.
 | <a name="input_period"></a> [period](#input\_period) | n/a | `string` | `"3"` | no |
 | <a name="input_properties_type"></a> [properties\_type](#input\_properties\_type) | The properties->type option for alarm widgets | `string` | `null` | no |
 | <a name="input_query"></a> [query](#input\_query) | The PromQL query to use for the chart | <pre>list(object({<br/>    datasource = object({<br/>      uid  = optional(string, "__expr__")<br/>      type = optional(string, "__expr__")<br/>      name = optional(string, "Expression")<br/>    })<br/>    expression = optional(string, "")<br/>    refId      = optional(string, "")<br/>    querymode  = optional(string, "")<br/>    type       = optional(string, "math")<br/>    hide       = optional(bool, false)<br/>  }))</pre> | `[]` | no |
+| <a name="input_reduce_options"></a> [reduce\_options](#input\_reduce\_options) | Gauge/stat reduce options: calcs = ["sum"] for Total, ["lastNotNull"] for Last | <pre>object({<br/>    calcs  = optional(list(string), ["sum"])<br/>    fields = optional(string, "")<br/>    values = optional(bool, false)<br/>  })</pre> | `null` | no |
 | <a name="input_region"></a> [region](#input\_region) | n/a | `string` | `""` | no |
 | <a name="input_setPeriodToTimeRange"></a> [setPeriodToTimeRange](#input\_setPeriodToTimeRange) | setPeriodToTimeRange of widget | `bool` | `null` | no |
 | <a name="input_singleValueFullPrecision"></a> [singleValueFullPrecision](#input\_singleValueFullPrecision) | singleValueFullPrecision of widget | `bool` | `null` | no |
 | <a name="input_sources"></a> [sources](#input\_sources) | Log groups list for Logs Insights query | `list(string)` | `[]` | no |
 | <a name="input_sparkline"></a> [sparkline](#input\_sparkline) | sparkline of widget | `bool` | `null` | no |
+| <a name="input_standard_options"></a> [standard\_options](#input\_standard\_options) | Standard options: min/max values for the field (e.g. gauge scale) | <pre>object({<br/>    min = optional(number)<br/>    max = optional(number)<br/>  })</pre> | `null` | no |
 | <a name="input_start"></a> [start](#input\_start) | start of widget | `string` | `null` | no |
 | <a name="input_stat"></a> [stat](#input\_stat) | n/a | `string` | `"Average"` | no |
 | <a name="input_tempo_targets"></a> [tempo\_targets](#input\_tempo\_targets) | Target section of tempo based widget | <pre>list(object({<br/>    filters = optional(list(any), [])<br/>    limit   = optional(number, 20)<br/>    query   = string<br/>  }))</pre> | `[]` | no |

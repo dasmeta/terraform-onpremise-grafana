@@ -38,6 +38,7 @@ locals {
     alb_ingress       = values(module.block_alb_ingress).*.result
     elasticache_redis = values(module.block_elasticache_redis).*.result
     rds               = values(module.block_rds).*.result
+    ses               = values(module.block_ses).*.result
   }
 
   blocks_by_type_results = concat([], [
@@ -229,5 +230,14 @@ locals {
     values(module.rds_read_latency_widget).*.data,
     values(module.rds_write_latency_widget).*.data,
     values(module.rds_read_iops_widget).*.data,
+
+    # SES widgets
+    values(module.ses_sending_quota_widget).*.data,
+    values(module.ses_send_delivery_widget).*.data,
+    values(module.ses_bounce_rate_widget).*.data,
+    values(module.ses_complaint_rate_widget).*.data,
+    values(module.ses_bounces_timeseries_widget).*.data,
+    values(module.ses_sending_rate_widget).*.data,
+    values(module.ses_bounce_reject_widget).*.data,
   )
 }

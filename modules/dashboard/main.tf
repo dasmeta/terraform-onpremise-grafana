@@ -28,7 +28,7 @@ resource "grafana_dashboard" "metrics" {
       list = local.grafana_templating_list_variables
     }
     time = {
-      from = "now-6h"
+      from = "now-${var.time_range_hours}h"
       to   = "now"
     }
     timepicker = {}

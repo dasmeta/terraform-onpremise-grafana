@@ -296,3 +296,22 @@ variable "transformations" {
   description = "Custom transformations to use"
   default     = null
 }
+
+variable "reduce_options" {
+  type = object({
+    calcs  = optional(list(string), ["sum"])
+    fields = optional(string, "")
+    values = optional(bool, false)
+  })
+  description = "Gauge/stat reduce options: calcs = [\"sum\"] for Total, [\"lastNotNull\"] for Last"
+  default     = null
+}
+
+variable "standard_options" {
+  type = object({
+    min = optional(number)
+    max = optional(number)
+  })
+  description = "Standard options: min/max values for the field (e.g. gauge scale)"
+  default     = null
+}

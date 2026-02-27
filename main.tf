@@ -16,6 +16,7 @@ module "application_dashboard" {
   folder_name         = each.value.folder_name
   create_folder       = var.skip_folder_creation
   rows                = each.value.rows
+  time_range_hours    = try(each.value.time_range_hours, 6)
   data_source         = each.value.data_source
   loki_datasource_uid = each.value.loki_datasource_uid
   variables           = each.value.variables
