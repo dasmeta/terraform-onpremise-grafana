@@ -8,6 +8,6 @@ module "this" {
     # RDS Block
     { "type" : "block/rds", "block_name" : "RDS", "db_identifiers" : ["rds-name"] },
     # SES Block
-    { type : "block/ses", block_name : "AWS SES", region : "eu-central-1", sending_quota_standard_options : { max : 100000 } },
+    { type : "block/aws-ses", block_name : "AWS SES", region : "eu-central-1", max : 100000 },
   ]
 }

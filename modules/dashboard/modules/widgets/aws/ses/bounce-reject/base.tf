@@ -1,5 +1,5 @@
 module "base" {
-  source = "../../base"
+  source = "../../../base"
 
   name = "Bounce/Reject"
   data_source = {

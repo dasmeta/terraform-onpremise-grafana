@@ -1,4 +1,4 @@
-# bounces_timeseries
+# complaint-rate
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -13,7 +13,7 @@ No providers.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_base"></a> [base](#module\_base) | ../../base | n/a |
+| <a name="module_base"></a> [base](#module\_base) | ../../../base | n/a |
 
 ## Resources
 

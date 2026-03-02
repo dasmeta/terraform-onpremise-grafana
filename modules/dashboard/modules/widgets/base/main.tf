@@ -19,11 +19,12 @@ module "base_grafana" {
   region             = var.region
   decimals           = var.decimals
   unit               = var.unit
+  min                = var.min
+  max                = var.max
   fillOpacity        = var.fillOpacity
   options            = var.options
   cloudwatch_targets = var.cloudwatch_targets
   loki_targets       = var.loki_targets
   legend_format      = var.legend_format
   transformations    = var.transformations
-  standard_options   = var.standard_options
 }

@@ -14,14 +14,14 @@ terraform plan   # or apply
 | **block/cloudwatch** | EC2 instance CPU, disk, network | `region`, `period`, `datasource_uid` |
 | **block/rds** | RDS CPU, memory, network, connections, latency, IOPS | `db_identifiers`, `block_name`, `region`, `period`, `datasource_uid` |
 | **block/elasticache_redis** | ElastiCache Redis metrics | `cache_cluster_ids`, `block_name`, `region`, `period`, `datasource_uid` |
-| **block/ses** | SES sending quota, send/delivery, bounce/complaint rates, etc. | `region`, `period`, `datasource_uid`, **`sending_quota_standard_options`** (min/max for gauge) |
+| **block/aws-ses** | SES sending quota, send/delivery, bounce/complaint rates, etc. | `region`, `period`, `datasource_uid`, **`min`**, **`max`** (gauge scale; null = auto). Widget types: `aws-ses/sending-quota`, `aws-ses/send-delivery`, etc. |
 | **block/alb_ingress** | ALB connections, request count, response time, HTTP codes | **`load_balancer_arn`** (required), `region`, `period`, `datasource_uid` |
 
 ## Widget options (options, reduceOptions, standard_options)
 
 - **options** — legend, tooltip, and **reduceOptions** (for gauge/stat panels). Example: `options = { reduceOptions = { calcs = ["sum"], fields = "", values = false } }` (Total vs Last).
 - **standard_options** — min/max for panel scale (e.g. gauge). Example: `standard_options = { min = 0, max = 100000 }`.
-- SES block exposes **sending_quota_standard_options** for the Sending Quota gauge (default `{ max = 100000 }`).
+- **block/aws-ses**: **min**, **max** for the Sending Quota gauge (defaults: null, 100000).
 
 Ensure the Grafana datasource UID (e.g. `cloudwatch`) exists and points to AWS CloudWatch.
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

@@ -22,11 +22,16 @@ variable "block_name" {
   description = "Widget block title"
 }
 
-variable "sending_quota_standard_options" {
-  type = object({
-    min = optional(number)
-    max = optional(number)
-  })
-  default     = { max = 100000 }
-  description = "Standard options (min/max) for Sending Quota gauge"
+variable "min" {
+  type        = number
+  default     = null
+  nullable    = true
+  description = "Sending Quota gauge: min (null = auto)"
+}
+
+variable "max" {
+  type        = number
+  default     = null
+  nullable    = true
+  description = "Sending Quota gauge: max (null = auto)"
 }

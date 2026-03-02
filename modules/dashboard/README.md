@@ -78,6 +78,7 @@ module "this" {
 | <a name="module_alb_ingress_target_http_response_widget"></a> [alb\_ingress\_target\_http\_response\_widget](#module\_alb\_ingress\_target\_http\_response\_widget) | ./modules/widgets/alb_ingress/target_http_response | n/a |
 | <a name="module_alb_ingress_target_response_time_widget"></a> [alb\_ingress\_target\_response\_time\_widget](#module\_alb\_ingress\_target\_response\_time\_widget) | ./modules/widgets/alb_ingress/target_response_time | n/a |
 | <a name="module_block_alb_ingress"></a> [block\_alb\_ingress](#module\_block\_alb\_ingress) | ./modules/blocks/alb_ingress | n/a |
+| <a name="module_block_aws_ses"></a> [block\_aws\_ses](#module\_block\_aws\_ses) | ./modules/blocks/aws/ses | n/a |
 | <a name="module_block_cloudwatch"></a> [block\_cloudwatch](#module\_block\_cloudwatch) | ./modules/blocks/cloudwatch | n/a |
 | <a name="module_block_elasticache_redis"></a> [block\_elasticache\_redis](#module\_block\_elasticache\_redis) | ./modules/blocks/elasticache_redis | n/a |
 | <a name="module_block_ingress"></a> [block\_ingress](#module\_block\_ingress) | ./modules/blocks/ingress | n/a |
@@ -86,7 +87,6 @@ module "this" {
 | <a name="module_block_redis"></a> [block\_redis](#module\_block\_redis) | ./modules/blocks/redis | n/a |
 | <a name="module_block_service"></a> [block\_service](#module\_block\_service) | ./modules/blocks/service | n/a |
 | <a name="module_block_service_alerts"></a> [block\_service\_alerts](#module\_block\_service\_alerts) | ./modules/alerts/block-service | n/a |
-| <a name="module_block_ses"></a> [block\_ses](#module\_block\_ses) | ./modules/blocks/ses | n/a |
 | <a name="module_block_sla"></a> [block\_sla](#module\_block\_sla) | ./modules/blocks/sla | n/a |
 | <a name="module_block_sla_nginx_alerts"></a> [block\_sla\_nginx\_alerts](#module\_block\_sla\_nginx\_alerts) | ./modules/alerts/block-sla-nginx | n/a |
 | <a name="module_container_cpu_widget"></a> [container\_cpu\_widget](#module\_container\_cpu\_widget) | ./modules/widgets/container/cpu | n/a |
@@ -153,13 +153,13 @@ module "this" {
 | <a name="module_redis_restarts_widget"></a> [redis\_restarts\_widget](#module\_redis\_restarts\_widget) | ./modules/widgets/redis/restarts | n/a |
 | <a name="module_redis_total_commands_widget"></a> [redis\_total\_commands\_widget](#module\_redis\_total\_commands\_widget) | ./modules/widgets/redis/total-commands | n/a |
 | <a name="module_redis_total_memory_widget"></a> [redis\_total\_memory\_widget](#module\_redis\_total\_memory\_widget) | ./modules/widgets/redis/total-memory | n/a |
-| <a name="module_ses_bounce_rate_widget"></a> [ses\_bounce\_rate\_widget](#module\_ses\_bounce\_rate\_widget) | ./modules/widgets/ses/bounce_rate | n/a |
-| <a name="module_ses_bounce_reject_widget"></a> [ses\_bounce\_reject\_widget](#module\_ses\_bounce\_reject\_widget) | ./modules/widgets/ses/bounce_reject | n/a |
-| <a name="module_ses_bounces_timeseries_widget"></a> [ses\_bounces\_timeseries\_widget](#module\_ses\_bounces\_timeseries\_widget) | ./modules/widgets/ses/bounces_timeseries | n/a |
-| <a name="module_ses_complaint_rate_widget"></a> [ses\_complaint\_rate\_widget](#module\_ses\_complaint\_rate\_widget) | ./modules/widgets/ses/complaint_rate | n/a |
-| <a name="module_ses_send_delivery_widget"></a> [ses\_send\_delivery\_widget](#module\_ses\_send\_delivery\_widget) | ./modules/widgets/ses/send_delivery | n/a |
-| <a name="module_ses_sending_quota_widget"></a> [ses\_sending\_quota\_widget](#module\_ses\_sending\_quota\_widget) | ./modules/widgets/ses/sending_quota | n/a |
-| <a name="module_ses_sending_rate_widget"></a> [ses\_sending\_rate\_widget](#module\_ses\_sending\_rate\_widget) | ./modules/widgets/ses/sending_rate | n/a |
+| <a name="module_ses_bounce_rate_widget"></a> [ses\_bounce\_rate\_widget](#module\_ses\_bounce\_rate\_widget) | ./modules/widgets/aws/ses/bounce-rate | n/a |
+| <a name="module_ses_bounce_reject_widget"></a> [ses\_bounce\_reject\_widget](#module\_ses\_bounce\_reject\_widget) | ./modules/widgets/aws/ses/bounce-reject | n/a |
+| <a name="module_ses_bounces_timeseries_widget"></a> [ses\_bounces\_timeseries\_widget](#module\_ses\_bounces\_timeseries\_widget) | ./modules/widgets/aws/ses/bounces-timeseries | n/a |
+| <a name="module_ses_complaint_rate_widget"></a> [ses\_complaint\_rate\_widget](#module\_ses\_complaint\_rate\_widget) | ./modules/widgets/aws/ses/complaint-rate | n/a |
+| <a name="module_ses_send_delivery_widget"></a> [ses\_send\_delivery\_widget](#module\_ses\_send\_delivery\_widget) | ./modules/widgets/aws/ses/send-delivery | n/a |
+| <a name="module_ses_sending_quota_widget"></a> [ses\_sending\_quota\_widget](#module\_ses\_sending\_quota\_widget) | ./modules/widgets/aws/ses/sending-quota | n/a |
+| <a name="module_ses_sending_rate_widget"></a> [ses\_sending\_rate\_widget](#module\_ses\_sending\_rate\_widget) | ./modules/widgets/aws/ses/sending-rate | n/a |
 | <a name="module_text_title"></a> [text\_title](#module\_text\_title) | ./modules/widgets/text/title | n/a |
 | <a name="module_text_title_with_collapse"></a> [text\_title\_with\_collapse](#module\_text\_title\_with\_collapse) | ./modules/widgets/text/title-with-collapse | n/a |
 | <a name="module_text_title_with_link"></a> [text\_title\_with\_link](#module\_text\_title\_with\_link) | ./modules/widgets/text/title-with-link | n/a |

@@ -1,21 +1,21 @@
-# SES widgets
-
+# AWS SES widgets (block/aws-ses; types aws-ses/*); modules under widgets/aws/ses
 module "ses_sending_quota_widget" {
-  source = "./modules/widgets/ses/sending_quota"
+  source = "./modules/widgets/aws/ses/sending-quota"
 
-  for_each = { for index, item in try(local.widget_config["ses/sending_quota"], []) : index => item }
+  for_each = { for index, item in try(local.widget_config["aws-ses/sending-quota"], []) : index => item }
 
-  coordinates      = each.value.coordinates
-  region           = try(each.value.region, local.widget_default_values.cloudwatch.region)
-  period           = try(each.value.period, local.widget_default_values.cloudwatch.period)
-  datasource_uid   = try(each.value.datasource_uid, local.widget_default_values.cloudwatch.datasource_uid)
-  standard_options = try(each.value.standard_options, { max = 100000 })
+  coordinates    = each.value.coordinates
+  region         = try(each.value.region, local.widget_default_values.cloudwatch.region)
+  period         = try(each.value.period, local.widget_default_values.cloudwatch.period)
+  datasource_uid = try(each.value.datasource_uid, local.widget_default_values.cloudwatch.datasource_uid)
+  min            = try(each.value.min, null)
+  max            = try(each.value.max, null)
 }
 
 module "ses_send_delivery_widget" {
-  source = "./modules/widgets/ses/send_delivery"
+  source = "./modules/widgets/aws/ses/send-delivery"
 
-  for_each = { for index, item in try(local.widget_config["ses/send_delivery"], []) : index => item }
+  for_each = { for index, item in try(local.widget_config["aws-ses/send-delivery"], []) : index => item }
 
   coordinates    = each.value.coordinates
   region         = try(each.value.region, local.widget_default_values.cloudwatch.region)
@@ -24,9 +24,9 @@ module "ses_send_delivery_widget" {
 }
 
 module "ses_bounce_rate_widget" {
-  source = "./modules/widgets/ses/bounce_rate"
+  source = "./modules/widgets/aws/ses/bounce-rate"
 
-  for_each = { for index, item in try(local.widget_config["ses/bounce_rate"], []) : index => item }
+  for_each = { for index, item in try(local.widget_config["aws-ses/bounce-rate"], []) : index => item }
 
   coordinates    = each.value.coordinates
   region         = try(each.value.region, local.widget_default_values.cloudwatch.region)
@@ -35,9 +35,9 @@ module "ses_bounce_rate_widget" {
 }
 
 module "ses_complaint_rate_widget" {
-  source = "./modules/widgets/ses/complaint_rate"
+  source = "./modules/widgets/aws/ses/complaint-rate"
 
-  for_each = { for index, item in try(local.widget_config["ses/complaint_rate"], []) : index => item }
+  for_each = { for index, item in try(local.widget_config["aws-ses/complaint-rate"], []) : index => item }
 
   coordinates    = each.value.coordinates
   region         = try(each.value.region, local.widget_default_values.cloudwatch.region)
@@ -46,9 +46,9 @@ module "ses_complaint_rate_widget" {
 }
 
 module "ses_bounces_timeseries_widget" {
-  source = "./modules/widgets/ses/bounces_timeseries"
+  source = "./modules/widgets/aws/ses/bounces-timeseries"
 
-  for_each = { for index, item in try(local.widget_config["ses/bounces_timeseries"], []) : index => item }
+  for_each = { for index, item in try(local.widget_config["aws-ses/bounces-timeseries"], []) : index => item }
 
   coordinates    = each.value.coordinates
   region         = try(each.value.region, local.widget_default_values.cloudwatch.region)
@@ -57,9 +57,9 @@ module "ses_bounces_timeseries_widget" {
 }
 
 module "ses_sending_rate_widget" {
-  source = "./modules/widgets/ses/sending_rate"
+  source = "./modules/widgets/aws/ses/sending-rate"
 
-  for_each = { for index, item in try(local.widget_config["ses/sending_rate"], []) : index => item }
+  for_each = { for index, item in try(local.widget_config["aws-ses/sending-rate"], []) : index => item }
 
   coordinates    = each.value.coordinates
   region         = try(each.value.region, local.widget_default_values.cloudwatch.region)
@@ -68,9 +68,9 @@ module "ses_sending_rate_widget" {
 }
 
 module "ses_bounce_reject_widget" {
-  source = "./modules/widgets/ses/bounce_reject"
+  source = "./modules/widgets/aws/ses/bounce-reject"
 
-  for_each = { for index, item in try(local.widget_config["ses/bounce_reject"], []) : index => item }
+  for_each = { for index, item in try(local.widget_config["aws-ses/bounce-reject"], []) : index => item }
 
   coordinates    = each.value.coordinates
   region         = try(each.value.region, local.widget_default_values.cloudwatch.region)

@@ -38,7 +38,7 @@ locals {
     alb_ingress       = values(module.block_alb_ingress).*.result
     elasticache_redis = values(module.block_elasticache_redis).*.result
     rds               = values(module.block_rds).*.result
-    ses               = values(module.block_ses).*.result
+    "aws-ses"         = values(module.block_aws_ses).*.result
   }
 
   blocks_by_type_results = concat([], [

@@ -1,7 +1,7 @@
 module "base" {
-  source = "../../base"
+  source = "../../../base"
 
-  name = "Current Bounce Rate"
+  name = "Bounces by Configuration Set (Time Series)"
   data_source = {
     uid  = var.datasource_uid
     type = "Cloudwatch"
@@ -13,9 +13,8 @@ module "base" {
   thresholds = {
     mode = "absolute"
     steps = [
-      { color = "green", value = null }
-      , { color = "#EAB839", value = 2.9996 }
-      , { color = "red", value = 5 }
+      { color = "green", value = null },
+      { color = "red", value = 80 }
     ]
   }
 
@@ -24,12 +23,12 @@ module "base" {
       query_mode  = "Metrics"
       region      = var.region
       namespace   = "AWS/SES"
-      metric_name = "Reputation.BounceRate"
+      metric_name = "Bounce"
       period      = var.period
       statistic   = "Average"
       dimensions  = {}
       refId       = "A"
-      label       = "Bounce Rate"
+      label       = "Bounce"
       hide        = false
     }
   ]

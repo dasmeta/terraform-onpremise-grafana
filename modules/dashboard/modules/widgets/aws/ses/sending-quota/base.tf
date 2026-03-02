@@ -1,5 +1,5 @@
 module "base" {
-  source = "../../base"
+  source = "../../../base"
 
   name = "Sending Quota (24-Hour Rolling Window)"
   data_source = {
@@ -21,8 +21,9 @@ module "base" {
     }
   }
 
-  # Standard options: min/max (configurable)
-  standard_options = var.standard_options
+  # Standard options: min/max (same as Grafana UI)
+  min = var.min
+  max = var.max
 
   defaults = {}
 

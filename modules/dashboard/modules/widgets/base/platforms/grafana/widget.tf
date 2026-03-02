@@ -4,8 +4,8 @@ locals {
     mappings   = []
     thresholds = var.thresholds
     unit       = var.unit
-    min        = try(var.standard_options.min, null)
-    max        = try(var.standard_options.max, null)
+    min        = var.min
+    max        = var.max
     color = {
       "mode" : try(var.color_mode, "palette-classic")
     }

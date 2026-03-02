@@ -303,11 +303,16 @@ variable "transformations" {
   default     = null
 }
 
-variable "standard_options" {
-  type = object({
-    min = optional(number)
-    max = optional(number)
-  })
-  description = "Standard options: min/max values for the field (e.g. gauge scale)"
+variable "min" {
+  type        = number
   default     = null
+  nullable    = true
+  description = "Standard options: minimum value for the field (e.g. gauge scale; null = auto)"
+}
+
+variable "max" {
+  type        = number
+  default     = null
+  nullable    = true
+  description = "Standard options: maximum value for the field (e.g. gauge scale; null = auto)"
 }

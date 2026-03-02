@@ -105,6 +105,20 @@ variable "unit" {
   description = "Unit used for widget metric"
 }
 
+variable "min" {
+  type        = number
+  default     = null
+  nullable    = true
+  description = "Standard options: minimum value for the field (leave empty/null for auto)"
+}
+
+variable "max" {
+  type        = number
+  default     = null
+  nullable    = true
+  description = "Standard options: maximum value for the field (leave empty/null for auto)"
+}
+
 variable "fillOpacity" {
   type        = number
   default     = 0
@@ -222,14 +236,5 @@ variable "color_mode" {
 variable "transformations" {
   type        = any
   description = "Custom transformations to use"
-  default     = null
-}
-
-variable "standard_options" {
-  type = object({
-    min = optional(number)
-    max = optional(number)
-  })
-  description = "Standard options: min/max values for the field"
   default     = null
 }

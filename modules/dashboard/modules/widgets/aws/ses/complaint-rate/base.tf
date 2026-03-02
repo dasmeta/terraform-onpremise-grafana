@@ -1,5 +1,5 @@
 module "base" {
-  source = "../../base"
+  source = "../../../base"
 
   name = "Current Complaint Rate"
   data_source = {

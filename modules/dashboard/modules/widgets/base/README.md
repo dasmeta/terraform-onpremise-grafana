@@ -39,7 +39,9 @@ No resources.
 | <a name="input_fillOpacity"></a> [fillOpacity](#input\_fillOpacity) | The fillOpacity value | `number` | `0` | no |
 | <a name="input_legend_format"></a> [legend\_format](#input\_legend\_format) | Legend format | `string` | `""` | no |
 | <a name="input_loki_targets"></a> [loki\_targets](#input\_loki\_targets) | Target section of Loki based widget | <pre>list(object({<br/>    expr      = string<br/>    refId     = optional(string, "")<br/>    direction = optional(string, "backward")<br/>    queryType = optional(string, "range")<br/>    hide      = optional(bool, false)<br/>    label     = optional(string, "Logs")<br/>    limit     = optional(number, 10)<br/>  }))</pre> | `[]` | no |
+| <a name="input_max"></a> [max](#input\_max) | Standard options: maximum value for the field (e.g. gauge scale; null = auto) | `number` | `null` | no |
 | <a name="input_metrics"></a> [metrics](#input\_metrics) | Metrics to be displayed on the widget. | `any` | `[]` | no |
+| <a name="input_min"></a> [min](#input\_min) | Standard options: minimum value for the field (e.g. gauge scale; null = auto) | `number` | `null` | no |
 | <a name="input_name"></a> [name](#input\_name) | n/a | `string` | n/a | yes |
 | <a name="input_options"></a> [options](#input\_options) | Configuration options for widget legend, tooltip and reduce (e.g. gauge/stat). | <pre>object({<br/>    legend = optional(object({<br/>      calcs       = optional(list(string), [])<br/>      displayMode = optional(string, "list")<br/>      placement   = optional(string, "bottom")<br/>      show_legend = optional(bool, true)<br/>    }), {})<br/>    tooltip = optional(object({<br/>      mode = optional(string, "single")<br/>      sort = optional(string, "none")<br/>    }), {})<br/>    reduceOptions = optional(object({<br/>      calcs  = optional(list(string), ["sum"])<br/>      fields = optional(string, "")<br/>      values = optional(bool, false)<br/>    }), null)<br/>  })</pre> | <pre>{<br/>  "legend": {<br/>    "calcs": [],<br/>    "displayMode": "list",<br/>    "placement": "bottom",<br/>    "show_legend": true<br/>  },<br/>  "reduceOptions": null,<br/>  "tooltip": {<br/>    "mode": "single",<br/>    "sort": "none"<br/>  }<br/>}</pre> | no |
 | <a name="input_period"></a> [period](#input\_period) | n/a | `string` | `"3"` | no |
@@ -50,7 +52,6 @@ No resources.
 | <a name="input_singleValueFullPrecision"></a> [singleValueFullPrecision](#input\_singleValueFullPrecision) | singleValueFullPrecision of widget | `bool` | `null` | no |
 | <a name="input_sources"></a> [sources](#input\_sources) | Log groups list for Logs Insights query | `list(string)` | `[]` | no |
 | <a name="input_sparkline"></a> [sparkline](#input\_sparkline) | sparkline of widget | `bool` | `null` | no |
-| <a name="input_standard_options"></a> [standard\_options](#input\_standard\_options) | Standard options: min/max values for the field (e.g. gauge scale) | <pre>object({<br/>    min = optional(number)<br/>    max = optional(number)<br/>  })</pre> | `null` | no |
 | <a name="input_start"></a> [start](#input\_start) | start of widget | `string` | `null` | no |
 | <a name="input_stat"></a> [stat](#input\_stat) | n/a | `string` | `"Average"` | no |
 | <a name="input_tempo_targets"></a> [tempo\_targets](#input\_tempo\_targets) | Target section of tempo based widget | <pre>list(object({<br/>    filters = optional(list(any), [])<br/>    limit   = optional(number, 20)<br/>    query   = string<br/>  }))</pre> | `[]` | no |

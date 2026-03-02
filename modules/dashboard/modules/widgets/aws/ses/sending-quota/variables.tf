@@ -22,11 +22,16 @@ variable "coordinates" {
   })
 }
 
-variable "standard_options" {
-  type = object({
-    min = optional(number)
-    max = optional(number)
-  })
-  default     = { max = 100000 }
-  description = "Standard options: min/max for the gauge (sending quota scale)"
+variable "min" {
+  type        = number
+  default     = null
+  nullable    = true
+  description = "Standard options: min (null = auto in Grafana)"
+}
+
+variable "max" {
+  type        = number
+  default     = null
+  nullable    = true
+  description = "Standard options: max (null = auto in Grafana)"
 }

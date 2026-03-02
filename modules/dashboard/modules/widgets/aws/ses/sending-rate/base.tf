@@ -1,5 +1,5 @@
 module "base" {
-  source = "../../base"
+  source = "../../../base"
 
   name = "Sending Rate (Messages per Second)"
   data_source = {
