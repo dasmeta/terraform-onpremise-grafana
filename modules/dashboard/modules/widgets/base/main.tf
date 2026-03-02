@@ -25,6 +25,5 @@ module "base_grafana" {
   loki_targets       = var.loki_targets
   legend_format      = var.legend_format
   transformations    = var.transformations
-  reduce_options     = var.reduce_options
   standard_options   = var.standard_options
 }

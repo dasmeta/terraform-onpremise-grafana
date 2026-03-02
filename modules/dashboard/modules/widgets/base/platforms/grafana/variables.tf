@@ -113,16 +113,21 @@ variable "fillOpacity" {
 
 variable "options" {
   type = object({
-    legend = object({
+    legend = optional(object({
       calcs       = optional(list(string), [])
       displayMode = optional(string, "list")
       placement   = optional(string, "bottom")
       show_legend = optional(bool, true)
-    })
+    }), {})
     tooltip = optional(object({
       mode = optional(string, "single")
       sort = optional(string, "none")
     }), {})
+    reduceOptions = optional(object({
+      calcs  = optional(list(string), ["sum"])
+      fields = optional(string, "")
+      values = optional(bool, false)
+    }), null)
   })
   default = {
     legend = {
@@ -135,8 +140,9 @@ variable "options" {
       mode = "single"
       sort = "none"
     }
+    reduceOptions = null
   }
-  description = "Configuration options for widget legend and tooltip."
+  description = "Configuration options for widget legend, tooltip and reduce (e.g. gauge/stat)."
 }
 
 variable "description" {
@@ -216,16 +222,6 @@ variable "color_mode" {
 variable "transformations" {
   type        = any
   description = "Custom transformations to use"
-  default     = null
-}
-
-variable "reduce_options" {
-  type = object({
-    calcs  = optional(list(string), ["sum"])
-    fields = optional(string, "")
-    values = optional(bool, false)
-  })
-  description = "Gauge/stat reduce options: calcs = [\"sum\"] for Total, [\"lastNotNull\"] for Last"
   default     = null
 }
 

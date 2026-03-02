@@ -13,10 +13,12 @@ module "base" {
   color_mode  = "thresholds"
 
   # Calculation: Total (sum of all values) — instead of Last
-  reduce_options = {
-    calcs  = ["sum"]
-    fields = ""
-    values = false
+  options = {
+    reduceOptions = {
+      calcs  = ["sum"]
+      fields = ""
+      values = false
+    }
   }
 
   # Standard options: min/max (configurable)

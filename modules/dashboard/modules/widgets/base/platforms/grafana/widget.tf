@@ -1,9 +1,11 @@
 locals {
-  field_config_defaults = merge({
+  field_config_defaults = {
     decimals   = var.decimals != 0 ? var.decimals : null
     mappings   = []
     thresholds = var.thresholds
     unit       = var.unit
+    min        = try(var.standard_options.min, null)
+    max        = try(var.standard_options.max, null)
     color = {
       "mode" : try(var.color_mode, "palette-classic")
     }
@@ -36,7 +38,7 @@ locals {
         "mode" : "off"
       }
     }
-  }, try(var.standard_options.min, null) != null ? { min = try(var.standard_options.min, null) } : {}, try(var.standard_options.max, null) != null ? { max = try(var.standard_options.max, null) } : {})
+  }
 
   field_config_overrides = [
     for metric in local.metrics_with_defaults : {
@@ -136,18 +138,19 @@ locals {
     }
     title = var.name
     type  = try(local.type_map[var.type], local.type_map.timeSeries)
-    options = merge({
+    options = {
       legend = {
-        calcs       = lookup(var.options.legend, "calcs", [])
-        displayMode = lookup(var.options.legend, "displayMode", "list")
-        placement   = lookup(var.options.legend, "placement", "bottom")
-        showLegend  = lookup(var.options.legend, "show_legend", true)
+        calcs       = lookup(try(var.options.legend, {}), "calcs", [])
+        displayMode = lookup(try(var.options.legend, {}), "displayMode", "list")
+        placement   = lookup(try(var.options.legend, {}), "placement", "bottom")
+        showLegend  = lookup(try(var.options.legend, {}), "show_legend", true)
       }
       tooltip = {
-        mode = lookup(var.options.tooltip, "mode", "single")
-        sort = lookup(var.options.tooltip, "sort", "none")
+        mode = lookup(try(var.options.tooltip, {}), "mode", "single")
+        sort = lookup(try(var.options.tooltip, {}), "sort", "none")
       }
-    }, var.reduce_options != null ? { reduceOptions = var.reduce_options } : {})
+      reduceOptions = try(var.options.reduceOptions, null)
+    }
     targets         = concat(local.query_targets, local.metric_targets, local.cloudwatch_targets, local.loki_targets)
     transformations = var.transformations
   }
