@@ -19,6 +19,8 @@ module "base_grafana" {
   region             = var.region
   decimals           = var.decimals
   unit               = var.unit
+  min                = var.min
+  max                = var.max
   fillOpacity        = var.fillOpacity
   options            = var.options
   cloudwatch_targets = var.cloudwatch_targets

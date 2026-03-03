@@ -4,6 +4,8 @@ locals {
     mappings   = []
     thresholds = var.thresholds
     unit       = var.unit
+    min        = var.min
+    max        = var.max
     color = {
       "mode" : try(var.color_mode, "palette-classic")
     }
@@ -138,15 +140,16 @@ locals {
     type  = try(local.type_map[var.type], local.type_map.timeSeries)
     options = {
       legend = {
-        calcs       = lookup(var.options.legend, "calcs", [])
-        displayMode = lookup(var.options.legend, "displayMode", "list")
-        placement   = lookup(var.options.legend, "placement", "bottom")
-        showLegend  = lookup(var.options.legend, "show_legend", true)
+        calcs       = lookup(try(var.options.legend, {}), "calcs", [])
+        displayMode = lookup(try(var.options.legend, {}), "displayMode", "list")
+        placement   = lookup(try(var.options.legend, {}), "placement", "bottom")
+        showLegend  = lookup(try(var.options.legend, {}), "show_legend", true)
       }
       tooltip = {
-        mode = lookup(var.options.tooltip, "mode", "single")
-        sort = lookup(var.options.tooltip, "sort", "none")
+        mode = lookup(try(var.options.tooltip, {}), "mode", "single")
+        sort = lookup(try(var.options.tooltip, {}), "sort", "none")
       }
+      reduceOptions = try(var.options.reduceOptions, null)
     }
     targets         = concat(local.query_targets, local.metric_targets, local.cloudwatch_targets, local.loki_targets)
     transformations = var.transformations

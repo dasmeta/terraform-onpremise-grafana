@@ -93,3 +93,17 @@ module "block_rds" {
   datasource_uid = try(each.value.block.datasource_uid, local.widget_default_values.cloudwatch.datasource_uid)
   block_name     = try(each.value.block.block_name, "RDS")
 }
+
+# AWS SES (block/aws-ses); widget types aws-ses/* with hyphens
+module "block_aws_ses" {
+  source = "./modules/blocks/aws/ses"
+
+  for_each = { for index, item in try(local.blocks_by_type["aws-ses"], []) : index => item }
+
+  region         = try(each.value.block.region, local.widget_default_values.cloudwatch.region)
+  period         = try(each.value.block.period, local.widget_default_values.cloudwatch.period)
+  datasource_uid = try(each.value.block.datasource_uid, local.widget_default_values.cloudwatch.datasource_uid)
+  block_name     = try(each.value.block.block_name, "AWS SES")
+  min            = try(each.value.block.min, null)
+  max            = try(each.value.block.max, null)
+}
