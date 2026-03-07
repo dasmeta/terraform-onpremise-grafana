@@ -9,7 +9,7 @@ locals {
     gt  = { operator = ">", definition = "greater than" },
     lt  = { operator = "<", definition = "less than" },
     lte = { operator = "<=", definition = "less than or equal to" },
-    e   = { operator = "=", definition = "equal to" }
+    e   = { operator = "==", definition = "equal to" }
   }
 
   folder_name_uids = length(var.folder_name_uids) > 0 ? var.folder_name_uids : {
