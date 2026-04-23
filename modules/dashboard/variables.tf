@@ -85,3 +85,9 @@ variable "folder_name" {
   default     = "application-dashboard"
   description = "The folder name to place grafana dashboard"
 }
+
+variable "time_range_hours" {
+  type        = number
+  default     = 6
+  description = "Dashboard time range in hours (e.g. 6, 12, 18, 24). Converts to now-{N}h. Set when creating the module."
+}
