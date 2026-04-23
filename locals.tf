@@ -31,5 +31,27 @@ locals {
     for name, folder in grafana_folder.shared_folders : name => folder.uid
   }
 
+  victoria_metrics_namespace = coalesce(var.victoria_metrics.namespace, var.namespace)
+  victoria_metrics_remote_write_url = format(
+    "http://%s-victoria-metrics-cluster-vminsert.%s.svc.cluster.local:8480/insert/0/prometheus/api/v1/write",
+    var.victoria_metrics.release_name,
+    local.victoria_metrics_namespace
+  )
+  victoria_metrics_query_url = format(
+    "http://%s-victoria-metrics-cluster-vmselect.%s.svc.cluster.local:8481/select/0/prometheus",
+    var.victoria_metrics.release_name,
+    local.victoria_metrics_namespace
+  )
+
+  prometheus_remote_write_config = var.victoria_metrics.enabled ? {
+    prometheus = {
+      prometheusSpec = {
+        remoteWrite = [{
+          url = local.victoria_metrics_remote_write_url
+        }]
+      }
+    }
+  } : {}
+
   json_dashboards = concat(var.dashboards_json_files, var.deploy_grafana_stack_dashboard ? ["${path.module}/grafana_dashboard_files/grafana_stack_dashboard.json"] : [])
 }
