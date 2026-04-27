@@ -58,7 +58,7 @@ module "block_service_alerts" {
 
   name       = each.value.block.name
   namespace  = each.value.namespace
-  defaults   = try(local.deep_merge_alert_configs["${each.value.service_index}_service"].defaults, {})
+  defaults   = provider::deepmerge::mergo({ labels = { "priority" = "P1" } }, try(local.deep_merge_alert_configs["${each.value.service_index}_service"].defaults, {}), { labels = { (try(local.deep_merge_alert_configs["${each.value.service_index}_service"].map_namespace_to_env_label, true) == true ? "env" : "namespace") = each.value.namespace } })
   alerts     = try(local.deep_merge_alert_configs["${each.value.service_index}_service"], {})
   datasource = try(each.value.block.datasource_uid, var.data_source.uid)
 }
