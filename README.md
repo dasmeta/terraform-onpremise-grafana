@@ -125,6 +125,51 @@ module "grafana_alerts" {
 ## Usage
 Check `./tests`, `modules/alert-rules/tests`, `modules/alert-contact-points/tests` and `modules/alert-notifications/tests` folders to see more examples.
 
+## Multi-environment routing examples (matcher-only)
+
+### Same cluster, multiple namespaces
+
+Use namespace variables for consolidated dashboards, then route alerts by `env` labels via existing notification policy matchers:
+
+```hcl
+alerts = {
+  notifications = {
+    contact_point = "ops-fallback"
+    policies = [
+      { contact_point = "slack-dev", matchers = [{ label = "env", match = "=", value = "dev" }] },
+      { contact_point = "slack-stage", matchers = [{ label = "env", match = "=", value = "stage" }] },
+      { contact_point = "slack-prod", matchers = [{ label = "env", match = "=", value = "prod" }] }
+    ]
+  }
+}
+```
+
+#### Namespace-to-env mapping for dashboard-generated service alerts
+
+Dashboard `block/service` alerts support `map_namespace_to_env_label` and it is enabled by default.
+
+- `map_namespace_to_env_label = true` (default): generated labels include `env = <namespace>`
+- `map_namespace_to_env_label = false`: generated labels include `namespace = <namespace>` instead
+
+This is useful when notification policies match on `env` and you want namespace-specific dashboard alerts to route to the correct environment channel without duplicating labels manually.
+
+```hcl
+application_dashboard = [{
+  name = "app"
+  rows = [
+    {
+      type      = "block/service"
+      name      = "api"
+      namespace = "dev"
+      alerts = {
+        # default behavior; can be omitted
+        map_namespace_to_env_label = true # when true the service alerts get env=<namespace-name> label, when we set false the labels will be namespace=<namespace-name>
+      }
+    }
+  ]
+}]
+```
+
 ## release important notes and upgrade guides
 - <1.26.2 to >=1.26.2
   - tempo port changed from 3100 to 3200 following changes on the source module: https://github.com/grafana/helm-charts/commit/f2f79b529a53bc8091aff22b8333d7440216730d

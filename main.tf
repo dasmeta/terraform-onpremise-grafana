@@ -39,7 +39,7 @@ module "application_dashboard_json" {
 module "alerts" {
   source = "./modules/alerts"
 
-  count = length(var.alerts.rules) > 0 ? 1 : 0
+  count = length(var.alerts.rules) > 0 || var.alerts.contact_points != null || var.alerts.notifications != null ? 1 : 0
 
   alert_interval_seconds = var.alerts.alert_interval_seconds
   disable_provenance     = var.alerts.disable_provenance
