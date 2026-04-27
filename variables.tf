@@ -370,6 +370,32 @@ variable "prometheus" {
   default     = {}
 }
 
+variable "victoria_metrics" {
+  type = object({
+    enabled          = optional(bool, false)
+    namespace        = optional(string, null) # the namespace fallbacks to var.namespace if not specified
+    create_namespace = optional(bool, true)   # whether create namespace if not exist
+    chart_version    = optional(string, "0.31.0")
+    release_name     = optional(string, "victoria-metrics")
+    retention_period = optional(string, "30d")
+    vmstorage = optional(object({
+      replica_count = optional(number, 3)
+      storage_class = optional(string, "")
+      storage_size  = optional(string, "100Gi")
+      access_modes  = optional(list(string), ["ReadWriteOnce"])
+    }), {})
+    vminsert = optional(object({
+      replica_count = optional(number, 2)
+    }), {})
+    vmselect = optional(object({
+      replica_count = optional(number, 2)
+    }), {})
+    extra_configs = optional(any, {})
+  })
+  description = "Values to deploy redundant VictoriaMetrics and wire Prometheus remote_write"
+  default     = {}
+}
+
 variable "tempo" {
   type = object({
     enabled          = optional(bool, false)
