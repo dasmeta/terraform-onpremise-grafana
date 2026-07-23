@@ -1,10 +1,11 @@
 {
-  "ai": "cursor-agent",
+  "ai": "cursor",
   "ai_skills": true,
   "branch_numbering": "sequential",
+  "context_file": "README.md",
   "here": true,
-  "integration": "cursor-agent",
+  "integration": "cursor",
   "preset": null,
   "script": "sh",
-  "speckit_version": "0.6.1"
+  "speckit_version": "0.7.4"
 }

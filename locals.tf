@@ -53,5 +53,7 @@ locals {
     }
   } : {}
 
+  loki_query_url = var.loki_stack.enabled ? module.loki[0].query_url : ""
+
   json_dashboards = concat(var.dashboards_json_files, var.deploy_grafana_stack_dashboard ? ["${path.module}/grafana_dashboard_files/grafana_stack_dashboard.json"] : [])
 }
