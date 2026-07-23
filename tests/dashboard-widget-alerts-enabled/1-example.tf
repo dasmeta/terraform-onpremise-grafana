@@ -40,7 +40,7 @@ module "this" {
           workload_type : "deployment"   # the workload type of app setup, can be "daemonset", "deployment", "statefulset" and "cronjob"
           workload_suffix : ""           # allows to filter workload or pod via {var.name}{var.defaults.workload_suffix} filtration, can be used for example in case we have flagger canary deployment to add "-primary" suffix to filter deployment
           workload_prefix : ""           # allows to filter workload or pod via {var.defaults.workload_suffix}{var.name} filtration, can be used for example in case we have a deployment which name differs from container name with custom suffix like in nginx ingress container named "controller" and daemonset named "ingress-nginx-controller"
-          labels : { "priority" : "P2" } # the service level monitoring alarms generally are considered as P2 priority and desired to be sent to slack channel)
+          labels : { "priority" : "P2" } # optional default labels applied to generated service alerts; alert-type and per-alert labels can override these
           pending_period : "1m"          # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire)
           interval : "5m"                # the time interval to use to evaluate/aggregate/rate metric for comparison
           deviation : 10                 # the deviation threshold to consider increase/decrease of metric as anomaly and fire alert, we use this now for network alert (in this case 10 means that the metric got increased x10 times withing provided interval)
@@ -52,7 +52,7 @@ module "this" {
         replicas_no : {
           enabled : null                 # whether to have alert if no any replica/pod available
           pending_period : "0s"          # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire), if set `null` here it takes  defaults value
-          labels : { "priority" : "P1" } # define alert labels to filter in notification policies, this extends with override the defaults labels. we set here P1 priority as if there are no any pods the service is down
+          labels : { "priority" : "P1" } # override alert labels for no running pods; the built-in default for this outage alert is P1/critical
           no_data_state : null           # define how to handle if no data for query, if set `null` here it takes  defaults value
           exec_err_state : "OK"
           annotations : {
@@ -62,7 +62,7 @@ module "this" {
         replicas_min : {
           enabled : null        # whether to have alert on min replicas/pods, so that if there are no at least min count of pods/replicas it will trigger alert
           pending_period : null # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire), if set `null` here it takes  defaults value
-          threshold : null      # for manually set min replica count, if not specified it will automatically get this based on hpa min, recommended to not set this if hpa is enabled, but if prometheus horizontalpodautoscaler metrics are not enable there may be need to set this manually
+          threshold : null      # manually set min replica count; if this and enabled are null, the HPA-based min alert is not created by default
           no_data_state : "OK"  # define how to handle if no data for query, if set `null` here it takes  defaults value
           annotations : {
             "impact" : "Service will go down, maybe it is just a test..."
@@ -72,7 +72,7 @@ module "this" {
         replicas_max = {
           enabled : null        # whether to have alert on max replicas/pods, so that if it reached to max count of pods/replicas it will trigger alert
           pending_period : null # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire), if set `null` here it takes  defaults value
-          threshold : null      # for manually set max replica count, if not specified it will automatically get this based on hpa min, recommended to not set this if hpa is enabled, but if prometheus horizontalpodautoscaler metrics are not enable there may be need to set this manually
+          threshold : null      # manually set max replica count; if this and enabled are null, the HPA-based max alert is not created by default
           no_data_state : "OK"  # define how to handle if no data for query, if set `null` here it takes  defaults value
           labels : {}           # define alert labels to filter in notification policies, this extends with override the defaults labels
           group : null          # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
@@ -84,6 +84,16 @@ module "this" {
           no_data_state : "OK"  # define how to handle if no data for query, if set `null` here it takes  defaults value
           labels : {}           # define alert labels to filter in notification policies, this extends with override the defaults labels
           group : null          # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
+        }
+        unavailable_replicas = {
+          enabled : null         # deployment-only alert; generated by default for deployments and disabled for daemonsets/jobs
+          pending_period : "30s" # alert when unavailable replicas stay above threshold for 30 seconds
+          threshold : 0          # fires when kube_deployment_status_replicas_unavailable is greater than 0
+          no_data_state : null   # define how to handle if no data for query, if set `null` here it takes defaults value
+          exec_err_state : null  # define how to handle query execution errors, if set `null` here it takes defaults value
+          labels : {}            # define alert labels to filter in notification policies, this extends with override the defaults labels
+          group : null           # grafana alert group name which used for grouping, if set `null` here it takes defaults value
+          annotations : {}       # define alert annotations to include in notifications
         }
         job_failed = {
           enabled : false       # whether to have alert on job/cronjob failed status, we have this alert disabled by default as it is only job/cronjob related
@@ -102,7 +112,7 @@ module "this" {
           group : null         # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
         }
         network_in = {          # to configure network in/out traffic anomaly increase alerting
-          enabled : null        # wether to create alert on network in/receive anomaly increase/decrease of traffic
+          enabled : false       # whether to create alert on network in/receive anomaly increase/decrease of traffic; disabled by default to avoid noisy generic anomaly alerts
           pending_period : null # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire), if set `null` here it takes  defaults value
           interval : null       # the time interval to use to evaluate/aggregate/rate network avg traffic to compare with previous same interval value, if set `null` here it takes  defaults value
           deviation : null      # the threshold to consider increase/decrease of traffic as anomaly and fire alert (in this case 10 means that the traffic got increased x10 times withing provided interval)
@@ -111,7 +121,7 @@ module "this" {
           group : null          # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
         }
         network_out = {         # to configure network in/out traffic anomaly increase alerting
-          enabled : null        # wether to create alert on network out/transmit anomaly increase/decrease of traffic
+          enabled : false       # whether to create alert on network out/transmit anomaly increase/decrease of traffic; disabled by default to avoid noisy generic anomaly alerts
           pending_period : null # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire), if set `null` here it takes  defaults value
           interval : null       # the time interval to use to evaluate/aggregate/rate network avg traffic to compare with previous same interval value, if set `null` here it takes  defaults value
           deviation : null      # the threshold to consider increase/decrease of traffic as anomaly and fire alert (in this case 10 means that the traffic got increased x10 times withing provided interval)

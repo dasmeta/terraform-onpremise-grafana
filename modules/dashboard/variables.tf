@@ -38,7 +38,7 @@ variable "rows" {
 
 variable "data_source" {
   type = object({
-    uid  = optional(string, "prometheus")
+    uid  = optional(string, null)
     type = optional(string, "prometheus")
   })
   default     = {}
