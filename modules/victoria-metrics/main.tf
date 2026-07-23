@@ -11,9 +11,17 @@ resource "helm_release" "victoria_metrics" {
     jsonencode({
       vminsert = {
         replicaCount = var.configs.vminsert.replica_count
+        extraArgs = {
+          replicationFactor = 2
+        }
       }
       vmselect = {
         replicaCount = var.configs.vmselect.replica_count
+        extraArgs = {
+          replicationFactor         = 2
+          "dedup.minScrapeInterval" = "1ms"
+          "search.skipSlowReplicas" = true
+        }
       }
       vmstorage = {
         replicaCount    = var.configs.vmstorage.replica_count
