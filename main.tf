@@ -39,14 +39,14 @@ module "application_dashboard_json" {
 module "alerts" {
   source = "./modules/alerts"
 
-  count = length(var.alerts.rules) > 0 || var.alerts.contact_points != null || var.alerts.notifications != null ? 1 : 0
+  count = length(local.alert_rules) > 0 || var.alerts.contact_points != null || var.alerts.notifications != null ? 1 : 0
 
   alert_interval_seconds = var.alerts.alert_interval_seconds
   disable_provenance     = var.alerts.disable_provenance
   create_folder          = var.skip_folder_creation
   folder_name            = coalesce(var.alerts.folder_name, try(var.application_dashboard[0].folder_name, null), local.app_dash_defaults.folder_name)
   group                  = var.alerts.group
-  rules                  = var.alerts.rules
+  rules                  = local.alert_rules
   annotations            = var.alerts.annotations
   labels                 = var.alerts.labels
   contact_points         = var.alerts.contact_points

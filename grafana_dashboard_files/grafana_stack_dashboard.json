@@ -1576,7 +1576,7 @@
               "uid": "${data_source}"
             },
             "editorMode": "code",
-            "expr": "max(prometheus_tsdb_head_max_time) - min(prometheus_tsdb_head_min_time)",
+            "expr": "max(prometheus_tsdb_head_max_time_seconds) - min(prometheus_tsdb_head_min_time_seconds)",
             "legendFormat": "Sum",
             "range": true,
             "refId": "A"
@@ -2153,7 +2153,7 @@
               "uid": "${data_source}"
             },
             "editorMode": "code",
-            "expr": "sum by(job)(rate(scrape_samples_scraped{job!=\"prometheus\"}[5m]) == 0)",
+            "expr": "sum by (job) (up == bool 0)",
             "legendFormat": "__auto",
             "range": true,
             "refId": "A"
@@ -3360,8 +3360,8 @@
         {
           "current": {
             "selected": false,
-            "text": "central-2-prom",
-            "value": "central-2-prom"
+            "text": "victoriametrics",
+            "value": "victoriametrics"
           },
           "hide": 0,
           "includeAll": false,
