@@ -6,8 +6,8 @@
 ## Phase 1: Setup
 
 - [x] T001 Confirm the scope is global PVC disk capacity, not client-specific ClickHouse.
-- [x] T002 Confirm dashboard and application datasource defaults are out of scope.
-- [x] T003 Verify `kubelet_volume_stats_*` metrics exist in the Prometheus-compatible datasource.
+- [x] T002 Verify live Grafana datasource UID/name for VictoriaMetrics.
+- [x] T003 Verify `kubelet_volume_stats_*` metrics exist in VictoriaMetrics.
 
 ## Phase 2: Test First
 

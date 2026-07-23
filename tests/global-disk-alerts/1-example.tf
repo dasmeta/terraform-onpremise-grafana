@@ -31,11 +31,11 @@ module "this" {
   }
 
   prometheus = {
-    enabled = true
+    enabled = false
   }
 
   victoria_metrics = {
-    enabled = false
+    enabled = true
   }
 
   tempo = {

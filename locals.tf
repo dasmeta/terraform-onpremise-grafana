@@ -41,7 +41,7 @@ locals {
     }
   } : {}
 
-  default_alert_datasource_uid  = "prometheus"
+  default_alert_datasource_uid  = var.victoria_metrics.enabled ? "victoriametrics" : "prometheus"
   disk_capacity_alert_config    = var.alerts.disk_capacity
   disk_capacity_alert_enabled   = coalesce(local.disk_capacity_alert_config.enabled, true)
   disk_capacity_alert_threshold = coalesce(local.disk_capacity_alert_config.threshold, 90)
