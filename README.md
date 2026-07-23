@@ -202,6 +202,38 @@ For S3 (or other object) storage in SimpleScalable mode, `schemaConfig.object_st
 4. Apply — Grafana datasource and Promtail URLs update automatically; no manual datasource URL edits needed.
 5. See `tests/loki-simple-scalable/` for a working example.
 
+### Local testing on EKS (AWS wrapper)
+
+When consuming this module through `dasmeta/grafanav12/aws` (for example Payconomy `grafana.yaml`), test unpublished changes on a dev cluster with two temporary local `source` overrides:
+
+1. In `terraform-aws-grafanav12/main.tf`, point the inner module to this repo and **remove or comment `version`**:
+
+   ```hcl
+   module "this" {
+     source = "/absolute/path/to/terraform-onpremise-grafana"
+     # version = "1.27.x"
+   }
+   ```
+
+2. In the generated consumer `main.tf` (for example `_terraform/1-environments/dev/grafana/main.tf`), point to the local AWS wrapper and **remove or comment `version`**:
+
+   ```hcl
+   module "this" {
+     source = "/absolute/path/to/terraform-aws-grafanav12"
+     # version = "1.1.x"
+   }
+   ```
+
+3. Re-init and plan against the existing Terraform Cloud workspace state:
+
+   ```sh
+   rm -rf .terraform/modules
+   terraform init -upgrade
+   terraform plan
+   ```
+
+`read`, `write`, and `backend` values from consumer YAML pass through the AWS wrapper into `modules/loki-stack`. The module applies SimpleScalable URL fixes (`loki-read` / `loki-write`) and replica defaults; explicit replica counts in YAML override defaults.
+
 ## release important notes and upgrade guides
 - <1.26.2 to >=1.26.2
   - tempo port changed from 3100 to 3200 following changes on the source module: https://github.com/grafana/helm-charts/commit/f2f79b529a53bc8091aff22b8333d7440216730d
