@@ -6,8 +6,8 @@
 ## Phase 1: Setup
 
 - [x] T001 Confirm the scope is global PVC disk capacity, not client-specific ClickHouse.
-- [x] T002 Verify live Grafana datasource UID/name for VictoriaMetrics.
-- [x] T003 Verify `kubelet_volume_stats_*` metrics exist in VictoriaMetrics.
+- [x] T002 Confirm dashboard and application datasource defaults are out of scope.
+- [x] T003 Verify `kubelet_volume_stats_*` metrics exist in the Prometheus-compatible datasource.
 
 ## Phase 2: Test First
 
@@ -20,14 +20,14 @@
 - [x] T007 Generate a default disk-capacity alert rule in `locals.tf`.
 - [x] T008 Pass generated default rules plus custom rules to `module.alerts` in `main.tf`.
 - [x] T009 Include generated default alert folder names in shared folder creation.
-- [x] T010 Set the stack dashboard datasource current value to `victoriametrics`.
+- [x] T010 Keep the stack dashboard datasource and queries unchanged.
 
 ## Phase 4: Validation
 
 - [x] T011 Run Terraform formatting checks.
 - [x] T012 Run Terraform validation for the new example or explain any provider-related blocker.
-- [x] T013 Run JSON validation for the dashboard.
-- [x] T014 Run live PromQL validation for the default expression shape.
+- [x] T013 Run JSON validation for the dashboard after reverting dashboard edits.
+- [x] T014 Run PromQL validation for the default expression shape.
 - [x] T015 Run `git diff --check`.
 
 ## Phase 5: Handoff

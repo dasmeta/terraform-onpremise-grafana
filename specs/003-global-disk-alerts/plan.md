@@ -5,14 +5,14 @@
 
 ## Summary
 
-Add a reusable root-module default PVC disk-capacity alert. The rule should evaluate all matching PVCs by default, alert above 90%, use VictoriaMetrics when that datasource is enabled, and remain configurable or disableable through the existing grouped `alerts` object.
+Add a reusable root-module default PVC disk-capacity alert. The rule should evaluate all matching PVCs by default, alert above 90%, default to the existing Prometheus datasource, and remain configurable or disableable through the existing grouped `alerts` object.
 
 ## Technical Context
 
 **Language/Version**: Terraform HCL using the repository's existing constraints
 **Primary Dependencies**: Existing root `alerts` input and `modules/alerts` Grafana rule generation
 **Storage**: N/A
-**Testing**: Terraform example validation, `terraform fmt`, `terraform validate`, `jq`, live PromQL shape check against VictoriaMetrics
+**Testing**: Terraform example validation, `terraform fmt`, `terraform validate`, `jq`, PromQL shape check
 **Target Platform**: Kubernetes clusters exposing kubelet PVC metrics to a Prometheus-compatible datasource
 **Project Type**: Terraform module repository
 **Constraints**: No client-specific names in Terraform artifacts; preserve custom alert rules and existing notification configuration
@@ -20,7 +20,7 @@ Add a reusable root-module default PVC disk-capacity alert. The rule should eval
 
 ## Constitution Check
 
-- **Repository-local change gate**: PASS. Changes are scoped to Terraform module locals, variables, tests/examples, and the checked-in dashboard JSON datasource default.
+- **Repository-local change gate**: PASS. Changes are scoped to Terraform module locals, variables, tests/examples, and feature documentation.
 - **Speckit evidence**: PASS. This package records the global disk-alert scope before module-impacting edits.
 - **Backward compatibility gate**: PASS with one intentional behavior addition. A default alert is added but includes an explicit disable path.
 - **Wrapper/interface gate**: PASS. The new input is grouped under the existing `alerts` object rather than adding unrelated flat variables.
@@ -39,7 +39,6 @@ specs/003-global-disk-alerts/
 locals.tf
 main.tf
 variables.tf
-grafana_dashboard_files/grafana_stack_dashboard.json
 tests/global-disk-alerts/
 ├── 0-setup.tf
 └── 1-example.tf
@@ -49,16 +48,16 @@ tests/global-disk-alerts/
 
 - Root custom alert rules are passed directly from `var.alerts.rules` to `module.alerts`.
 - Alert datasources are rule-level UIDs.
-- VictoriaMetrics datasource UID is generated as `victoriametrics` when `var.victoria_metrics.enabled` is true.
-- The checked-in Grafana stack dashboard currently uses a datasource variable with a static current value.
+- The existing Prometheus datasource UID is `prometheus`.
+- Dashboard JSON and application dashboard datasource defaults are outside this feature scope.
 
 ## Design
 
 1. Add `alerts.disk_capacity` as a grouped optional object.
 2. Build `local.default_disk_capacity_alert_rules` from that object.
 3. Concatenate default disk rules with `var.alerts.rules` before passing rules to `module.alerts`.
-4. Use datasource UID precedence: explicit disk alert datasource, then `victoriametrics` when enabled, then `prometheus`.
-5. Change the default stack dashboard datasource current value to `victoriametrics`.
+4. Use datasource UID precedence: explicit disk alert datasource, then `prometheus`.
+5. Leave dashboard JSON and application dashboard datasource defaults unchanged.
 6. Add a Terraform example that exercises the global disk-alert configuration.
 
 ## Proposed File Changes
@@ -66,7 +65,6 @@ tests/global-disk-alerts/
 - `variables.tf`: add `alerts.disk_capacity` input object.
 - `locals.tf`: add disk alert defaults and generated rule list.
 - `main.tf`: route concatenated alert rules to the alerts module and use the concatenated list for count/folder calculations.
-- `grafana_dashboard_files/grafana_stack_dashboard.json`: set datasource current value to `victoriametrics`.
 - `tests/global-disk-alerts/`: add validation fixture.
 
 ## Risks
@@ -77,8 +75,7 @@ tests/global-disk-alerts/
 
 ## Validation
 
-- Confirm VictoriaMetrics datasource UID/name from live Grafana.
-- Confirm the PVC usage expression parses and returns data in a VictoriaMetrics datasource.
+- Confirm the PVC usage expression shape is valid for Prometheus-compatible datasources.
 - Run `terraform fmt -check`.
 - Run `terraform validate` for the new example where provider setup allows.
 - Run `jq empty` for the dashboard JSON.

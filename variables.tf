@@ -83,7 +83,7 @@ variable "alerts" {
       enabled              = optional(bool, true)        # Whether to create the global PVC disk-capacity alert
       folder_name          = optional(string, null)      # The folder name for this alert, if not set it defaults to var.alerts.folder_name
       group                = optional(string, "storage") # Grafana alert group name for the disk-capacity rule
-      datasource           = optional(string, null)      # Datasource UID for the alert; defaults to VictoriaMetrics when enabled, otherwise Prometheus
+      datasource           = optional(string, null)      # Datasource UID for the alert; defaults to Prometheus
       datasource_type      = optional(string, "prometheus")
       namespace            = optional(string, ".*") # Namespace regex for matching PVC metrics
       pvc                  = optional(string, ".*") # PersistentVolumeClaim regex
