@@ -1,8 +1,16 @@
 locals {
+  default_metrics_datasource_uid = var.victoria_metrics.enabled ? "victoriametrics" : "prometheus"
+  default_metrics_data_source    = { uid = local.default_metrics_datasource_uid, type = "prometheus" }
+
   app_dash_defaults = {
     folder_name = "application-dashboard"
+    defaults = {
+      prometheus = {
+        datasource_uid = local.default_metrics_datasource_uid
+      }
+    }
     rows        = []
-    data_source = { uid = "prometheus", type = "prometheus" }
+    data_source = local.default_metrics_data_source
     variables   = []
     alerts      = { enabled = true }
   }
@@ -10,7 +18,22 @@ locals {
   # Fill defaults
   app_dash_list = [
     for d in var.application_dashboard :
-    merge(local.app_dash_defaults, d)
+    merge(local.app_dash_defaults, d, {
+      defaults = merge(
+        local.app_dash_defaults.defaults,
+        try(d.defaults, {}),
+        {
+          prometheus = merge(
+            local.app_dash_defaults.defaults.prometheus,
+            try(d.defaults.prometheus, {})
+          )
+        }
+      )
+      data_source = {
+        uid  = coalesce(try(d.data_source.uid, null), local.default_metrics_datasource_uid)
+        type = coalesce(try(d.data_source.type, null), "prometheus")
+      }
+    })
   ]
 
   # Key by name and skip ones with no rows (replicates your old count behavior)
@@ -41,7 +64,7 @@ locals {
     }
   } : {}
 
-  default_alert_datasource_uid  = var.victoria_metrics.enabled ? "victoriametrics" : "prometheus"
+  default_alert_datasource_uid  = local.default_metrics_datasource_uid
   disk_capacity_alert_config    = var.alerts.disk_capacity
   disk_capacity_alert_enabled   = coalesce(local.disk_capacity_alert_config.enabled, true)
   disk_capacity_alert_threshold = coalesce(local.disk_capacity_alert_config.threshold, 90)

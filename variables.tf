@@ -24,7 +24,7 @@ variable "application_dashboard" {
     rows             = optional(any, [])
     time_range_hours = optional(number, 6) # dashboard time range in hours (6, 12, 18, 24), default 6
     data_source = optional(object({
-      uid  = optional(string, "prometheus")
+      uid  = optional(string, null) # defaults to VictoriaMetrics when enabled, otherwise Prometheus
       type = optional(string, "prometheus")
     }), {})
     loki_datasource_uid = optional(string, "loki") # the default datasource that will be used on loki/logs related widgets/blocks, "block/service" block allows to pass custom value for this variable

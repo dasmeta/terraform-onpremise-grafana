@@ -73,8 +73,8 @@ module "grafana" {
 
   datasources = concat(
     var.grafana.datasources == null ? [] : var.grafana.datasources,
-    var.prometheus.enabled ? [{ type = "prometheus", name = "Prometheus", url = "http://${var.prometheus.release_name}-kube-prometheus-prometheus.${var.namespace}.svc.cluster.local:9090" }] : [],
-    var.victoria_metrics.enabled ? [{ type = "prometheus", name = "VictoriaMetrics", uid = "victoriametrics", url = local.victoria_metrics_query_url }] : [],
+    var.prometheus.enabled ? [{ type = "prometheus", name = "Prometheus", url = "http://${var.prometheus.release_name}-kube-prometheus-prometheus.${var.namespace}.svc.cluster.local:9090", is_default = !var.victoria_metrics.enabled }] : [],
+    var.victoria_metrics.enabled ? [{ type = "prometheus", name = "VictoriaMetrics", uid = "victoriametrics", url = local.victoria_metrics_query_url, is_default = true }] : [],
     var.tempo.enabled ? [{ type = "tempo", name = "Tempo", url = "http://${var.tempo.release_name}.${var.namespace}.svc.cluster.local:3200" }] : [],
     var.loki_stack.enabled ? [{ type = "loki", name = "Loki", url = "http://${var.loki_stack.loki.release_name}.${var.namespace}.svc.cluster.local:3100" }] : []
   )
