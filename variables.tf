@@ -24,7 +24,7 @@ variable "application_dashboard" {
     rows             = optional(any, [])
     time_range_hours = optional(number, 6) # dashboard time range in hours (6, 12, 18, 24), default 6
     data_source = optional(object({
-      uid  = optional(string, "prometheus")
+      uid  = optional(string, null) # defaults to VictoriaMetrics when enabled, otherwise Prometheus
       type = optional(string, "prometheus")
     }), {})
     loki_datasource_uid = optional(string, "loki") # the default datasource that will be used on loki/logs related widgets/blocks, "block/service" block allows to pass custom value for this variable
@@ -79,6 +79,25 @@ variable "alerts" {
       severity = optional(string, "warning")
       env      = optional(string, "")
     }), {})
+    disk_capacity = optional(object({
+      enabled              = optional(bool, true)        # Whether to create the global PVC disk-capacity alert
+      folder_name          = optional(string, null)      # The folder name for this alert, if not set it defaults to var.alerts.folder_name
+      group                = optional(string, "storage") # Grafana alert group name for the disk-capacity rule
+      datasource           = optional(string, null)      # Datasource UID for the alert; defaults to VictoriaMetrics when enabled, otherwise Prometheus
+      datasource_type      = optional(string, "prometheus")
+      namespace            = optional(string, ".*") # Namespace regex for matching PVC metrics
+      pvc                  = optional(string, ".*") # PersistentVolumeClaim regex
+      threshold            = optional(number, 90)   # Disk usage percent threshold
+      pending_period       = optional(string, "5m") # How long the threshold must be exceeded before firing
+      no_data_state        = optional(string, "NoData")
+      exec_err_state       = optional(string, "Error")
+      interval_ms          = optional(number, 1000)
+      function             = optional(string, "last")
+      settings_mode        = optional(string, "replaceNN")
+      settings_replaceWith = optional(number, 0)
+      labels               = optional(map(any), {})
+      annotations          = optional(map(string), {})
+    }), {})
     rules = optional(
       list(object({                                 # Describes custom alert rules
         name           = string                     # The name of the alert rule
@@ -102,6 +121,8 @@ variable "alerts" {
         function             = optional(string, "mean")       # One of Reduce functions which will be used in B block for alerting
         equation             = string                         # The equation in the math expression which compares B blocks value with a number and generates an alert if needed. Possible values: gt, lt, gte, lte, e
         threshold            = number                         # The value against which B blocks are compared in the math expression
+        pending_period       = optional(string, "0")          # Define for how long to wait to trigger alert if condition satisfies
+        condition            = optional(string, null)         # Full custom compare condition on evaluated value $B
     })), [])
     contact_points = optional(object({
       slack = optional(list(object({                                                         # Slack contact points list

@@ -39,14 +39,14 @@ module "application_dashboard_json" {
 module "alerts" {
   source = "./modules/alerts"
 
-  count = length(var.alerts.rules) > 0 || var.alerts.contact_points != null || var.alerts.notifications != null ? 1 : 0
+  count = length(local.alert_rules) > 0 || var.alerts.contact_points != null || var.alerts.notifications != null ? 1 : 0
 
   alert_interval_seconds = var.alerts.alert_interval_seconds
   disable_provenance     = var.alerts.disable_provenance
   create_folder          = var.skip_folder_creation
   folder_name            = coalesce(var.alerts.folder_name, try(var.application_dashboard[0].folder_name, null), local.app_dash_defaults.folder_name)
   group                  = var.alerts.group
-  rules                  = var.alerts.rules
+  rules                  = local.alert_rules
   annotations            = var.alerts.annotations
   labels                 = var.alerts.labels
   contact_points         = var.alerts.contact_points
@@ -73,8 +73,8 @@ module "grafana" {
 
   datasources = concat(
     var.grafana.datasources == null ? [] : var.grafana.datasources,
-    var.prometheus.enabled ? [{ type = "prometheus", name = "Prometheus", url = "http://${var.prometheus.release_name}-kube-prometheus-prometheus.${var.namespace}.svc.cluster.local:9090" }] : [],
-    var.victoria_metrics.enabled ? [{ type = "prometheus", name = "VictoriaMetrics", uid = "victoriametrics", url = local.victoria_metrics_query_url }] : [],
+    var.prometheus.enabled ? [{ type = "prometheus", name = "Prometheus", url = "http://${var.prometheus.release_name}-kube-prometheus-prometheus.${var.namespace}.svc.cluster.local:9090", is_default = !var.victoria_metrics.enabled }] : [],
+    var.victoria_metrics.enabled ? [{ type = "prometheus", name = "VictoriaMetrics", uid = "victoriametrics", url = local.victoria_metrics_query_url, is_default = true }] : [],
     var.tempo.enabled ? [{ type = "tempo", name = "Tempo", url = "http://${var.tempo.release_name}.${var.namespace}.svc.cluster.local:3200" }] : [],
     var.loki_stack.enabled ? [{ type = "loki", name = "Loki", url = local.loki_query_url }] : []
   )

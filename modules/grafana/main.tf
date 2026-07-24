@@ -81,6 +81,13 @@ resource "helm_release" "mysql" {
         }
         primary = {
           extraFlags = var.configs.database.extra_flags
+          podAnnotations = {
+            "karpenter.sh/do-not-disrupt" = "true"
+          }
+          pdb = {
+            minAvailable   = 1
+            maxUnavailable = ""
+          }
           persistence = {
             enabled      = var.configs.database.persistence.enabled
             size         = var.configs.database.persistence.size

@@ -4,7 +4,7 @@ module "pod_cpu_widget" {
 
   for_each = { for index, item in try(local.widget_config["pod/cpu"], []) : index => item }
 
-  data_source = try(each.value.data_source, {})
+  data_source = try(each.value.data_source, local.widget_default_values.data_source)
   coordinates = each.value.coordinates
   period      = try(each.value.period, local.widget_default_values.prometheus.period)
 
@@ -19,7 +19,7 @@ module "pod_memory_widget" {
 
   for_each = { for index, item in try(local.widget_config["pod/memory"], []) : index => item }
 
-  data_source = try(each.value.data_source, {})
+  data_source = try(each.value.data_source, local.widget_default_values.data_source)
   coordinates = each.value.coordinates
   period      = try(each.value.period, local.widget_default_values.prometheus.period)
 
@@ -33,7 +33,7 @@ module "pod_restarts_widget" {
 
   for_each = { for index, item in try(local.widget_config["pod/restarts"], []) : index => item }
 
-  datasource_uid = try(each.value.datasource_uid, {})
+  datasource_uid = coalesce(try(each.value.datasource_uid, null), local.widget_default_values.prometheus.datasource_uid)
   coordinates    = each.value.coordinates
   period         = try(each.value.period, local.widget_default_values.prometheus.period)
 
@@ -47,7 +47,7 @@ module "deployment_replicas_widget" {
 
   for_each = { for index, item in try(local.widget_config["deployment/replicas"], []) : index => item }
 
-  datasource_uid = try(each.value.datasource_uid, {})
+  datasource_uid = coalesce(try(each.value.datasource_uid, null), local.widget_default_values.prometheus.datasource_uid)
   coordinates    = each.value.coordinates
   period         = try(each.value.period, local.widget_default_values.prometheus.period)
 
