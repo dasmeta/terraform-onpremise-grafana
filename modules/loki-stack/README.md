@@ -1,5 +1,17 @@
 # loki
 
+Loki stack submodule deploying the Grafana Loki Helm chart and optional Promtail collector.
+
+## Deployment modes
+
+See the root [README](../../README.md#loki-deployment-modes) for the URL matrix, SimpleScalable defaults, guardrails, and migration notes.
+
+Outputs:
+
+- `query_url` — in-cluster URL for Grafana Loki datasource queries
+- `push_url` — in-cluster URL for Promtail log shipping
+- `deployment_mode` — resolved deployment mode
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
@@ -13,8 +25,8 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_helm"></a> [helm](#provider\_helm) | ~> 2.17 |
-| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.7 |
+| <a name="provider_helm"></a> [helm](#provider\_helm) | 2.17.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.9.0 |
 
 ## Modules
 
@@ -41,6 +53,9 @@ No modules.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_deployment_mode"></a> [deployment\_mode](#output\_deployment\_mode) | Resolved Loki deployment mode |
 | <a name="output_helm_metadata_loki"></a> [helm\_metadata\_loki](#output\_helm\_metadata\_loki) | loki helm release metadata |
 | <a name="output_helm_metadata_promtail"></a> [helm\_metadata\_promtail](#output\_helm\_metadata\_promtail) | promtail helm release metadata |
+| <a name="output_push_url"></a> [push\_url](#output\_push\_url) | In-cluster Loki push URL for Promtail clients (mode-aware) |
+| <a name="output_query_url"></a> [query\_url](#output\_query\_url) | In-cluster Loki query URL for Grafana datasource (mode-aware) |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

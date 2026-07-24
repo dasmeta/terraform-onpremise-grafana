@@ -76,7 +76,7 @@ module "grafana" {
     var.prometheus.enabled ? [{ type = "prometheus", name = "Prometheus", url = "http://${var.prometheus.release_name}-kube-prometheus-prometheus.${var.namespace}.svc.cluster.local:9090", is_default = !var.victoria_metrics.enabled }] : [],
     var.victoria_metrics.enabled ? [{ type = "prometheus", name = "VictoriaMetrics", uid = "victoriametrics", url = local.victoria_metrics_query_url, is_default = true }] : [],
     var.tempo.enabled ? [{ type = "tempo", name = "Tempo", url = "http://${var.tempo.release_name}.${var.namespace}.svc.cluster.local:3200" }] : [],
-    var.loki_stack.enabled ? [{ type = "loki", name = "Loki", url = "http://${var.loki_stack.loki.release_name}.${var.namespace}.svc.cluster.local:3100" }] : []
+    var.loki_stack.enabled ? [{ type = "loki", name = "Loki", url = local.loki_query_url }] : []
   )
 }
 

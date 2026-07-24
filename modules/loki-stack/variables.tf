@@ -151,4 +151,20 @@ variable "configs" {
   })
   description = "Values to pass to loki helm chart"
   default     = {}
+
+  validation {
+    condition = contains(
+      ["SingleBinary", "SimpleScalable", "Distributed"],
+      try(var.configs.loki.deploymentMode, "SingleBinary")
+    )
+    error_message = "loki.deploymentMode must be one of: SingleBinary, SimpleScalable, Distributed."
+  }
+
+  validation {
+    condition = (
+      try(var.configs.loki.deploymentMode, "SingleBinary") != "SimpleScalable" ||
+      try(var.configs.loki.storage.type, "filesystem") != "filesystem"
+    )
+    error_message = "SimpleScalable deployment mode requires object storage (s3, azure, gcs, etc.); filesystem-only storage is not supported."
+  }
 }

@@ -592,6 +592,23 @@ variable "loki_stack" {
   })
   description = "Values to pass to loki helm chart"
   default     = {}
+
+  validation {
+    condition = !var.loki_stack.enabled || contains(
+      ["SingleBinary", "SimpleScalable", "Distributed"],
+      try(var.loki_stack.loki.deploymentMode, "SingleBinary")
+    )
+    error_message = "loki_stack.loki.deploymentMode must be one of: SingleBinary, SimpleScalable, Distributed."
+  }
+
+  validation {
+    condition = (
+      !var.loki_stack.enabled ||
+      try(var.loki_stack.loki.deploymentMode, "SingleBinary") != "SimpleScalable" ||
+      try(var.loki_stack.loki.storage.type, "filesystem") != "filesystem"
+    )
+    error_message = "SimpleScalable deployment mode requires object storage (s3, azure, gcs, etc.); filesystem-only storage is not supported."
+  }
 }
 
 variable "dashboards_json_files" {

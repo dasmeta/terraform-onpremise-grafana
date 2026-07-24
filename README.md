@@ -170,6 +170,70 @@ application_dashboard = [{
 }]
 ```
 
+## Loki deployment modes
+
+Loki supports three Helm chart deployment modes via `loki_stack.loki.deploymentMode`:
+
+| Mode | Grafana datasource (query) | Promtail push URL | Storage requirement |
+|------|---------------------------|-------------------|---------------------|
+| `SingleBinary` (default) | `http://{release}.{namespace}.svc.cluster.local:3100` | same host + `/loki/api/v1/push` | filesystem or object storage |
+| `SimpleScalable` | `http://{release}-read.{namespace}.svc.cluster.local:3100` | `http://{release}-write.{namespace}.svc.cluster.local:3100/loki/api/v1/push` | object storage required (s3, azure, gcs, …) |
+| `Distributed` | `http://{release}-gateway.{namespace}.svc.cluster.local:80` | gateway + `/loki/api/v1/push` | object storage recommended |
+
+The module sets Grafana datasource and Promtail client URLs automatically from `modules/loki-stack` outputs (`query_url`, `push_url`). Override Promtail destinations with `loki_stack.promtail.clients`.
+
+### SimpleScalable defaults
+
+When `deploymentMode = "SimpleScalable"` and component replica counts are not set:
+
+- `read.replicas` = 2
+- `write.replicas` = 2
+- `backend.replicas` = 1
+
+User-provided `read`, `write`, or `backend` values override these defaults.
+
+For S3 (or other object) storage in SimpleScalable mode, `schemaConfig.object_store` and `compactor_options.delete_request_store` are aligned to the configured storage type automatically.
+
+### SingleBinary → SimpleScalable migration
+
+1. Configure object storage in `loki_stack.loki.storage` (filesystem-only storage is rejected for SimpleScalable).
+2. Set `loki_stack.loki.deploymentMode = "SimpleScalable"`.
+3. Optionally tune `read`, `write`, and `backend` replica counts.
+4. Apply — Grafana datasource and Promtail URLs update automatically; no manual datasource URL edits needed.
+5. See `tests/loki-simple-scalable/` for a working example.
+
+### Local testing on EKS (AWS wrapper)
+
+When consuming this module through `dasmeta/grafanav12/aws` (for example Payconomy `grafana.yaml`), test unpublished changes on a dev cluster with two temporary local `source` overrides:
+
+1. In `terraform-aws-grafanav12/main.tf`, point the inner module to this repo and **remove or comment `version`**:
+
+   ```hcl
+   module "this" {
+     source = "/absolute/path/to/terraform-onpremise-grafana"
+     # version = "1.27.x"
+   }
+   ```
+
+2. In the generated consumer `main.tf` (for example `_terraform/1-environments/dev/grafana/main.tf`), point to the local AWS wrapper and **remove or comment `version`**:
+
+   ```hcl
+   module "this" {
+     source = "/absolute/path/to/terraform-aws-grafanav12"
+     # version = "1.1.x"
+   }
+   ```
+
+3. Re-init and plan against the existing Terraform Cloud workspace state:
+
+   ```sh
+   rm -rf .terraform/modules
+   terraform init -upgrade
+   terraform plan
+   ```
+
+`read`, `write`, and `backend` values from consumer YAML pass through the AWS wrapper into `modules/loki-stack`. The module applies SimpleScalable URL fixes (`loki-read` / `loki-write`) and replica defaults; explicit replica counts in YAML override defaults.
+
 ## release important notes and upgrade guides
 - <1.26.2 to >=1.26.2
   - tempo port changed from 3100 to 3200 following changes on the source module: https://github.com/grafana/helm-charts/commit/f2f79b529a53bc8091aff22b8333d7440216730d
@@ -220,7 +284,7 @@ application_dashboard = [{
 
 | Name | Version |
 |------|---------|
-| <a name="provider_grafana"></a> [grafana](#provider\_grafana) | ~> 4.0 |
+| <a name="provider_grafana"></a> [grafana](#provider\_grafana) | 4.41.0 |
 
 ## Modules
 
@@ -233,6 +297,7 @@ application_dashboard = [{
 | <a name="module_loki"></a> [loki](#module\_loki) | ./modules/loki-stack | n/a |
 | <a name="module_prometheus"></a> [prometheus](#module\_prometheus) | ./modules/prometheus | n/a |
 | <a name="module_tempo"></a> [tempo](#module\_tempo) | ./modules/tempo | n/a |
+| <a name="module_victoria_metrics"></a> [victoria\_metrics](#module\_victoria\_metrics) | ./modules/victoria-metrics | n/a |
 
 ## Resources
 
@@ -255,6 +320,7 @@ application_dashboard = [{
 | <a name="input_prometheus"></a> [prometheus](#input\_prometheus) | values to be used as prometheus's chart values | <pre>object({<br/>    enabled          = optional(bool, true)<br/>    namespace        = optional(string, null) # the namespace fallbacks to var.namespace if not specified<br/>    create_namespace = optional(bool, true)   # whether create namespace if not exist<br/>    release_name     = optional(string, "prometheus")<br/>    chart_version    = optional(string, "75.8.0")<br/>    retention_days   = optional(string, "15d")<br/>    storage_class    = optional(string, "")<br/>    storage_size     = optional(string, "100Gi")<br/>    access_modes     = optional(list(string), ["ReadWriteOnce"])<br/>    resources = optional(object({<br/>      requests = optional(object({<br/>        cpu    = optional(string, "1")<br/>        memory = optional(string, "2500Mi")<br/>      }), {})<br/>      limits = optional(object({<br/>        cpu    = optional(string, "2")<br/>        memory = optional(string, "3Gi")<br/>      }), {})<br/>    }), {})<br/>    replicas                     = optional(number, 1)<br/>    enable_alertmanager          = optional(bool, true)  # allows to enable alertmanager. By default, we enable it.<br/>    scrape_helm_chart_components = optional(bool, false) # enable scraping all servicemonitors. The chart by default has disabled scraping all servicemonitors. https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack#prometheus-io-scrape<br/>    additional_scrape_configs    = optional(any, [])     # allows to specify additional scrape configs for prometheus. Example can be found in tests/prometheus-additional-scrape-configs/1-example.tf<br/>    ingress = optional(object({<br/>      enabled     = optional(bool, false)<br/>      type        = optional(string, "nginx")<br/>      public      = optional(bool, true)<br/>      tls_enabled = optional(bool, true)<br/><br/>      annotations = optional(map(string), {})<br/>      hosts       = optional(list(string), ["prometheus.example.com"])<br/>      path        = optional(list(string), ["/"])<br/>      path_type   = optional(string, "Prefix")<br/>    }), {})<br/>    kubelet_metrics = optional(list(string), ["container_cpu_.*", "container_memory_.*", "kube_pod_container_status_.*",<br/>      "kube_pod_container_resource_.*", "container_network_.*", "kube_pod_resource_limit",<br/>      "kube_pod_resource_request", "pod_cpu_usage_seconds_total", "pod_memory_usage_bytes",<br/>      "kubelet_volume_stats.*", "volume_operation_total_seconds.*", "container_fs_.*"]<br/>    )<br/>    additional_args = optional(list(object({<br/>      name  = string<br/>      value = string<br/>      })), [<br/>      {<br/>        name  = "query.max-concurrency"<br/>        value = "64"<br/>      },<br/>      {<br/>        name  = "query.timeout"<br/>        value = "2m"<br/>      },<br/>      {<br/>        name  = "query.max-samples"<br/>        value = "75000000"<br/>      }<br/>    ])<br/>    extra_configs = optional(any, {}) # allows to pass extra/custom configs to prometheus helm chart, this configs will deep-merged with all generated internal configs and can override the default set ones. All available options can be found in for the specified chart version here: https://artifacthub.io/packages/helm/prometheus-community/prometheus?modal=values<br/>  })</pre> | `{}` | no |
 | <a name="input_skip_folder_creation"></a> [skip\_folder\_creation](#input\_skip\_folder\_creation) | If true, folders are created in submodules. If false, folders are created centrally. | `bool` | `false` | no |
 | <a name="input_tempo"></a> [tempo](#input\_tempo) | Configs for tempo deployment | <pre>object({<br/>    enabled          = optional(bool, false)<br/>    namespace        = optional(string, null) # the namespace fallbacks to var.namespace if not specified<br/>    create_namespace = optional(bool, true)   # whether create namespace if not exist<br/>    chart_version    = optional(string, "1.23.3")<br/>    release_name     = optional(string, "tempo")<br/>    service_account = optional(object({<br/>      name        = optional(string, "tempo")<br/>      annotations = optional(map(string), {})<br/>    }), {})<br/>    storage = optional(object({<br/>      backend = optional(string, "local")<br/>      backend_configuration = optional(map(any), {<br/>        local = { path = "/var/tempo/traces" },<br/>        wal   = { path = "/var/tempo/wal" }<br/>      })<br/>    }), {})<br/>    enable_service_monitor = optional(bool, true)<br/>    oidc_provider_arn      = optional(string, "")<br/><br/>    metrics_generator = optional(object({<br/>      enabled    = optional(bool, true)<br/>      remote_url = optional(string, "http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090/api/v1/write")<br/>    }))<br/><br/>    persistence = optional(object({<br/>      enabled       = optional(bool, true)<br/>      size          = optional(string, "20Gi")<br/>      storage_class = optional(string, "")<br/>    }), {})<br/>    extra_configs = optional(any, {}) # allows to pass extra/custom configs to tempo helm chart, this configs will deep-merged with all generated internal configs and can override the default set ones. All available options can be found in for the specified chart version here: https://artifacthub.io/packages/helm/grafana/tempo?modal=values<br/>  })</pre> | `{}` | no |
+| <a name="input_victoria_metrics"></a> [victoria\_metrics](#input\_victoria\_metrics) | Values to deploy redundant VictoriaMetrics and wire Prometheus remote\_write | <pre>object({<br/>    enabled          = optional(bool, false)<br/>    namespace        = optional(string, null) # the namespace fallbacks to var.namespace if not specified<br/>    create_namespace = optional(bool, true)   # whether create namespace if not exist<br/>    chart_version    = optional(string, "0.31.0")<br/>    release_name     = optional(string, "victoria-metrics")<br/>    retention_period = optional(string, "30d")<br/>    vmstorage = optional(object({<br/>      replica_count = optional(number, 3)<br/>      storage_class = optional(string, "")<br/>      storage_size  = optional(string, "100Gi")<br/>      access_modes  = optional(list(string), ["ReadWriteOnce"])<br/>    }), {})<br/>    vminsert = optional(object({<br/>      replica_count = optional(number, 2)<br/>    }), {})<br/>    vmselect = optional(object({<br/>      replica_count = optional(number, 2)<br/>    }), {})<br/>    extra_configs = optional(any, {})<br/>  })</pre> | `{}` | no |
 
 ## Outputs
 

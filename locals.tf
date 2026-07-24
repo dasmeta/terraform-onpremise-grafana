@@ -64,6 +64,9 @@ locals {
     }
   } : {}
 
+
+  loki_query_url = var.loki_stack.enabled ? module.loki[0].query_url : ""
+
   default_alert_datasource_uid  = local.default_metrics_datasource_uid
   disk_capacity_alert_config    = var.alerts.disk_capacity
   disk_capacity_alert_enabled   = coalesce(local.disk_capacity_alert_config.enabled, true)
@@ -134,6 +137,7 @@ locals {
   folder_name_uids = {
     for name, folder in grafana_folder.shared_folders : name => folder.uid
   }
+
 
   json_dashboards = concat(var.dashboards_json_files, var.deploy_grafana_stack_dashboard ? ["${path.module}/grafana_dashboard_files/grafana_stack_dashboard.json"] : [])
 }
