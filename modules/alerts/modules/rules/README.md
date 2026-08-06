@@ -55,7 +55,7 @@ No modules.
 | <a name="input_folder_name"></a> [folder\_name](#input\_folder\_name) | The alerts general folder name to attach all alerts to if no specific folder name set for alert rule item | `string` | `"alerts"` | no |
 | <a name="input_folder_name_uids"></a> [folder\_name\_uids](#input\_folder\_name\_uids) | Map of folder names to folder UIDs. If provided, will be used instead of data sources | `map(string)` | `{}` | no |
 | <a name="input_group"></a> [group](#input\_group) | The alerts general group name to attach all alerts to if no specific group set for alert rule item | `string` | `"group"` | no |
-| <a name="input_labels"></a> [labels](#input\_labels) | Predefined labels structure for all alerts | <pre>object({<br/>    priority = optional(string, "P2")<br/>    severity = optional(string, "warning")<br/>    env      = optional(string, "")<br/>  })</pre> | `{}` | no |
+| <a name="input_labels"></a> [labels](#input\_labels) | Predefined labels structure for all alerts | <pre>object({<br/>    priority = optional(string, "P2")<br/>    severity = optional(string, "warning")<br/>    env      = optional(string, "")<br/>    team     = optional(string, "")<br/>  })</pre> | `{}` | no |
 
 ## Outputs
 
