@@ -72,10 +72,15 @@ locals {
       deployment  = "$deployment"
       namespace   = "$namespace"
       cluster     = "$cluster"
+      data_source = {
+        uid  = coalesce(var.data_source.uid, "prometheus")
+        type = coalesce(var.data_source.type, "prometheus")
+      }
 
-      prometheus = {                  # prometheus data source specific defaults
-        datasource_uid = "prometheus" # the data source name fallback
-        period         = "$__rate_interval"
+      prometheus = {                                                  # prometheus data source specific defaults
+        datasource_uid  = coalesce(var.data_source.uid, "prometheus") # the data source name fallback
+        datasource_type = coalesce(var.data_source.type, "prometheus")
+        period          = "$__rate_interval"
       }
       loki = {                  # loki data source specific defaults
         datasource_uid = "loki" # the data source name fallback

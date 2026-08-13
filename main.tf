@@ -39,14 +39,14 @@ module "application_dashboard_json" {
 module "alerts" {
   source = "./modules/alerts"
 
-  count = length(var.alerts.rules) > 0 ? 1 : 0
+  count = length(local.alert_rules) > 0 || var.alerts.contact_points != null || var.alerts.notifications != null ? 1 : 0
 
   alert_interval_seconds = var.alerts.alert_interval_seconds
   disable_provenance     = var.alerts.disable_provenance
   create_folder          = var.skip_folder_creation
   folder_name            = coalesce(var.alerts.folder_name, try(var.application_dashboard[0].folder_name, null), local.app_dash_defaults.folder_name)
   group                  = var.alerts.group
-  rules                  = var.alerts.rules
+  rules                  = local.alert_rules
   annotations            = var.alerts.annotations
   labels                 = var.alerts.labels
   contact_points         = var.alerts.contact_points
@@ -73,9 +73,10 @@ module "grafana" {
 
   datasources = concat(
     var.grafana.datasources == null ? [] : var.grafana.datasources,
-    var.prometheus.enabled ? [{ type = "prometheus", name = "Prometheus", url = "http://${var.prometheus.release_name}-kube-prometheus-prometheus.${var.namespace}.svc.cluster.local:9090" }] : [],
+    var.prometheus.enabled ? [{ type = "prometheus", name = "Prometheus", url = "http://${var.prometheus.release_name}-kube-prometheus-prometheus.${var.namespace}.svc.cluster.local:9090", is_default = !var.victoria_metrics.enabled }] : [],
+    var.victoria_metrics.enabled ? [{ type = "prometheus", name = "VictoriaMetrics", uid = "victoriametrics", url = local.victoria_metrics_query_url, is_default = true }] : [],
     var.tempo.enabled ? [{ type = "tempo", name = "Tempo", url = "http://${var.tempo.release_name}.${var.namespace}.svc.cluster.local:3200" }] : [],
-    var.loki_stack.enabled ? [{ type = "loki", name = "Loki", url = "http://${var.loki_stack.loki.release_name}.${var.namespace}.svc.cluster.local:3100" }] : []
+    var.loki_stack.enabled ? [{ type = "loki", name = "Loki", url = local.loki_query_url }] : []
   )
 }
 
@@ -87,9 +88,22 @@ module "prometheus" {
   chart_version    = var.prometheus.chart_version
   release_name     = var.prometheus.release_name
   configs          = var.prometheus
-  extra_configs    = var.prometheus.extra_configs
+  extra_configs    = merge(var.prometheus.extra_configs, local.prometheus_remote_write_config)
   namespace        = coalesce(var.prometheus.namespace, var.namespace)
   create_namespace = var.prometheus.create_namespace
+}
+
+module "victoria_metrics" {
+  source = "./modules/victoria-metrics"
+
+  count = var.victoria_metrics.enabled ? 1 : 0
+
+  chart_version    = var.victoria_metrics.chart_version
+  release_name     = var.victoria_metrics.release_name
+  configs          = var.victoria_metrics
+  extra_configs    = var.victoria_metrics.extra_configs
+  namespace        = local.victoria_metrics_namespace
+  create_namespace = var.victoria_metrics.create_namespace
 }
 
 module "tempo" {

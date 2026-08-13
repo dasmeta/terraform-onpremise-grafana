@@ -4,7 +4,7 @@ module "container_cpu_widget" {
 
   for_each = { for index, item in try(local.widget_config["container/cpu"], []) : index => item }
 
-  datasource_uid = try(each.value.datasource_uid, null)
+  datasource_uid = coalesce(try(each.value.datasource_uid, null), local.widget_default_values.prometheus.datasource_uid)
   coordinates    = each.value.coordinates
   period         = try(each.value.period, local.widget_default_values.prometheus.period)
 
@@ -19,7 +19,7 @@ module "container_memory_widget" {
 
   for_each = { for index, item in try(local.widget_config["container/memory"], []) : index => item }
 
-  datasource_uid = try(each.value.datasource_uid, null)
+  datasource_uid = coalesce(try(each.value.datasource_uid, null), local.widget_default_values.prometheus.datasource_uid)
   coordinates    = each.value.coordinates
   period         = try(each.value.period, local.widget_default_values.prometheus.period)
 
@@ -33,7 +33,7 @@ module "container_network_widget" {
 
   for_each = { for index, item in try(local.widget_config["container/network"], []) : index => item }
 
-  datasource_uid = try(each.value.datasource_uid, null)
+  datasource_uid = coalesce(try(each.value.datasource_uid, null), local.widget_default_values.prometheus.datasource_uid)
   coordinates    = each.value.coordinates
   period         = try(each.value.period, local.widget_default_values.prometheus.period)
 
@@ -49,8 +49,8 @@ module "container_replicas_widget" {
   for_each = { for index, item in try(local.widget_config["container/replicas"], []) : index => item }
 
   # data_source = try(each.value.data_source, {})
-  datasource_type = try(each.value.datasource_type, null)
-  datasource_uid  = try(each.value.datasource_uid, null)
+  datasource_type = coalesce(try(each.value.datasource_type, null), local.widget_default_values.prometheus.datasource_type)
+  datasource_uid  = coalesce(try(each.value.datasource_uid, null), local.widget_default_values.prometheus.datasource_uid)
   coordinates     = each.value.coordinates
   period          = try(each.value.period, local.widget_default_values.prometheus.period)
 
@@ -65,8 +65,8 @@ module "container_restarts_widget" {
   for_each = { for index, item in try(local.widget_config["container/restarts"], []) : index => item }
 
   # data_source = try(each.value.data_source, {})
-  datasource_type = try(each.value.datasource_type, null)
-  datasource_uid  = try(each.value.datasource_uid, null)
+  datasource_type = coalesce(try(each.value.datasource_type, null), local.widget_default_values.prometheus.datasource_type)
+  datasource_uid  = coalesce(try(each.value.datasource_uid, null), local.widget_default_values.prometheus.datasource_uid)
   coordinates     = each.value.coordinates
   period          = try(each.value.period, local.widget_default_values.prometheus.period)
 
@@ -81,8 +81,8 @@ module "container_request_count_widget" {
   for_each = { for index, item in try(local.widget_config["container/request-count"], []) : index => item }
 
   # data_source = try(each.value.data_source, {})
-  datasource_type = try(each.value.datasource_type, null)
-  datasource_uid  = try(each.value.datasource_uid, null)
+  datasource_type = coalesce(try(each.value.datasource_type, null), local.widget_default_values.prometheus.datasource_type)
+  datasource_uid  = coalesce(try(each.value.datasource_uid, null), local.widget_default_values.prometheus.datasource_uid)
   coordinates     = each.value.coordinates
   period          = try(each.value.period, local.widget_default_values.prometheus.period)
 
@@ -98,8 +98,8 @@ module "container_response_time_widget" {
   for_each = { for index, item in try(local.widget_config["container/response-time"], []) : index => item }
 
   # data_source = try(each.value.data_source, {})
-  datasource_type = try(each.value.datasource_type, null)
-  datasource_uid  = try(each.value.datasource_uid, null)
+  datasource_type = coalesce(try(each.value.datasource_type, null), local.widget_default_values.prometheus.datasource_type)
+  datasource_uid  = coalesce(try(each.value.datasource_uid, null), local.widget_default_values.prometheus.datasource_uid)
   coordinates     = each.value.coordinates
   period          = try(each.value.period, local.widget_default_values.prometheus.period)
   acceptable      = try(each.value.acceptable, 1)
@@ -114,7 +114,7 @@ module "container_network_traffic_widget" {
 
   for_each = { for index, item in try(local.widget_config["container/network-traffic"], []) : index => item }
 
-  datasource_uid = try(each.value.datasource_uid, null)
+  datasource_uid = coalesce(try(each.value.datasource_uid, null), local.widget_default_values.prometheus.datasource_uid)
   coordinates    = each.value.coordinates
   period         = try(each.value.period, local.widget_default_values.prometheus.period)
 
@@ -127,7 +127,7 @@ module "container_network_error_widget" {
 
   for_each = { for index, item in try(local.widget_config["container/network-error"], []) : index => item }
 
-  datasource_uid = try(each.value.datasource_uid, null)
+  datasource_uid = coalesce(try(each.value.datasource_uid, null), local.widget_default_values.prometheus.datasource_uid)
   coordinates    = each.value.coordinates
   period         = try(each.value.period, local.widget_default_values.prometheus.period)
 
@@ -140,7 +140,7 @@ module "container_volume_capacity_widget" {
 
   for_each = { for index, item in try(local.widget_config["container/volume-capacity"], []) : index => item }
 
-  datasource_uid = try(each.value.datasource_uid, null)
+  datasource_uid = coalesce(try(each.value.datasource_uid, null), local.widget_default_values.prometheus.datasource_uid)
   coordinates    = each.value.coordinates
   period         = try(each.value.period, local.widget_default_values.prometheus.period)
   pvc_name       = each.value.pvc_name
@@ -153,7 +153,7 @@ module "container_volume_iops_widget" {
 
   for_each = { for index, item in try(local.widget_config["container/volume-iops"], []) : index => item }
 
-  datasource_uid = try(each.value.datasource_uid, null)
+  datasource_uid = coalesce(try(each.value.datasource_uid, null), local.widget_default_values.prometheus.datasource_uid)
   coordinates    = each.value.coordinates
   period         = try(each.value.period, local.widget_default_values.prometheus.period)
   pod            = each.value.pod
@@ -165,7 +165,7 @@ module "container_volume_throughput_widget" {
 
   for_each = { for index, item in try(local.widget_config["container/volume-throughput"], []) : index => item }
 
-  datasource_uid = try(each.value.datasource_uid, null)
+  datasource_uid = coalesce(try(each.value.datasource_uid, null), local.widget_default_values.prometheus.datasource_uid)
   coordinates    = each.value.coordinates
   period         = try(each.value.period, local.widget_default_values.prometheus.period)
   pod            = each.value.pod

@@ -1,0 +1,40 @@
+---
+description: Project Development Guidelines
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# terraform-onpremise-grafana Development Guidelines
+
+Auto-generated from all feature plans. Last updated: 2026-07-23
+
+## Active Technologies
+
+- Terraform HCL modules (repo-managed versions) + Existing Grafana stack modules, dashboard and alert resources, current Terraform providers in this repository (002-loki-simple-scalable)
+
+## Project Structure
+
+```text
+modules/loki-stack/
+main.tf
+locals.tf
+variables.tf
+tests/loki-simple-scalable/
+specs/002-loki-simple-scalable/
+```
+
+## Commands
+
+# terraform validate (repo root and tests/loki-simple-scalable/)
+# terraform plan in tests/loki-simple-scalable/ to verify URL outputs
+
+## Code Style
+
+Terraform HCL modules (repo-managed versions): Follow standard conventions
+
+## Recent Changes
+
+- 002-loki-simple-scalable: Mode-aware Loki query/push URLs, SimpleScalable defaults/guardrails, tests and README
+
+<!-- MANUAL ADDITIONS START -->
+<!-- MANUAL ADDITIONS END -->

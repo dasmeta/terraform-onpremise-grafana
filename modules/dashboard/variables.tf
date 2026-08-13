@@ -38,7 +38,7 @@ variable "rows" {
 
 variable "data_source" {
   type = object({
-    uid  = optional(string, "prometheus")
+    uid  = optional(string, null)
     type = optional(string, "prometheus")
   })
   default     = {}
@@ -77,7 +77,7 @@ variable "variables" {
 variable "alerts" {
   type        = any
   default     = {}
-  description = "Allows to configure globally dashboard block/(sla|ingress|service) blocks/widgets related alerts"
+  description = "Allows to configure globally dashboard block/(sla|ingress|service) blocks/widgets related alerts. For `block/service` alerts, `map_namespace_to_env_label` (default true) maps each alert namespace to `labels.env`; set false to map it to `labels.namespace`."
 }
 
 variable "folder_name" {

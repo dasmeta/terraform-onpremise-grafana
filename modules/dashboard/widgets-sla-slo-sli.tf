@@ -5,7 +5,7 @@ module "widget_sla_slo_sli_nginx_availability" {
 
   for_each = { for index, item in try(local.widget_config["sla-slo-sli/nginx_availability"], []) : index => item }
 
-  datasource_uid = try(each.value.datasource_uid, null)
+  datasource_uid = coalesce(try(each.value.datasource_uid, null), local.widget_default_values.prometheus.datasource_uid)
   coordinates    = each.value.coordinates
   period         = try(each.value.period, local.widget_default_values.prometheus.period)
   histogram      = try(each.value.histogram, false)
@@ -17,7 +17,7 @@ module "widget_sla_slo_sli_nginx_latency" {
 
   for_each = { for index, item in try(local.widget_config["sla-slo-sli/nginx_latency"], []) : index => item }
 
-  datasource_uid = try(each.value.datasource_uid, null)
+  datasource_uid = coalesce(try(each.value.datasource_uid, null), local.widget_default_values.prometheus.datasource_uid)
   coordinates    = each.value.coordinates
   period         = try(each.value.period, local.widget_default_values.prometheus.period)
   histogram      = try(each.value.histogram, false)

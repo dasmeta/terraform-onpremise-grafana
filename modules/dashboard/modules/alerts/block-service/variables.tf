@@ -39,16 +39,16 @@ variable "alerts" {
     replicas_no = optional(object({
       enabled        = optional(bool, null)   # whether to have alert if no any replica/pod available
       pending_period = optional(string, "0s") # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire), if set `null` here it takes  defaults value
-      labels         = optional(any, {})      # define alert labels to filter in notification policies, this extends with override the defaults labels. we set here P1 priority as if there are no any pods the service is down
+      labels         = optional(any, {})      # define alert labels to filter in notification policies; default no-replica labels are P1/critical because the service is unavailable
       exec_err_state = optional(string, null) # define how to handle if query execution error, if set `null` here it takes  defaults value
       no_data_state  = optional(string, null) # define how to handle if no data for query, if set `null` here it takes  defaults value
       group          = optional(string, null) # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
       annotations    = optional(any, {})      # define alert annotations to include in notifications
     }), {})
     replicas_min = optional(object({
-      enabled        = optional(bool, null)   # whether to have alert on min replicas/pods, so that if there are no at least min count of pods/replicas it will trigger alert
+      enabled        = optional(bool, null)   # whether to have alert on min replicas/pods; leave null to skip HPA-based min alerts unless threshold is set
       pending_period = optional(string, null) # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire), if set `null` here it takes  defaults value
-      threshold      = optional(number, null) # for manually set min replica count, if not specified it will automatically get this based on hpa min, recommended to not set this if hpa is enabled, but if prometheus horizontalpodautoscaler metrics are not enable there may be need to set this manually
+      threshold      = optional(number, null) # for manually set min replica count; if this and enabled are null, the HPA-based alert is not created by default
       no_data_state  = optional(string, null) # define how to handle if no data for query, if set `null` here it takes  defaults value
       exec_err_state = optional(string, null) # define how to handle if query execution error, if set `null` here it takes  defaults value
       labels         = optional(any, {})      # define alert labels to filter in notification policies, if set `null` here it takes defaults labels.
@@ -56,9 +56,9 @@ variable "alerts" {
       annotations    = optional(any, {})      # define alert annotations to include in notifications
     }), {})
     replicas_max = optional(object({
-      enabled        = optional(bool, null)   # whether to have alert on max replicas/pods, so that if it reached to max count of pods/replicas it will trigger alert
+      enabled        = optional(bool, null)   # whether to have alert on max replicas/pods; leave null to skip HPA-based max alerts unless threshold is set
       pending_period = optional(string, null) # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire), if set `null` here it takes  defaults value
-      threshold      = optional(number, null) # for manually set max replica count, if not specified it will automatically get this based on hpa min, recommended to not set this if hpa is enabled, but if prometheus horizontalpodautoscaler metrics are not enable there may be need to set this manually
+      threshold      = optional(number, null) # for manually set max replica count; if this and enabled are null, the HPA-based alert is not created by default
       no_data_state  = optional(string, null) # define how to handle if no data for query, if set `null` here it takes  defaults value
       exec_err_state = optional(string, null) # define how to handle if query execution error, if set `null` here it takes  defaults value
       labels         = optional(any, {})      # define alert labels to filter in notification policies, this extends with override the defaults labels
@@ -74,6 +74,16 @@ variable "alerts" {
       labels         = optional(any, {})      # define alert labels to filter in notification policies, this extends with override the defaults labels
       group          = optional(string, null) # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
       annotations    = optional(any, {})      # define alert annotations to include in notifications
+    }), {})
+    unavailable_replicas = optional(object({
+      enabled        = optional(bool, null)    # whether to alert when deployment unavailable replicas are above threshold
+      pending_period = optional(string, "30s") # define for how long unavailable replicas should persist before firing
+      threshold      = optional(number, 0)     # unavailable replica count threshold; default alerts when count is greater than 0
+      no_data_state  = optional(string, null)  # define how to handle if no data for query, if set `null` here it takes  defaults value
+      exec_err_state = optional(string, null)  # define how to handle if query execution error, if set `null` here it takes  defaults value
+      labels         = optional(any, {})       # define alert labels to filter in notification policies, this extends with override the defaults labels
+      group          = optional(string, null)  # grafana alert group name which used for grouping, if set `null` here it takes  defaults value
+      annotations    = optional(any, {})       # define alert annotations to include in notifications
     }), {})
     job_failed = optional(object({
       enabled        = optional(bool, false)  # whether to have alert on job/cronjob failed status, we have this alert disabled by default as it is only job/cronjob related
@@ -96,7 +106,7 @@ variable "alerts" {
       annotations    = optional(any, {})      # define alert annotations to include in notifications
     }), {})
     network_in = optional(object({            # to configure network in/out traffic anomaly increase alerting
-      enabled        = optional(bool, null)   # wether to create alert on network in/receive anomaly increase/decrease of traffic
+      enabled        = optional(bool, false)  # whether to create alert on network in/receive anomaly increase/decrease of traffic
       pending_period = optional(string, null) # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire), if set `null` here it takes  defaults value
       interval       = optional(string, null) # the time interval to use to evaluate/aggregate/rate network avg traffic to compare with previous same interval value, if set `null` here it takes  defaults value
       deviation      = optional(number, null) # the threshold to consider increase/decrease of traffic as anomaly and fire alert (in this case 10 means that the traffic got increased x10 times withing provided interval)
@@ -107,7 +117,7 @@ variable "alerts" {
       annotations    = optional(any, {})      # define alert annotations to include in notifications
     }), {})
     network_out = optional(object({           # to configure network in/out traffic anomaly increase alerting
-      enabled        = optional(bool, null)   # wether to create alert on network out/transmit anomaly increase/decrease of traffic
+      enabled        = optional(bool, false)  # whether to create alert on network out/transmit anomaly increase/decrease of traffic
       pending_period = optional(string, null) # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire), if set `null` here it takes  defaults value
       interval       = optional(string, null) # the time interval to use to evaluate/aggregate/rate network avg traffic to compare with previous same interval value, if set `null` here it takes  defaults value
       deviation      = optional(number, null) # the threshold to consider increase/decrease of traffic as anomaly and fire alert (in this case 10 means that the traffic got increased x10 times withing provided interval)

@@ -3360,8 +3360,8 @@
         {
           "current": {
             "selected": false,
-            "text": "central-2-prom",
-            "value": "central-2-prom"
+            "text": "VictoriaMetrics",
+            "value": "victoriametrics"
           },
           "hide": 0,
           "includeAll": false,

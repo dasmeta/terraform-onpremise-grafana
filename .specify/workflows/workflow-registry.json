@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0",
+  "workflows": {
+    "speckit": {
+      "name": "Full SDD Cycle",
+      "version": "1.0.0",
+      "description": "Runs specify → plan → tasks → implement with review gates",
+      "source": "bundled",
+      "installed_at": "2026-07-23T10:59:00.000000+00:00",
+      "updated_at": "2026-07-23T10:59:00.000000+00:00"
+    }
+  }
+}

@@ -71,10 +71,10 @@ resource "grafana_contact_point" "webhook_contact_point" {
 }
 
 resource "grafana_message_template" "body_template" {
+  count = var.enable_message_template ? 1 : 0
 
-  count    = var.enable_message_template ? 1 : 0
-  name     = "Message Template"
-  template = <<EOF
+  name = "Message Template"
+  template = trimspace(<<-EOF
 {{ define "default.message" }}
 {{- $a := index .Alerts 0 -}}
 
@@ -102,12 +102,15 @@ resource "grafana_message_template" "body_template" {
 {{- $logsURL := or .CommonAnnotations.logs_url      $a.Annotations.logs_url      -}}
 {{- $silURL  := or .CommonAnnotations.silence_url   $a.Annotations.silence_url   -}}
 
-📅 Date: {{ $a.StartsAt }}
-📊 State: {{ .Status }}
-👤 Owner: {{ $owner }}
-🌍 Location: {{ $provider }}:{{ $account }}:{{ $env }}
+📅  Date: {{ $a.StartsAt }}
 
-📝 Description:
+📊  State: {{ .Status }}
+
+👤  Owner: {{ $owner }}
+
+🌍  Location: {{ $provider }}:{{ $account }}:{{ $env }}
+
+📝  Description:
 {{- if $summary }}
 Summary: {{ $summary }}
 {{- end }}
@@ -122,10 +125,11 @@ Evaluation: {{ or $evaluation "n/a" }}. Affected component/resource are visible 
 Impact not provided. Please assess user/business effect (e.g., error rate, endpoints affected, replicas down).
 {{- end }}
 
-🔧 Next step: {{ if $runbook }}{{ $runbook }}{{ else }}Check logs and dashboards; follow service runbook.{{ end }}
-🔗 Links: {{ if $dashURL }}[Dashboard]({{ $dashURL }}){{ else }}[Dashboard]{{ end }} {{ if $logsURL }}[Logs]({{ $logsURL }}){{ else }}[Logs]{{ end }} {{ if $silURL }}[Silence/Ack]({{ $silURL }}){{ else }}[Silence/Ack]{{ end }}
+🔧  Next step: {{ if $runbook }}{{ $runbook }}{{ else }}Check logs and dashboards; follow service runbook.{{ end }}
 
-📡 Source: {{ or (or .CommonLabels.source $a.Labels.source) "Grafana" }}
+🔗  Links: {{ if $dashURL }}[Dashboard]({{ $dashURL }}){{ else }}[Dashboard]{{ end }} {{ if $logsURL }}[Logs]({{ $logsURL }}){{ else }}[Logs]{{ end }} {{ if $silURL }}[Silence/Ack]({{ $silURL }}){{ else }}[Silence/Ack]{{ end }}
+
+📡  Source: {{ or (or .CommonLabels.source $a.Labels.source) "Grafana" }}
 
 --- Original ---
 {{- if gt (len .Alerts.Firing) 0 -}}**Firing**
@@ -136,11 +140,12 @@ Impact not provided. Please assess user/business effect (e.g., error rate, endpo
 {{ end -}}
 {{ end }}
   EOF
+  )
 }
 
 resource "grafana_message_template" "title_template" {
-  name     = "Title template"
-  template = <<EOF
+  name = "Title template"
+  template = trimspace(<<-EOF
 {{ define "default.title" }}
 {{- $a := index .Alerts 0 -}}
 
@@ -153,6 +158,7 @@ resource "grafana_message_template" "title_template" {
 {{- $project   := or .CommonAnnotations.project   $a.Labels.project   "-" -}}
 
 {{- template "prioIcon" $prio }} {{ $prio }}: {{ $issue }}{{ if and $val $threshold }} ({{ $val }} out of {{ $threshold }}){{ end }} on {{ $component }} / {{ $resource }} / {{ $project }}
+
 {{ end }}
 
 {{ define "prioIcon" }}
@@ -163,4 +169,5 @@ resource "grafana_message_template" "title_template" {
 {{- else }}ℹ️{{ end -}}
 {{ end }}
   EOF
+  )
 }

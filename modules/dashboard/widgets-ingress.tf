@@ -5,8 +5,8 @@ module "ingress_connections_widget" {
 
   for_each = { for index, item in try(local.widget_config["ingress/connections"], []) : index => item }
 
-  datasource_type = try(each.value.datasource_type, null)
-  datasource_uid  = try(each.value.datasource_uid, null)
+  datasource_type = coalesce(try(each.value.datasource_type, null), local.widget_default_values.prometheus.datasource_type)
+  datasource_uid  = coalesce(try(each.value.datasource_uid, null), local.widget_default_values.prometheus.datasource_uid)
   coordinates     = each.value.coordinates
   period          = try(each.value.period, local.widget_default_values.prometheus.period)
   filter          = try(each.value.filter, "")
@@ -18,8 +18,8 @@ module "ingress_request_rate_widget" {
 
   for_each = { for index, item in try(local.widget_config["ingress/request-rate"], []) : index => item }
 
-  datasource_type = try(each.value.datasource_type, null)
-  datasource_uid  = try(each.value.datasource_uid, null)
+  datasource_type = coalesce(try(each.value.datasource_type, null), local.widget_default_values.prometheus.datasource_type)
+  datasource_uid  = coalesce(try(each.value.datasource_uid, null), local.widget_default_values.prometheus.datasource_uid)
   coordinates     = each.value.coordinates
   period          = try(each.value.period, local.widget_default_values.prometheus.period)
   by_host         = try(each.value.by_host, false)
@@ -31,8 +31,8 @@ module "ingress_request_count_widget" {
 
   for_each = { for index, item in try(local.widget_config["ingress/request-count"], []) : index => item }
 
-  datasource_type = try(each.value.datasource_type, null)
-  datasource_uid  = try(each.value.datasource_uid, null)
+  datasource_type = coalesce(try(each.value.datasource_type, null), local.widget_default_values.prometheus.datasource_type)
+  datasource_uid  = coalesce(try(each.value.datasource_uid, null), local.widget_default_values.prometheus.datasource_uid)
   coordinates     = each.value.coordinates
   period          = try(each.value.period, local.widget_default_values.prometheus.period)
   by_host         = try(each.value.by_host, false)
@@ -47,8 +47,8 @@ module "ingress_cpu_widget" {
 
   for_each = { for index, item in try(local.widget_config["ingress/cpu"], []) : index => item }
 
-  datasource_type = try(each.value.datasource_type, null)
-  datasource_uid  = try(each.value.datasource_uid, null)
+  datasource_type = coalesce(try(each.value.datasource_type, null), local.widget_default_values.prometheus.datasource_type)
+  datasource_uid  = coalesce(try(each.value.datasource_uid, null), local.widget_default_values.prometheus.datasource_uid)
   coordinates     = each.value.coordinates
   period          = try(each.value.period, local.widget_default_values.prometheus.period)
 
@@ -61,8 +61,8 @@ module "ingress_memory_widget" {
 
   for_each = { for index, item in try(local.widget_config["ingress/memory"], []) : index => item }
 
-  datasource_type = try(each.value.datasource_type, null)
-  datasource_uid  = try(each.value.datasource_uid, null)
+  datasource_type = coalesce(try(each.value.datasource_type, null), local.widget_default_values.prometheus.datasource_type)
+  datasource_uid  = coalesce(try(each.value.datasource_uid, null), local.widget_default_values.prometheus.datasource_uid)
   coordinates     = each.value.coordinates
   period          = try(each.value.period, local.widget_default_values.prometheus.period)
 
@@ -75,8 +75,8 @@ module "ingress_latency_widget" {
 
   for_each = { for index, item in try(local.widget_config["ingress/latency"], []) : index => item }
 
-  datasource_type = try(each.value.datasource_type, null)
-  datasource_uid  = try(each.value.datasource_uid, null)
+  datasource_type = coalesce(try(each.value.datasource_type, null), local.widget_default_values.prometheus.datasource_type)
+  datasource_uid  = coalesce(try(each.value.datasource_uid, null), local.widget_default_values.prometheus.datasource_uid)
   coordinates     = each.value.coordinates
   period          = try(each.value.period, local.widget_default_values.prometheus.period)
   by_host         = try(each.value.by_host, false)

@@ -15,7 +15,7 @@ output "alert_rules" {
         equation       = "lte"
         threshold      = 0
         filters        = {}
-        labels         = merge(local.defaults.labels, local.alerts.replicas_no.labels)
+        labels         = merge(local.alert_type_labels.replicas_no, local.defaults.labels, local.alerts.replicas_no.labels)
         annotations = merge({
           "threshold" = 0,
           "metric"    = "replicas",
@@ -27,7 +27,7 @@ output "alert_rules" {
         settings_replaceWith = 0
       }
     ] : [],
-    coalesce(local.alerts.replicas_max.enabled, local.defaults.enabled, false) ? [
+    local.replicas_max_enabled ? [
       {
         name           = "`${var.namespace}/${var.name}` service has reached to its max ${local.alerts.replicas_max.threshold != null ? local.alerts.replicas_max.threshold : "hpa"} replicas/pods"
         folder_name    = try(coalesce(local.alerts.replicas_max.folder_name, local.defaults.folder_name), null)
@@ -42,7 +42,7 @@ output "alert_rules" {
         equation       = "lte"
         threshold      = 0
         filters        = {}
-        labels         = merge(local.defaults.labels, local.alerts.replicas_max.labels)
+        labels         = merge(local.alert_type_labels.replicas_max, local.defaults.labels, local.alerts.replicas_max.labels)
         annotations = merge({
           "threshold" = 0,
           "metric"    = "replicas",
@@ -54,7 +54,7 @@ output "alert_rules" {
         settings_replaceWith = 0
       }
     ] : [],
-    coalesce(local.alerts.replicas_min.enabled, local.defaults.enabled, false) ? [
+    local.replicas_min_enabled ? [
       {
         name           = "`${var.namespace}/${var.name}` service has less than min ${local.alerts.replicas_min.threshold != null ? local.alerts.replicas_min.threshold : "hpa"} replicas/pods"
         summary        = "{{ .Labels.alertname }} it is already ${coalesce(local.alerts.replicas_min.pending_period, local.defaults.pending_period)}"
@@ -68,7 +68,7 @@ output "alert_rules" {
         equation       = "lt"
         threshold      = 0
         filters        = {}
-        labels         = merge(local.defaults.labels, local.alerts.replicas_min.labels)
+        labels         = merge(local.alert_type_labels.replicas_min, local.defaults.labels, local.alerts.replicas_min.labels)
         annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
           {
             "threshold" = 0,
@@ -96,7 +96,7 @@ output "alert_rules" {
         equation       = "gte"
         threshold      = local.alerts.replicas_state.threshold
         filters        = {}
-        labels         = merge(local.defaults.labels, local.alerts.replicas_state.labels)
+        labels         = merge(local.alert_type_labels.replicas_state, local.defaults.labels, local.alerts.replicas_state.labels)
         annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
           {
             "threshold" = local.alerts.replicas_state.threshold,
@@ -105,6 +105,34 @@ output "alert_rules" {
             "component" = "pod"
             "resource"  = "deployment"
         }, try(local.alerts.replicas_state.annotations, {}))
+        settings_mode        = "replaceNN"
+        settings_replaceWith = 0
+      }
+    ] : [],
+    local.unavailable_replicas_enabled ? [
+      {
+        name           = "`${var.namespace}/${var.name}` deployment has unavailable replicas"
+        folder_name    = try(coalesce(local.alerts.unavailable_replicas.folder_name, local.defaults.folder_name), null)
+        summary        = "{{ .Labels.alertname }} it is already ${coalesce(local.alerts.unavailable_replicas.pending_period, local.defaults.pending_period)}"
+        group          = try(coalesce(local.alerts.unavailable_replicas.group, local.defaults.group), "${var.namespace}/${var.name} service")
+        no_data_state  = coalesce(local.alerts.unavailable_replicas.no_data_state, local.defaults.no_data_state, "NoData")
+        exec_err_state = coalesce(local.alerts.unavailable_replicas.exec_err_state, local.defaults.exec_err_state, "Error")
+        datasource     = var.datasource
+        expr           = local.defaults.unavailable_replicas_expr
+        pending_period = coalesce(local.alerts.unavailable_replicas.pending_period, local.defaults.pending_period)
+        function       = "last"
+        equation       = "gt"
+        threshold      = local.alerts.unavailable_replicas.threshold
+        filters        = {}
+        labels         = merge(local.alert_type_labels.unavailable_replicas, local.defaults.labels, local.alerts.unavailable_replicas.labels)
+        annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
+          {
+            "threshold" = local.alerts.unavailable_replicas.threshold,
+            "metric"    = "unavailable_replicas",
+            "impact"    = "Deployment rollout or availability is degraded"
+            "component" = "deployment"
+            "resource"  = "deployment"
+        }, try(local.alerts.unavailable_replicas.annotations, {}))
         settings_mode        = "replaceNN"
         settings_replaceWith = 0
       }
@@ -123,7 +151,7 @@ output "alert_rules" {
         equation       = "gte"
         threshold      = local.alerts.job_failed.threshold
         filters        = {}
-        labels         = merge(local.defaults.labels, local.alerts.job_failed.labels)
+        labels         = merge(local.alert_type_labels.job_failed, local.defaults.labels, local.alerts.job_failed.labels)
         annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
           {
             "threshold" = local.alerts.job_failed.threshold,
@@ -153,7 +181,7 @@ output "alert_rules" {
         function  = "last"
         equation  = "gte"
         threshold = local.alerts.restarts.threshold
-        labels    = merge(local.defaults.labels, local.alerts.restarts.labels)
+        labels    = merge(local.alert_type_labels.restarts, local.defaults.labels, local.alerts.restarts.labels)
         annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
           {
             "threshold" = local.alerts.restarts.threshold,
@@ -166,7 +194,7 @@ output "alert_rules" {
         settings_replaceWith = 0
       }
     ] : [],
-    coalesce(local.alerts.network_in.enabled, local.defaults.enabled, false) ? [
+    local.network_in_enabled ? [
       {
         name           = "`${var.namespace}/${var.name}` service has anomaly increase of in/receive network traffic for ${coalesce(local.alerts.network_in.interval, local.defaults.interval)} interval"
         summary        = "{{ .Labels.alertname }} it is already ${coalesce(local.alerts.network_in.pending_period, local.defaults.pending_period)}"
@@ -180,7 +208,7 @@ output "alert_rules" {
         filters        = {}
         equation       = "gte"
         threshold      = coalesce(local.alerts.network_in.deviation, local.defaults.deviation)
-        labels         = merge(local.defaults.labels, local.alerts.network_in.labels)
+        labels         = merge(local.alert_type_labels.network_in, local.defaults.labels, local.alerts.network_in.labels)
         annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
           {
             "threshold" = coalesce(local.alerts.network_in.deviation, local.defaults.deviation),
@@ -193,7 +221,7 @@ output "alert_rules" {
         settings_replaceWith = 0
       }
     ] : [],
-    coalesce(local.alerts.network_out.enabled, local.defaults.enabled, false) ? [
+    local.network_out_enabled ? [
       {
         name           = "`${var.namespace}/${var.name}` service has anomaly increase of out/transmit network traffic for ${coalesce(local.alerts.network_out.interval, local.defaults.interval)} interval"
         summary        = "{{ .Labels.alertname }} it is already ${coalesce(local.alerts.network_out.pending_period, local.defaults.pending_period)}"
@@ -207,7 +235,7 @@ output "alert_rules" {
         filters        = {}
         equation       = "gte"
         threshold      = coalesce(local.alerts.network_out.deviation, local.defaults.deviation)
-        labels         = merge(local.defaults.labels, local.alerts.network_out.labels)
+        labels         = merge(local.alert_type_labels.network_out, local.defaults.labels, local.alerts.network_out.labels)
         annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
           {
             "threshold" = coalesce(local.alerts.network_out.deviation, local.defaults.deviation),
@@ -234,7 +262,7 @@ output "alert_rules" {
         filters        = {}
         equation       = "gte"
         threshold      = coalesce(local.alerts.cpu.threshold_percent, local.defaults.threshold_percent)
-        labels         = merge(local.defaults.labels, local.alerts.cpu.labels)
+        labels         = merge(local.alert_type_labels.cpu, local.defaults.labels, local.alerts.cpu.labels)
         annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
           {
             "threshold" = coalesce(local.alerts.cpu.threshold_percent, local.defaults.threshold_percent),
@@ -263,7 +291,7 @@ output "alert_rules" {
         filters        = {}
         equation       = "gte"
         threshold      = coalesce(local.alerts.memory.threshold_percent, local.defaults.threshold_percent)
-        labels         = merge(local.defaults.labels, local.alerts.memory.labels)
+        labels         = merge(local.alert_type_labels.memory, local.defaults.labels, local.alerts.memory.labels)
         annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
           {
             "threshold" = coalesce(local.alerts.memory.threshold_percent, local.defaults.threshold_percent),

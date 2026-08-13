@@ -26,9 +26,9 @@ resource "helm_release" "loki" {
           auth_enabled     = var.configs.loki.auth_enabled
           limits_config    = var.configs.loki.limits_config
           storage          = var.configs.loki.storage
-          compactor        = var.configs.loki.compactor_options
+          compactor        = local.loki_compactor_options
           schemaConfig = {
-            configs = var.configs.loki.schemaConfig
+            configs = local.loki_schema_config
           }
         }
         gateway = {
@@ -53,9 +53,9 @@ resource "helm_release" "loki" {
         lokiCanary     = var.configs.loki.lokiCanary
         ruler          = var.configs.loki.ruler
         compactor      = var.configs.loki.compactor
-        read           = var.configs.loki.read
-        write          = var.configs.loki.write
-        backend        = var.configs.loki.backend
+        read           = local.loki_read
+        write          = local.loki_write
+        backend        = local.loki_backend
         ingester       = var.configs.loki.ingester
         querier        = var.configs.loki.querier
         queryFrontend  = var.configs.loki.queryFrontend
@@ -90,7 +90,7 @@ resource "helm_release" "promtail" {
       promtail_extra_label_configs_yaml = local.extra_relabel_configs_yaml
       promtail_extra_label_configs_raw  = local.extra_relabel_configs
       promtail_extra_pipeline_stages    = local.extra_pipeline_stages_yaml
-      promtail_clients                  = try(var.configs.promtails.clients, ["http://${var.configs.loki.release_name}:3100/loki/api/v1/push"])
+      promtail_clients                  = local.promtail_clients
       promtail_server_port              = var.configs.promtail.server_port
       }
     ),

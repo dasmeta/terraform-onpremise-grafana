@@ -1,0 +1,7 @@
+{
+  "integration": "cursor",
+  "version": "0.7.4",
+  "scripts": {
+    "update-context": ".specify/integrations/cursor-agent/scripts/update-context.sh"
+  }
+}
