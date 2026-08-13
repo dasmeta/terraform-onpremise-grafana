@@ -16,6 +16,7 @@ module "this" {
       },
       { type : "block/service", name : "basic-service", namespace : "prod" },                                                                                # by default no additional configs needed beside "namespace" to get alerts enabled
       { type : "block/service", name : "with-canary-service", namespace : "prod", alerts : { defaults : { workload_suffix : "-primary" } } },                # flagger canary alters deployment and adds "primary" suffix
+      { type : "block/service", name : "service-container", namespace : "prod", alerts : { defaults : { workload_name : "service-deployment" } } },          # allow workload name to differ from the container name used by cpu/restart alerts
       { type : "block/service", name : "one-replica-or-exact-replicas-service", namespace : "prod", alerts : { replicas_max : { enabled : false } } },       # disable max replica alert as we have just one only replica
       { type : "block/service", name : "cronjob-service", namespace : "prod", alerts : { defaults : { workload_type : "cronjob" } } },                       # cronjob/cron type service alerts configs
       { type : "block/service", name : "in-multiple-namespaces--same-service", namespace : "prod", alerts : { namespaces : ["namespace1", "namespace2"] } }, # create alerts for multiple namespaces
@@ -38,6 +39,7 @@ module "this" {
         defaults : {
           enabled : true                 # whether by default block widget alerts are enabled, it allows to disable alert by default and enable for specific widget only
           workload_type : "deployment"   # the workload type of app setup, can be "daemonset", "deployment", "statefulset" and "cronjob"
+          workload_name : null           # allows workload/deployment name to differ from service/container name; if null workload_prefix/name/workload_suffix are used
           workload_suffix : ""           # allows to filter workload or pod via {var.name}{var.defaults.workload_suffix} filtration, can be used for example in case we have flagger canary deployment to add "-primary" suffix to filter deployment
           workload_prefix : ""           # allows to filter workload or pod via {var.defaults.workload_suffix}{var.name} filtration, can be used for example in case we have a deployment which name differs from container name with custom suffix like in nginx ingress container named "controller" and daemonset named "ingress-nginx-controller"
           labels : { "priority" : "P2" } # the service level monitoring alarms generally are considered as P2 priority and desired to be sent to slack channel)
