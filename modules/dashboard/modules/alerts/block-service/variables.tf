@@ -16,18 +16,19 @@ variable "datasource" {
 
 variable "defaults" {
   type = object({
-    enabled           = optional(bool, true)           # whether by default block widget alerts are enabled, it allows to disable alert by default and enable for specific widget only
-    workload_type     = optional(string, "deployment") # the workload type of app setup, can be "daemonset", "deployment", "statefulset" and "cronjob"
-    workload_suffix   = optional(string, "")           # allows to filter workload or pod via {var.name}{var.defaults.workload_suffix} filtration, can be used for example in case we have flagger canary deployment to add "-primary" suffix to filter deployment
-    workload_prefix   = optional(string, "")           # allows to filter workload or pod via {var.defaults.workload_suffix}{var.name} filtration, can be used for example in case we have a deployment which name differs from container name with custom suffix like in nginx ingress container named "controller" and daemonset named "ingress-nginx-controller"
-    labels            = optional(any, {})              # labels applied to every generated service alert; alert-specific labels override these defaults
-    pending_period    = optional(string, "1m")         # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire)
-    interval          = optional(string, "5m")         # the time interval to use to evaluate/aggregate/rate metric for comparison
-    deviation         = optional(number, 10)           # the deviation threshold to consider increase/decrease of metric as anomaly and fire alert, we use this now for network alert (in this case 10 means that the metric got increased x10 times withing provided interval)
-    threshold_percent = optional(number, 99)           # the percent threshold to use when triggering alerts on resources like cpu/memory
-    no_data_state     = optional(string, "NoData")     # define how to handle if no data for query, by default it will fire alert with no data info
-    exec_err_state    = optional(string, "Error")      # define how to handle if query execution error, by default it will fire alert with error info
-    group             = optional(string, null)         # grafana alert group name which used for grouping, if null the group name will be based on service name/namespace in format `Service {namespace}/{name}`
+    enabled           = optional(bool, true)                 # whether by default block widget alerts are enabled, it allows to disable alert by default and enable for specific widget only
+    workload_type     = optional(string, "deployment")       # the workload type of app setup, can be "daemonset", "deployment", "statefulset" and "cronjob"
+    workload_name     = optional(string, null)               # allows workload/deployment name to differ from service/container name; if null workload_prefix/name/workload_suffix are used
+    workload_suffix   = optional(string, "")                 # allows to filter workload or pod via {var.name}{var.defaults.workload_suffix} filtration, can be used for example in case we have flagger canary deployment to add "-primary" suffix to filter deployment
+    workload_prefix   = optional(string, "")                 # allows to filter workload or pod via {var.defaults.workload_suffix}{var.name} filtration, can be used for example in case we have a deployment which name differs from container name with custom suffix like in nginx ingress container named "controller" and daemonset named "ingress-nginx-controller"
+    labels            = optional(any, { "priority" : "P1" }) # the service level monitoring alarms generally are considered as P1 priority
+    pending_period    = optional(string, "1m")               # define for how long to wait to trigger alert if condition satisfied(how long should satisfied state last to fire)
+    interval          = optional(string, "5m")               # the time interval to use to evaluate/aggregate/rate metric for comparison
+    deviation         = optional(number, 10)                 # the deviation threshold to consider increase/decrease of metric as anomaly and fire alert, we use this now for network alert (in this case 10 means that the metric got increased x10 times withing provided interval)
+    threshold_percent = optional(number, 99)                 # the percent threshold to use when triggering alerts on resources like cpu/memory
+    no_data_state     = optional(string, "NoData")           # define how to handle if no data for query, by default it will fire alert with no data info
+    exec_err_state    = optional(string, "Error")            # define how to handle if query execution error, by default it will fire alert with error info
+    group             = optional(string, null)               # grafana alert group name which used for grouping, if null the group name will be based on service name/namespace in format `Service {namespace}/{name}`
   })
   default     = {}
   description = "The general default values to use with alert rules"
