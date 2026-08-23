@@ -1,7 +1,7 @@
 locals {
   groups = toset([for rule in var.alert_rules : coalesce(rule.group, var.group)])
   alerts = { for member in local.groups : member => [for rule in var.alert_rules : merge(rule, {
-    expr : coalesce(rule.expr, "${rule.metric_function}(${rule.metric_name}${rule.filters != null ? replace(jsonencode(rule.filters), "\":\"", "\"=\"") : ""}${rule.metric_interval})")
+    expr : try(rule.datasource_type, "prometheus") == "cloudwatch" ? try(rule.expr, null) : coalesce(rule.expr, "${rule.metric_function}(${rule.metric_name}${rule.filters != null ? replace(jsonencode(rule.filters), "\":\"", "\"=\"") : ""}${rule.metric_interval})")
     folder_name : try(rule.folder_name, var.folder_name)
   }) if coalesce(rule.group, var.group) == member] }
   comparison_operators = {
@@ -69,7 +69,21 @@ resource "grafana_rule_group" "this" {
         }
         datasource_uid = rule.value.datasource
         model = (
-          jsonencode({
+          try(rule.value.datasource_type, "prometheus") == "cloudwatch" ? jsonencode({
+            refId      = "A"
+            intervalMs = rule.value.interval_ms
+            datasource = { uid = rule.value.datasource, type = "cloudwatch" }
+            queryMode  = "Metrics"
+            namespace  = rule.value.cloudwatch_query.namespace
+            metricName = rule.value.cloudwatch_query.metric_name
+            dimensions = rule.value.cloudwatch_query.dimensions
+            statistic  = rule.value.cloudwatch_query.statistic
+            period     = rule.value.cloudwatch_query.period
+            region     = rule.value.cloudwatch_query.region
+            matchExact = true
+            type       = "timeseries"
+            editorMode = "code"
+            }) : jsonencode({
             refId      = "A"
             intervalMs = rule.value.interval_ms
             datasource = {

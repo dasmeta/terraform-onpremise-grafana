@@ -6,35 +6,38 @@ alwaysApply: true
 
 # terraform-onpremise-grafana Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2026-07-23
+Auto-generated from all feature plans. Last updated: 2026-08-07
 
 ## Active Technologies
+- Terraform HCL ~> 1.3 + Grafana provider, existing `modules/dashboard` widget/base CloudWatch panel builder, `modules/alerts` rule group resources (004-msk-monitoring)
+- N/A (CloudWatch metrics consumed at query time via Grafana datasource) (004-msk-monitoring)
 
-- Terraform HCL modules (repo-managed versions) + Existing Grafana stack modules, dashboard and alert resources, current Terraform providers in this repository (002-loki-simple-scalable)
+- Terraform HCL modules (repo-managed versions) + Existing Grafana stack modules, dashboard and alert resources, current Terraform providers in this repository (004-msk-monitoring)
 
 ## Project Structure
 
 ```text
-modules/loki-stack/
-main.tf
-locals.tf
-variables.tf
-tests/loki-simple-scalable/
-specs/002-loki-simple-scalable/
+modules/dashboard/modules/widgets/msk/
+modules/dashboard/modules/blocks/msk/
+modules/dashboard/widgets-msk.tf
+modules/dashboard/widgets_blocks.tf
+modules/dashboard/tests/msk-cloudwatch/
+specs/004-msk-monitoring/
 ```
 
 ## Commands
 
-# terraform validate (repo root and tests/loki-simple-scalable/)
-# terraform plan in tests/loki-simple-scalable/ to verify URL outputs
+# terraform validate (repo root and modules/dashboard/tests/msk-cloudwatch/)
+# terraform plan in modules/dashboard/tests/msk-cloudwatch/ to verify MSK block wiring
 
 ## Code Style
 
 Terraform HCL modules (repo-managed versions): Follow standard conventions
 
 ## Recent Changes
+- 004-msk-monitoring: Added Terraform HCL ~> 1.3 + Grafana provider, existing `modules/dashboard` widget/base CloudWatch panel builder, `modules/alerts` rule group resources
 
-- 002-loki-simple-scalable: Mode-aware Loki query/push URLs, SimpleScalable defaults/guardrails, tests and README
+- 004-msk-monitoring: MSK CloudWatch dashboard widgets, block/msk, optional offline-partition alerts, tests and README
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->

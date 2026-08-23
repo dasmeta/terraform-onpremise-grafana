@@ -83,6 +83,8 @@ module "this" {
 | <a name="module_block_elasticache_redis"></a> [block\_elasticache\_redis](#module\_block\_elasticache\_redis) | ./modules/blocks/elasticache_redis | n/a |
 | <a name="module_block_ingress"></a> [block\_ingress](#module\_block\_ingress) | ./modules/blocks/ingress | n/a |
 | <a name="module_block_ingress_nginx_alerts"></a> [block\_ingress\_nginx\_alerts](#module\_block\_ingress\_nginx\_alerts) | ./modules/alerts/block-ingress-nginx | n/a |
+| <a name="module_block_msk"></a> [block\_msk](#module\_block\_msk) | ./modules/blocks/msk | n/a |
+| <a name="module_block_msk_alerts"></a> [block\_msk\_alerts](#module\_block\_msk\_alerts) | ./modules/alerts/block-msk | n/a |
 | <a name="module_block_rds"></a> [block\_rds](#module\_block\_rds) | ./modules/blocks/rds | n/a |
 | <a name="module_block_redis"></a> [block\_redis](#module\_block\_redis) | ./modules/blocks/redis | n/a |
 | <a name="module_block_service"></a> [block\_service](#module\_block\_service) | ./modules/blocks/service | n/a |
@@ -127,6 +129,13 @@ module "this" {
 | <a name="module_logs_count_widget"></a> [logs\_count\_widget](#module\_logs\_count\_widget) | ./modules/widgets/loki/count | n/a |
 | <a name="module_logs_error_rate_widget"></a> [logs\_error\_rate\_widget](#module\_logs\_error\_rate\_widget) | ./modules/widgets/loki/error-rate | n/a |
 | <a name="module_logs_warning_rate_widget"></a> [logs\_warning\_rate\_widget](#module\_logs\_warning\_rate\_widget) | ./modules/widgets/loki/warning-rate | n/a |
+| <a name="module_msk_consumer_lag_widget"></a> [msk\_consumer\_lag\_widget](#module\_msk\_consumer\_lag\_widget) | ./modules/widgets/msk/consumer_lag | n/a |
+| <a name="module_msk_cpu_widget"></a> [msk\_cpu\_widget](#module\_msk\_cpu\_widget) | ./modules/widgets/msk/cpu | n/a |
+| <a name="module_msk_memory_widget"></a> [msk\_memory\_widget](#module\_msk\_memory\_widget) | ./modules/widgets/msk/memory | n/a |
+| <a name="module_msk_offline_partitions_widget"></a> [msk\_offline\_partitions\_widget](#module\_msk\_offline\_partitions\_widget) | ./modules/widgets/msk/offline_partitions | n/a |
+| <a name="module_msk_partitions_widget"></a> [msk\_partitions\_widget](#module\_msk\_partitions\_widget) | ./modules/widgets/msk/partitions | n/a |
+| <a name="module_msk_throughput_in_widget"></a> [msk\_throughput\_in\_widget](#module\_msk\_throughput\_in\_widget) | ./modules/widgets/msk/throughput_in | n/a |
+| <a name="module_msk_throughput_out_widget"></a> [msk\_throughput\_out\_widget](#module\_msk\_throughput\_out\_widget) | ./modules/widgets/msk/throughput_out | n/a |
 | <a name="module_pod_cpu_widget"></a> [pod\_cpu\_widget](#module\_pod\_cpu\_widget) | ./modules/widgets/pod/cpu | n/a |
 | <a name="module_pod_memory_widget"></a> [pod\_memory\_widget](#module\_pod\_memory\_widget) | ./modules/widgets/pod/memory | n/a |
 | <a name="module_pod_restarts_widget"></a> [pod\_restarts\_widget](#module\_pod\_restarts\_widget) | ./modules/widgets/pod/restarts | n/a |
@@ -185,7 +194,7 @@ module "this" {
 |------|-------------|------|---------|:--------:|
 | <a name="input_alerts"></a> [alerts](#input\_alerts) | Allows to configure globally dashboard block/(sla\|ingress\|service) blocks/widgets related alerts. For `block/service` alerts, `map_namespace_to_env_label` (default true) maps each alert namespace to `labels.env`; set false to map it to `labels.namespace`. | `any` | `{}` | no |
 | <a name="input_create_folder"></a> [create\_folder](#input\_create\_folder) | If true, create folder in this module. If false, use existing folder. | `bool` | `false` | no |
-| <a name="input_data_source"></a> [data\_source](#input\_data\_source) | The grafana dashboard global/default datasource, will be used in widget items if they have no their custom ones | <pre>object({<br/>    uid  = optional(string, "prometheus")<br/>    type = optional(string, "prometheus")<br/>  })</pre> | `{}` | no |
+| <a name="input_data_source"></a> [data\_source](#input\_data\_source) | The grafana dashboard global/default datasource, will be used in widget items if they have no their custom ones | <pre>object({<br/>    uid  = optional(string, null)<br/>    type = optional(string, "prometheus")<br/>  })</pre> | `{}` | no |
 | <a name="input_defaults"></a> [defaults](#input\_defaults) | Default values to be supplied to all modules. | `any` | `{}` | no |
 | <a name="input_folder_name"></a> [folder\_name](#input\_folder\_name) | The folder name to place grafana dashboard | `string` | `"application-dashboard"` | no |
 | <a name="input_folder_name_uids"></a> [folder\_name\_uids](#input\_folder\_name\_uids) | Map of folder names to folder UIDs. If provided, will be used instead of data sources | `map(string)` | `{}` | no |
