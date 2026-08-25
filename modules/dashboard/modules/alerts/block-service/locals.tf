@@ -68,6 +68,10 @@ locals {
   defaults = provider::deepmerge::mergo(var.defaults, try(local.type_specific_defaults[var.defaults.workload_type].defaults, {}))
   alerts   = provider::deepmerge::mergo(var.alerts, try(local.type_specific_defaults[var.defaults.workload_type].alerts, {}))
 
+  hpa_replicas_count_expr = "max by(namespace, ${local.defaults.workload_type}) (${local.defaults.replicas_count_expr})"
+  hpa_min_replicas_expr   = "max by(namespace, horizontalpodautoscaler) (kube_horizontalpodautoscaler_spec_min_replicas{namespace='${var.namespace}', horizontalpodautoscaler='${var.name}'})"
+  hpa_max_replicas_expr   = "max by(namespace, horizontalpodautoscaler) (kube_horizontalpodautoscaler_spec_max_replicas{namespace='${var.namespace}', horizontalpodautoscaler='${var.name}'})"
+
   alert_type_labels = {
     replicas_no = {
       priority = "P1"
