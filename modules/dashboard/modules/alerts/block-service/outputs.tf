@@ -285,7 +285,7 @@ output "alert_rules" {
         no_data_state  = coalesce(local.alerts.memory.no_data_state, local.defaults.no_data_state, "NoData")
         exec_err_state = coalesce(local.alerts.memory.exec_err_state, local.defaults.exec_err_state, "Error")
         datasource     = var.datasource
-        expr           = "(sum(container_memory_usage_bytes{container='${var.name}', namespace='${var.namespace}'}) by (pod) / ${local.alerts.memory.threshold != null ? "(${local.alerts.memory.threshold} * 1048576 )" : "max(kube_pod_container_resource_${local.alerts.memory.threshold_resource}{container='${var.name}', namespace='${var.namespace}', resource='memory'}) by (pod)"}) * 100"
+        expr           = "(sum(container_memory_working_set_bytes{container='${var.name}', namespace='${var.namespace}'}) by (pod) / ${local.alerts.memory.threshold != null ? "(${local.alerts.memory.threshold} * 1048576 )" : "max(kube_pod_container_resource_${local.alerts.memory.threshold_resource}{container='${var.name}', namespace='${var.namespace}', resource='memory'}) by (pod)"}) * 100"
         pending_period = coalesce(local.alerts.memory.pending_period, local.defaults.pending_period)
         function       = "last"
         filters        = {}
