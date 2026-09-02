@@ -36,7 +36,7 @@ output "alert_rules" {
         no_data_state  = coalesce(local.alerts.replicas_max.no_data_state, local.defaults.no_data_state, "NoData")
         exec_err_state = coalesce(local.alerts.replicas_max.exec_err_state, local.defaults.exec_err_state, "Error")
         datasource     = var.datasource
-        expr           = "${local.alerts.replicas_max.threshold != null ? "${local.alerts.replicas_max.threshold} -" : "(kube_horizontalpodautoscaler_spec_max_replicas{namespace='${var.namespace}', horizontalpodautoscaler='${var.name}'}) - on(namespace) group_left(${local.defaults.workload_type})"} (${local.defaults.replicas_count_expr})"
+        expr           = "${local.alerts.replicas_max.threshold != null ? "${local.alerts.replicas_max.threshold} -" : "${local.hpa_max_replicas_expr} - on(namespace) group_left(${local.defaults.workload_type})"} (${local.hpa_replicas_count_expr})"
         pending_period = coalesce(local.alerts.replicas_max.pending_period, local.defaults.pending_period)
         function       = "last"
         equation       = "lte"
@@ -62,7 +62,7 @@ output "alert_rules" {
         no_data_state  = coalesce(local.alerts.replicas_min.no_data_state, local.defaults.no_data_state, "NoData")
         exec_err_state = coalesce(local.alerts.replicas_min.exec_err_state, local.defaults.exec_err_state, "Error")
         datasource     = var.datasource
-        expr           = "(${local.defaults.replicas_count_expr}) - on(namespace) group_right(${local.defaults.workload_type}) ${local.alerts.replicas_min.threshold != null ? "${local.alerts.replicas_min.threshold}" : "(kube_horizontalpodautoscaler_spec_min_replicas{namespace='${var.namespace}', horizontalpodautoscaler='${var.name}'})"}"
+        expr           = "(${local.hpa_replicas_count_expr}) - on(namespace) group_right(${local.defaults.workload_type}) ${local.alerts.replicas_min.threshold != null ? "${local.alerts.replicas_min.threshold}" : local.hpa_min_replicas_expr}"
         pending_period = coalesce(local.alerts.replicas_min.pending_period, local.defaults.pending_period)
         function       = "last"
         equation       = "lt"
