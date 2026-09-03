@@ -47,6 +47,18 @@ variable "datasources" {
   default     = []
 }
 
+variable "default_metrics_datasource_uid" {
+  type        = string
+  default     = "prometheus"
+  description = "UID used by Tempo traces-to-metrics integration."
+}
+
+variable "prometheus_monitor_enabled" {
+  type        = bool
+  default     = false
+  description = "Selector-owned Grafana Prometheus ServiceMonitor state."
+}
+
 variable "release_name" {
   type        = string
   description = "grafana release name"

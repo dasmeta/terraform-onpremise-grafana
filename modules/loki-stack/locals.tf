@@ -21,6 +21,17 @@ locals {
     format("http://%s:3100/loki/api/v1/push", local.loki_service_host)
   )
 
+  selector_owned_monitoring_values = {
+    monitoring = {
+      serviceMonitor = {
+        enabled = var.prometheus_monitor_enabled
+      }
+      rules = {
+        enabled = var.prometheus_rules_enabled
+      }
+    }
+  }
+
   simple_scalable_component_defaults = {
     read    = 2
     write   = 2

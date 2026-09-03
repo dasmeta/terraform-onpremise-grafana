@@ -66,7 +66,8 @@ resource "helm_release" "loki" {
         bloomPlanner   = var.configs.loki.bloomPlanner
         bloomGateway   = var.configs.loki.bloomGateway
     }),
-    jsonencode(var.configs.loki.extra_configs)
+    jsonencode(var.configs.loki.extra_configs),
+    jsonencode(local.selector_owned_monitoring_values),
   ]
 }
 

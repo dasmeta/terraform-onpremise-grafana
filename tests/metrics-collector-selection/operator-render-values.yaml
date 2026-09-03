@@ -1,0 +1,54 @@
+admissionWebhooks:
+  enabled: false
+operator:
+  disable_prometheus_converter: false
+  enable_converter_ownership: true
+watchNamespaces: []
+extraArgs:
+  controller.disableReconcileFor: []
+env:
+  - name: UNRELATED_OPERATOR_ENV
+    value: keep
+envFrom: []
+rbac:
+  create: true
+crds:
+  enabled: true
+  plain: true
+  cleanup:
+    enabled: false
+  upgrade:
+    enabled: true
+extraObjects:
+  - apiVersion: operator.victoriametrics.com/v1beta1
+    kind: VMAgent
+    metadata:
+      name: victoria-metrics-agent
+      namespace: monitoring
+    spec:
+      replicaCount: 1
+      selectAllByDefault: true
+      remoteWrite:
+        - url: http://victoria-metrics-victoria-metrics-cluster-vminsert.monitoring.svc.cluster.local:8480/insert/0/prometheus/api/v1/write
+      inlineScrapeConfig: "[]\n"
+      resources:
+        requests: { cpu: "1", memory: 512Mi }
+        limits: { cpu: "2", memory: 1Gi }
+      extraArgs:
+        remoteWrite.queues: "16"
+  - apiVersion: operator.victoriametrics.com/v1beta1
+    kind: VMServiceScrape
+    metadata:
+      name: prometheus-kube-state-metrics-victoria-metrics
+      namespace: monitoring
+    spec:
+      namespaceSelector:
+        matchNames: [monitoring]
+      selector:
+        matchLabels:
+          app.kubernetes.io/name: kube-state-metrics
+          app.kubernetes.io/instance: kube-state-metrics
+      endpoints:
+        - port: http
+          honorLabels: true
+          max_scrape_size: 32MiB

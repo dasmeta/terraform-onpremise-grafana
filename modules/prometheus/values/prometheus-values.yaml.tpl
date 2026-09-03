@@ -2,6 +2,9 @@
 grafana:
   enabled: false
 
+kubeStateMetrics:
+  enabled: false
+
 prometheusOperator:
   enabled: true
   serviceMonitor:
@@ -27,7 +30,7 @@ kubeProxy:
         action: drop
 
 prometheus:
-  enabled: true
+  enabled: ${prometheus_enabled}
   serviceMonitor:
     metricRelabelings:
       - sourceLabels: [__name__]
@@ -238,7 +241,7 @@ kube-state-metrics:
     - storageclasses
 
 nodeExporter:
-  enabled: true
+  enabled: false
 
 prometheus-node-exporter:
   serviceMonitor:

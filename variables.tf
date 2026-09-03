@@ -9,6 +9,17 @@ variable "namespace" {
   default = "monitoring"
 }
 
+variable "metrics_collector" {
+  type        = string
+  default     = "prometheus"
+  description = "Active metrics scraper. Supported values are prometheus and victoria_metrics. Backend enabled flags control installation separately."
+
+  validation {
+    condition     = contains(["prometheus", "victoria_metrics"], var.metrics_collector)
+    error_message = "metrics_collector must be either \"prometheus\" or \"victoria_metrics\"."
+  }
+}
+
 variable "skip_folder_creation" {
   type        = bool
   default     = false
@@ -385,10 +396,48 @@ variable "prometheus" {
         value = "75000000"
       }
     ])
-    extra_configs = optional(any, {}) # allows to pass extra/custom configs to prometheus helm chart, this configs will deep-merged with all generated internal configs and can override the default set ones. All available options can be found in for the specified chart version here: https://artifacthub.io/packages/helm/prometheus-community/prometheus?modal=values
+    extra_configs = optional(any, {}) # additional chart values; collector activation, monitor CRDs, bundled kube-state-metrics, and validation remoteWrite remain selector-owned
   })
   description = "values to be used as prometheus's chart values"
   default     = {}
+}
+
+variable "kube_state_metrics" {
+  type = object({
+    enabled           = optional(bool, true)
+    namespace         = optional(string, null)
+    create_namespace  = optional(bool, true)
+    chart_version     = optional(string, "6.1.0")
+    release_name      = optional(string, "kube-state-metrics")
+    fullname_override = optional(string, null)
+    extra_configs     = optional(any, {})
+  })
+  default     = {}
+  description = "Independent kube-state-metrics release shared by the selected metrics collector."
+}
+
+variable "node_exporter" {
+  type = object({
+    enabled           = optional(bool, true)
+    namespace         = optional(string, null)
+    create_namespace  = optional(bool, true)
+    chart_version     = optional(string, "4.47.1")
+    release_name      = optional(string, "node-exporter")
+    fullname_override = optional(string, "prometheus-node-exporter")
+    resources = optional(object({
+      requests = optional(object({
+        cpu    = optional(string, "100m")
+        memory = optional(string, "200Mi")
+      }), {})
+      limits = optional(object({
+        cpu    = optional(string, "200m")
+        memory = optional(string, "500Mi")
+      }), {})
+    }), {})
+    extra_configs = optional(any, {})
+  })
+  default     = {}
+  description = "Independent node-exporter release shared by the selected metrics collector."
 }
 
 variable "victoria_metrics" {
@@ -411,10 +460,60 @@ variable "victoria_metrics" {
     vmselect = optional(object({
       replica_count = optional(number, 2)
     }), {})
+    operator = optional(object({
+      chart_version = optional(string, "0.67.2")
+      release_name  = optional(string, "victoria-metrics-operator")
+      extra_configs = optional(any, {})
+    }), {})
+    agent = optional(object({
+      name                    = optional(string, "victoria-metrics-agent")
+      replica_count           = optional(number, 1)
+      kubelet_scrape_enabled  = optional(bool, true)
+      cadvisor_scrape_enabled = optional(bool, true)
+      resource_scrape_enabled = optional(bool, false)
+      kubelet_metrics = optional(list(string), [
+        "container_cpu_.*",
+        "container_memory_.*",
+        "kube_pod_container_status_.*",
+        "kube_pod_container_resource_.*",
+        "container_network_.*",
+        "kube_pod_resource_limit",
+        "kube_pod_resource_request",
+        "pod_cpu_usage_seconds_total",
+        "pod_memory_usage_bytes",
+        "kubelet_volume_stats.*",
+        "volume_operation_total_seconds.*",
+        "container_fs_.*",
+      ])
+      extra_scrape_configs = optional(any, [])
+      extra_configs        = optional(any, {})
+    }), {})
     extra_configs = optional(any, {})
   })
-  description = "Values to deploy redundant VictoriaMetrics and wire Prometheus remote_write"
+  description = "Values to deploy the VictoriaMetrics cluster and Operator-managed VMAgent, and wire the selected metrics collector"
   default     = {}
+
+  validation {
+    condition = (
+      length(var.victoria_metrics.agent.name) <= 253 &&
+      alltrue([
+        for label in split(".", var.victoria_metrics.agent.name) :
+        length(label) >= 1 &&
+        length(label) <= 63 &&
+        can(regex("^[a-z0-9]([-a-z0-9]*[a-z0-9])?$", label))
+      ])
+    )
+    error_message = "victoria_metrics.agent.name must be a valid Kubernetes DNS subdomain name."
+  }
+
+  validation {
+    condition = (
+      var.victoria_metrics.agent.replica_count >= 1 &&
+      floor(var.victoria_metrics.agent.replica_count) ==
+      var.victoria_metrics.agent.replica_count
+    )
+    error_message = "victoria_metrics.agent.replica_count must be a positive integer."
+  }
 }
 
 variable "tempo" {
@@ -440,8 +539,8 @@ variable "tempo" {
 
     metrics_generator = optional(object({
       enabled    = optional(bool, true)
-      remote_url = optional(string, "http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090/api/v1/write")
-    }))
+      remote_url = optional(string, null)
+    }), {})
 
     persistence = optional(object({
       enabled       = optional(bool, true)

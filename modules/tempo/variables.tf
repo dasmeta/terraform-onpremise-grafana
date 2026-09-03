@@ -43,7 +43,7 @@ variable "configs" {
 
     metrics_generator = optional(object({
       enabled    = optional(bool, true)
-      remote_url = optional(string, "http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090/api/v1/write")
+      remote_url = optional(string, null)
     }), {})
 
     service_account = optional(object({
@@ -51,6 +51,20 @@ variable "configs" {
       annotations = optional(map(string), {})
     }), {})
   })
+}
+
+variable "metrics_generator_remote_url" {
+  type        = string
+  default     = null
+  nullable    = true
+  description = "Selector-resolved metrics-generator remote-write URL. A non-null value takes precedence over chart values."
+}
+
+variable "service_monitor_enabled" {
+  type        = bool
+  default     = null
+  nullable    = true
+  description = "Selector-resolved Prometheus ServiceMonitor state; null preserves the configs request for direct child use."
 }
 
 variable "extra_configs" {

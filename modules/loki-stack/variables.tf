@@ -16,6 +16,18 @@ variable "promtail_chart_version" {
   default     = "6.17.0"
 }
 
+variable "prometheus_monitor_enabled" {
+  type        = bool
+  default     = false
+  description = "Selector-owned Loki Prometheus ServiceMonitor state."
+}
+
+variable "prometheus_rules_enabled" {
+  type        = bool
+  default     = false
+  description = "Selector-owned Loki PrometheusRule state."
+}
+
 variable "configs" {
   type = object({
     loki = optional(object({
