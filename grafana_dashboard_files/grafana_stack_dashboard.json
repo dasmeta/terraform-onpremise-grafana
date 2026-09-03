@@ -270,7 +270,7 @@
               "uid": "${data_source}"
             },
             "editorMode": "code",
-            "expr": "max(container_memory_usage_bytes{pod=~\"grafana-.*-.*\", namespace=\"$grafana_namespace\"})",
+            "expr": "max(container_memory_working_set_bytes{pod=~\"grafana-.*-.*\", namespace=\"$grafana_namespace\"})",
             "legendFormat": "Max",
             "range": true,
             "refId": "A"
@@ -281,7 +281,7 @@
               "uid": "${data_source}"
             },
             "editorMode": "code",
-            "expr": "avg(container_memory_usage_bytes{namespace=\"$grafana_namespace\", pod=~\"grafana-.*-.*\"})",
+            "expr": "avg(container_memory_working_set_bytes{namespace=\"$grafana_namespace\", pod=~\"grafana-.*-.*\"})",
             "hide": false,
             "legendFormat": "Average",
             "range": true,
@@ -808,7 +808,7 @@
               "uid": "${data_source}"
             },
             "editorMode": "code",
-            "expr": "max(container_memory_usage_bytes{pod=~\"prometheus-prometheus-kube-prometheus-prometheus-.*\", namespace=\"$prometheus_namespace\", container=\"prometheus\"})",
+            "expr": "max(container_memory_working_set_bytes{pod=~\"prometheus-prometheus-kube-prometheus-prometheus-.*\", namespace=\"$prometheus_namespace\", container=\"prometheus\"})",
             "legendFormat": "Max",
             "range": true,
             "refId": "A"
@@ -819,7 +819,7 @@
               "uid": "${data_source}"
             },
             "editorMode": "code",
-            "expr": "avg(container_memory_usage_bytes{namespace=\"$prometheus_namespace\", pod=~\"prometheus-prometheus-kube-prometheus-prometheus-.*\", container=\"prometheus\"})",
+            "expr": "avg(container_memory_working_set_bytes{namespace=\"$prometheus_namespace\", pod=~\"prometheus-prometheus-kube-prometheus-prometheus-.*\", container=\"prometheus\"})",
             "hide": false,
             "legendFormat": "Average",
             "range": true,
@@ -2487,7 +2487,7 @@
               "uid": "${data_source}"
             },
             "editorMode": "code",
-            "expr": "max(container_memory_usage_bytes{pod=~\"loki-.*\", namespace=\"$loki_namespace\", container=\"loki\"})",
+            "expr": "max(container_memory_working_set_bytes{pod=~\"loki-.*\", namespace=\"$loki_namespace\", container=\"loki\"})",
             "legendFormat": "Max",
             "range": true,
             "refId": "A"
@@ -2498,7 +2498,7 @@
               "uid": "${data_source}"
             },
             "editorMode": "code",
-            "expr": "avg(container_memory_usage_bytes{namespace=\"$loki_namespace\", pod=~\"loki-.*\", container=\"loki\"})",
+            "expr": "avg(container_memory_working_set_bytes{namespace=\"$loki_namespace\", pod=~\"loki-.*\", container=\"loki\"})",
             "hide": false,
             "legendFormat": "Average",
             "range": true,
@@ -3025,7 +3025,7 @@
               "uid": "${data_source}"
             },
             "editorMode": "code",
-            "expr": "max(container_memory_usage_bytes{pod=~\"tempo-.*\", namespace=\"$tempo_namespace\", container=\"tempo\"})",
+            "expr": "max(container_memory_working_set_bytes{pod=~\"tempo-.*\", namespace=\"$tempo_namespace\", container=\"tempo\"})",
             "legendFormat": "Max",
             "range": true,
             "refId": "A"
@@ -3036,7 +3036,7 @@
               "uid": "${data_source}"
             },
             "editorMode": "code",
-            "expr": "avg(container_memory_usage_bytes{namespace=\"$tempo_namespace\", pod=~\"tempo-.*\", container=\"tempo\"})",
+            "expr": "avg(container_memory_working_set_bytes{namespace=\"$tempo_namespace\", pod=~\"tempo-.*\", container=\"tempo\"})",
             "hide": false,
             "legendFormat": "Average",
             "range": true,
