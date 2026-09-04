@@ -204,7 +204,7 @@ For S3 (or other object) storage in SimpleScalable mode, `schemaConfig.object_st
 
 ### Local testing on EKS (AWS wrapper)
 
-When consuming this module through `dasmeta/grafanav12/aws` (for example Payconomy `grafana.yaml`), test unpublished changes on a dev cluster with two temporary local `source` overrides:
+When consuming this module through `dasmeta/grafanav12/aws` (for example a downstream setup's `grafana.yaml`), test unpublished changes on a dev cluster with two temporary local `source` overrides:
 
 1. In `terraform-aws-grafanav12/main.tf`, point the inner module to this repo and **remove or comment `version`**:
 
