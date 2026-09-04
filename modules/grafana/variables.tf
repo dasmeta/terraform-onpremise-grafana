@@ -107,9 +107,12 @@ variable "configs" {
     }), {})
 
     redundancy = optional(object({
-      enabled                  = optional(bool, false)
-      max_replicas             = optional(number, 4)
-      min_replicas             = optional(number, 1)
+      enabled      = optional(bool, false)
+      max_replicas = optional(number, 4)
+      # Must stay >= 2. The redundancy block renders a PodDisruptionBudget of minAvailable: 1, and at a
+      # replica floor of 1 that permits ZERO evictions -- which blocks node drains, blocks spot replacement,
+      # and makes EKS node group upgrades fail on pod eviction. This was observed live on multiple clusters.
+      min_replicas             = optional(number, 2)
       redundancy_storage_class = optional(string, "")
     }), {})
 
@@ -117,7 +120,9 @@ variable "configs" {
       enabled       = optional(bool, false)
       trace_pattern = optional(string, "trace_id=(\\w+)")
     }), {})
-    replicas  = optional(number, 1)
+    # 2 by default: a single grafana replica cannot be protected by a PodDisruptionBudget at all, so any node
+    # drain takes the whole dashboard down -- during exactly the node churn you need it to diagnose.
+    replicas  = optional(number, 2)
     image_tag = optional(string, "11.4.2")
   })
 
@@ -177,4 +182,28 @@ variable "sso_settings" {
   default     = {}
   description = "SSO settings for Grafana. Supports OAuth2 providers (gitlab, github, google, azuread, okta, generic_oauth), SAML, and LDAP. The map key should be the provider name (e.g., 'gitlab', 'github', 'saml', 'ldap')."
   sensitive   = true
+}
+
+variable "database_node_selector" {
+  type        = map(string)
+  default     = { "karpenter.sh/capacity-type" = "on-demand" }
+  description = <<-EOT
+    Node selector for the created grafana database primary.
+
+    Defaults to on-demand capacity. A single-replica database with ReadWriteOnce storage is the worst
+    possible workload to place on reclaimable capacity: a spot reclaim kills it involuntarily -- no
+    PodDisruptionBudget or do-not-disrupt annotation can prevent that -- and its volume must then detach from
+    a node that is already gone, which has produced multi-minute outages with VolumeInUse errors on more than
+    one cluster. Set to {} to opt out, for example on a cluster that has no on-demand capacity at all.
+  EOT
+}
+
+variable "database_tolerations" {
+  type        = any
+  default     = []
+  description = <<-EOT
+    Tolerations for the created grafana database primary. Needed when the target on-demand capacity is
+    tainted, which is how the dasmeta eks module's protected node pool keeps ordinary workloads off it.
+    Example: [{ key = "dasmeta.io/protected", operator = "Equal", value = "true", effect = "NoSchedule" }]
+  EOT
 }
