@@ -2,7 +2,8 @@
 
 **Feature Branch**: `005-victoria-metrics-native-stack` (branch creation skipped by user request)  
 **Created**: 2026-08-31  
-**Status**: Implemented  
+**Revised**: 2026-09-14
+**Status**: Implemented
 **Input**: Replace the Prometheus stack completely with VictoriaMetrics when selected, while keeping shared metric exporters independent and preserving a safe one-collector migration mode.
 
 ## User Scenarios & Testing *(mandatory)*
@@ -28,6 +29,7 @@ and no Prometheus monitor definitions.
 2. **Given** a clean cluster with no Prometheus Operator definitions, **When** the VictoriaMetrics-only configuration is applied, **Then** all selected VictoriaMetrics resources can be created without an unsupported-resource error.
 3. **Given** VictoriaMetrics-only mode is active, **When** the collector discovers Kubernetes targets, **Then** cluster state, node, kubelet, cAdvisor, filesystem, volume, network, and pod resource metrics have an active collection path.
 4. **Given** VictoriaMetrics-only mode, **When** generated resources are inspected, **Then** none use the Prometheus Operator API group.
+5. **Given** VictoriaMetrics-only mode, **When** kube-prometheus-stack is absent, **Then** enabled Kubernetes components retain native Services and VictoriaMetrics scrape definitions without duplicate paths.
 
 ---
 
@@ -72,6 +74,7 @@ one installed metrics datasource is default.
 2. **Given** both backends are installed and VictoriaMetrics is selected, **When** the plan is applied, **Then** VictoriaMetrics scrapes, the Prometheus server is inactive, and compatibility with existing Prometheus application monitors remains available.
 3. **Given** VictoriaMetrics has historical samples, **When** only the selected collector changes, **Then** VictoriaMetrics storage is not replaced or deleted.
 4. **Given** a migration rollback, **When** Prometheus is re-enabled and selected, **Then** the Prometheus collection path can resume without deleting VictoriaMetrics data.
+5. **Given** both backends are installed and VictoriaMetrics is selected, **When** kubelet and cAdvisor discovery is rendered, **Then** the kube-prometheus-stack kubelet ServiceMonitor is disabled and the native VMNodeScrapes are the only module-managed collection paths for those endpoints.
 
 ---
 
@@ -106,7 +109,19 @@ monitor is produced.
 - Old Prometheus Operator definitions remain in a cluster after Prometheus is disabled.
 - Application-owned Prometheus monitors have not yet been migrated to native VictoriaMetrics definitions.
 - A caller has additional Prometheus scrape jobs with authentication or backend-specific discovery.
+- A caller supplies a VictoriaMetrics inline job for a module-owned KSM,
+  node-exporter, Tempo, or Loki endpoint and must suppress only the matching
+  generated `VMServiceScrape` without uninstalling that workload.
 - Tempo has a caller-owned remote-write destination that differs from both module-managed backends.
+- An interrupted or targeted in-place upgrade leaves same-name
+  kube-state-metrics objects annotated for the old Helm release.
+- Selecting VictoriaMetrics removes the Prometheus custom resource and
+  StatefulSet while retained PVCs are not visible as child-resource actions in
+  Terraform's Helm diff.
+- VictoriaMetrics is installed only as a storage/query backend while its
+  Operator gate is omitted or explicitly disabled; no Operator, VictoriaMetrics
+  CRD release, custom-resource release, or associated cluster-wide RBAC may be
+  created.
 
 ## Requirements *(mandatory)*
 
@@ -147,6 +162,22 @@ monitor is produced.
 - **FR-033**: Module outputs MUST expose non-sensitive resolved status for selected collector, installed backends, converter state, shared exporters, native discovery, and default datasource.
 - **FR-034**: Existing Prometheus-only configurations using defaults MUST remain valid after the feature is introduced.
 - **FR-035**: The feature MUST NOT require changes in an application chart, wrapper module, or environment file to validate the base module contract.
+- **FR-036**: VictoriaMetrics-only mode MUST provide native discovery for enabled CoreDNS, kube-proxy, kube-controller-manager, kube-scheduler, and etcd metrics without requiring kube-prometheus-stack.
+- **FR-037**: Kubernetes API server native discovery MUST be supported but disabled by default to match the existing Prometheus module default.
+- **FR-038**: VM-only mode MUST create the Services required to replace kube-prometheus-stack-owned component discovery, while API server discovery MUST reuse the existing Kubernetes Service.
+- **FR-039**: Native Kubernetes component scrape endpoints MUST preserve the existing job labels, standard ports, HTTP/HTTPS behavior, CA file, and metric relabeling needed by current dashboards; the service-account token MUST be sent only to authenticated HTTPS endpoints with certificate verification enabled.
+- **FR-040**: Native Kubernetes component Services and VMServiceScrapes MUST be generated only in standalone VictoriaMetrics mode; dual-backend VictoriaMetrics mode MUST continue to use converted kube-prometheus-stack ServiceMonitors to avoid duplicate scraping.
+- **FR-041**: Callers MUST be able to disable each native Kubernetes component scrape and override the component and API server namespaces through one grouped optional VictoriaMetrics agent input.
+- **FR-042**: The kube-prometheus-stack kubelet ServiceMonitor MUST be selector-owned: enabled only when Prometheus is the selected collector and disabled when VictoriaMetrics is selected, including when raw Prometheus chart overrides attempt to re-enable it.
+- **FR-043**: Migration documentation MUST disclose the kube-state-metrics Helm ownership transfer, node-exporter fullname replacement, Prometheus custom-resource and StatefulSet removal, Prometheus PVC verification, complete non-targeted apply requirement, and bounded stale-ownership recovery.
+- **FR-044**: `victoria_metrics.operator.enabled` MUST default to `false` and gate both the VictoriaMetrics Operator Helm release and its dependent custom-resource release, while leaving the VictoriaMetrics cluster available as a storage/query backend.
+- **FR-045**: Selecting `metrics_collector = "victoria_metrics"` MUST require both `victoria_metrics.enabled = true` and `victoria_metrics.operator.enabled = true`; Prometheus collection MAY remote-write to VictoriaMetrics while the Operator is disabled.
+- **FR-046**: Operator, converter, VMAgent, generated scrape-object, and installation-status outputs MUST resolve to absent, false, or empty values when the Operator gate is disabled.
+- **FR-047**: Native node metric keep filters MUST route known metric families only to kubelet endpoints that expose them: kubelet, cAdvisor, or resource metrics.
+- **FR-048**: kube-state-metrics and scheduler-only metric families MUST NOT be included in module-default VMNodeScrape filters; caller-supplied unknown patterns MUST remain backward-compatible by applying to every enabled node endpoint.
+- **FR-049**: Native kubelet, cAdvisor, and resource VMNodeScrapes that disable target certificate validation MUST omit `caFile`; verified API-server and Kubernetes component scrape TLS configuration MUST remain unchanged.
+- **FR-050**: The optional grouped `victoria_metrics.agent.managed_service_scrapes` input MUST expose default-enabled switches for kube-state-metrics, node-exporter, Tempo, and Loki; disabling one switch MUST suppress only its module-generated `VMServiceScrape`, preserve the underlying workload and caller-owned inline jobs, and leave all other generated scrape paths unchanged. The existing exact `kube-state-metrics` transition-job suppression MUST remain backward-compatible.
+- **FR-051**: The VictoriaMetrics child module MUST default the `victoria-metrics-cluster` release to the same published chart version as the root module (`0.31.0`).
 
 ### Key Entities
 
@@ -171,6 +202,16 @@ monitor is produced.
 - **SC-008**: Raw override tests demonstrate that 100% of selector-owned activation, definition, discovery, and destination settings retain the module-resolved value.
 - **SC-009**: No test fixture, output, documentation example, or generated non-secret scrape configuration contains a credential value.
 - **SC-010**: The migration quickstart identifies a verifiable application-migration gate before Prometheus can be safely disabled and a rollback path that preserves VictoriaMetrics history.
+- **SC-011**: A VM-only render contains three safe enabled-by-default Kubernetes component Service/VMServiceScrape configurations, requires explicit TLS settings before controller-manager or scheduler can be enabled, contains no enabled-by-default API server scrape, and contains zero Prometheus Operator resources; rendered status does not claim runtime target health.
+- **SC-012**: A dual-backend VictoriaMetrics render contains zero module-generated native Kubernetes component Service/VMServiceScrape pairs, preventing duplicate collection with converted ServiceMonitors.
+- **SC-013**: Each dual-backend selector render contains exactly one module-managed kubelet/cAdvisor discovery path: the kube-prometheus-stack ServiceMonitor for Prometheus selection or native VMNodeScrapes for VictoriaMetrics selection.
+- **SC-014**: The root README and migration quickstart identify the exact old/new exporter identities, require before/after Prometheus PVC inventories and complete applies, and limit ownership recovery to a verified exact stale object.
+- **SC-015**: A focused plan with Prometheus selected, VictoriaMetrics enabled, and the Operator omitted creates only the VictoriaMetrics cluster and reports no Operator, converter, VMAgent, or generated VM scrape objects.
+- **SC-016**: Focused tests reject VictoriaMetrics selection when its Operator is disabled and prove that explicitly enabling the Operator creates both Operator-related Helm releases.
+- **SC-017**: Focused tests prove distinct kubelet, cAdvisor, and resource keep filters, the correct `pod_memory_working_set_bytes` resource metric, exclusion of known KSM/scheduler-only patterns, and preservation of custom caller patterns.
+- **SC-018**: Focused tests prove every native node VMNodeScrape retains `insecureSkipVerify = true` without a redundant `caFile`, while verified component and API-server scrapes retain their CA configuration.
+- **SC-019**: Focused root tests prove all four managed service-scrape switches default to enabled and can independently suppress their generated `VMServiceScrape` objects while exporter/component workloads and caller-owned inline jobs remain configured.
+- **SC-020**: A focused direct-child plan resolves the default `victoria-metrics-cluster` Helm release version to `0.31.0`.
 
 ## Assumptions
 

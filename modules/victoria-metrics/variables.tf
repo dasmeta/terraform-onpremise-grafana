@@ -13,7 +13,7 @@ variable "create_namespace" {
 variable "chart_version" {
   type        = string
   description = "victoria metrics cluster chart version"
-  default     = "0.31.4"
+  default     = "0.31.0"
 }
 
 variable "release_name" {
@@ -25,6 +25,18 @@ variable "release_name" {
 variable "agent_enabled" {
   type        = bool
   description = "Whether to render the VMAgent custom resource as the active Kubernetes scraper."
+  default     = false
+}
+
+variable "agent_standalone" {
+  type        = bool
+  description = "Whether VMAgent runs without kube-prometheus-stack and must own native Kubernetes component discovery."
+  default     = false
+}
+
+variable "operator_enabled" {
+  type        = bool
+  description = "Whether to install the VictoriaMetrics Operator, its CRDs/RBAC, and the dependent custom-resource release."
   default     = false
 }
 
@@ -88,7 +100,7 @@ variable "agent_replica_count" {
 
 variable "agent_extra_scrape_configs" {
   type        = any
-  description = "Non-secret inlineScrapeConfig entries for the VMAgent custom resource."
+  description = "Non-secret inlineScrapeConfig entries for the VMAgent custom resource; direct child callers replacing a module integration must disable its matching agent_*_enabled input."
   default     = []
 }
 
@@ -118,21 +130,54 @@ variable "agent_resource_scrape_enabled" {
 
 variable "agent_kubelet_metrics" {
   type        = list(string)
-  description = "Metric-name patterns retained from native kubelet, cAdvisor, and resource endpoint scrapes."
+  description = "Union of metric-name patterns retained from native node scrapes; known patterns are routed to matching kubelet, cAdvisor, or resource endpoints, while unknown patterns apply to all enabled endpoints."
   default = [
     "container_cpu_.*",
     "container_memory_.*",
-    "kube_pod_container_status_.*",
-    "kube_pod_container_resource_.*",
     "container_network_.*",
-    "kube_pod_resource_limit",
-    "kube_pod_resource_request",
     "pod_cpu_usage_seconds_total",
-    "pod_memory_usage_bytes",
+    "pod_memory_working_set_bytes",
     "kubelet_volume_stats.*",
     "volume_operation_total_seconds.*",
     "container_fs_.*",
   ]
+}
+
+variable "agent_kubernetes_component_scrapes" {
+  type = object({
+    namespace            = optional(string, "kube-system")
+    api_server_namespace = optional(string, "default")
+    api_server           = optional(bool, false)
+    core_dns             = optional(bool, true)
+    kube_proxy           = optional(bool, true)
+    controller_manager   = optional(bool, false)
+    scheduler            = optional(bool, false)
+    etcd                 = optional(bool, true)
+    controller_manager_tls = optional(object({
+      ca_file              = optional(string, null)
+      server_name          = optional(string, null)
+      insecure_skip_verify = optional(bool, false)
+    }), null)
+    scheduler_tls = optional(object({
+      ca_file              = optional(string, null)
+      server_name          = optional(string, null)
+      insecure_skip_verify = optional(bool, false)
+    }), null)
+  })
+  description = "Native Kubernetes component discovery rendered only for a standalone VictoriaMetrics collector."
+  default     = {}
+
+  validation {
+    condition = alltrue([
+      !var.agent_kubernetes_component_scrapes.controller_manager ||
+      try(var.agent_kubernetes_component_scrapes.controller_manager_tls.insecure_skip_verify, false) ||
+      try(length(trimspace(var.agent_kubernetes_component_scrapes.controller_manager_tls.ca_file)) > 0, false),
+      !var.agent_kubernetes_component_scrapes.scheduler ||
+      try(var.agent_kubernetes_component_scrapes.scheduler_tls.insecure_skip_verify, false) ||
+      try(length(trimspace(var.agent_kubernetes_component_scrapes.scheduler_tls.ca_file)) > 0, false),
+    ])
+    error_message = "Enabled controller-manager and scheduler scrapes require explicit TLS settings with either a non-empty CA file path or insecure_skip_verify=true."
+  }
 }
 
 variable "agent_kube_state_metrics_enabled" {

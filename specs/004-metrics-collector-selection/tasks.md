@@ -1,9 +1,7 @@
 # Tasks: Selectable Metrics Collectors with VictoriaMetrics Operator
 
-**Input**: Design documents from
-`specs/004-metrics-collector-selection/` and the detailed implementation plan
-at
-`docs/superpowers/plans/2026-08-28-victoria-metrics-operator-collector-support.md`
+**Input**: Design and implementation documents from
+`specs/004-metrics-collector-selection/`
 **Prerequisites**: `spec.md`, `plan.md`, `research.md`, `data-model.md`,
 `contracts/metrics-collector-contract.md`, and `quickstart.md`
 
@@ -182,7 +180,7 @@ queue gates from Prometheus-first preparation through switch and rollback.
 - [x] T045 [US3] Prove direct `metrics_collector` and `victoria_metrics` forwarding and absence of wrapper monitoring resources in `../terraform-aws-grafanav12/main.tf`
 - [x] T046 [US3] Set the AWS base example to both-installed Prometheus-first mode in `../terraform-aws-grafanav12/tests/base/1-example.tf`
 - [x] T047 [US3] Set the AWS Victoria example to the identical backend object with only the selector changed in `../terraform-aws-grafanav12/tests/base-with-victoria-metrics/1-example.tf`
-- [x] T048 [US3] Synchronize wrapper rollout/security/KSM/CRD ownership docs in `../terraform-aws-grafanav12/README.md`, `../terraform-aws-grafanav12/docs/superpowers/specs/2026-08-20-aws-wrapper-metrics-collector-selection-design.md`, and every file under `../terraform-aws-grafanav12/specs/003-metrics-collector-selection/`
+- [x] T048 [US3] Synchronize wrapper rollout/security/KSM/CRD ownership docs in `../terraform-aws-grafanav12/README.md` and every file under `../terraform-aws-grafanav12/specs/003-metrics-collector-selection/`
 - [x] T049 [US3] Run the GREEN sentinel console probe plus initialized wrapper root/base/VM example validations and record commands in `../terraform-aws-grafanav12/tests/base-with-victoria-metrics/README.md`
 - [x] T050 [US3] Record that registry-source restoration is blocked until an exact published base-module version is supplied in `../terraform-aws-grafanav12/README.md`
 
@@ -197,10 +195,10 @@ owns no Operator/VMAgent/scrape resources and no release version is invented.
 
 - [x] T051 [P] Remove stale standalone-agent wording from active files only in `README.md`, `modules/`, `tests/metrics-collector-selection/`, `../terraform-aws-grafanav12/README.md`, and `../terraform-aws-grafanav12/tests/`
 - [x] T052 Run focused Terraform formatting without rewriting unrelated files in `variables.tf`, `locals.tf`, `main.tf`, `outputs.tf`, `modules/prometheus/`, `modules/victoria-metrics/`, `modules/kube-state-metrics/`, and `tests/metrics-collector-selection/`
-- [x] T053 Initialize with `-backend=false -lockfile=readonly`, validate the root, and run the complete exit-0, `0 failed` native suite in `/Users/vazgen/work/Dasmeta/modules/terraform-onpremise-grafana` and `tests/metrics-collector-selection/`
+- [x] T053 Initialize with `-backend=false -lockfile=readonly`, validate the repository root, and run the complete exit-0, `0 failed` native suite in `tests/metrics-collector-selection/`
 - [x] T054 Add the non-secret, render-only chart fixture with `admissionWebhooks.enabled = false` in `tests/metrics-collector-selection/operator-render-values.yaml`
 - [x] T055 In one fail-fast shell with guaranteed exact-path cleanup, render Operator chart `0.67.2` with `--include-crds` to a restricted temporary file and inspect both required CRDs, no Secret/controller-disable/watch-env path, wildcard Secret RBAC, VMAgent, and VMServiceScrape predicates against `specs/004-metrics-collector-selection/contracts/metrics-collector-contract.md`
-- [x] T056 Prove the standalone `helm_release.vmagent` plus obsolete dotted, child-variable, and nested-agent fields are absent from active Terraform source and examples in both repositories using the exact single-line and multiline searches in `docs/superpowers/plans/2026-08-28-victoria-metrics-operator-collector-support.md`
+- [x] T056 Prove with repository-wide single-line and multiline searches that the standalone `helm_release.vmagent` plus obsolete dotted, child-variable, and nested-agent fields are absent from active Terraform source and examples in both repositories
 - [x] T057 Validate Prometheus queue drain, VMAgent queue drain, source/converted auth selectors, target health, duplicate-scrape, and PVC identity procedures in `specs/004-metrics-collector-selection/quickstart.md`
 - [x] T058 Run read-only `git diff --check`, `git diff --cached --check`, and `git status --short` in both repositories without staging or mutating either worktree
 - [x] T059 Add regression coverage and a nested merge so selector-owned Prometheus validation `remoteWrite` preserves all sibling `prometheusSpec` overrides
@@ -220,6 +218,42 @@ before Helm REST-maps the generated VMAgent and VMServiceScrape objects.
 - [X] T065 Protect Helm pre-install CRD bootstrap and the chart-provided CRD upgrade hook in `modules/victoria-metrics/locals.tf`
 - [X] T066 Align the Operator contract and usage documentation in `modules/victoria-metrics/README.md` and `README.md`
 - [X] T067 Run focused Terraform tests, pinned Helm CRD/custom-resource rendering, validation, formatting, and diff checks without git mutation
+
+---
+
+## Phase 10: Grafana Direct-child Monitor Precedence Regression
+
+**Purpose**: Preserve direct Grafana child-module caller configuration while
+keeping explicit root selector ownership authoritative.
+
+- [X] T068 Add RED regression coverage for omitted, explicit-false, and explicit-true `prometheus_monitor_enabled` precedence in `tests/metrics-collector-selection/3-operator-values.tftest.hcl`
+- [X] T069 Make `modules/grafana.prometheus_monitor_enabled` nullable and resolve it against `extra_configs.serviceMonitor.enabled` with a final `false` fallback
+- [X] T070 Align the Grafana README, focused-test responsibility, and metrics collector contract with the resolved precedence
+- [X] T071 Run focused and complete Terraform tests, formatting, validation, and diff checks without git mutation
+
+---
+
+## Phase 11: Loki Monitoring Precedence Regression
+
+**Purpose**: Preserve direct Loki child-module caller configuration and source
+ServiceMonitor/rules decisions consistently at the root.
+
+- [X] T072 Add RED regression coverage for direct-child and root merged Loki monitoring values in `tests/metrics-collector-selection/5-native-stack.tftest.hcl`
+- [X] T073 Make Loki selector inputs nullable, resolve effective child values, and use one merged monitoring view at the root
+- [X] T074 Align the Loki README, focused-test responsibility, and metrics collector contract with the resolved precedence
+- [X] T075 Run focused and complete Terraform tests, formatting, validation, and diff checks without git mutation
+
+---
+
+## Phase 12: kube-state-metrics Runtime Metric Filtering Regression
+
+**Purpose**: Preserve the former `^go_.*` kube-state-metrics drop rule after
+moving the exporter out of kube-prometheus-stack, for either active collector.
+
+- [X] T076 Record equivalent Prometheus and VictoriaMetrics kube-state-metrics filtering in `spec.md` and `plan.md`
+- [X] T077 Add RED assertions for standalone ServiceMonitor filtering, native VMServiceScrape filtering, and removal of dead bundled KSM values
+- [X] T078 Add the collector-specific relabel rules, remove the dead Prometheus template block, and align KSM contract documentation
+- [X] T079 Run focused and complete Terraform tests, formatting, validation, and diff checks without git mutation
 
 ---
 
@@ -281,7 +315,7 @@ existing VictoriaMetrics cluster/PVCs unchanged.
 
 ### Definition of done
 
-- All 67 tasks are complete or an explicitly external release gate is recorded.
+- All 79 tasks are complete or an explicitly external release gate is recorded.
 - Root and wrapper validations pass after initialization.
 - Focused Terraform tests exit 0 with `0 failed`.
 - Rendered chart predicates pass without producing or printing a Secret.

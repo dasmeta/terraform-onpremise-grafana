@@ -21,13 +21,27 @@ locals {
     format("http://%s:3100/loki/api/v1/push", local.loki_service_host)
   )
 
+  caller_monitoring_values = merge(
+    var.configs.loki.monitoring,
+    try(var.configs.loki.extra_configs.monitoring, {}),
+  )
+
+  effective_prometheus_monitor_enabled = coalesce(
+    var.prometheus_monitor_enabled,
+    try(local.caller_monitoring_values.serviceMonitor.enabled, false),
+  )
+  effective_prometheus_rules_enabled = coalesce(
+    var.prometheus_rules_enabled,
+    try(local.caller_monitoring_values.rules.enabled, false),
+  )
+
   selector_owned_monitoring_values = {
     monitoring = {
       serviceMonitor = {
-        enabled = var.prometheus_monitor_enabled
+        enabled = local.effective_prometheus_monitor_enabled
       }
       rules = {
-        enabled = var.prometheus_rules_enabled
+        enabled = local.effective_prometheus_rules_enabled
       }
     }
   }

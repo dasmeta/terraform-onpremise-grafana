@@ -19,6 +19,7 @@ module "this" {
     enabled = var.victoria_metrics_enabled
 
     operator = {
+      enabled       = var.operator_enabled
       chart_version = var.operator_chart_version
       release_name  = var.operator_release_name
       extra_configs = {}

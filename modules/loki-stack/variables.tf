@@ -18,14 +18,16 @@ variable "promtail_chart_version" {
 
 variable "prometheus_monitor_enabled" {
   type        = bool
-  default     = false
-  description = "Selector-owned Loki Prometheus ServiceMonitor state."
+  default     = null
+  nullable    = true
+  description = "Selector-owned Loki Prometheus ServiceMonitor state; null preserves the merged caller monitoring configuration."
 }
 
 variable "prometheus_rules_enabled" {
   type        = bool
-  default     = false
-  description = "Selector-owned Loki PrometheusRule state."
+  default     = null
+  nullable    = true
+  description = "Selector-owned Loki PrometheusRule state; null preserves the merged caller monitoring configuration."
 }
 
 variable "configs" {

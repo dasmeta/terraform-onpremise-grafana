@@ -45,6 +45,11 @@ resource "helm_release" "prometheus" {
       kubeStateMetrics = {
         enabled = false
       }
+      kubelet = {
+        serviceMonitor = {
+          enabled = var.collector_enabled
+        }
+      }
       nodeExporter = {
         enabled = false
       }

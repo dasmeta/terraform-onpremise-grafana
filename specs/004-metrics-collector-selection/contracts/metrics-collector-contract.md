@@ -20,6 +20,7 @@ victoria_metrics = {
   enabled = true
 
   operator = {
+    enabled       = true
     chart_version = "0.67.2"
     release_name  = "victoria-metrics-operator"
     extra_configs = {}
@@ -161,6 +162,34 @@ caller selectors, affinity, storage, and other sibling fields survive. The
 Prometheus monitor CRD value is protected as enabled while this release owns
 the source CRDs.
 
+## Grafana ServiceMonitor precedence
+
+The root module passes an explicit collector-resolved boolean to the Grafana
+child, so the selected collector owns the root deployment's ServiceMonitor
+state. For direct child-module consumers, `prometheus_monitor_enabled = null`
+preserves `extra_configs.serviceMonitor.enabled`; if neither input requests a
+value, the child defaults the effective state to `false`.
+
+The precedence is therefore explicit `prometheus_monitor_enabled`, then
+`extra_configs.serviceMonitor.enabled`, then `false`.
+
+## Loki monitoring precedence
+
+The root and Loki child resolve `monitoring.serviceMonitor.enabled` and
+`monitoring.rules.enabled` from one common merged view. Raw
+`extra_configs.monitoring` has the same precedence it has in the Helm values
+list and overrides typed `loki.monitoring`; an explicit selector-owned child
+input remains authoritative over both.
+
+For direct Loki child-module consumers, nullable
+`prometheus_monitor_enabled` and `prometheus_rules_enabled` preserve that
+merged caller configuration. If omitted everywhere, the typed ServiceMonitor
+default remains `true` and the rules fallback remains `false`.
+
+The precedence is therefore an explicit selector input, then
+`extra_configs.monitoring`, then typed `loki.monitoring`, then the existing
+per-setting fallback.
+
 ## Monitor conversion and Secret contract
 
 Application charts continue to own `PodMonitor`/`ServiceMonitor` resources and
@@ -179,7 +208,7 @@ rollout.
 ## kube-state-metrics contract
 
 The Prometheus chart never owns kube-state-metrics. The independent exporter
-defaults to chart `6.1.0`, Helm release `kube-state-metrics`, Service fullname
+defaults to chart `7.8.1`, Helm release `kube-state-metrics`, Service fullname
 `prometheus-kube-state-metrics`, native scrape name
 `prometheus-kube-state-metrics-victoria-metrics`, and namespace `monitoring`.
 The distinct native name avoids a Helm ownership collision with the transient
@@ -187,8 +216,12 @@ same-name object converted from the Prometheus `ServiceMonitor`.
 
 | Selector | Standalone ServiceMonitor | Native VMServiceScrape |
 |---|---:|---:|
-| `prometheus` | enabled with `release = <prometheus release>`, port `http`, `honorLabels = true` | absent |
-| `victoria_metrics` | disabled | enabled with resolved namespace/selectors, port `http`, `honorLabels = true`, `max_scrape_size = "32MiB"` |
+| `prometheus` | enabled with `release = <prometheus release>`, port `http`, `honorLabels = true`, drop `^go_.*` | absent |
+| `victoria_metrics` | disabled | enabled with resolved namespace/selectors, port `http`, `honorLabels = true`, drop `^go_.*`, `max_scrape_size = "32MiB"` |
+
+Both module-owned paths apply the metric-name drop before ingestion. The
+disabled bundled kube-state-metrics dependency has no residual values block in
+the Prometheus chart template.
 
 The native object's Service selector is:
 

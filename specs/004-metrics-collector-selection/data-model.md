@@ -61,7 +61,7 @@ Secrets therefore require restricted access and auditing.
 | resolved namespace | `kube_state_metrics.namespace`, then Prometheus namespace, then root namespace |
 | resolved fullname | explicit fullname override or `<prometheus.release_name>-kube-state-metrics` |
 | Service selector | `app.kubernetes.io/name = kube-state-metrics`, `app.kubernetes.io/instance = <standalone release_name>` |
-| endpoint | port `http`, `honorLabels = true`, `max_scrape_size = "32MiB"` in VM mode |
+| endpoint | port `http`, `honorLabels = true`, metric names matching `^go_.*` dropped in both modes, and `max_scrape_size = "32MiB"` in VM mode |
 
 ### MetricsBackendStorage
 

@@ -12,7 +12,7 @@ variable "create_namespace" {
 
 variable "chart_version" {
   type        = string
-  default     = "6.1.0"
+  default     = "7.8.1"
   description = "Prometheus Community kube-state-metrics Helm chart version."
 }
 

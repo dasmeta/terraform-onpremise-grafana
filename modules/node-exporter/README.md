@@ -14,6 +14,14 @@ chart version `4.47.1`, port `metrics:9100`, requests `100m/200Mi`, and limits
 `200m/500Mi`. `extra_configs` is applied first; identity, resources, and scrape
 ownership remain selector-owned.
 
+For an existing kube-prometheus-stack installation, the first complete root
+apply replaces the old bundled resource fullname
+`prometheus-prometheus-node-exporter` with the standalone fullname
+`prometheus-node-exporter`. Do not use a targeted or split apply for this
+handoff. The DaemonSet/Service identity changes, so a short node-metric scrape
+gap is possible while the old objects are removed and the new ones become
+ready.
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 

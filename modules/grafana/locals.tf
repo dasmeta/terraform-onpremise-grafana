@@ -50,9 +50,14 @@ locals {
     }
   }
 
+  effective_prometheus_monitor_enabled = coalesce(
+    var.prometheus_monitor_enabled,
+    try(var.extra_configs.serviceMonitor.enabled, false),
+  )
+
   selector_owned_monitor_values = {
     serviceMonitor = {
-      enabled = var.prometheus_monitor_enabled
+      enabled = local.effective_prometheus_monitor_enabled
     }
   }
 

@@ -182,6 +182,62 @@ application migration gate and manual cleanup boundary.
 authentication. Deleting a CRD can delete every custom resource of that kind.
 Both actions require application-owner verification outside this module.
 
+## Decision 10: Replace kube-prometheus-stack component discovery in VM-only mode
+
+**Decision**: Generate native Kubernetes component discovery only when
+VictoriaMetrics is selected and Prometheus is not installed. CoreDNS,
+kube-proxy, kube-controller-manager, kube-scheduler, and etcd receive dedicated
+Services and `VMServiceScrape` resources. Kubernetes API server discovery is
+optional and selects the existing `default/kubernetes` Service.
+
+The native definitions mirror kube-prometheus-stack `75.8.0` ports, selectors,
+job labels, and the module's CoreDNS/kube-proxy `go_*` metric drop. They tighten
+the credential transport contract: service-account credentials are omitted
+from plain HTTP targets and authenticated HTTPS targets verify the mounted CA.
+Component and API server namespaces are grouped with the per-component switches
+under `victoria_metrics.agent.kubernetes_component_scrapes`.
+The same group carries controller-manager and scheduler CA/SAN settings. The
+default verifies TLS; `insecure_skip_verify` is available only as an explicit
+compatibility choice for clusters that cannot expose a verifiable certificate.
+
+The parity oracle from kube-prometheus-stack `75.8.0` is:
+
+| Input key | Service pod selector | Job label | Port | Path | Transport | Metric relabeling |
+|---|---|---|---:|---|---|---|
+| `core_dns` | `k8s-app=kube-dns` | `coredns` | `9153` | `/metrics` | HTTP, no credentials | drop `^go_.*` |
+| `kube_proxy` | `k8s-app=kube-proxy` | `kube-proxy` | `10249` | `/metrics` | HTTP, no credentials | drop `^go_.*` |
+| `controller_manager` | `component=kube-controller-manager` | `kube-controller-manager` | `10257` | `/metrics` | verified HTTPS + token/CA files + server name `kubernetes` | none |
+| `scheduler` | `component=kube-scheduler` | `kube-scheduler` | `10259` | `/metrics` | verified HTTPS + token/CA files | none |
+| `etcd` | `component=etcd` | `kube-etcd` | `2381` | `/metrics` | HTTP, no credentials | none |
+| `api_server` | existing Service labels `component=apiserver,provider=kubernetes` | Service label `component` | named port `https` | `/metrics` | verified HTTPS + token/CA files + server name `kubernetes` | drop the kube-prometheus-stack noisy API histogram buckets |
+
+Dedicated Service names are derived from the VMAgent name and component slug;
+the corresponding VMServiceScrape adds `-victoria-metrics`. Every generated
+component endpoint uses a 30-second interval and 10-second timeout. The
+VictoriaMetrics output booleans mean that configuration was rendered, not that
+the discovered target is healthy.
+
+**Rationale**: Removing the Prometheus Helm release also removes both its
+ServiceMonitors and the Services they select. A VMServiceScrape without a
+replacement Service is therefore insufficient. Restricting the native pairs
+to standalone mode avoids duplicate targets while the dual-backend converter
+is consuming kube-prometheus-stack ServiceMonitors.
+
+**Alternatives considered**:
+
+- Keep `prometheus.enabled = true`: rejected because it preserves the hidden
+  dependency that VM-only mode is intended to remove.
+- Generate native component pairs in dual mode too: rejected because converted
+  ServiceMonitors would create a second scrape path.
+- Create only VMServiceScrapes: rejected because most selected Services are
+  owned by kube-prometheus-stack and disappear with that release.
+
+**Modern capability classification**: `supported`. The existing pinned
+VictoriaMetrics Operator supports native `VMServiceScrape` resources and the
+module-local ordered resources chart already provides their lifecycle boundary.
+
+**Primary source**: [VictoriaMetrics Operator VMServiceScrape](https://docs.victoriametrics.com/operator/resources/vmservicescrape/)
+
 ## Resolved versions and compatibility
 
 | Component | Version | Reason |
@@ -190,7 +246,7 @@ Both actions require application-owner verification outside this module.
 | Terraform test runner | `>= 1.7, < 2.0` | Native provider mocking in focused tests |
 | Helm provider | `~> 2.17` | Existing provider constraint |
 | kube-prometheus-stack | `75.8.0` | Existing public default |
-| kube-state-metrics | `6.1.0` | Existing independent release default |
+| kube-state-metrics | `7.8.1` (app `2.19.1`) | Aligns the independent release with the current EKS module pin while preserving the existing chart values contract |
 | prometheus-node-exporter | `4.47.1` | Matches the bundled dependency being split out |
 | VictoriaMetrics Cluster | `0.31.0` | Existing root default |
 | VictoriaMetrics Operator | `0.67.2` | Existing pinned operator contract |

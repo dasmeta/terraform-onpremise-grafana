@@ -10,14 +10,16 @@ enables exactly one chart `ServiceMonitor` when Prometheus is selected. In
 VictoriaMetrics mode that monitor is disabled and the root creates exactly one
 native `VMServiceScrape` for the same Service with port `http`,
 `honorLabels = true`, and a scoped `max_scrape_size = "32MiB"` endpoint limit.
+Both collector-specific scrape paths drop kube-state-metrics Go runtime metrics
+matching `^go_.*` before ingestion.
 The native object's name has a `-victoria-metrics` suffix so it does not
 collide with the same-name object converted from the Prometheus
 `ServiceMonitor` during handoff.
 
 Collector-owned values are applied after `extra_configs`: the resource full
 name, Service port `8080`, ServiceMonitor activation, Prometheus release
-label, selector labels, and `honorLabels = true` cannot be changed through raw
-overrides. In VictoriaMetrics mode, a caller inline job named exactly
+label, selector labels, `honorLabels = true`, and the Go runtime metric filter
+cannot be changed through raw overrides. In VictoriaMetrics mode, a caller inline job named exactly
 `kube-state-metrics` suppresses the native object and remains responsible for
 its own scrape-size limit.
 
@@ -29,6 +31,16 @@ release creates their independent replacement. Verify the exporter and its
 may remain enabled during the dual-backend observation window, but it is not
 required by this exporter after all application-owned monitor resources have
 native VictoriaMetrics replacements.
+
+That ownership handoff must use one complete root-module apply, without
+`-target`: the default `prometheus-kube-state-metrics` object fullname is
+unchanged while the Helm owner changes from release `prometheus` to release
+`kube-state-metrics`. If an interrupted or partial apply reports
+`invalid ownership metadata`, rerun the complete apply first. If it remains
+blocked, inspect the exact object's `meta.helm.sh/release-*` annotations and
+confirm the old Prometheus release no longer renders it before deleting only
+that stale object. Never bulk-delete kube-state-metrics resources, PVCs, or
+CRDs as recovery.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -58,7 +70,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_chart_version"></a> [chart\_version](#input\_chart\_version) | Prometheus Community kube-state-metrics Helm chart version. | `string` | `"6.1.0"` | no |
+| <a name="input_chart_version"></a> [chart\_version](#input\_chart\_version) | Prometheus Community kube-state-metrics Helm chart version. | `string` | `"7.8.1"` | no |
 | <a name="input_create_namespace"></a> [create\_namespace](#input\_create\_namespace) | Whether Helm may create the target namespace. | `bool` | `true` | no |
 | <a name="input_extra_configs"></a> [extra\_configs](#input\_extra\_configs) | Additional kube-state-metrics chart values applied before selector-owned values. | `any` | `{}` | no |
 | <a name="input_fullname_override"></a> [fullname\_override](#input\_fullname\_override) | Full name used for kube-state-metrics Kubernetes resources and Service discovery. | `string` | `"prometheus-kube-state-metrics"` | no |
@@ -103,7 +115,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_chart_version"></a> [chart\_version](#input\_chart\_version) | Prometheus Community kube-state-metrics Helm chart version. | `string` | `"6.1.0"` | no |
+| <a name="input_chart_version"></a> [chart\_version](#input\_chart\_version) | Prometheus Community kube-state-metrics Helm chart version. | `string` | `"7.8.1"` | no |
 | <a name="input_create_namespace"></a> [create\_namespace](#input\_create\_namespace) | Whether Helm may create the target namespace. | `bool` | `true` | no |
 | <a name="input_extra_configs"></a> [extra\_configs](#input\_extra\_configs) | Additional kube-state-metrics chart values applied before selector-owned values. | `any` | `{}` | no |
 | <a name="input_fullname_override"></a> [fullname\_override](#input\_fullname\_override) | Full name used for kube-state-metrics Kubernetes resources and Service discovery. | `string` | `"prometheus-kube-state-metrics"` | no |

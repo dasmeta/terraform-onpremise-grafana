@@ -40,12 +40,16 @@ Represents a backend-neutral metrics producer.
 | `fullname` | string | Stable Service/workload identity |
 | `chart_version` | string | Explicitly pinned |
 | `prometheus_monitor_enabled` | derived bool | Exporter enabled and Prometheus selected |
-| `vm_service_scrape_enabled` | derived bool | Exporter enabled and VictoriaMetrics selected |
+| `managed_service_scrape` | bool | Defaults true; caller can transfer VictoriaMetrics discovery ownership without disabling the exporter |
+| `vm_service_scrape_enabled` | derived bool | Exporter enabled, VictoriaMetrics selected, and module-managed discovery enabled |
 
 ### Invariants
 
-- An enabled exporter has exactly one module-managed discovery definition.
+- An enabled exporter has one module-managed discovery definition unless the
+  caller explicitly owns its VictoriaMetrics scrape job.
 - A disabled exporter has no module-managed discovery definition.
+- Disabling module-managed discovery does not disable the exporter workload or
+  remove caller inline jobs.
 - The Prometheus stack cannot install a bundled copy.
 - Exporter Service annotations cannot activate a second annotation scrape.
 
@@ -71,8 +75,10 @@ Represents a generated VictoriaMetrics discovery resource.
 | `cadvisor` | `/metrics/cadvisor` | enabled | container CPU, memory, network, filesystem |
 | `resource` | `/metrics/resource` | disabled | optional pod/container resource endpoint |
 
-Node scrapes use service-account token and CA file paths. They never contain a
-credential value.
+Node scrapes use the mounted service-account token and intentionally skip
+target certificate validation without declaring an unused CA path. They never
+contain a credential value. Verified API-server and component scrapes retain
+their separate CA configuration.
 
 ## VictoriaMetricsResourceRelease
 
@@ -103,13 +109,16 @@ metrics backend.
 | `component` | enum | `grafana`, `tempo`, or `loki` |
 | `enabled` | bool | Existing component lifecycle flag |
 | `monitor_requested` | bool | Existing public self-monitoring request |
+| `managed_service_scrape` | bool | Defaults true for Tempo and Loki; false transfers VictoriaMetrics discovery ownership to the caller |
 | `prometheus_monitor_enabled` | derived bool | Requested and Prometheus selected |
-| `vm_service_scrape_enabled` | derived bool | Requested and VictoriaMetrics selected |
+| `vm_service_scrape_enabled` | derived bool | Requested, VictoriaMetrics selected, and module-managed discovery enabled |
 | `managed_remote_write_url` | nullable string | Tempo only; selector-derived when caller omits URL |
 
 ### Invariants
 
 - A requested module-owned monitor has at most one discovery path.
+- A caller-owned inline job can replace native Tempo or Loki discovery without
+  disabling the component.
 - VM-only suppresses module-owned Prometheus monitors and rules.
 - An explicit Tempo URL is not modified.
 - An omitted Tempo URL resolves to the selected backend's write endpoint.

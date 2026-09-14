@@ -148,26 +148,29 @@ module "victoria_metrics" {
   namespace        = local.victoria_metrics_namespace
   create_namespace = var.victoria_metrics.create_namespace
 
-  agent_enabled                 = local.victoria_metrics_agent_enabled
-  operator_chart_version        = var.victoria_metrics.operator.chart_version
-  operator_release_name         = var.victoria_metrics.operator.release_name
-  operator_extra_configs        = var.victoria_metrics.operator.extra_configs
-  prometheus_converter_enabled  = local.prometheus_converter_enabled
-  agent_name                    = var.victoria_metrics.agent.name
-  agent_replica_count           = var.victoria_metrics.agent.replica_count
-  agent_kubelet_scrape_enabled  = var.victoria_metrics.agent.kubelet_scrape_enabled
-  agent_cadvisor_scrape_enabled = var.victoria_metrics.agent.cadvisor_scrape_enabled
-  agent_resource_scrape_enabled = var.victoria_metrics.agent.resource_scrape_enabled
-  agent_kubelet_metrics         = var.victoria_metrics.agent.kubelet_metrics
-  agent_extra_scrape_configs    = var.victoria_metrics.agent.extra_scrape_configs
-  agent_extra_configs           = var.victoria_metrics.agent.extra_configs
+  agent_enabled                      = local.victoria_metrics_agent_enabled
+  agent_standalone                   = local.victoria_metrics_standalone
+  operator_enabled                   = var.victoria_metrics.operator.enabled
+  operator_chart_version             = var.victoria_metrics.operator.chart_version
+  operator_release_name              = var.victoria_metrics.operator.release_name
+  operator_extra_configs             = var.victoria_metrics.operator.extra_configs
+  prometheus_converter_enabled       = local.prometheus_converter_enabled
+  agent_name                         = var.victoria_metrics.agent.name
+  agent_replica_count                = var.victoria_metrics.agent.replica_count
+  agent_kubelet_scrape_enabled       = var.victoria_metrics.agent.kubelet_scrape_enabled
+  agent_cadvisor_scrape_enabled      = var.victoria_metrics.agent.cadvisor_scrape_enabled
+  agent_resource_scrape_enabled      = var.victoria_metrics.agent.resource_scrape_enabled
+  agent_kubelet_metrics              = var.victoria_metrics.agent.kubelet_metrics
+  agent_kubernetes_component_scrapes = var.victoria_metrics.agent.kubernetes_component_scrapes
+  agent_extra_scrape_configs         = var.victoria_metrics.agent.extra_scrape_configs
+  agent_extra_configs                = var.victoria_metrics.agent.extra_configs
 
-  agent_kube_state_metrics_enabled      = var.kube_state_metrics.enabled
+  agent_kube_state_metrics_enabled      = local.kube_state_metrics_vm_service_scrape_enabled
   agent_kube_state_metrics_namespace    = local.kube_state_metrics_namespace
   agent_kube_state_metrics_release_name = var.kube_state_metrics.release_name
   agent_kube_state_metrics_fullname     = local.kube_state_metrics_fullname
 
-  agent_node_exporter_enabled      = var.node_exporter.enabled
+  agent_node_exporter_enabled      = local.node_exporter_vm_service_scrape_enabled
   agent_node_exporter_namespace    = local.node_exporter_namespace
   agent_node_exporter_release_name = var.node_exporter.release_name
   agent_node_exporter_fullname     = local.node_exporter_fullname

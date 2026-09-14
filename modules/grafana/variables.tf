@@ -55,8 +55,9 @@ variable "default_metrics_datasource_uid" {
 
 variable "prometheus_monitor_enabled" {
   type        = bool
-  default     = false
-  description = "Selector-owned Grafana Prometheus ServiceMonitor state."
+  default     = null
+  nullable    = true
+  description = "Selector-resolved Grafana Prometheus ServiceMonitor state; null preserves the extra_configs request for direct child use."
 }
 
 variable "release_name" {

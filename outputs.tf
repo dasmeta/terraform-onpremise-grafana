@@ -26,10 +26,15 @@ output "metrics_collector" {
       ) ||
       (
         local.metrics_collector == "victoria_metrics" &&
-        var.victoria_metrics.enabled
+        var.victoria_metrics.enabled &&
+        var.victoria_metrics.operator.enabled
       )
     )
-    error_message = local.metrics_collector == "victoria_metrics" ? "victoria_metrics.enabled=true is required when metrics_collector is victoria_metrics." : "prometheus.enabled=true is required when metrics_collector is prometheus."
+    error_message = local.metrics_collector == "victoria_metrics" ? (
+      var.victoria_metrics.enabled
+      ? "victoria_metrics.operator.enabled=true is required when metrics_collector is victoria_metrics."
+      : "victoria_metrics.enabled=true is required when metrics_collector is victoria_metrics."
+    ) : "prometheus.enabled=true is required when metrics_collector is prometheus."
   }
 }
 
@@ -38,7 +43,7 @@ output "metrics_collector_status" {
     active                              = local.metrics_collector
     prometheus_installed                = var.prometheus.enabled
     victoria_metrics_installed          = var.victoria_metrics.enabled
-    victoria_metrics_operator_installed = var.victoria_metrics.enabled
+    victoria_metrics_operator_installed = local.victoria_metrics_operator_enabled
     prometheus_converter_enabled = (
       var.victoria_metrics.enabled
       ? module.victoria_metrics[0].prometheus_converter_enabled
@@ -85,9 +90,39 @@ output "metrics_collector_status" {
       node_exporter      = local.node_exporter_vm_service_scrape_enabled
       tempo              = local.tempo_vm_service_scrape_enabled
       loki               = local.loki_vm_service_scrape_enabled
+      api_server = (
+        var.victoria_metrics.enabled
+        ? module.victoria_metrics[0].native_kubernetes_component_scrapes.api_server
+        : false
+      )
+      core_dns = (
+        var.victoria_metrics.enabled
+        ? module.victoria_metrics[0].native_kubernetes_component_scrapes.core_dns
+        : false
+      )
+      kube_proxy = (
+        var.victoria_metrics.enabled
+        ? module.victoria_metrics[0].native_kubernetes_component_scrapes.kube_proxy
+        : false
+      )
+      controller_manager = (
+        var.victoria_metrics.enabled
+        ? module.victoria_metrics[0].native_kubernetes_component_scrapes.controller_manager
+        : false
+      )
+      scheduler = (
+        var.victoria_metrics.enabled
+        ? module.victoria_metrics[0].native_kubernetes_component_scrapes.scheduler
+        : false
+      )
+      etcd = (
+        var.victoria_metrics.enabled
+        ? module.victoria_metrics[0].native_kubernetes_component_scrapes.etcd
+        : false
+      )
     }
   }
-  description = "Resolved metrics collector installation and activation status."
+  description = "Resolved metrics collector installation and rendered scrape configuration status; scrape booleans do not report runtime target health."
 }
 
 output "alerts" {

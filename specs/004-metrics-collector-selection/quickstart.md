@@ -19,6 +19,21 @@ kubectl get crd podmonitors.monitoring.coreos.com servicemonitors.monitoring.cor
 Review any existing `VMAgent` or `VMServiceScrape` before applying. The module's
 generated VMAgent uses `selectAllByDefault = true`.
 
+For an in-place upgrade, use one complete root-module plan and apply; targeted
+or split applies are unsupported. Record the current exporter and Prometheus
+storage identities first:
+
+```sh
+kubectl get deployment,daemonset,service,servicemonitor -n monitoring
+kubectl get prometheus.monitoring.coreos.com,statefulset,persistentvolumeclaim -n monitoring
+```
+
+The first apply transfers same-name `prometheus-kube-state-metrics` objects
+from Helm release `prometheus` to `kube-state-metrics` and replaces bundled
+`prometheus-prometheus-node-exporter` objects with standalone
+`prometheus-node-exporter` objects. Repeat the inventory after the apply and
+confirm both standalone exporters are ready.
+
 ## 2. Install the Operator while Prometheus remains active
 
 ```hcl
@@ -30,6 +45,7 @@ victoria_metrics = {
   enabled = true
 
   operator = {
+    enabled       = true
     chart_version = "0.67.2"
   }
 
@@ -125,14 +141,17 @@ metrics_collector = "victoria_metrics"
 
 Plan and confirm:
 
-- the Prometheus Helm release remains installed but its Prometheus server is
-  disabled;
+- the Prometheus Helm release remains installed, but its `Prometheus` custom
+  resource and Operator-generated StatefulSet are removed;
+- the recorded Prometheus PVCs remain; old Prometheus history is unavailable
+  until its server is re-enabled;
 - the Operator release remains installed;
 - one `VMAgent` object is added through Operator `extraObjects`;
 - the kube-state-metrics Prometheus `ServiceMonitor` is disabled;
 - one native kube-state-metrics `VMServiceScrape` named
   `<Service fullname>-victoria-metrics` is present with a 32 MiB endpoint
-  limit; its distinct name avoids ownership collision with converter output;
+  limit and a `^go_.*` metric drop; its distinct name avoids ownership
+  collision with converter output;
 - the VictoriaMetrics cluster and vmstorage PVC settings are unchanged;
 - Grafana defaults to the VictoriaMetrics datasource.
 
@@ -166,7 +185,7 @@ Confirm:
 
 - the authorization-protected application target is healthy and has no last
   scrape error;
-- expected application metrics such as `projected_talk_replicas` and
+- expected application-owned metrics and
   `scheduled_outbound_calls_next_5m` are queryable from VictoriaMetrics;
 - Kubernetes dashboard metrics for replicas, kubelet/cAdvisor, network, and
   volumes continue updating;
@@ -178,8 +197,9 @@ For kube-state-metrics, inspect the generated object:
 kubectl get vmservicescrape -A -o yaml
 ```
 
-Its endpoint must use port `http`, `honorLabels: true`, and
-`max_scrape_size: 32MiB`.
+Its endpoint must use port `http`, `honorLabels: true`,
+`max_scrape_size: 32MiB`, and one `metricRelabelConfigs` rule dropping
+`^go_.*` from `__name__`.
 
 ## 7. Exceptional inline scrape jobs
 
@@ -208,6 +228,12 @@ A temporary caller job named `kube-state-metrics` suppresses the module's
 native `VMServiceScrape`. Remove that transition job after verifying the native
 object; otherwise the caller remains responsible for `max_scrape_size`.
 
+For caller-owned jobs targeting KSM, node-exporter, Tempo, or Loki, set the
+matching `victoria_metrics.agent.managed_service_scrapes` field to `false`.
+This suppresses only the module-owned `VMServiceScrape`, not the workload or
+inline job. Every field defaults to `true`; the exact KSM job-name behavior is
+retained for backward compatibility.
+
 ## 8. Roll back to Prometheus
 
 Before rollback, require:
@@ -226,13 +252,14 @@ Then set:
 metrics_collector = "prometheus"
 ```
 
-Apply and verify that the VMAgent CR is gone, Prometheus is active again, and the
-VictoriaMetrics vmstorage PVC identities are unchanged.
+Apply and verify that the VMAgent CR is gone, Prometheus is active again, its
+recorded PVCs are reattached, and the VictoriaMetrics vmstorage PVC identities
+are unchanged.
 
 ## 9. Expected invalid configuration
 
-This configuration must fail with a message explaining Prometheus monitoring CRD
-ownership:
+This configuration must fail because the VictoriaMetrics collector requires an
+explicit Operator opt-in:
 
 ```hcl
 prometheus = {
@@ -246,5 +273,6 @@ victoria_metrics = {
 metrics_collector = "victoria_metrics"
 ```
 
-Removing kube-prometheus-stack requires a separate migration that independently
-owns Prometheus monitor CRDs and replaces any remaining exporters/rules.
+Set `victoria_metrics.operator.enabled = true` only after deciding to install
+the Operator's CRDs and cluster-wide RBAC. Running without Prometheus also
+requires the native monitor/exporter migration described by feature 005.

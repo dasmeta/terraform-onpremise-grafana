@@ -2,7 +2,7 @@
 
 **Feature Branch**: `004-metrics-collector-selection`
 **Created**: 2026-08-20
-**Revised**: 2026-08-28
+**Revised**: 2026-09-14
 **Status**: Approved for planning
 **Input**: User description: "Install Prometheus and VictoriaMetrics together, select which one collects metrics, and test VictoriaMetrics while Prometheus remains active."
 
@@ -61,6 +61,7 @@ An operator wants `kube-state-metrics` to remain installed when Prometheus is di
 2. **Given** `metrics_collector = "victoria_metrics"`, **When** the stack is rendered, **Then** the `ServiceMonitor` is disabled and a native `VMServiceScrape` targets the independent Service through the operator-managed VMAgent.
 3. **Given** both backends remain installed and VictoriaMetrics is selected, **When** the Prometheus server is disabled, **Then** kube-state-metrics remains installed independently.
 4. **Given** the kube-state-metrics response is larger than vmagent's default 16 MiB scrape limit, **When** VictoriaMetrics is selected, **Then** the native scrape object accepts responses up to 32 MiB without raising the limit for unrelated targets.
+5. **Given** either supported collector is selected, **When** kube-state-metrics is scraped, **Then** Go runtime metrics matching `^go_.*` are dropped before ingestion.
 
 ### User Story 5 - Reuse application monitor objects with VictoriaMetrics (Priority: P1)
 
@@ -145,6 +146,7 @@ render the operator-managed collector, and verify that an authorization-enabled
 - **FR-040**: Rollout documentation MUST require Prometheus queue-drain checks before switching and VMAgent pending-data/error checks before rollback when agent queue storage is ephemeral.
 - **FR-041**: Operator runtime Secret resolution MUST be documented, including its need to read source Secrets, the pinned chart ClusterRole's broader cluster-wide wildcard verbs on `secrets` and `secrets/finalizers`, and the generated configuration Secret containing resolved credentials.
 - **FR-042**: The Operator Helm release MUST protect `crds.enabled = true`, `crds.plain = true`, and `crds.upgrade.enabled = true` so a fresh-cluster apply installs CRDs before generated custom resources are REST-mapped and later chart upgrades can update those plain CRDs.
+- **FR-043**: Both the standalone kube-state-metrics Prometheus `ServiceMonitor` and native VictoriaMetrics `VMServiceScrape` MUST drop metric names matching `^go_.*` before ingestion.
 
 ### Key Entities
 
@@ -175,6 +177,7 @@ render the operator-managed collector, and verify that an authorization-enabled
 - **SC-016**: Tests prove protected Operator/VMAgent values win over conflicting raw overrides, including controller-disable/env/envFrom attempts and Pod/Service selector narrowing; zero, negative, and fractional VMAgent replica counts plus malformed DNS names such as `a..b` and `a.-b` are rejected.
 - **SC-017**: The rendered native kube-state-metrics object contains the exact namespace selector, Service selector, endpoint port, honor-label setting, and endpoint-level 32 MiB limit.
 - **SC-018**: A focused regression test proves caller overrides cannot disable the Operator chart's plain CRD bootstrap or CRD upgrade hook, and a pinned chart render places required CRDs in Helm's CRD payload while retaining generated custom resources.
+- **SC-019**: Focused tests prove both kube-state-metrics collector paths render the equivalent `^go_.*` drop rule and the disabled bundled kube-state-metrics values block is absent.
 
 ## Assumptions
 
@@ -187,6 +190,6 @@ render the operator-managed collector, and verify that an authorization-enabled
 - Secret references used by monitor endpoints are in the same namespace as their source monitor and are readable by VictoriaMetrics Operator; resolved values are stored in the generated VMAgent configuration Secret at runtime. The pinned chart-owned ClusterRole grants wildcard verbs on Secrets, so the Operator service account plus source and generated Secrets require restricted access and auditing.
 - Existing retention periods and persistent-volume settings remain unchanged.
 - VMAgent persistent-queue storage remains controlled by its CR spec or explicit `victoria_metrics.agent.extra_configs`; this change does not enable a PVC.
-- The standalone kube-state-metrics chart initially stays at `6.1.0`, matching the dependency bundled by kube-prometheus-stack `75.8.0`.
+- The standalone kube-state-metrics chart defaults to `7.8.1` (app `2.19.1`), aligned with the current `terraform-aws-eks` pin.
 - Removing the entire kube-prometheus-stack release and independently replacing all exporters and rules is outside this migration; the selected rollout keeps both backends installed.
 - The exactly-one-scraper invariant applies after Terraform/Helm convergence; a bounded transition overlap or gap is accepted and documented because the two Helm releases cannot switch atomically.

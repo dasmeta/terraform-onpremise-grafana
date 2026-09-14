@@ -58,9 +58,18 @@ resource "helm_release" "victoria_metrics" {
     jsonencode(var.extra_configs),
     jsonencode(local.cluster_endpoint_contract),
   ]
+
+  lifecycle {
+    precondition {
+      condition     = !var.agent_enabled || var.operator_enabled
+      error_message = "operator_enabled=true is required when agent_enabled=true."
+    }
+  }
 }
 
 resource "helm_release" "victoria_metrics_operator" {
+  count = var.operator_enabled ? 1 : 0
+
   name             = var.operator_release_name
   repository       = "https://victoriametrics.github.io/helm-charts"
   chart            = "victoria-metrics-operator"
@@ -78,6 +87,8 @@ resource "helm_release" "victoria_metrics_operator" {
 }
 
 resource "helm_release" "victoria_metrics_resources" {
+  count = var.operator_enabled ? 1 : 0
+
   name             = "${var.operator_release_name}-resources"
   chart            = "${path.module}/charts/resources"
   namespace        = var.namespace

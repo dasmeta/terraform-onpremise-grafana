@@ -65,7 +65,7 @@ generated `monitoring.coreos.com` objects.
 - [x] T010 [US1] Add the module-local VM resource chart with deterministic multi-document rendering in `modules/victoria-metrics/charts/resources/Chart.yaml`, `modules/victoria-metrics/charts/resources/values.yaml`, and `modules/victoria-metrics/charts/resources/templates/resources.yaml`
 - [x] T011 [US1] Split VM CR instances from the Operator release into a dependent `helm_release`, keep official CRD install/upgrade enabled, and protect VM-only cluster component monitors in `modules/victoria-metrics/main.tf` and `modules/victoria-metrics/locals.tf`
 - [x] T012 [US1] Implement conditional converter values and filter raw environment/configuration bypasses in `modules/victoria-metrics/locals.tf`
-- [x] T013 [US1] Generate selector-owned VMAgent and native kubelet/cAdvisor/resource `VMNodeScrape` objects with token/CA file paths and metric filtering in `modules/victoria-metrics/locals.tf`
+- [x] T013 [US1] Generate selector-owned VMAgent and native kubelet/cAdvisor/resource `VMNodeScrape` objects with mounted-token authentication, explicit TLS behavior, and metric filtering in `modules/victoria-metrics/locals.tf`
 - [x] T014 [US1] Pass standalone/converter/native-node inputs from root orchestration in `main.tf` and expose resource-release/native-node state in `modules/victoria-metrics/outputs.tf` and root `outputs.tf`
 - [x] T015 [US1] Run the US1 focused tests and verify VM-only contains no Prometheus Operator API versions and preserves the existing VictoriaMetrics storage identity
 
@@ -226,3 +226,83 @@ verification.
 - No live Terraform apply is part of module implementation.
 - Do not place API tokens or rendered Secret values in Terraform, tests,
   documentation, outputs, or command output.
+
+---
+
+## Review Remediation: kube-state-metrics Chart Version
+
+- [x] T045 Update root and child default-version assertions to chart `7.8.1`, then run the focused tests and confirm they fail against the old `6.1.0` defaults
+- [x] T046 Change the root and child kube-state-metrics chart defaults to `7.8.1` without changing the `enabled = true` ownership decision or collector-specific scrape behavior
+- [x] T047 Synchronize current README and resolved-version documentation with chart `7.8.1` / app `2.19.1`
+- [x] T048 Run focused Terraform tests, render the pinned chart with selector-owned values, run formatting and diff checks, and leave all changes unstaged
+
+---
+
+## Review Remediation: Native Kubernetes Component Scrapes
+
+- [x] T049 Extend the VM-only spec, research, contract, and design with native Kubernetes component parity, standalone-only ownership, and managed-control-plane limitations
+- [x] T050 Add failing child-module tests for safe-default and explicitly configured Service/VMServiceScrape pairs, optional API server discovery, exact ports/selectors/auth/TLS/relabeling, per-component disablement, and dual-mode duplicate suppression
+- [x] T051 Add failing root tests for forwarding the grouped component input and exposing resolved component scrape status only in VM-only mode
+- [x] T052 Implement the grouped root/child input, standalone gate, collision-safe Service identities, native Kubernetes Services/VMServiceScrapes, and additive outputs
+- [x] T053 Update root and child README usage/input/output documentation plus the VM-only rollout checks
+- [x] T054 Run focused and full Terraform tests, format/validate checks, Helm rendering, `git diff --check`, and leave all changes unstaged
+
+---
+
+## Review Remediation: Dual-Backend Kubelet Scrape Ownership
+
+- [x] T055 Add a failing Prometheus child-module regression test proving `kubelet.serviceMonitor.enabled` is false for VictoriaMetrics selection even when raw Helm values request true, and true for Prometheus selection
+- [x] T056 Make the Prometheus kubelet ServiceMonitor selector-owned in both the template and final protected Helm values layer without changing the public module interface
+- [x] T057 Extend the dual-backend root contract to prove VictoriaMetrics selection retains native kubelet/cAdvisor VMNodeScrapes while the Prometheus server remains inactive
+- [x] T058 Run focused and full Terraform tests, formatting, YAML, validation, and diff checks; leave all changes unstaged
+
+---
+
+## Review Remediation: Destructive Migration Documentation
+
+- [x] T059 Record the in-place KSM ownership, node-exporter identity, Prometheus workload, and PVC visibility risks in the native-stack specification and plan
+- [x] T060 Add complete-apply preflight, exact resource effects, PVC verification, rollback, and bounded ownership recovery to the root, quickstart, contract, and exporter documentation
+- [x] T061 Run fresh documentation, Terraform, formatting, and diff checks without staging or otherwise mutating Git state
+
+---
+
+## Review Remediation: Explicit VictoriaMetrics Operator Opt-In
+
+- [x] T062 Record the default-disabled Operator gate, storage-only mode, collector precondition, output semantics, alternatives, and module-standard assessment in the design, spec, plan, and contract
+- [x] T063 Add focused RED tests proving omission disables both Operator-related releases and VictoriaMetrics collection rejects a disabled Operator
+- [x] T064 Gate Operator/resources releases, converter/agent derivation, and child/root outputs while preserving cluster-only remote write
+- [x] T065 Update root/child usage documentation and every active-collector example to opt in explicitly; mirror the grouped input through the AWS wrapper contract
+- [x] T066 Run focused and full Terraform tests, formatting, YAML, validation, documentation, and diff checks without Git mutation
+
+---
+
+## Review Remediation: Endpoint-Specific VMNodeScrape Filters
+
+- [x] T067 Add RED assertions for exact kubelet, cAdvisor, and resource keep filters, exclusion of KSM/scheduler-only patterns, corrected resource memory metric, and unknown custom-pattern compatibility
+- [x] T068 Route known metric families by endpoint and clean the root/child defaults without changing the public `agent_kubelet_metrics` input
+- [x] T069 Run focused and full Terraform tests, formatting, validation, documentation, YAML, and diff checks without Git mutation
+
+---
+
+## Review Remediation: Unambiguous Native Node TLS
+
+- [x] T070 Change the generated-object regression assertion to require `insecureSkipVerify = true` with no `caFile`, then observe the focused test fail against the redundant configuration
+- [x] T071 Remove only the native node `caFile` and synchronize node-TLS documentation while preserving verified API-server/component TLS configuration
+- [x] T072 Run focused and full Terraform tests, formatting, validation, documentation, YAML, and diff checks without Git mutation
+
+---
+
+## Review Remediation: Caller-Owned Service Scrape Opt-Outs
+
+- [x] T073 Record the explicit grouped ownership switches, preserved defaults, alternatives, interface assessment, and KSM compatibility behavior in the design/spec/plan
+- [x] T074 Add a failing root regression test proving caller-owned jobs can suppress generated KSM, node-exporter, Tempo, and Loki VMServiceScrapes without removing their workloads
+- [x] T075 Add and forward `victoria_metrics.agent.managed_service_scrapes`, gate each resolved native service scrape, and document direct-child and root usage
+- [x] T076 Run focused and full Terraform tests, formatting, validation, documentation, YAML, and diff checks without Git mutation
+
+---
+
+## Review Remediation: Published VictoriaMetrics Cluster Chart Default
+
+- [x] T077 Add a direct-child regression test requiring the default `victoria-metrics-cluster` Helm release version to resolve to published chart `0.31.0`, then observe it fail against `0.31.4`
+- [x] T078 Align the child `chart_version` default and generated child README with the existing root default `0.31.0`
+- [x] T079 Run focused and full Terraform tests, formatting, validation, documentation, YAML, and diff checks without Git mutation

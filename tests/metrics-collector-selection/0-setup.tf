@@ -38,6 +38,11 @@ variable "victoria_metrics_enabled" {
   default = true
 }
 
+variable "operator_enabled" {
+  type    = bool
+  default = false
+}
+
 variable "operator_chart_version" {
   type    = string
   default = "0.67.2"

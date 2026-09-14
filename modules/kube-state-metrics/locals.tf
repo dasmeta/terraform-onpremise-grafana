@@ -16,6 +16,11 @@ locals {
         }
         http = {
           honorLabels = true
+          metricRelabelings = [{
+            sourceLabels = ["__name__"]
+            regex        = "^go_.*"
+            action       = "drop"
+          }]
         }
       }
     }

@@ -34,6 +34,6 @@ output "release" {
 }
 
 output "prometheus_monitor_enabled" {
-  value       = var.prometheus_monitor_enabled
+  value       = local.effective_prometheus_monitor_enabled
   description = "Resolved Loki Prometheus ServiceMonitor state."
 }

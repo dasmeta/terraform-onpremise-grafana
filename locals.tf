@@ -1,9 +1,19 @@
 locals {
   metrics_collector = var.metrics_collector
 
-  prometheus_scraping_enabled    = local.metrics_collector == "prometheus"
-  victoria_metrics_agent_enabled = local.metrics_collector == "victoria_metrics"
-  prometheus_converter_enabled   = var.prometheus.enabled && var.victoria_metrics.enabled
+  prometheus_scraping_enabled = local.metrics_collector == "prometheus"
+  victoria_metrics_operator_enabled = (
+    var.victoria_metrics.enabled &&
+    var.victoria_metrics.operator.enabled
+  )
+  victoria_metrics_agent_enabled = (
+    local.metrics_collector == "victoria_metrics" &&
+    local.victoria_metrics_operator_enabled
+  )
+  prometheus_converter_enabled = (
+    var.prometheus.enabled &&
+    local.victoria_metrics_operator_enabled
+  )
   victoria_metrics_standalone = (
     local.victoria_metrics_agent_enabled &&
     var.victoria_metrics.enabled &&
@@ -45,6 +55,7 @@ locals {
     var.kube_state_metrics.enabled &&
     var.victoria_metrics.enabled &&
     local.victoria_metrics_agent_enabled &&
+    var.victoria_metrics.agent.managed_service_scrapes.kube_state_metrics &&
     !local.victoria_metrics_agent_has_kube_state_metrics_scrape_config
   )
 
@@ -70,7 +81,8 @@ locals {
   node_exporter_vm_service_scrape_enabled = (
     var.node_exporter.enabled &&
     var.victoria_metrics.enabled &&
-    local.victoria_metrics_agent_enabled
+    local.victoria_metrics_agent_enabled &&
+    var.victoria_metrics.agent.managed_service_scrapes.node_exporter
   )
 
   app_dash_defaults = {
@@ -163,13 +175,18 @@ locals {
     var.tempo.enabled &&
     var.tempo.enable_service_monitor &&
     var.victoria_metrics.enabled &&
-    local.victoria_metrics_agent_enabled
+    local.victoria_metrics_agent_enabled &&
+    var.victoria_metrics.agent.managed_service_scrapes.tempo
   )
 
   loki_namespace = coalesce(var.loki_stack.namespace, var.namespace)
+  loki_monitoring_values = merge(
+    var.loki_stack.loki.monitoring,
+    try(var.loki_stack.loki.extra_configs.monitoring, {}),
+  )
   loki_prometheus_monitor_enabled = (
     var.loki_stack.enabled &&
-    var.loki_stack.loki.monitoring.serviceMonitor.enabled &&
+    try(local.loki_monitoring_values.serviceMonitor.enabled, false) &&
     var.prometheus.enabled &&
     local.prometheus_scraping_enabled
   )
@@ -177,13 +194,14 @@ locals {
     var.loki_stack.enabled &&
     var.prometheus.enabled &&
     local.prometheus_scraping_enabled &&
-    try(var.loki_stack.loki.extra_configs.monitoring.rules.enabled, false)
+    try(local.loki_monitoring_values.rules.enabled, false)
   )
   loki_vm_service_scrape_enabled = (
     var.loki_stack.enabled &&
-    var.loki_stack.loki.monitoring.serviceMonitor.enabled &&
+    try(local.loki_monitoring_values.serviceMonitor.enabled, false) &&
     var.victoria_metrics.enabled &&
-    local.victoria_metrics_agent_enabled
+    local.victoria_metrics_agent_enabled &&
+    var.victoria_metrics.agent.managed_service_scrapes.loki
   )
 
   grafana_prometheus_monitor_enabled = (

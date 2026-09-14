@@ -407,7 +407,7 @@ variable "kube_state_metrics" {
     enabled           = optional(bool, true)
     namespace         = optional(string, null)
     create_namespace  = optional(bool, true)
-    chart_version     = optional(string, "6.1.0")
+    chart_version     = optional(string, "7.8.1")
     release_name      = optional(string, "kube-state-metrics")
     fullname_override = optional(string, null)
     extra_configs     = optional(any, {})
@@ -461,6 +461,7 @@ variable "victoria_metrics" {
       replica_count = optional(number, 2)
     }), {})
     operator = optional(object({
+      enabled       = optional(bool, false)
       chart_version = optional(string, "0.67.2")
       release_name  = optional(string, "victoria-metrics-operator")
       extra_configs = optional(any, {})
@@ -471,16 +472,38 @@ variable "victoria_metrics" {
       kubelet_scrape_enabled  = optional(bool, true)
       cadvisor_scrape_enabled = optional(bool, true)
       resource_scrape_enabled = optional(bool, false)
+      kubernetes_component_scrapes = optional(object({
+        namespace            = optional(string, "kube-system")
+        api_server_namespace = optional(string, "default")
+        api_server           = optional(bool, false)
+        core_dns             = optional(bool, true)
+        kube_proxy           = optional(bool, true)
+        controller_manager   = optional(bool, false)
+        scheduler            = optional(bool, false)
+        etcd                 = optional(bool, true)
+        controller_manager_tls = optional(object({
+          ca_file              = optional(string, null)
+          server_name          = optional(string, null)
+          insecure_skip_verify = optional(bool, false)
+        }), null)
+        scheduler_tls = optional(object({
+          ca_file              = optional(string, null)
+          server_name          = optional(string, null)
+          insecure_skip_verify = optional(bool, false)
+        }), null)
+      }), {})
+      managed_service_scrapes = optional(object({
+        kube_state_metrics = optional(bool, true)
+        node_exporter      = optional(bool, true)
+        tempo              = optional(bool, true)
+        loki               = optional(bool, true)
+      }), {})
       kubelet_metrics = optional(list(string), [
         "container_cpu_.*",
         "container_memory_.*",
-        "kube_pod_container_status_.*",
-        "kube_pod_container_resource_.*",
         "container_network_.*",
-        "kube_pod_resource_limit",
-        "kube_pod_resource_request",
         "pod_cpu_usage_seconds_total",
-        "pod_memory_usage_bytes",
+        "pod_memory_working_set_bytes",
         "kubelet_volume_stats.*",
         "volume_operation_total_seconds.*",
         "container_fs_.*",
@@ -513,6 +536,18 @@ variable "victoria_metrics" {
       var.victoria_metrics.agent.replica_count
     )
     error_message = "victoria_metrics.agent.replica_count must be a positive integer."
+  }
+
+  validation {
+    condition = alltrue([
+      !var.victoria_metrics.agent.kubernetes_component_scrapes.controller_manager ||
+      try(var.victoria_metrics.agent.kubernetes_component_scrapes.controller_manager_tls.insecure_skip_verify, false) ||
+      try(length(trimspace(var.victoria_metrics.agent.kubernetes_component_scrapes.controller_manager_tls.ca_file)) > 0, false),
+      !var.victoria_metrics.agent.kubernetes_component_scrapes.scheduler ||
+      try(var.victoria_metrics.agent.kubernetes_component_scrapes.scheduler_tls.insecure_skip_verify, false) ||
+      try(length(trimspace(var.victoria_metrics.agent.kubernetes_component_scrapes.scheduler_tls.ca_file)) > 0, false),
+    ])
+    error_message = "Enabled controller-manager and scheduler scrapes require explicit TLS settings with either a non-empty CA file path or insecure_skip_verify=true."
   }
 }
 

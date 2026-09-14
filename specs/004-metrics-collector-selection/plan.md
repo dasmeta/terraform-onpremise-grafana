@@ -3,8 +3,8 @@
 **Branch**: `DMVP-10446` (Speckit feature override:
 `004-metrics-collector-selection`) | **Date**: 2026-08-28 | **Spec**:
 [spec.md](./spec.md)
-**Input**: Approved feature specification and
-[operator design](../../docs/superpowers/specs/2026-08-20-metrics-collector-selection-design.md)
+**Input**: Approved feature specification and the design decisions recorded in
+this package's research and contract documents
 
 ## Summary
 
@@ -23,7 +23,7 @@ native test fixture uses Terraform `>= 1.7, < 2.0`
 **Primary Dependencies**: `hashicorp/helm ~> 2.17`,
 `grafana/grafana ~> 4.0`, kube-prometheus-stack `75.8.0`,
 victoria-metrics-cluster `0.31.0`, victoria-metrics-operator `0.67.2`,
-kube-state-metrics `6.1.0`
+kube-state-metrics `7.8.1`
 **Storage**: Existing VictoriaMetrics vmstorage PVCs and retention settings;
 VMAgent queue remains ephemeral unless explicitly overridden
 **Testing**: Terraform native tests with mocked Helm/Grafana providers,
@@ -50,7 +50,7 @@ The repository constitution is still an unratified placeholder, so it has no
 project-specific enforceable gates. The established Terraform module standards
 and approved feature specification provide the gates:
 
-- **Requirements gate: PASS** — all behavior is mapped to FR-001 through FR-042
+- **Requirements gate: PASS** — all behavior is mapped to FR-001 through FR-043
   and measurable success criteria.
 - **No unresolved clarification gate: PASS** — chart version, CRD ownership,
   Secret flow, object selection, override precedence, rollout, and rollback are
@@ -95,11 +95,6 @@ specs/004-metrics-collector-selection/
 │   └── requirements.md
 └── tasks.md
 
-docs/superpowers/
-├── specs/
-│   └── 2026-08-20-metrics-collector-selection-design.md
-└── plans/
-    └── 2026-08-28-victoria-metrics-operator-collector-support.md
 ```
 
 ### Base module source and tests
@@ -166,6 +161,7 @@ Replace the unpublished standalone agent object with:
 
 ```hcl
 operator = optional(object({
+  enabled       = optional(bool, false)
   chart_version = optional(string, "0.67.2")
   release_name  = optional(string, "victoria-metrics-operator")
   extra_configs = optional(any, {})
@@ -244,7 +240,13 @@ the static generated vmagent job. In VM mode, add a native
 - exporter namespace in metadata and `namespaceSelector.matchNames`;
 - selector labels for exporter chart name and standalone release instance;
 - endpoint port `http`, `honorLabels = true`, and
-  `max_scrape_size = "32MiB"`.
+  `max_scrape_size = "32MiB"`;
+- an endpoint metric relabel rule that drops metric names matching `^go_.*`.
+
+Apply the equivalent metric drop to the standalone Prometheus ServiceMonitor so
+the collector switch does not change kube-state-metrics cardinality. Remove the
+now-dead `kube-state-metrics` values block from the Prometheus chart template;
+the bundled dependency remains disabled and cannot consume that block.
 
 If caller inline jobs contain `job_name = "kube-state-metrics"`, suppress the
 native object and preserve the caller job unchanged.
@@ -293,7 +295,9 @@ out of scope.
 - Resource and queue defaults plus partial non-protected overrides remain
   correct.
 - Native KSM VMServiceScrape renders exact namespace, selectors, port,
-  honor-label flag, and 32 MiB endpoint limit.
+  honor-label flag, 32 MiB endpoint limit, and the `^go_.*` metric drop.
+- Standalone KSM ServiceMonitor renders the equivalent `^go_.*` metric drop,
+  and the disabled bundled KSM values block is absent from Prometheus values.
 - Caller KSM inline job suppresses the native object and remains unchanged.
 - No standalone vmagent Helm release remains in source or planned resources.
 
