@@ -18,6 +18,8 @@ jobs:
           - /
 
     steps:
+    - uses: actions/checkout@v4
+
     - name: Validate pod-name regexes
       run: bash tests/pod-name-regex.sh
 
