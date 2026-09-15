@@ -4,7 +4,8 @@ locals {
   type_specific_defaults = {
     deployment = {
       defaults = {
-        replicas_count_expr = "kube_deployment_status_replicas_available{deployment='${local.workload_name}', namespace='${var.namespace}'}"
+        replicas_count_expr       = "kube_deployment_status_replicas_available{deployment='${local.workload_name}', namespace='${var.namespace}'}"
+        unavailable_replicas_expr = "kube_deployment_status_replicas_unavailable{deployment='${local.workload_name}', namespace='${var.namespace}'}"
 
         labels = {
           slack = "true"
@@ -67,6 +68,11 @@ locals {
 
   defaults = provider::deepmerge::mergo(var.defaults, try(local.type_specific_defaults[var.defaults.workload_type].defaults, {}))
   alerts   = provider::deepmerge::mergo(var.alerts, try(local.type_specific_defaults[var.defaults.workload_type].alerts, {}))
+
+  alert_annotations = merge({}, [
+    for k, v in try(local.alerts.annotations, {}) :
+    try(tostring(v), "") != "" ? { (k) = v } : {}
+  ]...)
 
   alert_type_labels = {
     replicas_no = {
