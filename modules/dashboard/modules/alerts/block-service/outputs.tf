@@ -49,7 +49,7 @@ output "alert_rules" {
           "impact"    = "Service might response slower"
           "component" = "pod"
           "resource"  = "deployment"
-        }, try(local.alerts.replicas_max.annotations, {}), { for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 })
+        }, try(local.alerts.replicas_max.annotations, {}), local.alert_annotations)
         settings_mode        = "replaceNN"
         settings_replaceWith = 0
       }
@@ -69,7 +69,7 @@ output "alert_rules" {
         threshold      = 0
         filters        = {}
         labels         = merge(local.alert_type_labels.replicas_min, local.defaults.labels, local.alerts.replicas_min.labels)
-        annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
+        annotations = merge(local.alert_annotations,
           {
             "threshold" = 0,
             "metric"    = "replicas",
@@ -97,7 +97,7 @@ output "alert_rules" {
         threshold      = local.alerts.replicas_state.threshold
         filters        = {}
         labels         = merge(local.alert_type_labels.replicas_state, local.defaults.labels, local.alerts.replicas_state.labels)
-        annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
+        annotations = merge(local.alert_annotations,
           {
             "threshold" = local.alerts.replicas_state.threshold,
             "metric"    = "replicas",
@@ -125,7 +125,7 @@ output "alert_rules" {
         threshold      = local.alerts.unavailable_replicas.threshold
         filters        = {}
         labels         = merge(local.alert_type_labels.unavailable_replicas, local.defaults.labels, local.alerts.unavailable_replicas.labels)
-        annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
+        annotations = merge(local.alert_annotations,
           {
             "threshold" = local.alerts.unavailable_replicas.threshold,
             "metric"    = "unavailable_replicas",
@@ -152,7 +152,7 @@ output "alert_rules" {
         threshold      = local.alerts.job_failed.threshold
         filters        = {}
         labels         = merge(local.alert_type_labels.job_failed, local.defaults.labels, local.alerts.job_failed.labels)
-        annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
+        annotations = merge(local.alert_annotations,
           {
             "threshold" = local.alerts.job_failed.threshold,
             "metric"    = "replicas",
@@ -182,7 +182,7 @@ output "alert_rules" {
         equation  = "gte"
         threshold = local.alerts.restarts.threshold
         labels    = merge(local.alert_type_labels.restarts, local.defaults.labels, local.alerts.restarts.labels)
-        annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
+        annotations = merge(local.alert_annotations,
           {
             "threshold" = local.alerts.restarts.threshold,
             "metric"    = "replicas",
@@ -209,7 +209,7 @@ output "alert_rules" {
         equation       = "gte"
         threshold      = coalesce(local.alerts.network_in.deviation, local.defaults.deviation)
         labels         = merge(local.alert_type_labels.network_in, local.defaults.labels, local.alerts.network_in.labels)
-        annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
+        annotations = merge(local.alert_annotations,
           {
             "threshold" = coalesce(local.alerts.network_in.deviation, local.defaults.deviation),
             "metric"    = "replicas",
@@ -236,7 +236,7 @@ output "alert_rules" {
         equation       = "gte"
         threshold      = coalesce(local.alerts.network_out.deviation, local.defaults.deviation)
         labels         = merge(local.alert_type_labels.network_out, local.defaults.labels, local.alerts.network_out.labels)
-        annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
+        annotations = merge(local.alert_annotations,
           {
             "threshold" = coalesce(local.alerts.network_out.deviation, local.defaults.deviation),
             "metric"    = "replicas",
@@ -263,7 +263,7 @@ output "alert_rules" {
         equation       = "gte"
         threshold      = coalesce(local.alerts.cpu.threshold_percent, local.defaults.threshold_percent)
         labels         = merge(local.alert_type_labels.cpu, local.defaults.labels, local.alerts.cpu.labels)
-        annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
+        annotations = merge(local.alert_annotations,
           {
             "threshold" = coalesce(local.alerts.cpu.threshold_percent, local.defaults.threshold_percent),
             "metric"    = "cpu",
@@ -292,7 +292,7 @@ output "alert_rules" {
         equation       = "gte"
         threshold      = coalesce(local.alerts.memory.threshold_percent, local.defaults.threshold_percent)
         labels         = merge(local.alert_type_labels.memory, local.defaults.labels, local.alerts.memory.labels)
-        annotations = merge({ for k, v in try(local.alerts.annotations, {}) : k => v if length(v) > 0 },
+        annotations = merge(local.alert_annotations,
           {
             "threshold" = coalesce(local.alerts.memory.threshold_percent, local.defaults.threshold_percent),
             "metric"    = "memory",
