@@ -11,9 +11,9 @@ module "base" {
   unit        = "bytes"
 
   metrics = [
-    { label = "Transmit/Out", expression = "sum(rate(container_network_transmit_errors_total{namespace=\"${var.namespace}\", pod=~\"^${var.pod}(-[^-]+)?-[^-]+-[^-]+$\"}[${var.period}]))" },
-    { label = "Received/In", expression = "-sum(rate(container_network_receive_errors_total{namespace=\"${var.namespace}\", pod=~\"^${var.pod}(-[^-]+)?-[^-]+-[^-]+$\"}[${var.period}]))" },
-    { label = "Transmit/Out ({{pod}})", expression = "sum(rate(container_network_transmit_errors_total{namespace=\"${var.namespace}\", pod=~\"^${var.pod}(-[^-]+)?-[^-]+-[^-]+$\"}[${var.period}])) by (pod)" },
-    { label = "Received/In ({{pod}})", expression = "-sum(rate(container_network_receive_errors_total{namespace=\"${var.namespace}\", pod=~\"^${var.pod}(-[^-]+)?-[^-]+-[^-]+$\"}[${var.period}])) by (pod)" },
+    { label = "Transmit/Out", expression = "sum(rate(container_network_transmit_errors_total{namespace=\"${var.namespace}\", pod=~\"^${var.pod}(-(primary|canary))?(-[^-]+)?-[^-]+$\"}[${var.period}]))" },
+    { label = "Received/In", expression = "-sum(rate(container_network_receive_errors_total{namespace=\"${var.namespace}\", pod=~\"^${var.pod}(-(primary|canary))?(-[^-]+)?-[^-]+$\"}[${var.period}]))" },
+    { label = "Transmit/Out ({{pod}})", expression = "sum(rate(container_network_transmit_errors_total{namespace=\"${var.namespace}\", pod=~\"^${var.pod}(-(primary|canary))?(-[^-]+)?-[^-]+$\"}[${var.period}])) by (pod)" },
+    { label = "Received/In ({{pod}})", expression = "-sum(rate(container_network_receive_errors_total{namespace=\"${var.namespace}\", pod=~\"^${var.pod}(-(primary|canary))?(-[^-]+)?-[^-]+$\"}[${var.period}])) by (pod)" },
   ]
 }

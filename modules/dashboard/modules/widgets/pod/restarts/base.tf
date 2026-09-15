@@ -10,6 +10,6 @@ module "base" {
   period      = var.period
 
   metrics = [
-    { label = "Restarts", color = "FF0F3C", expression = "sum(rate(kube_pod_container_status_restarts_total{pod=~\"^${var.pod}(-[^-]+)?-[^-]+-[^-]+$\"}[${var.period}]))" },
+    { label = "Restarts", color = "FF0F3C", expression = "sum(rate(kube_pod_container_status_restarts_total{pod=~\"^${var.pod}(-(primary|canary))?-[^-]+-[^-]+$\"}[${var.period}]))" },
   ]
 }

@@ -15,8 +15,8 @@ module "base" {
   }
 
   metrics = [
-    { label = "Total", expression = "sum(kube_pod_status_phase{namespace=\"${var.namespace}\", pod=~\"^${var.container}(-[^-]+)?-[^-]+-[^-]+$\"})" },
-    { label = "{{phase}}", expression = "sum(kube_pod_status_phase{namespace=\"${var.namespace}\", pod=~\"^${var.container}(-[^-]+)?-[^-]+-[^-]+$\"}) by (phase)" },
-    { label = "Restarts", expression = "sum(rate(kube_pod_container_status_restarts_total{namespace=\"${var.namespace}\", pod=~\"^${var.container}(-[^-]+)?-[^-]+-[^-]+$\"}[${var.period}])) by (container)" },
+    { label = "Total", expression = "sum(kube_pod_status_phase{namespace=\"${var.namespace}\", pod=~\"^${var.container}(-(primary|canary))?-[^-]+-[^-]+$\"})" },
+    { label = "{{phase}}", expression = "sum(kube_pod_status_phase{namespace=\"${var.namespace}\", pod=~\"^${var.container}(-(primary|canary))?-[^-]+-[^-]+$\"}) by (phase)" },
+    { label = "Restarts", expression = "sum(rate(kube_pod_container_status_restarts_total{namespace=\"${var.namespace}\", pod=~\"^${var.container}(-(primary|canary))?-[^-]+-[^-]+$\"}[${var.period}])) by (container)" },
   ]
 }

@@ -18,6 +18,9 @@ jobs:
           - /
 
     steps:
+    - name: Validate pod-name regexes
+      run: bash tests/pod-name-regex.sh
+
     - uses: dasmeta/reusable-actions-workflows/terraform-test@4.2.1
       with:
         aws-region: ${{ secrets.AWS_REGION}}
