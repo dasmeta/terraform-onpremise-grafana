@@ -265,6 +265,45 @@ run "loki_direct_child_preserves_caller_monitoring_values" {
   }
 }
 
+run "loki_direct_child_keeps_base_monitor_enabled_for_sibling_override" {
+  command = plan
+
+  module {
+    source = "../../modules/loki-stack"
+  }
+
+  variables {
+    configs = {
+      loki = {
+        monitoring = {
+          serviceMonitor = {
+            enabled = true
+          }
+        }
+        extra_configs = {
+          monitoring = {
+            serviceMonitor = {
+              scrapeTimeout = "10s"
+            }
+          }
+        }
+      }
+      promtail = {
+        enabled = false
+      }
+    }
+  }
+
+  assert {
+    condition = alltrue([
+      jsondecode(helm_release.loki.values[2]).monitoring.serviceMonitor.scrapeTimeout == "10s",
+      jsondecode(helm_release.loki.values[3]).monitoring.serviceMonitor.enabled == true,
+      output.prometheus_monitor_enabled,
+    ])
+    error_message = "A sibling ServiceMonitor override must not disable the monitor configured in the base Loki monitoring block."
+  }
+}
+
 run "root_loki_monitoring_uses_merged_caller_values" {
   command = apply
 
@@ -313,6 +352,58 @@ run "root_loki_monitoring_uses_merged_caller_values" {
       output.loki.prometheus_monitor_enabled,
     ])
     error_message = "Root Loki monitor selection must use the same merged monitoring values that are passed to the child module."
+  }
+}
+
+run "root_loki_monitoring_keeps_base_enabled_for_sibling_override" {
+  command = apply
+
+  module {
+    source = "../.."
+  }
+
+  variables {
+    metrics_collector  = "prometheus"
+    prometheus         = { enabled = true }
+    victoria_metrics   = { enabled = false }
+    kube_state_metrics = { enabled = false }
+    node_exporter      = { enabled = false }
+    grafana            = { enabled = false }
+    tempo              = { enabled = false }
+    loki_stack = {
+      enabled = true
+      loki = {
+        monitoring = {
+          serviceMonitor = {
+            enabled = true
+          }
+        }
+        extra_configs = {
+          monitoring = {
+            serviceMonitor = {
+              scrapeTimeout = "10s"
+            }
+          }
+        }
+      }
+      promtail = {
+        enabled = false
+      }
+    }
+    alerts = {
+      disk_capacity  = { enabled = false }
+      rules          = []
+      contact_points = null
+      notifications  = null
+    }
+  }
+
+  assert {
+    condition = alltrue([
+      output.metrics_collector_status.loki_prometheus_monitor_enabled,
+      output.loki.prometheus_monitor_enabled,
+    ])
+    error_message = "Root Loki monitor selection must retain the base enabled flag when extra_configs adds only sibling ServiceMonitor fields."
   }
 }
 

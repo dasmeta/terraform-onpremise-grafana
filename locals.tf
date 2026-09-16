@@ -180,13 +180,19 @@ locals {
   )
 
   loki_namespace = coalesce(var.loki_stack.namespace, var.namespace)
-  loki_monitoring_values = merge(
-    var.loki_stack.loki.monitoring,
-    try(var.loki_stack.loki.extra_configs.monitoring, {}),
+  loki_caller_prometheus_monitor_enabled = coalesce(
+    try(var.loki_stack.loki.extra_configs.monitoring.serviceMonitor.enabled, null),
+    try(var.loki_stack.loki.monitoring.serviceMonitor.enabled, null),
+    false,
+  )
+  loki_caller_prometheus_rules_enabled = coalesce(
+    try(var.loki_stack.loki.extra_configs.monitoring.rules.enabled, null),
+    try(var.loki_stack.loki.monitoring.rules.enabled, null),
+    false,
   )
   loki_prometheus_monitor_enabled = (
     var.loki_stack.enabled &&
-    try(local.loki_monitoring_values.serviceMonitor.enabled, false) &&
+    local.loki_caller_prometheus_monitor_enabled &&
     var.prometheus.enabled &&
     local.prometheus_scraping_enabled
   )
@@ -194,11 +200,11 @@ locals {
     var.loki_stack.enabled &&
     var.prometheus.enabled &&
     local.prometheus_scraping_enabled &&
-    try(local.loki_monitoring_values.rules.enabled, false)
+    local.loki_caller_prometheus_rules_enabled
   )
   loki_vm_service_scrape_enabled = (
     var.loki_stack.enabled &&
-    try(local.loki_monitoring_values.serviceMonitor.enabled, false) &&
+    local.loki_caller_prometheus_monitor_enabled &&
     var.victoria_metrics.enabled &&
     local.victoria_metrics_agent_enabled &&
     var.victoria_metrics.agent.managed_service_scrapes.loki

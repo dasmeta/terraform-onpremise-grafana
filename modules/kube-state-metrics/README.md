@@ -16,12 +16,18 @@ The native object's name has a `-victoria-metrics` suffix so it does not
 collide with the same-name object converted from the Prometheus
 `ServiceMonitor` during handoff.
 
+The standalone release preserves the previous 15-collector allowlist,
+including the legacy `endpoints` collector. This avoids silently enabling
+additional high-cardinality collectors during migration and keeps the metric
+surface compatible with the bundled kube-state-metrics release it replaces.
+
 Collector-owned values are applied after `extra_configs`: the resource full
-name, Service port `8080`, ServiceMonitor activation, Prometheus release
-label, selector labels, `honorLabels = true`, and the Go runtime metric filter
-cannot be changed through raw overrides. In VictoriaMetrics mode, a caller inline job named exactly
-`kube-state-metrics` suppresses the native object and remains responsible for
-its own scrape-size limit.
+name, collector allowlist, Service port `8080`, ServiceMonitor activation,
+Prometheus release label, selector labels, `honorLabels = true`, and the Go
+runtime metric filter cannot be changed through raw overrides. In
+VictoriaMetrics mode, a caller inline job named exactly `kube-state-metrics`
+suppresses the native object and remains responsible for its own scrape-size
+limit.
 
 For an existing installation, first apply the root module while Prometheus
 remains installed and selected. The root dependency ordering lets the

@@ -1,6 +1,23 @@
 locals {
   selector_owned_values = {
     fullnameOverride = var.fullname_override
+    collectors = [
+      "horizontalpodautoscalers",
+      "configmaps",
+      "pods",
+      "cronjobs",
+      "deployments",
+      "endpoints",
+      "daemonsets",
+      "ingresses",
+      "nodes",
+      "persistentvolumeclaims",
+      "persistentvolumes",
+      "volumeattachments",
+      "poddisruptionbudgets",
+      "replicasets",
+      "storageclasses",
+    ]
     service = {
       port = 8080
     }

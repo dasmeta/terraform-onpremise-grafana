@@ -36,11 +36,12 @@ only backward-compatible automatic suppression.
 
 The module protects Operator conversion ownership, cluster-wide monitor
 discovery, VMAgent identity/activation, remote-write destination, and scrape
-selector fields after caller values. It filters `WATCH_NAMESPACE` and
-`VM_ENABLEDPROMETHEUSCONVERTER*`, forces `envFrom = []`, and clears
-`controller.disableReconcileFor`; unrelated env and extra arguments remain
-supported. Partial VMAgent resources and `extraArgs` overrides retain
-unspecified defaults.
+selector fields after caller values. VMAgent always uses
+`selectAllByDefault = true` for cluster-wide native monitor discovery. The
+module filters `WATCH_NAMESPACE` and `VM_ENABLEDPROMETHEUSCONVERTER*`, forces
+`envFrom = []`, and clears `controller.disableReconcileFor`; unrelated env and
+extra arguments remain supported. Partial VMAgent resources and `extraArgs`
+overrides retain unspecified defaults.
 
 For a deterministic first install, the module protects `crds.enabled = true`
 and `crds.plain = true`, keeps the chart-provided CRD upgrade hook enabled, and

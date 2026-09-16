@@ -477,6 +477,7 @@ run "kube_state_metrics_values_are_collector_owned" {
     prometheus_monitor_enabled = true
     prometheus_release_name    = "prometheus"
     extra_configs = {
+      collectors       = ["secrets"]
       fullnameOverride = "wrong-name"
       service = {
         port = 9090
@@ -501,6 +502,23 @@ run "kube_state_metrics_values_are_collector_owned" {
       helm_release.kube_state_metrics.chart == "kube-state-metrics",
       helm_release.kube_state_metrics.version == "7.8.1",
       jsondecode(helm_release.kube_state_metrics.values[1]).fullnameOverride == "prometheus-kube-state-metrics",
+      try(jsondecode(helm_release.kube_state_metrics.values[1]).collectors, []) == [
+        "horizontalpodautoscalers",
+        "configmaps",
+        "pods",
+        "cronjobs",
+        "deployments",
+        "endpoints",
+        "daemonsets",
+        "ingresses",
+        "nodes",
+        "persistentvolumeclaims",
+        "persistentvolumes",
+        "volumeattachments",
+        "poddisruptionbudgets",
+        "replicasets",
+        "storageclasses",
+      ],
       jsondecode(helm_release.kube_state_metrics.values[1]).service.port == 8080,
       jsondecode(helm_release.kube_state_metrics.values[1]).prometheus.monitor.enabled == true,
       jsondecode(helm_release.kube_state_metrics.values[1]).prometheus.monitor.additionalLabels.release == "prometheus",
@@ -513,6 +531,6 @@ run "kube_state_metrics_values_are_collector_owned" {
       try(jsondecode(helm_release.kube_state_metrics.values[1]).prometheus.monitor.http.metricRelabelings[0].action, null) == "drop",
       output.service_target == "prometheus-kube-state-metrics.monitoring.svc.cluster.local:8080",
     ]), false)
-    error_message = "The standalone release must preserve its Service contract, drop go runtime metrics, and apply collector-owned values last."
+    error_message = "The standalone release must preserve its legacy collector allowlist and Service contract, drop go runtime metrics, and apply collector-owned values last."
   }
 }
