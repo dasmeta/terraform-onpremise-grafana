@@ -1,27 +1,41 @@
-# Complete Kafka monitoring dashboard
+# MSK CloudWatch dashboard test
 
-Example dashboard with both Kafka rows and generic identifiers:
+Example dashboard module configuration using `block/msk` with generic cluster identifiers.
 
-- `block/msk` — CloudWatch MSK brokers
-- `block/kafka_observability` — Prometheus consumer groups and Kafka Connect
+## Block covered
 
-## What this tests
+| Block | Metrics |
+|-------|---------|
+| **block/msk** | CPU, memory, bytes in/out, partition count, offline partitions, consumer lag |
 
-| Item | Coverage |
-|------|----------|
-| **block/msk** | CPU, memory, bytes in/out, partition count, offline partitions, CloudWatch consumer lag |
-| **block/kafka_observability** | Consumer lag, lag trend, members, empty groups, Connect REST/state/totals, exporter health |
-| **alerts** | MSK offline partitions (opt-in); critical empty-member + lag growth, connector/task FAILED, REST down, optional scrape failure |
-| **selectors** | MSK `cluster_names` / `broker_ids`; Prometheus `namespace`, optional `cluster`/`cluster_label`, and `extra_filters` |
+## Usage
 
-Validate with:
-
-```bash
-terraform init -backend=false
+```sh
+cd modules/dashboard/tests/msk-cloudwatch
+terraform init
 terraform validate
+terraform plan
 ```
 
-Do not hardcode customer-specific cluster, group, or connector names.
+## Expected result
+
+- Plan succeeds without errors
+- Dashboard includes MSK CloudWatch panels for `example-msk-cluster`
+- No client-specific cluster names in this fixture
+
+## Optional alerting example
+
+Add to the block row:
+
+```hcl
+alerts = {
+  enabled = true
+  offline_partitions = {
+    threshold      = 0
+    pending_period = "5m"
+  }
+}
+```
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 

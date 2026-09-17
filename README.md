@@ -62,14 +62,32 @@ module "grafana_monitoring" {
 }
 ```
 
-## Example for Kafka observability (Prometheus)
+## Example for complete Kafka monitoring
 
-Reusable Kafka consumer-group and Kafka Connect dashboard block. This is Prometheus-exporter based (`block/kafka_observability`), not the CloudWatch MSK block.
+Two additive dashboard rows cover Kafka end to end:
+
+- `block/msk` — MSK **brokers** from CloudWatch (`AWS/Kafka`)
+- `block/kafka_observability` — consumer groups and Kafka Connect from Prometheus exporters
 
 ```hcl
 application_dashboard = [{
   name = "Platform Overview"
   rows = [
+    {
+      type           = "block/msk"
+      block_name     = "MSK brokers"
+      cluster_names  = ["example-msk-cluster"]
+      broker_ids     = ["1", "2", "3"]
+      region         = "eu-central-1"
+      datasource_uid = "cloudwatch"
+      alerts = {
+        enabled = true
+        offline_partitions = {
+          threshold      = 0
+          pending_period = "5m"
+        }
+      }
+    },
     {
       type                     = "block/kafka_observability"
       namespace                = "kafka"
@@ -94,7 +112,7 @@ application_dashboard = [{
 }]
 ```
 
-See `modules/dashboard/tests/kafka-observability/` for a validate/plan example.
+See `modules/dashboard/tests/kafka-observability/` (both rows) and `modules/dashboard/tests/msk-cloudwatch/` (MSK only).
 
 ## Example for Alerts
 ```terraform

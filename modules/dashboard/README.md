@@ -41,19 +41,37 @@ module "this" {
 }
 ```
 
-## Kafka observability (Prometheus)
+## Complete Kafka monitoring (MSK brokers + Prometheus observability)
 
-Reusable Kafka consumer-group and Kafka Connect panels/alerts. Metrics come from Prometheus exporters (`kafka_consumergroup_*`, `kafka_connect_*`), not CloudWatch.
+Two additive row types. Put both on the same dashboard for full Kafka coverage.
+
+- `block/msk` — CloudWatch MSK broker health (`AWS/Kafka`)
+- `block/kafka_observability` — Prometheus consumer-group and Kafka Connect exporters
 
 ```hcl
 module "this" {
   source  = "dasmeta/grafana/onpremise//modules/dashboard"
   version = "x.y.z"
 
-  name        = "kafka-observability"
+  name        = "kafka"
   data_source = { uid = "prometheus" }
 
   rows = [
+    {
+      type           = "block/msk"
+      block_name     = "MSK brokers"
+      cluster_names  = ["example-msk-cluster"]
+      broker_ids     = ["1", "2", "3"]
+      region         = "eu-central-1"
+      datasource_uid = "cloudwatch"
+      alerts = {
+        enabled = true
+        offline_partitions = {
+          threshold      = 0
+          pending_period = "5m"
+        }
+      }
+    },
     {
       type                     = "block/kafka_observability"
       namespace                = "kafka"
@@ -78,7 +96,7 @@ module "this" {
 }
 ```
 
-See `modules/dashboard/tests/kafka-observability/` for a validate/plan example.
+See `modules/dashboard/tests/kafka-observability/` (both rows) and `modules/dashboard/tests/msk-cloudwatch/` (MSK only).
 
 ## How add new widget
 1. create module in modules/widgets (copy from one)
@@ -124,6 +142,8 @@ See `modules/dashboard/tests/kafka-observability/` for a validate/plan example.
 | <a name="module_block_ingress_nginx_alerts"></a> [block\_ingress\_nginx\_alerts](#module\_block\_ingress\_nginx\_alerts) | ./modules/alerts/block-ingress-nginx | n/a |
 | <a name="module_block_kafka_observability"></a> [block\_kafka\_observability](#module\_block\_kafka\_observability) | ./modules/blocks/kafka_observability | n/a |
 | <a name="module_block_kafka_observability_alerts"></a> [block\_kafka\_observability\_alerts](#module\_block\_kafka\_observability\_alerts) | ./modules/alerts/block-kafka-observability | n/a |
+| <a name="module_block_msk"></a> [block\_msk](#module\_block\_msk) | ./modules/blocks/msk | n/a |
+| <a name="module_block_msk_alerts"></a> [block\_msk\_alerts](#module\_block\_msk\_alerts) | ./modules/alerts/block-msk | n/a |
 | <a name="module_block_rds"></a> [block\_rds](#module\_block\_rds) | ./modules/blocks/rds | n/a |
 | <a name="module_block_redis"></a> [block\_redis](#module\_block\_redis) | ./modules/blocks/redis | n/a |
 | <a name="module_block_service"></a> [block\_service](#module\_block\_service) | ./modules/blocks/service | n/a |
@@ -177,6 +197,13 @@ See `modules/dashboard/tests/kafka-observability/` for a validate/plan example.
 | <a name="module_logs_count_widget"></a> [logs\_count\_widget](#module\_logs\_count\_widget) | ./modules/widgets/loki/count | n/a |
 | <a name="module_logs_error_rate_widget"></a> [logs\_error\_rate\_widget](#module\_logs\_error\_rate\_widget) | ./modules/widgets/loki/error-rate | n/a |
 | <a name="module_logs_warning_rate_widget"></a> [logs\_warning\_rate\_widget](#module\_logs\_warning\_rate\_widget) | ./modules/widgets/loki/warning-rate | n/a |
+| <a name="module_msk_consumer_lag_widget"></a> [msk\_consumer\_lag\_widget](#module\_msk\_consumer\_lag\_widget) | ./modules/widgets/msk/consumer_lag | n/a |
+| <a name="module_msk_cpu_widget"></a> [msk\_cpu\_widget](#module\_msk\_cpu\_widget) | ./modules/widgets/msk/cpu | n/a |
+| <a name="module_msk_memory_widget"></a> [msk\_memory\_widget](#module\_msk\_memory\_widget) | ./modules/widgets/msk/memory | n/a |
+| <a name="module_msk_offline_partitions_widget"></a> [msk\_offline\_partitions\_widget](#module\_msk\_offline\_partitions\_widget) | ./modules/widgets/msk/offline_partitions | n/a |
+| <a name="module_msk_partitions_widget"></a> [msk\_partitions\_widget](#module\_msk\_partitions\_widget) | ./modules/widgets/msk/partitions | n/a |
+| <a name="module_msk_throughput_in_widget"></a> [msk\_throughput\_in\_widget](#module\_msk\_throughput\_in\_widget) | ./modules/widgets/msk/throughput_in | n/a |
+| <a name="module_msk_throughput_out_widget"></a> [msk\_throughput\_out\_widget](#module\_msk\_throughput\_out\_widget) | ./modules/widgets/msk/throughput_out | n/a |
 | <a name="module_pod_cpu_widget"></a> [pod\_cpu\_widget](#module\_pod\_cpu\_widget) | ./modules/widgets/pod/cpu | n/a |
 | <a name="module_pod_memory_widget"></a> [pod\_memory\_widget](#module\_pod\_memory\_widget) | ./modules/widgets/pod/memory | n/a |
 | <a name="module_pod_restarts_widget"></a> [pod\_restarts\_widget](#module\_pod\_restarts\_widget) | ./modules/widgets/pod/restarts | n/a |
@@ -233,7 +260,7 @@ See `modules/dashboard/tests/kafka-observability/` for a validate/plan example.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_alerts"></a> [alerts](#input\_alerts) | Allows to configure globally dashboard block/(sla\|ingress\|service\|kafka\_observability) blocks/widgets related alerts. For `block/service` alerts, `map_namespace_to_env_label` (default true) maps each alert namespace to `labels.env`; set false to map it to `labels.namespace`. | `any` | `{}` | no |
+| <a name="input_alerts"></a> [alerts](#input\_alerts) | Allows to configure globally dashboard block/(sla\|ingress\|service\|msk\|kafka\_observability) blocks/widgets related alerts. For `block/service` alerts, `map_namespace_to_env_label` (default true) maps each alert namespace to `labels.env`; set false to map it to `labels.namespace`. | `any` | `{}` | no |
 | <a name="input_create_folder"></a> [create\_folder](#input\_create\_folder) | If true, create folder in this module. If false, use existing folder. | `bool` | `false` | no |
 | <a name="input_data_source"></a> [data\_source](#input\_data\_source) | The grafana dashboard global/default datasource, will be used in widget items if they have no their custom ones | <pre>object({<br/>    uid  = optional(string, null)<br/>    type = optional(string, "prometheus")<br/>  })</pre> | `{}` | no |
 | <a name="input_defaults"></a> [defaults](#input\_defaults) | Default values to be supplied to all modules. | `any` | `{}` | no |

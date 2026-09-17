@@ -7,6 +7,21 @@ module "this" {
 
   rows = [
     {
+      type           = "block/msk"
+      block_name     = "MSK brokers"
+      cluster_names  = ["example-msk-cluster"]
+      broker_ids     = ["1", "2", "3"]
+      region         = "eu-central-1"
+      datasource_uid = "cloudwatch"
+      alerts = {
+        enabled = true
+        offline_partitions = {
+          threshold      = 0
+          pending_period = "5m"
+        }
+      }
+    },
+    {
       type                     = "block/kafka_observability"
       block_name               = "Kafka observability"
       namespace                = "kafka"
