@@ -7,6 +7,8 @@
 
 This document is the review package. Please read it, comment, and approve or request changes.
 
+**Source of the change:** Jira [DMVP-10603](https://tutorbot.atlassian.net/browse/DMVP-10603) (ticket text provided in the implementation request). Implementation follows existing `block/redis` / `block/rds` / `block/service` patterns in this repo. No live Kafka cluster was available to confirm exporter labels; selectors are configurable for that reason.
+
 ---
 
 ## 1. Why this exists
@@ -56,6 +58,130 @@ Almost every file is under `modules/dashboard` because that is the only place th
 | Docs | root `README.md`, `modules/dashboard/README.md` | Consumer usage |
 
 Root `application_dashboard` is already `rows = optional(any, [])`. No new root variable was added.
+
+---
+
+## 3a. What was actually adjusted
+
+This is an **additive** change to the existing dashboard module. We did not rewrite Grafana, alerts routing, or other blocks. We plugged a new row type into the same pipeline used by Redis/RDS/SES.
+
+### Before (unchanged pipeline)
+
+1. Consumer sets `application_dashboard = [{ rows = [ ... ] }]`.
+2. Dashboard module scans `rows` for entries whose `type` starts with `block/`.
+3. It strips the prefix (`block/rds` → `rds`) and looks up `local.blocks_results["rds"]`.
+4. The matching block module returns a list of widget rows.
+5. Those widgets are registered by type (`rds/cpu`, `redis/memory`, …) and rendered through `modules/widgets/base`.
+6. If alerts are enabled, a block-specific alerts module emits rule objects into `local.widget_alert_rules`, then `modules/alerts/modules/rules` creates Grafana rules.
+
+Unknown `block/*` types are ignored (no panels, no crash). That is why adding Kafka required **registering** it in those lookup maps.
+
+### After (what we added to that pipeline)
+
+Same steps, plus:
+
+- `block/kafka_observability` is a known type
+- it expands to nine `kafka/*` widgets
+- `block_kafka_observability_alerts` can emit 4–5 Prometheus alert rules
+
+### Existing files we edited (the adjustment)
+
+These are the only **existing** Terraform files that changed. Everything else is new files.
+
+| File | What we changed | Why |
+|------|-----------------|-----|
+| `modules/dashboard/widgets_blocks.tf` | Added `module "block_kafka_observability"` `for_each` over `local.blocks_by_type["kafka_observability"]` | Same registration as `block_rds` / `block_aws_ses`. Without this, a Kafka row would be skipped. |
+| `modules/dashboard/locals.tf` | Added `kafka_observability = values(module.block_kafka_observability).*.result` to `blocks_results`; appended nine `kafka_*_widget` results to `widget_result` | Block output must be injected back into the row list, and each widget type must be included in the final Grafana panel list. |
+| `modules/dashboard/alerts.tf` | Concatenated `module.block_kafka_observability_alerts` into `widget_alert_rules`; added kafka entry to `deep_merge_alert_configs`; added the alerts module | Same pattern as `block/service`. Dashboard-level `alerts` merge with per-row `alerts`. |
+| `modules/dashboard/variables.tf` | Docs only: `alerts` description now mentions `kafka_observability` | No type/default change. Existing `alerts` input stays `any`. |
+| `modules/dashboard/README.md` | Added consumer HCL example for the new block | Reviewers/consumers can copy usage. |
+| `README.md` | Added the same example at root | Root README is what AWS-wrapper consumers usually read. |
+
+We did **not** change:
+
+- `application_dashboard` schema (`rows` was already `any`)
+- `modules/grafana`, Loki, Prometheus, Tempo, VictoriaMetrics runtime modules
+- alert contact points / notification policies
+- AWS wrapper repository
+
+Incidental: `modules/loki-stack/README.md` and `modules/victoria-metrics/README.md` may show provider-version table noise from `terraform_docs`. That is not Kafka behaviour.
+
+### New files we added
+
+| Path | What it is |
+|------|------------|
+| `modules/dashboard/widgets-kafka.tf` | Wires the nine `kafka/*` widget modules from `local.widget_config` (copy of `widgets-redis.tf` style) |
+| `modules/dashboard/modules/blocks/kafka_observability/` | Block contract + the 5 dashboard rows (title + 4 panel rows) |
+| `modules/dashboard/modules/widgets/kafka/<panel>/` | One small module per panel: `base.tf` PromQL, `locals.tf` selector, `variables.tf`, `output.tf` |
+| `modules/dashboard/modules/alerts/block-kafka-observability/` | Builds the Grafana rule list from the row config |
+| `modules/dashboard/tests/kafka-observability/` | Example dashboard with generic names + `terraform validate` |
+| `docs/DMVP-10603-kafka-observability.md` | This review document |
+
+Widget folders (9): `consumer_lag`, `consumer_lag_trend`, `consumer_group_members`, `empty_consumer_groups`, `connect_rest_up`, `connector_state`, `task_state`, `connect_totals`, `exporter_health`.
+
+### Copied pattern (not a new architecture)
+
+| Copied from | Used for |
+|-------------|----------|
+| `block/rds` / `block/redis` | Block `output.result` is a list of rows of widget objects |
+| `widgets-redis.tf` | One `module` per widget type + `for_each` on `local.widget_config["kafka/..."]` |
+| `modules/widgets/container/cpu` | Prometheus `expression` panels through `modules/widgets/base` |
+| `modules/alerts/block-service` | Alert objects with `expr`, `pending_period`, `labels`, `annotations` fed into existing `widget_alerts` |
+
+Difference vs Redis: Redis takes `redis_name`. Kafka takes `namespace` plus optional PromQL `extra_filters` / cluster label, because exporter identity varies.
+
+### Panel layout the block emits
+
+From `modules/blocks/kafka_observability/output.tf`:
+
+1. Title: `text/title-with-collapse` = `block_name`
+2. Lag (width 12) + lag trend (width 12)
+3. Members (12) + empty groups (12)
+4. Connect REST (8) + connector state (8) + task state (8)
+5. Totals by state (12) + exporter health (12)
+
+Alert lists (`critical_consumer_groups`, idle groups, stopped connectors, thresholds, URLs) are **not** block-module variables. They stay on the row object and are read by `alerts.tf` via `try(each.value.block.critical_consumer_groups, [])`. The block module only owns panel layout.
+
+### How a PromQL selector is built (every panel)
+
+Each widget `locals.tf` builds a selector like:
+
+```text
+{namespace="kafka",cluster="example-kafka",job=~"kafka-exporter|kafka-connect-exporter"}
+```
+
+from:
+
+- `namespace="..."` if namespace is set
+- `${cluster_label}="${cluster}"` only if both are set
+- raw `extra_filters` string if non-empty
+
+Then metrics look like `kafka_consumergroup_lag${local.selector}`.
+
+### How alerts turn on
+
+```hcl
+for_each = {
+  for index, item in try(local.blocks_by_type["kafka_observability"], []) :
+  index => item
+  if try(merge(var.alerts, try(item.block.alerts, {})).enabled, true)
+}
+```
+
+Meaning:
+
+- Same default as `block/service`: if dashboard alerts are on, adding this block creates Kafka alerts
+- Set `alerts = { enabled = false }` on the row to get **panels only**
+- Empty `critical_consumer_groups` → skip the “0 members + lag growth” rule only
+- `alerts.exporter_scrape.enabled` defaults **false**
+- Connector / task / REST rules default **on** when the block’s alerts are on
+
+### Branch commits
+
+1. `ec9dc4d` `feat(DMVP-10603): add Kafka observability dashboard block and alerts`
+2. `5c74b7c` `docs(DMVP-10603): add Kafka observability reviewer document`
+
+Size vs `main`: about 64 files, roughly +2100 / −17 lines, almost all under `modules/dashboard`.
 
 ---
 
@@ -205,7 +331,24 @@ sum(kafka_connect_rest_up{namespace="..."}) == 0
 sum by (job) (up{namespace="...",...}) == 0
 ```
 
-Each rule includes `summary`, `description`, and optional `dashboard_url` / `runbook`.
+Each rule includes `summary`, `description`, `component`, `metric`, `issue_phrase`, `impact`, and optional `dashboard_url` / `runbook`.
+
+Grafana reduce: `function = last`, `equation = gt`, `threshold = 0` (the PromQL already encodes the condition). `settings_mode = replaceNN` with `0`.
+
+Default labels: `priority = P1`, `severity = critical`. Scrape alert defaults to `P2` / `warning`.
+
+Disable individual rules with:
+
+```hcl
+alerts = {
+  enabled = true
+  connector_failed    = { enabled = false }
+  task_failed         = { enabled = false }
+  connect_rest_down   = { enabled = false }
+  consumer_group_lag  = { enabled = false }
+  exporter_scrape     = { enabled = true }
+}
+
 
 ---
 
@@ -238,11 +381,13 @@ Not done in this repo (needs a live Grafana + exporters): apply against a real c
 
 Please confirm or comment:
 
+- [ ] Existing file edits (`widgets_blocks.tf`, `locals.tf`, `alerts.tf`) only register the new type and do not change other blocks
 - [ ] Scope is correct: reusable dashboard block + Grafana alerts only
 - [ ] Row type `block/kafka_observability` is the right consumer interface
 - [ ] Selectors are generic enough (`namespace`, `extra_filters`, optional cluster)
 - [ ] Idle groups and stopped connectors are excluded as expected
 - [ ] Lag alert PromQL is acceptable (`increase` on lag, then `sum by (consumergroup)`)
+- [ ] Alert defaults are acceptable (service-like on; scrape opt-in)
 - [ ] No Slack/Teams/secrets/customer hardcoding slipped in
 - [ ] AWS wrapper does **not** need a forwarding PR unless you know it does not pass `rows`
 - [ ] Docs/example are enough for a consumer to copy
