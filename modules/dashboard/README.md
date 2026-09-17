@@ -41,6 +41,45 @@ module "this" {
 }
 ```
 
+## Kafka observability (Prometheus)
+
+Reusable Kafka consumer-group and Kafka Connect panels/alerts. Metrics come from Prometheus exporters (`kafka_consumergroup_*`, `kafka_connect_*`), not CloudWatch.
+
+```hcl
+module "this" {
+  source  = "dasmeta/grafana/onpremise//modules/dashboard"
+  version = "x.y.z"
+
+  name        = "kafka-observability"
+  data_source = { uid = "prometheus" }
+
+  rows = [
+    {
+      type                     = "block/kafka_observability"
+      namespace                = "kafka"
+      datasource_uid           = "prometheus"
+      extra_filters            = "job=~\"kafka-exporter|kafka-connect-exporter\""
+      cluster_label            = "cluster"       # optional, when exporters expose a cluster label
+      cluster                  = "example-kafka" # optional
+      critical_consumer_groups = ["example-payments"]
+      idle_consumer_groups     = ["example-idle"]
+      stopped_connectors       = ["example-stopped-sink"]
+      lag_threshold            = 0
+      lag_growth_window        = "15m"
+      pending_period           = "5m"
+      dashboard_url            = "https://grafana.example.com/d/example-kafka"
+      runbook_url              = "https://example.com/runbooks/kafka"
+      alerts = {
+        enabled         = true
+        exporter_scrape = { enabled = true }
+      }
+    }
+  ]
+}
+```
+
+See `modules/dashboard/tests/kafka-observability/` for a validate/plan example.
+
 ## How add new widget
 1. create module in modules/widgets (copy from one)
 2. implement data loading as required
@@ -83,6 +122,8 @@ module "this" {
 | <a name="module_block_elasticache_redis"></a> [block\_elasticache\_redis](#module\_block\_elasticache\_redis) | ./modules/blocks/elasticache_redis | n/a |
 | <a name="module_block_ingress"></a> [block\_ingress](#module\_block\_ingress) | ./modules/blocks/ingress | n/a |
 | <a name="module_block_ingress_nginx_alerts"></a> [block\_ingress\_nginx\_alerts](#module\_block\_ingress\_nginx\_alerts) | ./modules/alerts/block-ingress-nginx | n/a |
+| <a name="module_block_kafka_observability"></a> [block\_kafka\_observability](#module\_block\_kafka\_observability) | ./modules/blocks/kafka_observability | n/a |
+| <a name="module_block_kafka_observability_alerts"></a> [block\_kafka\_observability\_alerts](#module\_block\_kafka\_observability\_alerts) | ./modules/alerts/block-kafka-observability | n/a |
 | <a name="module_block_rds"></a> [block\_rds](#module\_block\_rds) | ./modules/blocks/rds | n/a |
 | <a name="module_block_redis"></a> [block\_redis](#module\_block\_redis) | ./modules/blocks/redis | n/a |
 | <a name="module_block_service"></a> [block\_service](#module\_block\_service) | ./modules/blocks/service | n/a |
@@ -124,6 +165,15 @@ module "this" {
 | <a name="module_instance_cpu_widget"></a> [instance\_cpu\_widget](#module\_instance\_cpu\_widget) | ./modules/widgets/cloudwatch/instance_cpu | n/a |
 | <a name="module_instance_disk_widget"></a> [instance\_disk\_widget](#module\_instance\_disk\_widget) | ./modules/widgets/cloudwatch/instance_disk | n/a |
 | <a name="module_instance_network_widget"></a> [instance\_network\_widget](#module\_instance\_network\_widget) | ./modules/widgets/cloudwatch/instance_network | n/a |
+| <a name="module_kafka_connect_rest_up_widget"></a> [kafka\_connect\_rest\_up\_widget](#module\_kafka\_connect\_rest\_up\_widget) | ./modules/widgets/kafka/connect_rest_up | n/a |
+| <a name="module_kafka_connect_totals_widget"></a> [kafka\_connect\_totals\_widget](#module\_kafka\_connect\_totals\_widget) | ./modules/widgets/kafka/connect_totals | n/a |
+| <a name="module_kafka_connector_state_widget"></a> [kafka\_connector\_state\_widget](#module\_kafka\_connector\_state\_widget) | ./modules/widgets/kafka/connector_state | n/a |
+| <a name="module_kafka_consumer_group_members_widget"></a> [kafka\_consumer\_group\_members\_widget](#module\_kafka\_consumer\_group\_members\_widget) | ./modules/widgets/kafka/consumer_group_members | n/a |
+| <a name="module_kafka_consumer_lag_trend_widget"></a> [kafka\_consumer\_lag\_trend\_widget](#module\_kafka\_consumer\_lag\_trend\_widget) | ./modules/widgets/kafka/consumer_lag_trend | n/a |
+| <a name="module_kafka_consumer_lag_widget"></a> [kafka\_consumer\_lag\_widget](#module\_kafka\_consumer\_lag\_widget) | ./modules/widgets/kafka/consumer_lag | n/a |
+| <a name="module_kafka_empty_consumer_groups_widget"></a> [kafka\_empty\_consumer\_groups\_widget](#module\_kafka\_empty\_consumer\_groups\_widget) | ./modules/widgets/kafka/empty_consumer_groups | n/a |
+| <a name="module_kafka_exporter_health_widget"></a> [kafka\_exporter\_health\_widget](#module\_kafka\_exporter\_health\_widget) | ./modules/widgets/kafka/exporter_health | n/a |
+| <a name="module_kafka_task_state_widget"></a> [kafka\_task\_state\_widget](#module\_kafka\_task\_state\_widget) | ./modules/widgets/kafka/task_state | n/a |
 | <a name="module_logs_count_widget"></a> [logs\_count\_widget](#module\_logs\_count\_widget) | ./modules/widgets/loki/count | n/a |
 | <a name="module_logs_error_rate_widget"></a> [logs\_error\_rate\_widget](#module\_logs\_error\_rate\_widget) | ./modules/widgets/loki/error-rate | n/a |
 | <a name="module_logs_warning_rate_widget"></a> [logs\_warning\_rate\_widget](#module\_logs\_warning\_rate\_widget) | ./modules/widgets/loki/warning-rate | n/a |
@@ -183,7 +233,7 @@ module "this" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_alerts"></a> [alerts](#input\_alerts) | Allows to configure globally dashboard block/(sla\|ingress\|service) blocks/widgets related alerts. For `block/service` alerts, `map_namespace_to_env_label` (default true) maps each alert namespace to `labels.env`; set false to map it to `labels.namespace`. | `any` | `{}` | no |
+| <a name="input_alerts"></a> [alerts](#input\_alerts) | Allows to configure globally dashboard block/(sla\|ingress\|service\|kafka\_observability) blocks/widgets related alerts. For `block/service` alerts, `map_namespace_to_env_label` (default true) maps each alert namespace to `labels.env`; set false to map it to `labels.namespace`. | `any` | `{}` | no |
 | <a name="input_create_folder"></a> [create\_folder](#input\_create\_folder) | If true, create folder in this module. If false, use existing folder. | `bool` | `false` | no |
 | <a name="input_data_source"></a> [data\_source](#input\_data\_source) | The grafana dashboard global/default datasource, will be used in widget items if they have no their custom ones | <pre>object({<br/>    uid  = optional(string, null)<br/>    type = optional(string, "prometheus")<br/>  })</pre> | `{}` | no |
 | <a name="input_defaults"></a> [defaults](#input\_defaults) | Default values to be supplied to all modules. | `any` | `{}` | no |

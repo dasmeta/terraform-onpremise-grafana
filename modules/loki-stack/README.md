@@ -35,8 +35,8 @@ Outputs:
 
 | Name | Version |
 |------|---------|
-| <a name="provider_helm"></a> [helm](#provider\_helm) | ~> 2.17 |
-| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.7 |
+| <a name="provider_helm"></a> [helm](#provider\_helm) | 2.17.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.9.0 |
 
 ## Modules
 

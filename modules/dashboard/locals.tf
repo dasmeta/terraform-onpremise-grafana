@@ -30,15 +30,16 @@ locals {
 
   # bring all module results together
   blocks_results = {
-    ingress           = values(module.block_ingress).*.result
-    service           = values(module.block_service).*.result
-    sla               = values(module.block_sla).*.result
-    redis             = values(module.block_redis).*.result
-    cloudwatch        = values(module.block_cloudwatch).*.result
-    alb_ingress       = values(module.block_alb_ingress).*.result
-    elasticache_redis = values(module.block_elasticache_redis).*.result
-    rds               = values(module.block_rds).*.result
-    "aws-ses"         = values(module.block_aws_ses).*.result
+    ingress             = values(module.block_ingress).*.result
+    service             = values(module.block_service).*.result
+    sla                 = values(module.block_sla).*.result
+    redis               = values(module.block_redis).*.result
+    cloudwatch          = values(module.block_cloudwatch).*.result
+    alb_ingress         = values(module.block_alb_ingress).*.result
+    elasticache_redis   = values(module.block_elasticache_redis).*.result
+    rds                 = values(module.block_rds).*.result
+    "aws-ses"           = values(module.block_aws_ses).*.result
+    kafka_observability = values(module.block_kafka_observability).*.result
   }
 
   blocks_by_type_results = concat([], [
@@ -244,5 +245,16 @@ locals {
     values(module.ses_bounces_timeseries_widget).*.data,
     values(module.ses_sending_rate_widget).*.data,
     values(module.ses_bounce_reject_widget).*.data,
+
+    # Kafka observability widgets
+    values(module.kafka_consumer_lag_widget).*.data,
+    values(module.kafka_consumer_lag_trend_widget).*.data,
+    values(module.kafka_consumer_group_members_widget).*.data,
+    values(module.kafka_empty_consumer_groups_widget).*.data,
+    values(module.kafka_connect_rest_up_widget).*.data,
+    values(module.kafka_connector_state_widget).*.data,
+    values(module.kafka_task_state_widget).*.data,
+    values(module.kafka_connect_totals_widget).*.data,
+    values(module.kafka_exporter_health_widget).*.data,
   )
 }

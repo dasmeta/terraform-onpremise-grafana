@@ -107,3 +107,17 @@ module "block_aws_ses" {
   min            = try(each.value.block.min, null)
   max            = try(each.value.block.max, null)
 }
+
+module "block_kafka_observability" {
+  source = "./modules/blocks/kafka_observability"
+
+  for_each = { for index, item in try(local.blocks_by_type["kafka_observability"], []) : index => item }
+
+  namespace      = each.value.block.namespace
+  extra_filters  = try(each.value.block.extra_filters, "")
+  cluster_label  = try(each.value.block.cluster_label, "")
+  cluster        = try(each.value.block.cluster, "")
+  period         = try(each.value.block.period, local.widget_default_values.prometheus.period)
+  datasource_uid = try(each.value.block.datasource_uid, local.widget_default_values.prometheus.datasource_uid)
+  block_name     = try(each.value.block.block_name, "Kafka observability")
+}

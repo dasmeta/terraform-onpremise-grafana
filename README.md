@@ -62,6 +62,40 @@ module "grafana_monitoring" {
 }
 ```
 
+## Example for Kafka observability (Prometheus)
+
+Reusable Kafka consumer-group and Kafka Connect dashboard block. This is Prometheus-exporter based (`block/kafka_observability`), not the CloudWatch MSK block.
+
+```hcl
+application_dashboard = [{
+  name = "Platform Overview"
+  rows = [
+    {
+      type                     = "block/kafka_observability"
+      namespace                = "kafka"
+      datasource_uid           = "prometheus"
+      extra_filters            = "job=~\"kafka-exporter|kafka-connect-exporter\""
+      cluster_label            = "cluster"
+      cluster                  = "example-kafka"
+      critical_consumer_groups = ["example-payments"]
+      idle_consumer_groups     = ["example-idle"]
+      stopped_connectors       = ["example-stopped-sink"]
+      lag_threshold            = 0
+      lag_growth_window        = "15m"
+      pending_period           = "5m"
+      dashboard_url            = "https://grafana.example.com/d/example-kafka"
+      runbook_url              = "https://example.com/runbooks/kafka"
+      alerts = {
+        enabled         = true
+        exporter_scrape = { enabled = true }
+      }
+    }
+  ]
+}]
+```
+
+See `modules/dashboard/tests/kafka-observability/` for a validate/plan example.
+
 ## Example for Alerts
 ```terraform
 module "grafana_alerts" {
@@ -645,7 +679,7 @@ temporary local `source` overrides:
 
 | Name | Version |
 |------|---------|
-| <a name="provider_grafana"></a> [grafana](#provider\_grafana) | 4.45.1 |
+| <a name="provider_grafana"></a> [grafana](#provider\_grafana) | 4.41.0 |
 
 ## Modules
 
