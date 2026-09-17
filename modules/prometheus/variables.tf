@@ -22,6 +22,19 @@ variable "release_name" {
   default     = "prometheus"
 }
 
+variable "collector_enabled" {
+  type        = bool
+  description = "Whether the Prometheus server should actively scrape targets. The Helm release can remain installed when this is false."
+  default     = true
+}
+
+variable "remote_write_url" {
+  type        = string
+  description = "Selector-owned remote-write destination. Null leaves caller remoteWrite settings unchanged."
+  default     = null
+  nullable    = true
+}
+
 variable "configs" {
   type = object({
     retention_days = optional(string, "15d")
@@ -85,5 +98,5 @@ variable "configs" {
 variable "extra_configs" {
   type        = any
   default     = {}
-  description = "Allows to pass extra/custom configs to prometheus helm chart, this configs will deep-merged with all generated internal configs and can override the default set ones. All available options can be found in for the specified chart version here: https://artifacthub.io/packages/helm/prometheus-community/prometheus?modal=values"
+  description = "Additional Prometheus chart values. Selector-owned server activation, monitor CRD ownership, bundled kube-state-metrics disablement, and an active validation remoteWrite destination take precedence."
 }

@@ -1,5 +1,30 @@
 # prometheus
 
+The `collector_enabled` input controls whether the Prometheus server actively
+scrapes targets. The Helm release can remain installed with
+`collector_enabled = false` while VictoriaMetrics is selected; the root module
+sets this from `metrics_collector`. Selector-owned Prometheus activation is
+applied after raw chart overrides. The CRD gate is also protected, and
+the selector-owned validation `remoteWrite` replaces only that field inside
+`prometheusSpec`; caller selectors, affinity, storage, and other sibling fields
+remain intact. The release may be removed after all application-owned
+Prometheus monitors, rules, authenticated scrapes, and rollback requirements
+have been migrated to native VictoriaMetrics resources.
+
+The bundled kube-state-metrics and node-exporter dependencies are always
+disabled with selector-owned `kubeStateMetrics.enabled = false` and
+`nodeExporter.enabled = false`. The root installs both through independent
+child modules. Prometheus mode creates their `ServiceMonitor` resources;
+VictoriaMetrics mode disables those and creates native `VMServiceScrape`
+resources.
+
+When both backends are enabled and Prometheus is selected, Prometheus is the
+only active scraper and remote-writes a validation copy to VictoriaMetrics.
+Grafana still provisions both datasources and defaults to Prometheus. Switch
+only `metrics_collector` after the Prometheus remote-write queue is drained
+and converted authenticated targets have been verified. Separate Helm
+releases converge non-atomically, so a bounded overlap or collection gap is
+possible and samples are not backfilled.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -30,11 +55,13 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_chart_version"></a> [chart\_version](#input\_chart\_version) | prometheus chart version | `string` | `"75.8.0"` | no |
+| <a name="input_collector_enabled"></a> [collector\_enabled](#input\_collector\_enabled) | Whether the Prometheus server should actively scrape targets. The Helm release can remain installed when this is false. | `bool` | `true` | no |
 | <a name="input_configs"></a> [configs](#input\_configs) | Values to send to Prometheus template values file | <pre>object({<br/>    retention_days = optional(string, "15d")<br/>    storage_class  = optional(string, "")<br/>    storage_size   = optional(string, "100Gi")<br/>    access_modes   = optional(list(string), ["ReadWriteOnce"])<br/>    resources = optional(object({<br/>      requests = optional(object({<br/>        cpu    = optional(string, "1")<br/>        memory = optional(string, "2500Mi")<br/>      }), {})<br/>      limits = optional(object({<br/>        cpu    = optional(string, "2")<br/>        memory = optional(string, "3Gi")<br/>      }), {})<br/>    }), {})<br/>    replicas                     = optional(number, 1)<br/>    enable_alertmanager          = optional(bool, true)<br/>    scrape_helm_chart_components = optional(bool, false) # enable scraping all servicemonitors. The chart by default has disabled scraping all servicemonitors. https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack#prometheus-io-scrape<br/>    additional_scrape_configs    = optional(any, [])     # allows to specify additional scrape configs for prometheus. Example can be found in tests/prometheus-additional-scrape-configs/1-example.tf<br/>    ingress = optional(object({<br/>      enabled     = optional(bool, false)<br/>      type        = optional(string, "nginx")<br/>      public      = optional(bool, true)<br/>      tls_enabled = optional(bool, true)<br/><br/>      annotations = optional(map(string), {})<br/>      hosts       = optional(list(string), ["prometheus.example.com"])<br/>      path        = optional(list(string), ["/"])<br/>      path_type   = optional(string, "Prefix")<br/>    }), {})<br/>    kubelet_metrics = optional(list(string), ["container_cpu_.*", "container_memory_.*", "kube_pod_container_status_.*",<br/>      "kube_pod_container_resource_.*", "container_network_.*", "kube_pod_resource_limit",<br/>      "kube_pod_resource_request", "pod_cpu_usage_seconds_total", "pod_memory_usage_bytes",<br/>      "kubelet_volume_stats.*", "volume_operation_total_seconds.*", "container_fs_.*"]<br/>    )<br/>    additional_args = optional(list(object({<br/>      name  = string<br/>      value = string<br/>      })), [<br/>      {<br/>        name  = "query.max-concurrency"<br/>        value = "64"<br/>      },<br/>      {<br/>        name  = "query.timeout"<br/>        value = "2m"<br/>      },<br/>      {<br/>        name  = "query.max-samples"<br/>        value = "75000000"<br/>      }<br/>    ])<br/>  })</pre> | `{}` | no |
 | <a name="input_create_namespace"></a> [create\_namespace](#input\_create\_namespace) | Whether create namespace if not exist | `bool` | `true` | no |
-| <a name="input_extra_configs"></a> [extra\_configs](#input\_extra\_configs) | Allows to pass extra/custom configs to prometheus helm chart, this configs will deep-merged with all generated internal configs and can override the default set ones. All available options can be found in for the specified chart version here: https://artifacthub.io/packages/helm/prometheus-community/prometheus?modal=values | `any` | `{}` | no |
+| <a name="input_extra_configs"></a> [extra\_configs](#input\_extra\_configs) | Additional Prometheus chart values. Selector-owned server activation, monitor CRD ownership, bundled kube-state-metrics disablement, and an active validation remoteWrite destination take precedence. | `any` | `{}` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | namespace to use for deployment | `string` | `"monitoring"` | no |
 | <a name="input_release_name"></a> [release\_name](#input\_release\_name) | prometheus release name | `string` | `"prometheus"` | no |
+| <a name="input_remote_write_url"></a> [remote\_write\_url](#input\_remote\_write\_url) | Selector-owned remote-write destination. Null leaves caller remoteWrite settings unchanged. | `string` | `null` | no |
 
 ## Outputs
 
@@ -42,3 +69,47 @@ No modules.
 |------|-------------|
 | <a name="output_helm_metadata"></a> [helm\_metadata](#output\_helm\_metadata) | prometheus helm release metadata |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+
+<!-- BEGIN_TF_DOCS -->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.3 |
+| <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 2.17 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_helm"></a> [helm](#provider\_helm) | ~> 2.17 |
+
+## Modules
+
+No modules.
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [helm_release.prometheus](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_chart_version"></a> [chart\_version](#input\_chart\_version) | prometheus chart version | `string` | `"75.8.0"` | no |
+| <a name="input_collector_enabled"></a> [collector\_enabled](#input\_collector\_enabled) | Whether the Prometheus server should actively scrape targets. The Helm release can remain installed when this is false. | `bool` | `true` | no |
+| <a name="input_configs"></a> [configs](#input\_configs) | Values to send to Prometheus template values file | <pre>object({<br/>    retention_days = optional(string, "15d")<br/>    storage_class  = optional(string, "")<br/>    storage_size   = optional(string, "100Gi")<br/>    access_modes   = optional(list(string), ["ReadWriteOnce"])<br/>    resources = optional(object({<br/>      requests = optional(object({<br/>        cpu    = optional(string, "1")<br/>        memory = optional(string, "2500Mi")<br/>      }), {})<br/>      limits = optional(object({<br/>        cpu    = optional(string, "2")<br/>        memory = optional(string, "3Gi")<br/>      }), {})<br/>    }), {})<br/>    replicas                     = optional(number, 1)<br/>    enable_alertmanager          = optional(bool, true)<br/>    scrape_helm_chart_components = optional(bool, false) # enable scraping all servicemonitors. The chart by default has disabled scraping all servicemonitors. https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack#prometheus-io-scrape<br/>    additional_scrape_configs    = optional(any, [])     # allows to specify additional scrape configs for prometheus. Example can be found in tests/prometheus-additional-scrape-configs/1-example.tf<br/>    ingress = optional(object({<br/>      enabled     = optional(bool, false)<br/>      type        = optional(string, "nginx")<br/>      public      = optional(bool, true)<br/>      tls_enabled = optional(bool, true)<br/><br/>      annotations = optional(map(string), {})<br/>      hosts       = optional(list(string), ["prometheus.example.com"])<br/>      path        = optional(list(string), ["/"])<br/>      path_type   = optional(string, "Prefix")<br/>    }), {})<br/>    kubelet_metrics = optional(list(string), ["container_cpu_.*", "container_memory_.*", "kube_pod_container_status_.*",<br/>      "kube_pod_container_resource_.*", "container_network_.*", "kube_pod_resource_limit",<br/>      "kube_pod_resource_request", "pod_cpu_usage_seconds_total", "pod_memory_usage_bytes",<br/>      "kubelet_volume_stats.*", "volume_operation_total_seconds.*", "container_fs_.*"]<br/>    )<br/>    additional_args = optional(list(object({<br/>      name  = string<br/>      value = string<br/>      })), [<br/>      {<br/>        name  = "query.max-concurrency"<br/>        value = "64"<br/>      },<br/>      {<br/>        name  = "query.timeout"<br/>        value = "2m"<br/>      },<br/>      {<br/>        name  = "query.max-samples"<br/>        value = "75000000"<br/>      }<br/>    ])<br/>  })</pre> | `{}` | no |
+| <a name="input_create_namespace"></a> [create\_namespace](#input\_create\_namespace) | Whether create namespace if not exist | `bool` | `true` | no |
+| <a name="input_extra_configs"></a> [extra\_configs](#input\_extra\_configs) | Additional Prometheus chart values. Selector-owned server activation, monitor CRD ownership, bundled kube-state-metrics disablement, and an active validation remoteWrite destination take precedence. | `any` | `{}` | no |
+| <a name="input_namespace"></a> [namespace](#input\_namespace) | namespace to use for deployment | `string` | `"monitoring"` | no |
+| <a name="input_release_name"></a> [release\_name](#input\_release\_name) | prometheus release name | `string` | `"prometheus"` | no |
+| <a name="input_remote_write_url"></a> [remote\_write\_url](#input\_remote\_write\_url) | Selector-owned remote-write destination. Null leaves caller remoteWrite settings unchanged. | `string` | `null` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_helm_metadata"></a> [helm\_metadata](#output\_helm\_metadata) | prometheus helm release metadata |
+<!-- END_TF_DOCS -->

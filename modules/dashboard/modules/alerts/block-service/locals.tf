@@ -4,7 +4,8 @@ locals {
   type_specific_defaults = {
     deployment = {
       defaults = {
-        replicas_count_expr = "kube_deployment_status_replicas_available{deployment='${local.workload_name}', namespace='${var.namespace}'}"
+        replicas_count_expr       = "kube_deployment_status_replicas_available{deployment='${local.workload_name}', namespace='${var.namespace}'}"
+        unavailable_replicas_expr = "kube_deployment_status_replicas_unavailable{deployment='${local.workload_name}', namespace='${var.namespace}'}"
 
         labels = {
           slack = "true"

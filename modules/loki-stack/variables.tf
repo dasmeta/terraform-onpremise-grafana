@@ -16,6 +16,20 @@ variable "promtail_chart_version" {
   default     = "6.17.0"
 }
 
+variable "prometheus_monitor_enabled" {
+  type        = bool
+  default     = null
+  nullable    = true
+  description = "Selector-owned Loki Prometheus ServiceMonitor state; null preserves the merged caller monitoring configuration."
+}
+
+variable "prometheus_rules_enabled" {
+  type        = bool
+  default     = null
+  nullable    = true
+  description = "Selector-owned Loki PrometheusRule state; null preserves the merged caller monitoring configuration."
+}
+
 variable "configs" {
   type = object({
     loki = optional(object({
