@@ -15,8 +15,8 @@ run "default_uptime_contract" {
   }
 
   assert {
-    condition     = output.data.targets[0].expr == "100 * sum(increase(nginx_ingress_controller_requests{status!~\"5..\"}[7d])) / sum(increase(nginx_ingress_controller_requests{}[7d]))"
-    error_message = "Uptime must be non-5xx requests divided by all requests for the selected period."
+    condition     = output.data.targets[0].expr == "100 * sum(increase(nginx_ingress_controller_requests{status!~\"5..|499\"}[7d])) / sum(increase(nginx_ingress_controller_requests{}[7d]))"
+    error_message = "Uptime must treat 5xx and 499 as unavailable while retaining 429 in available and total traffic."
   }
 
   assert {
@@ -34,7 +34,7 @@ run "filtered_uptime_contract" {
   }
 
   assert {
-    condition     = output.data.targets[0].expr == "100 * sum(increase(nginx_ingress_controller_requests{status!~\"5..\", namespace=\"production\", ingress=~\"api|web\"}[6h])) / sum(increase(nginx_ingress_controller_requests{namespace=\"production\", ingress=~\"api|web\"}[6h]))"
+    condition     = output.data.targets[0].expr == "100 * sum(increase(nginx_ingress_controller_requests{status!~\"5..|499\", namespace=\"production\", ingress=~\"api|web\"}[6h])) / sum(increase(nginx_ingress_controller_requests{namespace=\"production\", ingress=~\"api|web\"}[6h]))"
     error_message = "The uptime scope must be applied consistently to successful and total traffic."
   }
 }

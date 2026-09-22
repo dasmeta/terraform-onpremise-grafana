@@ -7,13 +7,13 @@ run "default_alert_contract" {
   }
 
   assert {
-    condition     = output.alert_rules[0].expr == "(sum(rate(nginx_ingress_controller_request_duration_seconds_sum{status=~\"2..|3..\"}[5m])) / sum(rate(nginx_ingress_controller_request_duration_seconds_count{status=~\"2..|3..\"}[5m]))) unless sum(rate(nginx_ingress_controller_request_duration_seconds_count{status=~\"2..|3..\"}[5m])) == 0"
-    error_message = "The latency alert must use the aggregate successful-request weighted mean."
+    condition     = output.alert_rules[0].expr == "(sum(rate(nginx_ingress_controller_request_duration_seconds_sum{status=~\"2..|3..|429|499\"}[5m])) / sum(rate(nginx_ingress_controller_request_duration_seconds_count{status=~\"2..|3..|429|499\"}[5m]))) unless sum(rate(nginx_ingress_controller_request_duration_seconds_count{status=~\"2..|3..|429|499\"}[5m])) == 0"
+    error_message = "The latency alert must include 429 and 499 in the aggregate request-weighted mean."
   }
 
   assert {
-    condition     = output.alert_rules[1].expr == "(100 * sum(rate(nginx_ingress_controller_requests{status!~\"5..\"}[5m])) / sum(rate(nginx_ingress_controller_requests{}[5m]))) unless sum(rate(nginx_ingress_controller_requests{}[5m])) == 0"
-    error_message = "The availability alert must use non-5xx requests divided by all requests."
+    condition     = output.alert_rules[1].expr == "(100 * sum(rate(nginx_ingress_controller_requests{status!~\"5..|499\"}[5m])) / sum(rate(nginx_ingress_controller_requests{}[5m]))) unless sum(rate(nginx_ingress_controller_requests{}[5m])) == 0"
+    error_message = "The availability alert must treat 5xx and 499 as unavailable while retaining 429 in available and total traffic."
   }
 
   assert {
@@ -48,7 +48,7 @@ run "filtered_alert_contract" {
   }
 
   assert {
-    condition     = output.alert_rules[0].expr == "(sum(rate(nginx_ingress_controller_request_duration_seconds_sum{status=~\"2..|3..\", namespace=\"production\", ingress=~\"api|web\"}[5m])) / sum(rate(nginx_ingress_controller_request_duration_seconds_count{status=~\"2..|3..\", namespace=\"production\", ingress=~\"api|web\"}[5m]))) unless sum(rate(nginx_ingress_controller_request_duration_seconds_count{status=~\"2..|3..\", namespace=\"production\", ingress=~\"api|web\"}[5m])) == 0"
+    condition     = output.alert_rules[0].expr == "(sum(rate(nginx_ingress_controller_request_duration_seconds_sum{status=~\"2..|3..|429|499\", namespace=\"production\", ingress=~\"api|web\"}[5m])) / sum(rate(nginx_ingress_controller_request_duration_seconds_count{status=~\"2..|3..|429|499\", namespace=\"production\", ingress=~\"api|web\"}[5m]))) unless sum(rate(nginx_ingress_controller_request_duration_seconds_count{status=~\"2..|3..|429|499\", namespace=\"production\", ingress=~\"api|web\"}[5m])) == 0"
     error_message = "The alert scope must be applied consistently without a dangling separator."
   }
 

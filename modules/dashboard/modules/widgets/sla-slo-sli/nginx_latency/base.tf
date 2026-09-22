@@ -2,7 +2,7 @@ module "base" {
   source = "../../base"
 
   name        = "${var.histogram ? "Latency distribution" : "Latency"} (${var.period})"
-  description = "${var.histogram ? "Request-count distribution by duration bucket for successful responses" : "Request-weighted average duration of 2xx and 3xx responses in seconds"} within ${var.period}"
+  description = "${var.histogram ? "Request-count distribution by duration bucket for 2xx, 3xx, 429, and 499 responses" : "Request-weighted average duration of 2xx, 3xx, 429, and 499 responses in seconds"} within ${var.period}"
   data_source = {
     uid  = var.datasource_uid
     type = "prometheus"
@@ -43,8 +43,8 @@ module "base" {
   }
 
   metrics = var.histogram ? [
-    { label : "__auto", format : "heatmap", expression : "sum by (le) (increase(nginx_ingress_controller_request_duration_seconds_bucket{status=~\"2..|3..\"${local.metric_filter_suffix}}[${var.period}]))" },
+    { label : "__auto", format : "heatmap", expression : "sum by (le) (increase(nginx_ingress_controller_request_duration_seconds_bucket{status=~\"2..|3..|429|499\"${local.metric_filter_suffix}}[${var.period}]))" },
     ] : [
-    { label : "__auto", expression : "sum(increase(nginx_ingress_controller_request_duration_seconds_sum{status=~\"2..|3..\"${local.metric_filter_suffix}}[${var.period}])) / sum(increase(nginx_ingress_controller_request_duration_seconds_count{status=~\"2..|3..\"${local.metric_filter_suffix}}[${var.period}]))" }
+    { label : "__auto", expression : "sum(increase(nginx_ingress_controller_request_duration_seconds_sum{status=~\"2..|3..|429|499\"${local.metric_filter_suffix}}[${var.period}])) / sum(increase(nginx_ingress_controller_request_duration_seconds_count{status=~\"2..|3..|429|499\"${local.metric_filter_suffix}}[${var.period}]))" }
   ]
 }

@@ -8,7 +8,7 @@ output "alert_rules" {
         no_data_state  = coalesce(var.alerts.latency.no_data_state, var.defaults.no_data_state, "NoData")
         exec_err_state = coalesce(var.alerts.latency.exec_err_state, var.defaults.exec_err_state, "Error")
         datasource     = var.datasource
-        expr           = "(sum(rate(nginx_ingress_controller_request_duration_seconds_sum{status=~\"2..|3..\"${local.latency_metric_filter_suffix}}[${local.latency_interval}])) / sum(rate(nginx_ingress_controller_request_duration_seconds_count{status=~\"2..|3..\"${local.latency_metric_filter_suffix}}[${local.latency_interval}]))) unless sum(rate(nginx_ingress_controller_request_duration_seconds_count{status=~\"2..|3..\"${local.latency_metric_filter_suffix}}[${local.latency_interval}])) == 0"
+        expr           = "(sum(rate(nginx_ingress_controller_request_duration_seconds_sum{status=~\"2..|3..|429|499\"${local.latency_metric_filter_suffix}}[${local.latency_interval}])) / sum(rate(nginx_ingress_controller_request_duration_seconds_count{status=~\"2..|3..|429|499\"${local.latency_metric_filter_suffix}}[${local.latency_interval}]))) unless sum(rate(nginx_ingress_controller_request_duration_seconds_count{status=~\"2..|3..|429|499\"${local.latency_metric_filter_suffix}}[${local.latency_interval}])) == 0"
         pending_period = coalesce(var.alerts.latency.pending_period, var.defaults.pending_period)
         function       = "last"
         equation       = "gt"
@@ -34,7 +34,7 @@ output "alert_rules" {
         no_data_state  = coalesce(var.alerts.availability.no_data_state, var.defaults.no_data_state, "NoData")
         exec_err_state = coalesce(var.alerts.availability.exec_err_state, var.defaults.exec_err_state, "Error")
         datasource     = var.datasource
-        expr           = "(100 * sum(rate(nginx_ingress_controller_requests{status!~\"5..\"${local.availability_metric_filter_suffix}}[${local.availability_interval}])) / sum(rate(nginx_ingress_controller_requests{${local.availability_metric_filter}}[${local.availability_interval}]))) unless sum(rate(nginx_ingress_controller_requests{${local.availability_metric_filter}}[${local.availability_interval}])) == 0"
+        expr           = "(100 * sum(rate(nginx_ingress_controller_requests{status!~\"5..|499\"${local.availability_metric_filter_suffix}}[${local.availability_interval}])) / sum(rate(nginx_ingress_controller_requests{${local.availability_metric_filter}}[${local.availability_interval}]))) unless sum(rate(nginx_ingress_controller_requests{${local.availability_metric_filter}}[${local.availability_interval}])) == 0"
         pending_period = coalesce(var.alerts.availability.pending_period, var.defaults.pending_period)
         function       = "last"
         equation       = "lt"

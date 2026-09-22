@@ -15,8 +15,8 @@ run "default_average_latency_contract" {
   }
 
   assert {
-    condition     = output.data.targets[0].expr == "sum(increase(nginx_ingress_controller_request_duration_seconds_sum{status=~\"2..|3..\"}[7d])) / sum(increase(nginx_ingress_controller_request_duration_seconds_count{status=~\"2..|3..\"}[7d]))"
-    error_message = "Latency must be the request-weighted mean duration for 2xx and 3xx responses."
+    condition     = output.data.targets[0].expr == "sum(increase(nginx_ingress_controller_request_duration_seconds_sum{status=~\"2..|3..|429|499\"}[7d])) / sum(increase(nginx_ingress_controller_request_duration_seconds_count{status=~\"2..|3..|429|499\"}[7d]))"
+    error_message = "Latency must be the request-weighted mean duration for 2xx, 3xx, 429, and 499 responses."
   }
 
   assert {
@@ -46,12 +46,12 @@ run "filtered_average_latency_contract" {
   }
 
   assert {
-    condition     = output.data.targets[0].expr == "sum(increase(nginx_ingress_controller_request_duration_seconds_sum{status=~\"2..|3..\", namespace=\"production\", ingress=~\"api|web\"}[6h])) / sum(increase(nginx_ingress_controller_request_duration_seconds_count{status=~\"2..|3..\", namespace=\"production\", ingress=~\"api|web\"}[6h]))"
+    condition     = output.data.targets[0].expr == "sum(increase(nginx_ingress_controller_request_duration_seconds_sum{status=~\"2..|3..|429|499\", namespace=\"production\", ingress=~\"api|web\"}[6h])) / sum(increase(nginx_ingress_controller_request_duration_seconds_count{status=~\"2..|3..|429|499\", namespace=\"production\", ingress=~\"api|web\"}[6h]))"
     error_message = "The latency scope must be applied consistently to duration and request count."
   }
 }
 
-run "latency_distribution_uses_successful_requests_and_period" {
+run "latency_distribution_uses_historical_statuses_and_period" {
   command = plan
 
   variables {
@@ -61,7 +61,7 @@ run "latency_distribution_uses_successful_requests_and_period" {
   }
 
   assert {
-    condition     = output.data.targets[0].expr == "sum by (le) (increase(nginx_ingress_controller_request_duration_seconds_bucket{status=~\"2..|3..\", namespace=\"production\"}[6h]))"
-    error_message = "Latency distribution must use successful responses and the selected period."
+    condition     = output.data.targets[0].expr == "sum by (le) (increase(nginx_ingress_controller_request_duration_seconds_bucket{status=~\"2..|3..|429|499\", namespace=\"production\"}[6h]))"
+    error_message = "Latency distribution must include successful, throttled, and client-aborted responses for the selected period."
   }
 }

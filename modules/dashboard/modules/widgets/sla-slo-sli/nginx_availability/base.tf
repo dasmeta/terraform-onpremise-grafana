@@ -2,7 +2,7 @@ module "base" {
   source = "../../base"
 
   name        = "${var.histogram ? "Status code distribution" : "Availability"} (${var.period})"
-  description = "${var.histogram ? "Count of requests for each HTTP status code" : "Percent of requests that did not return a 5xx status"} within ${var.period}"
+  description = "${var.histogram ? "Count of requests for each HTTP status code" : "Percent of requests that did not return a 5xx or 499 status"} within ${var.period}"
   data_source = {
     uid  = var.datasource_uid
     type = "prometheus"
@@ -73,6 +73,6 @@ module "base" {
   metrics = var.histogram ? [
     { label : "__auto", format : "heatmap", expression : "sum by (status) (increase(nginx_ingress_controller_requests{${local.metric_filter}}[${var.period}]))" },
     ] : [
-    { label = "__auto", expression = "100 * sum(increase(nginx_ingress_controller_requests{status!~\"5..\"${local.metric_filter_suffix}}[${var.period}])) / sum(increase(nginx_ingress_controller_requests{${local.metric_filter}}[${var.period}]))" }
+    { label = "__auto", expression = "100 * sum(increase(nginx_ingress_controller_requests{status!~\"5..|499\"${local.metric_filter_suffix}}[${var.period}])) / sum(increase(nginx_ingress_controller_requests{${local.metric_filter}}[${var.period}]))" }
   ]
 }
