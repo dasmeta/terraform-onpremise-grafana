@@ -300,9 +300,12 @@ variable "grafana" {
       trace_pattern = optional(string, "trace_id=(\\w+)")
     }), {})
 
-    # 2, matching modules/grafana: a single replica cannot be protected by a PodDisruptionBudget at all,
-    # so any node drain takes the whole dashboard down -- during exactly the churn you need it to diagnose.
-    replicas            = optional(number, 2)
+    # 1, pending DMVP-10608. Raising this WITHOUT configuring unified_alerting HA peers gives each replica
+    # its own embedded alertmanager: both evaluate the same rules from the shared database and both
+    # dispatch, so every notification fires twice. The chart already provides POD_IP and the gossip ports
+    # and has a headlessService toggle, so the clustering is small to add -- but it belongs with the
+    # database HA question rather than in a PodDisruptionBudget fix.
+    replicas            = optional(number, 1)
     extra_configs       = optional(any, {}) # allows to pass extra/custom configs to grafana helm chart, this configs will deep-merged with all generated internal configs and can override the default set ones. All available options can be found in for the specified chart version here: https://artifacthub.io/packages/helm/grafana/grafana?modal=values
     mysql_extra_configs = optional(any, {}) # allows to pass extra/custom configs to grafana-mysql created helm chart, this configs will deep-merged with all generated internal configs and can override the default set ones. All available options can be found in for the specified chart version here: https://artifacthub.io/packages/helm/bitnami/mysql?modal=values
     sso_settings = optional(map(object({    # SSO settings for Grafana. Supports OAuth2 providers (gitlab, github, google, azuread, okta, generic_oauth), SAML, and LDAP. The map key should be the provider name, NOTE: that multiple providers can be passed but if a user(email is identifier) got logged in by using one of the providers it may fail to login by using another provider.

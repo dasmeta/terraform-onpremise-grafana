@@ -144,9 +144,12 @@ variable "configs" {
       enabled       = optional(bool, false)
       trace_pattern = optional(string, "trace_id=(\\w+)")
     }), {})
-    # 2 by default: a single grafana replica cannot be protected by a PodDisruptionBudget at all, so any node
-    # drain takes the whole dashboard down -- during exactly the node churn you need it to diagnose.
-    replicas  = optional(number, 2)
+    # 1, pending DMVP-10608. Raising this WITHOUT configuring unified_alerting HA peers gives each replica
+    # its own embedded alertmanager: both evaluate the same rules from the shared database and both
+    # dispatch, so every notification fires twice. The chart already provides POD_IP and the gossip ports
+    # and has a headlessService toggle, so the clustering is small to add -- but it belongs with the
+    # database HA question rather than in a PodDisruptionBudget fix.
+    replicas  = optional(number, 1)
     image_tag = optional(string, "11.4.2")
   })
 
