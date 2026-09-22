@@ -81,6 +81,19 @@ variable "configs" {
       }), {})
       extra_flags = optional(string, "--skip-log-bin") # allows to set extra flags(whitespace separated) on grafana mysql primary instance, we have by default skip-log-bin flag set to disable bin-logs which overload mysql disc and/but we do not use multi replica mysql here
 
+      # Keep the database off reclaimable capacity. A single-replica database with ReadWriteOnce storage is
+      # the worst workload to put on spot: a reclaim kills it involuntarily -- no PodDisruptionBudget or
+      # do-not-disrupt annotation prevents that -- and its volume must then detach from a node that is
+      # already gone, which has produced multi-minute outages with VolumeInUse errors.
+      #
+      # Set to {} to opt out, for example on a cluster with no on-demand capacity at all, or a local one.
+      # It is first-class because an empty map passed through mysql_extra_configs cannot CLEAR a default
+      # helm already merged; tolerations need no such field, since adding one there merges cleanly:
+      #   mysql_extra_configs = { primary = { tolerations = [{ key = "dedicated", operator = "Equal",
+      #                                                        value = "on-demand", effect = "NoSchedule" }] } }
+      # That is the taint the dasmeta eks module's protected pool applies.
+      node_selector = optional(map(string), { "karpenter.sh/capacity-type" = "on-demand" })
+
       # TODO: implement multi-replica/redundant grafana mysql database creation possibility
     }), {})
     persistence = optional(object({ # configure pvc base storing/persisting grafana data(it uses sqlite DB in this mode), NOTE: we use mysql database for data storage by default and no need to enable persistence if DB is set, so that we have persistence disable here by default
@@ -182,28 +195,4 @@ variable "sso_settings" {
   default     = {}
   description = "SSO settings for Grafana. Supports OAuth2 providers (gitlab, github, google, azuread, okta, generic_oauth), SAML, and LDAP. The map key should be the provider name (e.g., 'gitlab', 'github', 'saml', 'ldap')."
   sensitive   = true
-}
-
-variable "database_node_selector" {
-  type        = map(string)
-  default     = { "karpenter.sh/capacity-type" = "on-demand" }
-  description = <<-EOT
-    Node selector for the created grafana database primary.
-
-    Defaults to on-demand capacity. A single-replica database with ReadWriteOnce storage is the worst
-    possible workload to place on reclaimable capacity: a spot reclaim kills it involuntarily -- no
-    PodDisruptionBudget or do-not-disrupt annotation can prevent that -- and its volume must then detach from
-    a node that is already gone, which has produced multi-minute outages with VolumeInUse errors on more than
-    one cluster. Set to {} to opt out, for example on a cluster that has no on-demand capacity at all.
-  EOT
-}
-
-variable "database_tolerations" {
-  type        = any
-  default     = []
-  description = <<-EOT
-    Tolerations for the created grafana database primary. Needed when the target on-demand capacity is
-    tainted, which is how the dasmeta eks module's protected node pool keeps ordinary workloads off it.
-    Example: [{ key = "dasmeta.io/protected", operator = "Equal", value = "true", effect = "NoSchedule" }]
-  EOT
 }

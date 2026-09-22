@@ -101,8 +101,7 @@ resource "helm_release" "mysql" {
           # Keep the database off reclaimable capacity. This is the actual protection: a spot reclaim kills
           # this pod regardless of any budget or annotation, and its ReadWriteOnce volume then has to detach
           # from a node that is already gone, which has produced multi-minute outages with VolumeInUse errors.
-          nodeSelector = var.database_node_selector
-          tolerations  = var.database_tolerations
+          nodeSelector = var.configs.database.node_selector
           persistence = {
             enabled      = var.configs.database.persistence.enabled
             size         = var.configs.database.persistence.size

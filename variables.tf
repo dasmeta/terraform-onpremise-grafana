@@ -240,8 +240,13 @@ variable "grafana" {
       type          = optional(string, "mysql") # when we set external database we can set any sql compatible one like postgresql or ms sql, but when we create database it supports only mysql and changing this field do not affect
       host          = optional(string, null)    # it will set right host for grafana mysql in case create=true
       user          = optional(string, "grafana")
-      password      = optional(string, null)     # if not set it will use var.grafana_admin_password
-      root_password = optional(string, null)     # if not set it will use var.grafana_admin_password
+      password      = optional(string, null) # if not set it will use var.grafana_admin_password
+      root_password = optional(string, null) # if not set it will use var.grafana_admin_password
+      # Declared here as well as in modules/grafana, because terraform object conversion SILENTLY DROPS an
+      # attribute the target type does not list -- so without this line a consumer setting it changes
+      # nothing and the module keeps its own default, with no error anywhere.
+      node_selector = optional(map(string), { "karpenter.sh/capacity-type" = "on-demand" })
+
       persistence = optional(object({            # allows to configure created(when database.create=true) mysql databases storage/persistence configs
         enabled       = optional(bool, true)     # whether to have created in k8s mysql database with persistence
         size          = optional(string, "20Gi") # the size of primary persistent volume of mysql when creating it
@@ -273,7 +278,9 @@ variable "grafana" {
     redundancy = optional(object({
       enabled      = optional(bool, false)
       max_replicas = optional(number, 4)
-      min_replicas = optional(number, 1)
+      # >= 2. The redundancy block renders a PodDisruptionBudget of minAvailable: 1, which at a floor of 1
+      # permits ZERO evictions -- blocking drains, spot replacement and node group upgrades.
+      min_replicas = optional(number, 2)
     }), {})
 
     datasources = optional(list(map(any))) # a list of grafana datasource configurations. Based on the type of the datasource the module will fill in the missing configuration for some supported datasources. Mandatory are name and type fields
@@ -282,7 +289,9 @@ variable "grafana" {
       trace_pattern = optional(string, "trace_id=(\\w+)")
     }), {})
 
-    replicas            = optional(number, 1)
+    # 2, matching modules/grafana: a single replica cannot be protected by a PodDisruptionBudget at all,
+    # so any node drain takes the whole dashboard down -- during exactly the churn you need it to diagnose.
+    replicas            = optional(number, 2)
     extra_configs       = optional(any, {}) # allows to pass extra/custom configs to grafana helm chart, this configs will deep-merged with all generated internal configs and can override the default set ones. All available options can be found in for the specified chart version here: https://artifacthub.io/packages/helm/grafana/grafana?modal=values
     mysql_extra_configs = optional(any, {}) # allows to pass extra/custom configs to grafana-mysql created helm chart, this configs will deep-merged with all generated internal configs and can override the default set ones. All available options can be found in for the specified chart version here: https://artifacthub.io/packages/helm/bitnami/mysql?modal=values
     sso_settings = optional(map(object({    # SSO settings for Grafana. Supports OAuth2 providers (gitlab, github, google, azuread, okta, generic_oauth), SAML, and LDAP. The map key should be the provider name, NOTE: that multiple providers can be passed but if a user(email is identifier) got logged in by using one of the providers it may fail to login by using another provider.
