@@ -46,6 +46,15 @@ karpenter cluster and unschedulable here — no Docker Desktop node carries that
 would sit Pending forever and the change would look like the cause. Setting `{}` also exercises the
 documented opt-out.
 
+## Two restarts on a fresh install are expected
+
+`replicas: 2` means both grafana pods start together and both attempt the schema migration. One takes the
+lock, the other logs `Failed to lock database: failed to obtain lock` and exits; kubernetes restarts it and
+by then the migration is done. Typically two restarts, then stable. It is a startup-only cost of running
+two replicas, not a fault, and not worth trading back for the single replica this change exists to remove.
+
+`Could not register plugin pluginId=table` is a benign grafana 12 startup warning, unrelated.
+
 ## Why the default alert is disabled
 
 `alerts.disk_capacity` defaults to enabled, resolves its folder to `application-dashboard`, and then LOOKS
