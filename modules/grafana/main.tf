@@ -80,10 +80,8 @@ resource "helm_release" "mysql" {
           rootPassword = local.database.root_password
         }
         primary = {
-          extraFlags = var.configs.database.extra_flags
-          podAnnotations = {
-            "karpenter.sh/do-not-disrupt" = "true"
-          }
+          extraFlags     = var.configs.database.extra_flags
+          podAnnotations = var.configs.database.do_not_disrupt ? { "karpenter.sh/do-not-disrupt" = "true" } : {}
           # NO PodDisruptionBudget while this is a single-replica primary.
           #
           # The previous `minAvailable = 1` here permitted ZERO evictions, because minAvailable equal to the

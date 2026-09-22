@@ -43,3 +43,7 @@ module "this" {
 
   grafana_admin_password = "admin"
 }
+
+# Opt-in check for the annotation: uncomment, re-plan, and the mysql pod should carry
+# karpenter.sh/do-not-disrupt again. Left commented because the default is what we want verified.
+# (set database.do_not_disrupt = true inside the grafana block above)

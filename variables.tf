@@ -247,6 +247,17 @@ variable "grafana" {
       # nothing and the module keeps its own default, with no error anywhere.
       node_selector = optional(map(string), { "karpenter.sh/capacity-type" = "on-demand" })
 
+      # Blocks karpenter from VOLUNTARILY disrupting the node hosting this pod. Off by default, because on
+      # the on-demand placement above it costs more than it buys: that pool consolidates WhenEmpty, so a
+      # node running this pod is never consolidated anyway, while the annotation also blocks DRIFT -- which
+      # is how nodes receive AMI patches. A node holding a do-not-disrupt pod is never replaced by a drift
+      # roll, so it stays on its old AMI until a human intervenes, and the eks assessment reports it as
+      # needing attention on every run thereafter.
+      #
+      # Turn it on if you set node_selector = {} and the database lands on a pool that consolidates while
+      # non-empty, where it is the only lever a single-replica workload has.
+      do_not_disrupt = optional(bool, false)
+
       persistence = optional(object({            # allows to configure created(when database.create=true) mysql databases storage/persistence configs
         enabled       = optional(bool, true)     # whether to have created in k8s mysql database with persistence
         size          = optional(string, "20Gi") # the size of primary persistent volume of mysql when creating it

@@ -94,6 +94,17 @@ variable "configs" {
       # That is the taint the dasmeta eks module's protected pool applies.
       node_selector = optional(map(string), { "karpenter.sh/capacity-type" = "on-demand" })
 
+      # Blocks karpenter from VOLUNTARILY disrupting the node hosting this pod. Off by default, because on
+      # the on-demand placement above it costs more than it buys: that pool consolidates WhenEmpty, so a
+      # node running this pod is never consolidated anyway, while the annotation also blocks DRIFT -- which
+      # is how nodes receive AMI patches. A node holding a do-not-disrupt pod is never replaced by a drift
+      # roll, so it stays on its old AMI until a human intervenes, and the eks assessment reports it as
+      # needing attention on every run thereafter.
+      #
+      # Turn it on if you set node_selector = {} and the database lands on a pool that consolidates while
+      # non-empty, where it is the only lever a single-replica workload has.
+      do_not_disrupt = optional(bool, false)
+
       # TODO: implement multi-replica/redundant grafana mysql database creation possibility
     }), {})
     persistence = optional(object({ # configure pvc base storing/persisting grafana data(it uses sqlite DB in this mode), NOTE: we use mysql database for data storage by default and no need to enable persistence if DB is set, so that we have persistence disable here by default
