@@ -8,7 +8,7 @@ output "alert_rules" {
         no_data_state  = coalesce(var.alerts.latency.no_data_state, var.defaults.no_data_state, "NoData")
         exec_err_state = coalesce(var.alerts.latency.exec_err_state, var.defaults.exec_err_state, "Error")
         datasource     = var.datasource
-        expr           = "avg(rate(nginx_ingress_controller_request_duration_seconds_sum{status=~'[^1]..', ${coalesce(var.alerts.latency.metric_filter, var.defaults.metric_filter)}}[${coalesce(var.alerts.latency.interval, var.defaults.interval)}]))/avg(rate(nginx_ingress_controller_request_duration_seconds_count{status=~'[^1]..', ${coalesce(var.alerts.latency.metric_filter, var.defaults.metric_filter)}}[${coalesce(var.alerts.latency.interval, var.defaults.interval)}])) unless (avg(rate(nginx_ingress_controller_request_duration_seconds_count{status=~'[^1]..', ${coalesce(var.alerts.latency.metric_filter, var.defaults.metric_filter)}}[${coalesce(var.alerts.latency.interval, var.defaults.interval)}]))) == 0"
+        expr           = "(sum(rate(nginx_ingress_controller_request_duration_seconds_sum{status=~\"2..|3..\"${local.latency_metric_filter_suffix}}[${local.latency_interval}])) / sum(rate(nginx_ingress_controller_request_duration_seconds_count{status=~\"2..|3..\"${local.latency_metric_filter_suffix}}[${local.latency_interval}]))) unless sum(rate(nginx_ingress_controller_request_duration_seconds_count{status=~\"2..|3..\"${local.latency_metric_filter_suffix}}[${local.latency_interval}])) == 0"
         pending_period = coalesce(var.alerts.latency.pending_period, var.defaults.pending_period)
         function       = "last"
         equation       = "gt"
@@ -16,12 +16,12 @@ output "alert_rules" {
         filters        = {}
         labels         = merge(var.defaults.labels, var.alerts.latency.labels)
         annotations = merge({
-          "threshold" = coalesce(var.alerts.availability.threshold, var.defaults.threshold_percent),
-          "metric"    = "requests",
-          "impact"    = "Service might response slower"
+          "threshold" = var.alerts.latency.threshold,
+          "metric"    = "request_latency_seconds",
+          "impact"    = "Service response latency is above the SLO"
           "component" = "ingress"
           "resource"  = "-"
-        }, try(var.alerts.availability.annotations, {}))
+        }, try(var.alerts.latency.annotations, {}))
         settings_mode        = "replaceNN"
         settings_replaceWith = 0
       }
@@ -34,7 +34,7 @@ output "alert_rules" {
         no_data_state  = coalesce(var.alerts.availability.no_data_state, var.defaults.no_data_state, "NoData")
         exec_err_state = coalesce(var.alerts.availability.exec_err_state, var.defaults.exec_err_state, "Error")
         datasource     = var.datasource
-        expr           = "(1 - (sum(rate(nginx_ingress_controller_requests{status=~'5..|499', ${coalesce(var.alerts.availability.metric_filter, var.defaults.metric_filter)}}[${coalesce(var.alerts.availability.interval, var.defaults.interval)}])) / sum(rate(nginx_ingress_controller_requests{${coalesce(var.alerts.availability.metric_filter, var.defaults.metric_filter)}}[${coalesce(var.alerts.availability.interval, var.defaults.interval)}])))) * 100 unless (sum(rate(nginx_ingress_controller_requests{${coalesce(var.alerts.availability.metric_filter, var.defaults.metric_filter)}}[${coalesce(var.alerts.availability.interval, var.defaults.interval)}]))) == 0"
+        expr           = "(100 * sum(rate(nginx_ingress_controller_requests{status!~\"5..\"${local.availability_metric_filter_suffix}}[${local.availability_interval}])) / sum(rate(nginx_ingress_controller_requests{${local.availability_metric_filter}}[${local.availability_interval}]))) unless sum(rate(nginx_ingress_controller_requests{${local.availability_metric_filter}}[${local.availability_interval}])) == 0"
         pending_period = coalesce(var.alerts.availability.pending_period, var.defaults.pending_period)
         function       = "last"
         equation       = "lt"
@@ -44,7 +44,7 @@ output "alert_rules" {
         annotations = merge({
           "threshold" = coalesce(var.alerts.availability.threshold, var.defaults.threshold_percent),
           "metric"    = "requests",
-          "impact"    = "Service might response slower"
+          "impact"    = "Service might be unavailable"
           "component" = "ingress"
           "resource"  = "-"
         }, try(var.alerts.availability.annotations, {}))
