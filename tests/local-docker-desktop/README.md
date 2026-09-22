@@ -46,6 +46,14 @@ karpenter cluster and unschedulable here — no Docker Desktop node carries that
 would sit Pending forever and the change would look like the cause. Setting `{}` also exercises the
 documented opt-out.
 
+## Why the default alert is disabled
+
+`alerts.disk_capacity` defaults to enabled, resolves its folder to `application-dashboard`, and then LOOKS
+THAT FOLDER UP with a data source. The folder only exists if an `application_dashboard` entry created it,
+and a minimal config has none — so the apply fails with `folder with title application-dashboard not found`
+on a folder nothing was ever asked to create. Pre-existing module behaviour, unrelated to this change;
+`tests/metrics-collector-selection` works around it the same way.
+
 ## What this cannot verify
 
 The on-demand placement itself, which needs karpenter. The local run covers the budget removal, the

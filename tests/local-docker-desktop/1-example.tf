@@ -37,6 +37,14 @@ module "this" {
     }
   }
 
+  # The default disk-capacity alert resolves its folder to "application-dashboard" and then LOOKS IT UP
+  # with a data source. That folder only exists if an application_dashboard created it, and there are none
+  # here -- so the apply fails on a folder nothing was ever asked to create. Pre-existing module coupling,
+  # not related to what this example tests.
+  alerts = {
+    disk_capacity = { enabled = false }
+  }
+
   tempo      = { enabled = false }
   loki_stack = { enabled = false }
   prometheus = { enabled = false }
