@@ -245,7 +245,21 @@ variable "grafana" {
       # Declared here as well as in modules/grafana, because terraform object conversion SILENTLY DROPS an
       # attribute the target type does not list -- so without this line a consumer setting it changes
       # nothing and the module keeps its own default, with no error anywhere.
-      node_selector = optional(map(string), { "karpenter.sh/capacity-type" = "on-demand" })
+      # Where the created database primary runs. Empty by default: node labels are cluster-specific, and this
+      # module is not EKS-only -- a default naming karpenter labels leaves the pod Pending with no
+      # explanation on any cluster that does not use karpenter, including on-premise and plain managed
+      # kubernetes.
+      #
+      # Set it where the cluster has capacity worth pinning to. A single-replica database with ReadWriteOnce
+      # storage is the worst workload to leave on reclaimable capacity: a spot reclaim kills it
+      # involuntarily -- no PodDisruptionBudget or do-not-disrupt annotation prevents that -- and its volume
+      # must then detach from a node that is already gone, which has produced multi-minute outages with
+      # VolumeInUse errors. On EKS with karpenter that is:
+      #   node_selector = { "karpenter.sh/capacity-type" = "on-demand" }
+      # and if that capacity is tainted, add the matching toleration through mysql_extra_configs:
+      #   mysql_extra_configs = { primary = { tolerations = [{ key = "dedicated", operator = "Equal",
+      #                                                        value = "on-demand", effect = "NoSchedule" }] } }
+      node_selector = optional(map(string), {})
 
       # Blocks karpenter from VOLUNTARILY disrupting the node hosting this pod. Off by default, because on
       # the on-demand placement above it costs more than it buys: that pool consolidates WhenEmpty, so a

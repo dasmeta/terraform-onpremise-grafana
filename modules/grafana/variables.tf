@@ -81,18 +81,21 @@ variable "configs" {
       }), {})
       extra_flags = optional(string, "--skip-log-bin") # allows to set extra flags(whitespace separated) on grafana mysql primary instance, we have by default skip-log-bin flag set to disable bin-logs which overload mysql disc and/but we do not use multi replica mysql here
 
-      # Keep the database off reclaimable capacity. A single-replica database with ReadWriteOnce storage is
-      # the worst workload to put on spot: a reclaim kills it involuntarily -- no PodDisruptionBudget or
-      # do-not-disrupt annotation prevents that -- and its volume must then detach from a node that is
-      # already gone, which has produced multi-minute outages with VolumeInUse errors.
+      # Where the created database primary runs. Empty by default: node labels are cluster-specific, and this
+      # module is not EKS-only -- a default naming karpenter labels leaves the pod Pending with no
+      # explanation on any cluster that does not use karpenter, including on-premise and plain managed
+      # kubernetes.
       #
-      # Set to {} to opt out, for example on a cluster with no on-demand capacity at all, or a local one.
-      # It is first-class because an empty map passed through mysql_extra_configs cannot CLEAR a default
-      # helm already merged; tolerations need no such field, since adding one there merges cleanly:
+      # Set it where the cluster has capacity worth pinning to. A single-replica database with ReadWriteOnce
+      # storage is the worst workload to leave on reclaimable capacity: a spot reclaim kills it
+      # involuntarily -- no PodDisruptionBudget or do-not-disrupt annotation prevents that -- and its volume
+      # must then detach from a node that is already gone, which has produced multi-minute outages with
+      # VolumeInUse errors. On EKS with karpenter that is:
+      #   node_selector = { "karpenter.sh/capacity-type" = "on-demand" }
+      # and if that capacity is tainted, add the matching toleration through mysql_extra_configs:
       #   mysql_extra_configs = { primary = { tolerations = [{ key = "dedicated", operator = "Equal",
       #                                                        value = "on-demand", effect = "NoSchedule" }] } }
-      # That is the taint the dasmeta eks module's protected pool applies.
-      node_selector = optional(map(string), { "karpenter.sh/capacity-type" = "on-demand" })
+      node_selector = optional(map(string), {})
 
       # Blocks karpenter from VOLUNTARILY disrupting the node hosting this pod. Off by default, because on
       # the on-demand placement above it costs more than it buys: that pool consolidates WhenEmpty, so a

@@ -39,13 +39,6 @@ kubectl get deploy -l app.kubernetes.io/name=grafana
 curl -sI http://grafana.localhost/login | head -1
 ```
 
-## Why `database.node_selector = {}` is set
-
-The module defaults it to `{ "karpenter.sh/capacity-type" = "on-demand" }`, which is correct on a
-karpenter cluster and unschedulable here — no Docker Desktop node carries that label, so the mysql pod
-would sit Pending forever and the change would look like the cause. Setting `{}` also exercises the
-documented opt-out.
-
 ## Two restarts on a fresh install are expected
 
 `replicas: 2` means both grafana pods start together and both attempt the schema migration. One takes the

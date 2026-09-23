@@ -17,12 +17,8 @@ module "this" {
     }
 
     database = {
-      # REQUIRED LOCALLY. The default is { "karpenter.sh/capacity-type" = "on-demand" }, which is right on
-      # a karpenter cluster and unschedulable here: no Docker Desktop node carries that label, so the mysql
-      # pod would sit Pending forever and the change would look like the cause. Setting {} also exercises
-      # the documented opt-out.
-      node_selector = {}
-
+      # No node_selector set: the default is empty, which is what a cluster without karpenter needs. On EKS
+      # you would pin this to on-demand capacity -- see the variable description.
       persistence = {
         size = "1Gi" # 20Gi by default; the hostpath provisioner will honour either, this is just tidier
       }
