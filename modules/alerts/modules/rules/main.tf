@@ -80,7 +80,7 @@ resource "grafana_rule_group" "this" {
             statistic  = rule.value.cloudwatch_query.statistic
             period     = rule.value.cloudwatch_query.period
             region     = rule.value.cloudwatch_query.region
-            matchExact = true
+            matchExact = try(rule.value.cloudwatch_query.match_exact, true)
             type       = "timeseries"
             editorMode = "code"
             }) : jsonencode({

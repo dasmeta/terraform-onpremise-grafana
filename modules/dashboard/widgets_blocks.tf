@@ -102,6 +102,7 @@ module "block_msk" {
   cluster_names   = try(each.value.block.cluster_names, [])
   broker_ids      = try(each.value.block.broker_ids, ["1", "2", "3"])
   consumer_groups = try(each.value.block.consumer_groups, [])
+  topics          = try(each.value.block.topics, [])
   region          = try(each.value.block.region, local.widget_default_values.cloudwatch.region)
   period          = try(each.value.block.period, local.widget_default_values.cloudwatch.period)
   datasource_uid  = try(each.value.block.datasource_uid, local.widget_default_values.cloudwatch.datasource_uid)

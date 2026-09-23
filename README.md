@@ -62,57 +62,52 @@ module "grafana_monitoring" {
 }
 ```
 
-## Example for complete Kafka monitoring
+## Example for optional Kafka monitoring
 
-Two additive dashboard rows cover Kafka end to end:
-
-- `block/msk` — MSK **brokers** from CloudWatch (`AWS/Kafka`)
-- `block/kafka_observability` — consumer groups and Kafka Connect from Prometheus exporters
+Disabled until the rows are added. Use CloudWatch for MSK brokers/lag and VictoriaMetrics for `kafka-connect-status-exporter`.
 
 ```hcl
 application_dashboard = [{
   name = "Platform Overview"
   rows = [
     {
-      type           = "block/msk"
-      block_name     = "MSK brokers"
-      cluster_names  = ["example-msk-cluster"]
-      broker_ids     = ["1", "2", "3"]
-      region         = "eu-central-1"
-      datasource_uid = "cloudwatch"
+      type            = "block/msk"
+      block_name      = "MSK brokers"
+      cluster_names   = ["example-msk-cluster"]
+      broker_ids      = ["1", "2", "3"]
+      consumer_groups = ["example-payments"]
+      topics          = ["example-events"]
+      lag_threshold   = 10000
+      region          = "eu-central-1"
+      datasource_uid  = "cloudwatch"
       alerts = {
         enabled = true
         offline_partitions = {
           threshold      = 0
           pending_period = "5m"
         }
+        consumer_lag = {
+          threshold      = 10000
+          pending_period = "15m"
+        }
       }
     },
     {
-      type                     = "block/kafka_observability"
-      namespace                = "kafka"
-      datasource_uid           = "prometheus"
-      extra_filters            = "job=~\"kafka-exporter|kafka-connect-exporter\""
-      cluster_label            = "cluster"
-      cluster                  = "example-kafka"
-      critical_consumer_groups = ["example-payments"]
-      idle_consumer_groups     = ["example-idle"]
-      stopped_connectors       = ["example-stopped-sink"]
-      lag_threshold            = 0
-      lag_growth_window        = "15m"
-      pending_period           = "5m"
-      dashboard_url            = "https://grafana.example.com/d/example-kafka"
-      runbook_url              = "https://example.com/runbooks/kafka"
+      type               = "block/kafka_observability"
+      namespace          = "example"
+      datasource_uid     = "victoriametrics"
+      extra_filters      = "job=~\"kafka-connect-status-exporter\""
+      stopped_connectors = ["example-stopped-sink"]
+      pending_period     = "5m"
       alerts = {
-        enabled         = true
-        exporter_scrape = { enabled = true }
+        enabled = true
       }
     }
   ]
 }]
 ```
 
-See `modules/dashboard/tests/kafka-observability/` (both rows) and `modules/dashboard/tests/msk-cloudwatch/` (MSK only).
+See `modules/dashboard/tests/kafka-observability/` and `docs/DMVP-10603-kafka-observability.md`.
 
 ## Example for Alerts
 ```terraform

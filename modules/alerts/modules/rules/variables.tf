@@ -78,6 +78,7 @@ variable "alert_rules" {
       statistic   = optional(string, "Maximum")
       period      = optional(string, "300")
       region      = string
+      match_exact = optional(bool, true)
     }), null)
     metric_name          = optional(string, "")          # Prometheus metric name which queries the data for the alert
     metric_function      = optional(string, "")          # Prometheus function used with metric for queries, like rate, sum etc.

@@ -41,8 +41,8 @@ No resources.
 | <a name="input_cluster"></a> [cluster](#input\_cluster) | Optional cluster label value | `string` | `""` | no |
 | <a name="input_cluster_label"></a> [cluster\_label](#input\_cluster\_label) | Optional cluster label name when exporters expose a cluster identity | `string` | `""` | no |
 | <a name="input_datasource_uid"></a> [datasource\_uid](#input\_datasource\_uid) | Prometheus datasource UID | `string` | `"prometheus"` | no |
-| <a name="input_extra_filters"></a> [extra\_filters](#input\_extra\_filters) | Additional PromQL label matchers shared by dashboard panels, for example job=~"kafka-exporter\|kafka-connect-exporter" | `string` | `""` | no |
-| <a name="input_namespace"></a> [namespace](#input\_namespace) | Kubernetes namespace used to select Kafka exporter and Kafka Connect exporter metrics | `string` | n/a | yes |
+| <a name="input_extra_filters"></a> [extra\_filters](#input\_extra\_filters) | Additional PromQL label matchers shared by dashboard panels, for example job=~"kafka-connect-status-exporter" | `string` | `""` | no |
+| <a name="input_namespace"></a> [namespace](#input\_namespace) | Kubernetes namespace used to select kafka-connect-status-exporter metrics | `string` | n/a | yes |
 | <a name="input_period"></a> [period](#input\_period) | Prometheus range interval used by trend panels | `string` | `"$__rate_interval"` | no |
 
 ## Outputs

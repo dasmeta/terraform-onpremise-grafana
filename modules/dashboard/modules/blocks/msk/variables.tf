@@ -11,7 +11,13 @@ variable "broker_ids" {
 
 variable "consumer_groups" {
   type        = list(string)
-  description = "Optional consumer groups for lag panels"
+  description = "Optional consumer groups for DEFAULT MaxOffsetLag and SumOffsetLag panels"
+  default     = []
+}
+
+variable "topics" {
+  type        = list(string)
+  description = "Optional topics for DEFAULT consumer-lag dimensions"
   default     = []
 }
 

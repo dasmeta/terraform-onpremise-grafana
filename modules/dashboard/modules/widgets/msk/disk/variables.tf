@@ -18,16 +18,10 @@ variable "cluster_names" {
   description = "List of MSK cluster names (CloudWatch Cluster Name dimension)"
 }
 
-variable "consumer_groups" {
+variable "broker_ids" {
   type        = list(string)
-  description = "Consumer groups for DEFAULT MaxOffsetLag and SumOffsetLag series"
-  default     = []
-}
-
-variable "topics" {
-  type        = list(string)
-  description = "Optional topics for DEFAULT MaxOffsetLag and SumOffsetLag dimensions. Empty list omits Topic so Grafana can return all topic series."
-  default     = []
+  description = "Broker IDs to include in broker-level MSK metrics"
+  default     = ["1", "2", "3"]
 }
 
 variable "coordinates" {

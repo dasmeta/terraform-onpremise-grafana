@@ -241,10 +241,12 @@ locals {
     # MSK widgets
     values(module.msk_cpu_widget).*.data,
     values(module.msk_memory_widget).*.data,
+    values(module.msk_disk_widget).*.data,
     values(module.msk_throughput_in_widget).*.data,
     values(module.msk_throughput_out_widget).*.data,
     values(module.msk_partitions_widget).*.data,
     values(module.msk_offline_partitions_widget).*.data,
+    values(module.msk_under_replicated_widget).*.data,
     values(module.msk_consumer_lag_widget).*.data,
 
     # SES widgets

@@ -16,14 +16,6 @@ output "result" {
       { type : "text/title-with-collapse", text : var.block_name }
     ],
     [
-      merge(local.common, { type : "kafka/consumer_lag", width : 12 }),
-      merge(local.common, { type : "kafka/consumer_lag_trend", width : 12 }),
-    ],
-    [
-      merge(local.common, { type : "kafka/consumer_group_members", width : 12 }),
-      merge(local.common, { type : "kafka/empty_consumer_groups", width : 12 }),
-    ],
-    [
       merge(local.common, { type : "kafka/connect_rest_up", width : 8 }),
       merge(local.common, { type : "kafka/connector_state", width : 8 }),
       merge(local.common, { type : "kafka/task_state", width : 8 }),

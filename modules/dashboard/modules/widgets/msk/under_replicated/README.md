@@ -1,5 +1,6 @@
-# consumer_lag
+# under_replicated
 
+DEFAULT CloudWatch `AWS/Kafka` `UnderReplicatedPartitions` per broker.
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
@@ -23,13 +24,12 @@ No resources.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_broker_ids"></a> [broker\_ids](#input\_broker\_ids) | Broker IDs to include in broker-level MSK metrics | `list(string)` | <pre>[<br/>  "1",<br/>  "2",<br/>  "3"<br/>]</pre> | no |
 | <a name="input_cluster_names"></a> [cluster\_names](#input\_cluster\_names) | List of MSK cluster names (CloudWatch Cluster Name dimension) | `list(string)` | n/a | yes |
-| <a name="input_consumer_groups"></a> [consumer\_groups](#input\_consumer\_groups) | Consumer groups for DEFAULT MaxOffsetLag and SumOffsetLag series | `list(string)` | `[]` | no |
 | <a name="input_coordinates"></a> [coordinates](#input\_coordinates) | Grid position for the panel | <pre>object({<br/>    x      = number<br/>    y      = number<br/>    width  = number<br/>    height = number<br/>  })</pre> | n/a | yes |
 | <a name="input_datasource_uid"></a> [datasource\_uid](#input\_datasource\_uid) | n/a | `string` | `"cloudwatch"` | no |
 | <a name="input_period"></a> [period](#input\_period) | n/a | `string` | `""` | no |
 | <a name="input_region"></a> [region](#input\_region) | n/a | `string` | `""` | no |
-| <a name="input_topics"></a> [topics](#input\_topics) | Optional topics for DEFAULT MaxOffsetLag and SumOffsetLag dimensions. Empty list omits Topic so Grafana can return all topic series. | `list(string)` | `[]` | no |
 
 ## Outputs
 

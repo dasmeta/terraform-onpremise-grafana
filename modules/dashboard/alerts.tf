@@ -76,17 +76,20 @@ module "block_msk_alerts" {
 
   for_each = { for index, item in try(local.blocks_by_type["msk"], []) : index => item if try(merge(var.alerts, try(item.block.alerts, {})).enabled, false) || try(item.block.alerts.enabled, false) }
 
-  cluster_names = try(each.value.block.cluster_names, [])
-  region        = try(each.value.block.region, local.widget_default_values.cloudwatch.region)
-  defaults      = try(local.deep_merge_alert_configs["${each.key}_msk"].defaults, {})
-  alerts        = try(local.deep_merge_alert_configs["${each.key}_msk"], {})
-  datasource    = try(each.value.block.datasource_uid, local.widget_default_values.cloudwatch.datasource_uid)
+  cluster_names   = try(each.value.block.cluster_names, [])
+  consumer_groups = try(each.value.block.consumer_groups, [])
+  topics          = try(each.value.block.topics, [])
+  lag_threshold   = try(each.value.block.lag_threshold, 10000)
+  region          = try(each.value.block.region, local.widget_default_values.cloudwatch.region)
+  defaults        = try(local.deep_merge_alert_configs["${each.key}_msk"].defaults, {})
+  alerts          = try(local.deep_merge_alert_configs["${each.key}_msk"], {})
+  datasource      = try(each.value.block.datasource_uid, local.widget_default_values.cloudwatch.datasource_uid)
 }
 
 module "block_kafka_observability_alerts" {
   source = "./modules/alerts/block-kafka-observability"
 
-  for_each = { for index, item in try(local.blocks_by_type["kafka_observability"], []) : index => item if try(merge(var.alerts, try(item.block.alerts, {})).enabled, true) }
+  for_each = { for index, item in try(local.blocks_by_type["kafka_observability"], []) : index => item if try(merge(var.alerts, try(item.block.alerts, {})).enabled, false) || try(item.block.alerts.enabled, false) }
 
   namespace                = each.value.block.namespace
   extra_filters            = try(each.value.block.extra_filters, "")
@@ -99,7 +102,7 @@ module "block_kafka_observability_alerts" {
   lag_threshold            = try(each.value.block.lag_threshold, 0)
   lag_growth_window        = try(each.value.block.lag_growth_window, "15m")
   pending_period           = try(each.value.block.pending_period, "5m")
-  failed_state             = try(each.value.block.failed_state, "FAILED")
+  failed_state             = try(each.value.block.failed_state, "failed")
   dashboard_url            = try(each.value.block.dashboard_url, "")
   runbook_url              = try(each.value.block.runbook_url, "")
   defaults                 = try(local.deep_merge_alert_configs["${each.key}_kafka_observability"].defaults, {})

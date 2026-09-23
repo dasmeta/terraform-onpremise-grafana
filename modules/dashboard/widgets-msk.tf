@@ -26,6 +26,19 @@ module "msk_memory_widget" {
   datasource_uid = try(each.value.datasource_uid, local.widget_default_values.cloudwatch.datasource_uid)
 }
 
+module "msk_disk_widget" {
+  source = "./modules/widgets/msk/disk"
+
+  for_each = { for index, item in try(local.widget_config["msk/disk"], []) : index => item }
+
+  coordinates    = each.value.coordinates
+  cluster_names  = try(each.value.cluster_names, [])
+  broker_ids     = try(each.value.broker_ids, ["1", "2", "3"])
+  region         = try(each.value.region, local.widget_default_values.cloudwatch.region)
+  period         = try(each.value.period, local.widget_default_values.cloudwatch.period)
+  datasource_uid = try(each.value.datasource_uid, local.widget_default_values.cloudwatch.datasource_uid)
+}
+
 module "msk_throughput_in_widget" {
   source = "./modules/widgets/msk/throughput_in"
 
@@ -74,6 +87,19 @@ module "msk_offline_partitions_widget" {
   datasource_uid = try(each.value.datasource_uid, local.widget_default_values.cloudwatch.datasource_uid)
 }
 
+module "msk_under_replicated_widget" {
+  source = "./modules/widgets/msk/under_replicated"
+
+  for_each = { for index, item in try(local.widget_config["msk/under_replicated"], []) : index => item }
+
+  coordinates    = each.value.coordinates
+  cluster_names  = try(each.value.cluster_names, [])
+  broker_ids     = try(each.value.broker_ids, ["1", "2", "3"])
+  region         = try(each.value.region, local.widget_default_values.cloudwatch.region)
+  period         = try(each.value.period, local.widget_default_values.cloudwatch.period)
+  datasource_uid = try(each.value.datasource_uid, local.widget_default_values.cloudwatch.datasource_uid)
+}
+
 module "msk_consumer_lag_widget" {
   source = "./modules/widgets/msk/consumer_lag"
 
@@ -82,6 +108,7 @@ module "msk_consumer_lag_widget" {
   coordinates     = each.value.coordinates
   cluster_names   = try(each.value.cluster_names, [])
   consumer_groups = try(each.value.consumer_groups, [])
+  topics          = try(each.value.topics, [])
   region          = try(each.value.region, local.widget_default_values.cloudwatch.region)
   period          = try(each.value.period, local.widget_default_values.cloudwatch.period)
   datasource_uid  = try(each.value.datasource_uid, local.widget_default_values.cloudwatch.datasource_uid)

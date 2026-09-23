@@ -41,12 +41,9 @@ module "this" {
 }
 ```
 
-## Complete Kafka monitoring (MSK brokers + Prometheus observability)
+## Optional Kafka monitoring (MSK CloudWatch + Connect status exporter)
 
-Two additive row types. Put both on the same dashboard for full Kafka coverage.
-
-- `block/msk` — CloudWatch MSK broker health (`AWS/Kafka`)
-- `block/kafka_observability` — Prometheus consumer-group and Kafka Connect exporters
+Two additive row types, both off until added. Use DEFAULT CloudWatch MSK metrics and `kafka-connect-status-exporter` through VictoriaMetrics.
 
 ```hcl
 module "this" {
@@ -54,49 +51,47 @@ module "this" {
   version = "x.y.z"
 
   name        = "kafka"
-  data_source = { uid = "prometheus" }
+  data_source = { uid = "victoriametrics", type = "prometheus" }
 
   rows = [
     {
-      type           = "block/msk"
-      block_name     = "MSK brokers"
-      cluster_names  = ["example-msk-cluster"]
-      broker_ids     = ["1", "2", "3"]
-      region         = "eu-central-1"
-      datasource_uid = "cloudwatch"
+      type            = "block/msk"
+      block_name      = "MSK brokers"
+      cluster_names   = ["example-msk-cluster"]
+      broker_ids      = ["1", "2", "3"]
+      consumer_groups = ["example-payments"]
+      topics          = ["example-events"]
+      lag_threshold   = 10000
+      region          = "eu-central-1"
+      datasource_uid  = "cloudwatch"
       alerts = {
         enabled = true
         offline_partitions = {
           threshold      = 0
           pending_period = "5m"
         }
+        consumer_lag = {
+          threshold      = 10000
+          pending_period = "15m"
+        }
       }
     },
     {
-      type                     = "block/kafka_observability"
-      namespace                = "kafka"
-      datasource_uid           = "prometheus"
-      extra_filters            = "job=~\"kafka-exporter|kafka-connect-exporter\""
-      cluster_label            = "cluster"       # optional, when exporters expose a cluster label
-      cluster                  = "example-kafka" # optional
-      critical_consumer_groups = ["example-payments"]
-      idle_consumer_groups     = ["example-idle"]
-      stopped_connectors       = ["example-stopped-sink"]
-      lag_threshold            = 0
-      lag_growth_window        = "15m"
-      pending_period           = "5m"
-      dashboard_url            = "https://grafana.example.com/d/example-kafka"
-      runbook_url              = "https://example.com/runbooks/kafka"
+      type               = "block/kafka_observability"
+      namespace          = "example"
+      datasource_uid     = "victoriametrics"
+      extra_filters      = "job=~\"kafka-connect-status-exporter\""
+      stopped_connectors = ["example-stopped-sink"]
+      pending_period     = "5m"
       alerts = {
-        enabled         = true
-        exporter_scrape = { enabled = true }
+        enabled = true
       }
     }
   ]
 }
 ```
 
-See `modules/dashboard/tests/kafka-observability/` (both rows) and `modules/dashboard/tests/msk-cloudwatch/` (MSK only).
+See `modules/dashboard/tests/kafka-observability/` and `docs/DMVP-10603-kafka-observability.md`.
 
 ## How add new widget
 1. create module in modules/widgets (copy from one)
@@ -199,11 +194,13 @@ See `modules/dashboard/tests/kafka-observability/` (both rows) and `modules/dash
 | <a name="module_logs_warning_rate_widget"></a> [logs\_warning\_rate\_widget](#module\_logs\_warning\_rate\_widget) | ./modules/widgets/loki/warning-rate | n/a |
 | <a name="module_msk_consumer_lag_widget"></a> [msk\_consumer\_lag\_widget](#module\_msk\_consumer\_lag\_widget) | ./modules/widgets/msk/consumer_lag | n/a |
 | <a name="module_msk_cpu_widget"></a> [msk\_cpu\_widget](#module\_msk\_cpu\_widget) | ./modules/widgets/msk/cpu | n/a |
+| <a name="module_msk_disk_widget"></a> [msk\_disk\_widget](#module\_msk\_disk\_widget) | ./modules/widgets/msk/disk | n/a |
 | <a name="module_msk_memory_widget"></a> [msk\_memory\_widget](#module\_msk\_memory\_widget) | ./modules/widgets/msk/memory | n/a |
 | <a name="module_msk_offline_partitions_widget"></a> [msk\_offline\_partitions\_widget](#module\_msk\_offline\_partitions\_widget) | ./modules/widgets/msk/offline_partitions | n/a |
 | <a name="module_msk_partitions_widget"></a> [msk\_partitions\_widget](#module\_msk\_partitions\_widget) | ./modules/widgets/msk/partitions | n/a |
 | <a name="module_msk_throughput_in_widget"></a> [msk\_throughput\_in\_widget](#module\_msk\_throughput\_in\_widget) | ./modules/widgets/msk/throughput_in | n/a |
 | <a name="module_msk_throughput_out_widget"></a> [msk\_throughput\_out\_widget](#module\_msk\_throughput\_out\_widget) | ./modules/widgets/msk/throughput_out | n/a |
+| <a name="module_msk_under_replicated_widget"></a> [msk\_under\_replicated\_widget](#module\_msk\_under\_replicated\_widget) | ./modules/widgets/msk/under_replicated | n/a |
 | <a name="module_pod_cpu_widget"></a> [pod\_cpu\_widget](#module\_pod\_cpu\_widget) | ./modules/widgets/pod/cpu | n/a |
 | <a name="module_pod_memory_widget"></a> [pod\_memory\_widget](#module\_pod\_memory\_widget) | ./modules/widgets/pod/memory | n/a |
 | <a name="module_pod_restarts_widget"></a> [pod\_restarts\_widget](#module\_pod\_restarts\_widget) | ./modules/widgets/pod/restarts | n/a |

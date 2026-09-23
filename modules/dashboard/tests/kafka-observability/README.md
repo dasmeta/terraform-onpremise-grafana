@@ -1,18 +1,20 @@
 # Complete Kafka monitoring dashboard
 
-Example dashboard with both Kafka rows and generic identifiers:
+Optional example that enables both Kafka rows with generic identifiers:
 
-- `block/msk` — CloudWatch MSK brokers
-- `block/kafka_observability` — Prometheus consumer groups and Kafka Connect
+- `block/msk` — CloudWatch DEFAULT `AWS/Kafka` metrics (`cloudwatch`)
+- `block/kafka_observability` — `kafka-connect-status-exporter` through VictoriaMetrics (`victoriametrics`)
+
+Alerts stay off unless `alerts.enabled = true` is set on the row.
 
 ## What this tests
 
 | Item | Coverage |
 |------|----------|
-| **block/msk** | CPU, memory, bytes in/out, partition count, offline partitions, CloudWatch consumer lag |
-| **block/kafka_observability** | Consumer lag, lag trend, members, empty groups, Connect REST/state/totals, exporter health |
-| **alerts** | MSK offline partitions (opt-in); critical empty-member + lag growth, connector/task FAILED, REST down, optional scrape failure |
-| **selectors** | MSK `cluster_names` / `broker_ids`; Prometheus `namespace`, optional `cluster`/`cluster_label`, and `extra_filters` |
+| **block/msk** | CPU, memory, data-log disk, bytes in/out, partition count, offline partitions, under-replicated partitions, max/sum consumer lag |
+| **block/kafka_observability** | Connect REST, connector/task state, totals, exporter health |
+| **alerts** | Opt-in MSK offline partitions and MaxOffsetLag; opt-in Connect REST/failed/exporter |
+| **datasources** | `cloudwatch` and `victoriametrics` |
 
 Validate with:
 
@@ -22,6 +24,14 @@ terraform validate
 ```
 
 Do not hardcode customer-specific cluster, group, or connector names.
+
+Environment YAML should only pass identifiers and datasource UIDs. Do not copy this module into an environment wrapper.
+
+## Trade-off
+
+Native MSK `MaxOffsetLag` / `SumOffsetLag` can detect backlog. They do **not** provide exact per-group active-member count. Do not alert on `ConnectionCount`.
+
+Keep `kafka-lag-exporter` in the environment until these CloudWatch lag alerts are validated. Removal is a follow-up.
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 

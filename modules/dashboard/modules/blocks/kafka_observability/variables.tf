@@ -1,6 +1,6 @@
 variable "namespace" {
   type        = string
-  description = "Kubernetes namespace used to select Kafka exporter and Kafka Connect exporter metrics"
+  description = "Kubernetes namespace used to select kafka-connect-status-exporter metrics"
 }
 
 variable "datasource_uid" {
@@ -12,7 +12,7 @@ variable "datasource_uid" {
 variable "extra_filters" {
   type        = string
   default     = ""
-  description = "Additional PromQL label matchers shared by dashboard panels, for example job=~\"kafka-exporter|kafka-connect-exporter\""
+  description = "Additional PromQL label matchers shared by dashboard panels, for example job=~\"kafka-connect-status-exporter\""
 }
 
 variable "cluster_label" {

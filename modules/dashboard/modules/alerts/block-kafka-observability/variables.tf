@@ -1,6 +1,6 @@
 variable "namespace" {
   type        = string
-  description = "Kubernetes namespace used to select Kafka exporter and Kafka Connect exporter metrics"
+  description = "Kubernetes namespace used to select kafka-connect-status-exporter metrics"
 }
 
 variable "datasource" {
@@ -71,8 +71,8 @@ variable "pending_period" {
 
 variable "failed_state" {
   type        = string
-  default     = "FAILED"
-  description = "Connector/task state label value treated as failed"
+  default     = "failed"
+  description = "Connector/task state label value treated as failed. kafka-connect-status-exporter emits lowercase Connect states."
 }
 
 variable "dashboard_url" {
@@ -96,5 +96,5 @@ variable "defaults" {
 variable "alerts" {
   type        = any
   default     = {}
-  description = "Per-rule Kafka observability alert configuration. Supported keys: enabled, pending_period, labels, annotations, consumer_group_lag, connector_failed, task_failed, connect_rest_down, exporter_scrape."
+  description = "Per-rule Kafka Connect alert configuration. Supported keys: enabled, pending_period, labels, annotations, connector_failed, task_failed, connect_rest_down, exporter_scrape. All rules stay off unless alerts.enabled is true."
 }
