@@ -62,6 +62,35 @@ module "grafana_monitoring" {
 }
 ```
 
+## Example for MSK (AWS Kafka) CloudWatch dashboard block
+
+Requires a Grafana CloudWatch datasource (typically UID `cloudwatch`) configured in the target environment.
+
+```hcl
+application_dashboard = [{
+  name = "Platform Overview"
+  rows = [
+    {
+      type           = "block/msk"
+      block_name     = "Kafka (MSK)"
+      cluster_names  = ["example-msk-cluster"]
+      region         = "eu-central-1"
+      datasource_uid = "cloudwatch"
+      consumer_groups = ["example-consumer-group"] # optional, for MaxOffsetLag panels
+      alerts = {
+        enabled = true
+        offline_partitions = {
+          threshold      = 0
+          pending_period = "5m"
+        }
+      }
+    }
+  ]
+}]
+```
+
+See `modules/dashboard/tests/msk-cloudwatch/` for a validate/plan example.
+
 ## Example for Alerts
 ```terraform
 module "grafana_alerts" {

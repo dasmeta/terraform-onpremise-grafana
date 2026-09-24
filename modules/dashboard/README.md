@@ -83,6 +83,8 @@ module "this" {
 | <a name="module_block_elasticache_redis"></a> [block\_elasticache\_redis](#module\_block\_elasticache\_redis) | ./modules/blocks/elasticache_redis | n/a |
 | <a name="module_block_ingress"></a> [block\_ingress](#module\_block\_ingress) | ./modules/blocks/ingress | n/a |
 | <a name="module_block_ingress_nginx_alerts"></a> [block\_ingress\_nginx\_alerts](#module\_block\_ingress\_nginx\_alerts) | ./modules/alerts/block-ingress-nginx | n/a |
+| <a name="module_block_msk"></a> [block\_msk](#module\_block\_msk) | ./modules/blocks/msk | n/a |
+| <a name="module_block_msk_alerts"></a> [block\_msk\_alerts](#module\_block\_msk\_alerts) | ./modules/alerts/block-msk | n/a |
 | <a name="module_block_rds"></a> [block\_rds](#module\_block\_rds) | ./modules/blocks/rds | n/a |
 | <a name="module_block_redis"></a> [block\_redis](#module\_block\_redis) | ./modules/blocks/redis | n/a |
 | <a name="module_block_service"></a> [block\_service](#module\_block\_service) | ./modules/blocks/service | n/a |
@@ -127,6 +129,13 @@ module "this" {
 | <a name="module_logs_count_widget"></a> [logs\_count\_widget](#module\_logs\_count\_widget) | ./modules/widgets/loki/count | n/a |
 | <a name="module_logs_error_rate_widget"></a> [logs\_error\_rate\_widget](#module\_logs\_error\_rate\_widget) | ./modules/widgets/loki/error-rate | n/a |
 | <a name="module_logs_warning_rate_widget"></a> [logs\_warning\_rate\_widget](#module\_logs\_warning\_rate\_widget) | ./modules/widgets/loki/warning-rate | n/a |
+| <a name="module_msk_consumer_lag_widget"></a> [msk\_consumer\_lag\_widget](#module\_msk\_consumer\_lag\_widget) | ./modules/widgets/msk/consumer_lag | n/a |
+| <a name="module_msk_cpu_widget"></a> [msk\_cpu\_widget](#module\_msk\_cpu\_widget) | ./modules/widgets/msk/cpu | n/a |
+| <a name="module_msk_memory_widget"></a> [msk\_memory\_widget](#module\_msk\_memory\_widget) | ./modules/widgets/msk/memory | n/a |
+| <a name="module_msk_offline_partitions_widget"></a> [msk\_offline\_partitions\_widget](#module\_msk\_offline\_partitions\_widget) | ./modules/widgets/msk/offline_partitions | n/a |
+| <a name="module_msk_partitions_widget"></a> [msk\_partitions\_widget](#module\_msk\_partitions\_widget) | ./modules/widgets/msk/partitions | n/a |
+| <a name="module_msk_throughput_in_widget"></a> [msk\_throughput\_in\_widget](#module\_msk\_throughput\_in\_widget) | ./modules/widgets/msk/throughput_in | n/a |
+| <a name="module_msk_throughput_out_widget"></a> [msk\_throughput\_out\_widget](#module\_msk\_throughput\_out\_widget) | ./modules/widgets/msk/throughput_out | n/a |
 | <a name="module_pod_cpu_widget"></a> [pod\_cpu\_widget](#module\_pod\_cpu\_widget) | ./modules/widgets/pod/cpu | n/a |
 | <a name="module_pod_memory_widget"></a> [pod\_memory\_widget](#module\_pod\_memory\_widget) | ./modules/widgets/pod/memory | n/a |
 | <a name="module_pod_restarts_widget"></a> [pod\_restarts\_widget](#module\_pod\_restarts\_widget) | ./modules/widgets/pod/restarts | n/a |
