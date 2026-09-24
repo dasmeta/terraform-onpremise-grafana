@@ -1,12 +1,20 @@
 # Widget alerts
 
 locals {
-  widget_alert_rules = concat(flatten(values(module.block_sla_nginx_alerts).*.alert_rules), flatten(values(module.block_ingress_nginx_alerts).*.alert_rules), flatten(values(module.block_service_alerts).*.alert_rules))
+  widget_alert_rules = concat(
+    flatten(values(module.block_sla_nginx_alerts).*.alert_rules),
+    flatten(values(module.block_ingress_nginx_alerts).*.alert_rules),
+    flatten(values(module.block_service_alerts).*.alert_rules),
+    flatten(values(module.block_msk_alerts).*.alert_rules),
+    flatten(values(module.block_kafka_observability_alerts).*.alert_rules)
+  )
 
   deep_merge_alert_configs = merge(
     { for index, item in try(local.blocks_by_type["sla"], []) : "${index}_sla" => provider::deepmerge::mergo(var.alerts, try(item.block.alerts, {})) },
     { for index, item in try(local.blocks_by_type["ingress"], []) : "${index}_ingress" => provider::deepmerge::mergo(var.alerts, try(item.block.alerts, {})) },
-    { for index, item in try(local.blocks_by_type["service"], []) : "${index}_service" => provider::deepmerge::mergo(var.alerts, try(item.block.alerts, {})) }
+    { for index, item in try(local.blocks_by_type["service"], []) : "${index}_service" => provider::deepmerge::mergo(var.alerts, try(item.block.alerts, {})) },
+    { for index, item in try(local.blocks_by_type["msk"], []) : "${index}_msk" => provider::deepmerge::mergo(var.alerts, try(item.block.alerts, {})) },
+    { for index, item in try(local.blocks_by_type["kafka_observability"], []) : "${index}_kafka_observability" => provider::deepmerge::mergo(var.alerts, try(item.block.alerts, {})) }
   )
 }
 
@@ -61,4 +69,39 @@ module "block_service_alerts" {
   defaults   = provider::deepmerge::mergo(try(local.deep_merge_alert_configs["${each.value.service_index}_service"].defaults, {}), { labels = { (try(local.deep_merge_alert_configs["${each.value.service_index}_service"].map_namespace_to_env_label, true) == true ? "env" : "namespace") = each.value.namespace } })
   alerts     = try(local.deep_merge_alert_configs["${each.value.service_index}_service"], {})
   datasource = try(each.value.block.datasource_uid, var.data_source.uid)
+}
+
+module "block_msk_alerts" {
+  source = "./modules/alerts/block-msk"
+
+  for_each = { for index, item in try(local.blocks_by_type["msk"], []) : index => item if try(item.block.alerts.enabled, false) }
+
+  cluster_names   = try(each.value.block.cluster_names, [])
+  consumer_groups = try(each.value.block.consumer_groups, [])
+  topics          = try(each.value.block.topics, [])
+  lag_threshold   = try(each.value.block.lag_threshold, 10000)
+  region          = try(each.value.block.region, local.widget_default_values.cloudwatch.region)
+  defaults        = try(local.deep_merge_alert_configs["${each.key}_msk"].defaults, {})
+  alerts          = try(local.deep_merge_alert_configs["${each.key}_msk"], {})
+  datasource      = try(each.value.block.datasource_uid, local.widget_default_values.cloudwatch.datasource_uid)
+}
+
+module "block_kafka_observability_alerts" {
+  source = "./modules/alerts/block-kafka-observability"
+
+  for_each = { for index, item in try(local.blocks_by_type["kafka_observability"], []) : index => item if try(item.block.alerts.enabled, false) }
+
+  namespace               = each.value.block.namespace
+  extra_filters           = try(each.value.block.extra_filters, "")
+  exporter_scrape_filters = try(each.value.block.exporter_scrape_filters, try(each.value.block.extra_filters, ""))
+  cluster_label           = try(each.value.block.cluster_label, "")
+  cluster                 = try(each.value.block.cluster, "")
+  stopped_connectors      = try(each.value.block.stopped_connectors, [])
+  pending_period          = try(each.value.block.pending_period, "5m")
+  failed_state            = try(each.value.block.failed_state, "failed")
+  dashboard_url           = try(each.value.block.dashboard_url, "")
+  runbook_url             = try(each.value.block.runbook_url, "")
+  defaults                = try(local.deep_merge_alert_configs["${each.key}_kafka_observability"].defaults, {})
+  alerts                  = try(local.deep_merge_alert_configs["${each.key}_kafka_observability"], {})
+  datasource              = try(each.value.block.datasource_uid, var.data_source.uid)
 }

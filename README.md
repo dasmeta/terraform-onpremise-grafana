@@ -62,6 +62,53 @@ module "grafana_monitoring" {
 }
 ```
 
+## Example for optional Kafka monitoring
+
+Disabled until the rows are added. Use CloudWatch for MSK brokers/lag and VictoriaMetrics for `kafka-connect-status-exporter`.
+
+```hcl
+application_dashboard = [{
+  name = "Platform Overview"
+  rows = [
+    {
+      type            = "block/msk"
+      block_name      = "MSK brokers"
+      cluster_names   = ["example-msk-cluster"]
+      broker_ids      = ["1", "2", "3"]
+      consumer_groups = ["example-payments"]
+      topics          = ["example-events"]
+      lag_threshold   = 10000
+      region          = "eu-central-1"
+      datasource_uid  = "cloudwatch"
+      alerts = {
+        enabled = true
+        offline_partitions = {
+          threshold      = 0
+          pending_period = "5m"
+        }
+        consumer_lag = {
+          threshold      = 10000
+          pending_period = "15m"
+        }
+      }
+    },
+    {
+      type               = "block/kafka_observability"
+      namespace          = "example"
+      datasource_uid     = "victoriametrics"
+      extra_filters      = "job=~\"example-connect-status-exporter\""
+      stopped_connectors = ["example-stopped-sink"]
+      pending_period     = "5m"
+      alerts = {
+        enabled = true
+      }
+    }
+  ]
+}]
+```
+
+See `modules/dashboard/tests/kafka-observability/` and `docs/DMVP-10603-kafka-observability.md`.
+
 ## Example for Alerts
 ```terraform
 module "grafana_alerts" {
@@ -643,7 +690,7 @@ When consuming this module through `dasmeta/grafanav12/aws` (for example a downs
 
 | Name | Version |
 |------|---------|
-| <a name="provider_grafana"></a> [grafana](#provider\_grafana) | ~> 4.0 |
+
 
 ## Modules
 
