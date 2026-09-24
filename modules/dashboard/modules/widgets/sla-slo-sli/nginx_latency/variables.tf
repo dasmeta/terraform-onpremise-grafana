@@ -26,8 +26,9 @@ variable "coordinates" {
 
 # stats
 variable "period" {
-  type    = string
-  default = "$__rate_interval"
+  type        = string
+  default     = "1d"
+  description = "Prometheus range used to calculate average latency and latency distribution"
 }
 
 variable "filter" {
