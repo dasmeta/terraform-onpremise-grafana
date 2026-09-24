@@ -94,4 +94,12 @@ variable "alert_rules" {
   }))
   default     = []
   description = "This variable describes alert folders, groups and rules."
+
+  validation {
+    condition = alltrue([
+      for rule in var.alert_rules :
+      try(rule.datasource_type, "prometheus") != "cloudwatch" || try(rule.cloudwatch_query, null) != null
+    ])
+    error_message = "alert_rules with datasource_type = \"cloudwatch\" must set cloudwatch_query."
+  }
 }

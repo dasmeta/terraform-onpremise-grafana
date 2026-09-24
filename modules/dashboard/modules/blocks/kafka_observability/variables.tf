@@ -12,7 +12,7 @@ variable "datasource_uid" {
 variable "extra_filters" {
   type        = string
   default     = ""
-  description = "Additional PromQL label matchers shared by dashboard panels, for example job=~\"kafka-connect-status-exporter\""
+  description = "Additional PromQL label matchers shared by dashboard panels, for example job=~\"example-connect-status-exporter\""
 }
 
 variable "cluster_label" {

@@ -5,7 +5,7 @@ Optional example that enables both Kafka rows with generic identifiers:
 - `block/msk` — CloudWatch DEFAULT `AWS/Kafka` metrics (`cloudwatch`)
 - `block/kafka_observability` — `kafka-connect-status-exporter` through VictoriaMetrics (`victoriametrics`)
 
-Alerts stay off unless `alerts.enabled = true` is set on the row.
+Alerts stay off unless `alerts.enabled = true` is set on that row. Dashboard-level `alerts.enabled` does not enable MSK or Connect alerts.
 
 ## What this tests
 

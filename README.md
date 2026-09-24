@@ -96,7 +96,7 @@ application_dashboard = [{
       type               = "block/kafka_observability"
       namespace          = "example"
       datasource_uid     = "victoriametrics"
-      extra_filters      = "job=~\"kafka-connect-status-exporter\""
+      extra_filters      = "job=~\"example-connect-status-exporter\""
       stopped_connectors = ["example-stopped-sink"]
       pending_period     = "5m"
       alerts = {

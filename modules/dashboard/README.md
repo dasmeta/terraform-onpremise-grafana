@@ -80,7 +80,7 @@ module "this" {
       type               = "block/kafka_observability"
       namespace          = "example"
       datasource_uid     = "victoriametrics"
-      extra_filters      = "job=~\"kafka-connect-status-exporter\""
+      extra_filters      = "job=~\"example-connect-status-exporter\""
       stopped_connectors = ["example-stopped-sink"]
       pending_period     = "5m"
       alerts = {
@@ -183,10 +183,6 @@ See `modules/dashboard/tests/kafka-observability/` and `docs/DMVP-10603-kafka-ob
 | <a name="module_kafka_connect_rest_up_widget"></a> [kafka\_connect\_rest\_up\_widget](#module\_kafka\_connect\_rest\_up\_widget) | ./modules/widgets/kafka/connect_rest_up | n/a |
 | <a name="module_kafka_connect_totals_widget"></a> [kafka\_connect\_totals\_widget](#module\_kafka\_connect\_totals\_widget) | ./modules/widgets/kafka/connect_totals | n/a |
 | <a name="module_kafka_connector_state_widget"></a> [kafka\_connector\_state\_widget](#module\_kafka\_connector\_state\_widget) | ./modules/widgets/kafka/connector_state | n/a |
-| <a name="module_kafka_consumer_group_members_widget"></a> [kafka\_consumer\_group\_members\_widget](#module\_kafka\_consumer\_group\_members\_widget) | ./modules/widgets/kafka/consumer_group_members | n/a |
-| <a name="module_kafka_consumer_lag_trend_widget"></a> [kafka\_consumer\_lag\_trend\_widget](#module\_kafka\_consumer\_lag\_trend\_widget) | ./modules/widgets/kafka/consumer_lag_trend | n/a |
-| <a name="module_kafka_consumer_lag_widget"></a> [kafka\_consumer\_lag\_widget](#module\_kafka\_consumer\_lag\_widget) | ./modules/widgets/kafka/consumer_lag | n/a |
-| <a name="module_kafka_empty_consumer_groups_widget"></a> [kafka\_empty\_consumer\_groups\_widget](#module\_kafka\_empty\_consumer\_groups\_widget) | ./modules/widgets/kafka/empty_consumer_groups | n/a |
 | <a name="module_kafka_exporter_health_widget"></a> [kafka\_exporter\_health\_widget](#module\_kafka\_exporter\_health\_widget) | ./modules/widgets/kafka/exporter_health | n/a |
 | <a name="module_kafka_task_state_widget"></a> [kafka\_task\_state\_widget](#module\_kafka\_task\_state\_widget) | ./modules/widgets/kafka/task_state | n/a |
 | <a name="module_logs_count_widget"></a> [logs\_count\_widget](#module\_logs\_count\_widget) | ./modules/widgets/loki/count | n/a |
@@ -257,7 +253,7 @@ See `modules/dashboard/tests/kafka-observability/` and `docs/DMVP-10603-kafka-ob
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_alerts"></a> [alerts](#input\_alerts) | Allows to configure globally dashboard block/(sla\|ingress\|service\|msk\|kafka\_observability) blocks/widgets related alerts. For `block/service` alerts, `map_namespace_to_env_label` (default true) maps each alert namespace to `labels.env`; set false to map it to `labels.namespace`. | `any` | `{}` | no |
+| <a name="input_alerts"></a> [alerts](#input\_alerts) | Allows to configure globally dashboard block/(sla\|ingress\|service\|msk\|kafka\_observability) blocks/widgets related alerts. For `block/service` alerts, `map_namespace_to_env_label` (default true) maps each alert namespace to `labels.env`; set false to map it to `labels.namespace`. `block/msk` and `block/kafka_observability` still require `alerts.enabled = true` on the row; dashboard-level `alerts.enabled` does not turn those rows on. | `any` | `{}` | no |
 | <a name="input_create_folder"></a> [create\_folder](#input\_create\_folder) | If true, create folder in this module. If false, use existing folder. | `bool` | `false` | no |
 | <a name="input_data_source"></a> [data\_source](#input\_data\_source) | The grafana dashboard global/default datasource, will be used in widget items if they have no their custom ones | <pre>object({<br/>    uid  = optional(string, null)<br/>    type = optional(string, "prometheus")<br/>  })</pre> | `{}` | no |
 | <a name="input_defaults"></a> [defaults](#input\_defaults) | Default values to be supplied to all modules. | `any` | `{}` | no |

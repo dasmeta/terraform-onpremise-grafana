@@ -14,6 +14,7 @@ No providers.
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_base"></a> [base](#module\_base) | ../../base | n/a |
+| <a name="module_selector"></a> [selector](#module\_selector) | ../selector | n/a |
 
 ## Resources
 

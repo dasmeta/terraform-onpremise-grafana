@@ -1,20 +1,27 @@
+module "selector" {
+  source = "../../widgets/kafka/selector"
+
+  namespace     = var.namespace
+  extra_filters = var.extra_filters
+  cluster_label = var.cluster_label
+  cluster       = var.cluster
+}
+
+module "scrape_selector" {
+  source = "../../widgets/kafka/selector"
+
+  namespace     = var.namespace
+  extra_filters = var.exporter_scrape_filters != "" ? var.exporter_scrape_filters : var.extra_filters
+  cluster_label = var.cluster_label
+  cluster       = var.cluster
+}
+
 locals {
-  matchers = compact([
-    var.namespace != "" ? "namespace=\"${var.namespace}\"" : "",
-    var.cluster_label != "" && var.cluster != "" ? "${var.cluster_label}=\"${var.cluster}\"" : "",
-    var.extra_filters != "" ? var.extra_filters : "",
-  ])
-  selector = join(",", local.matchers)
-
-  scrape_matchers = compact([
-    var.namespace != "" ? "namespace=\"${var.namespace}\"" : "",
-    var.cluster_label != "" && var.cluster != "" ? "${var.cluster_label}=\"${var.cluster}\"" : "",
-    var.exporter_scrape_filters != "" ? var.exporter_scrape_filters : var.extra_filters,
-  ])
-  scrape_selector = join(",", local.scrape_matchers)
-
-  stopped_re     = join("|", var.stopped_connectors)
-  stopped_filter = length(var.stopped_connectors) > 0 ? ",connector!~\"${local.stopped_re}\"" : ""
+  selector        = module.selector.selector
+  scrape_selector = module.scrape_selector.selector
+  stopped_re      = join("|", var.stopped_connectors)
+  stopped_filter  = length(var.stopped_connectors) > 0 ? ",connector!~\"${local.stopped_re}\"" : ""
+  failed_selector = "{${join(",", concat(module.selector.matchers, ["state=\"${var.failed_state}\""]))}${local.stopped_filter}}"
 
   pending_period = coalesce(try(var.alerts.pending_period, null), var.pending_period, try(var.defaults.pending_period, null), "5m")
   group_name     = coalesce(try(var.defaults.group, null), "Kafka observability ${var.namespace}")
@@ -36,10 +43,11 @@ locals {
   connect_rest_down_enabled = coalesce(try(var.alerts.connect_rest_down.enabled, null), try(var.alerts.enabled, false), false)
   exporter_scrape_enabled   = coalesce(try(var.alerts.exporter_scrape.enabled, null), try(var.alerts.enabled, false), false)
 
-  connector_failed_expr = "sum by (connector) (kafka_connect_connector_state{${local.selector},state=\"${var.failed_state}\"${local.stopped_filter}}) > 0"
-  task_failed_expr      = "sum by (connector, task) (kafka_connect_task_state{${local.selector},state=\"${var.failed_state}\"${local.stopped_filter}}) > 0"
-  connect_rest_expr     = "sum(kafka_connect_rest_up{${local.selector}}) == 0"
-  exporter_scrape_expr  = "sum by (job) (up{${local.scrape_selector}}) == 0 or absent(kafka_connect_rest_up{${local.selector}})"
+  connector_failed_expr = "sum by (connector) (kafka_connect_connector_state${local.failed_selector}) > 0"
+  task_failed_expr      = "sum by (connector, task) (kafka_connect_task_state${local.failed_selector}) > 0"
+  # == bool 0 returns 1 when down so Grafana reduce last() > 0 can fire. Bare == 0 keeps value 0 and never matches gt 0.
+  connect_rest_expr    = "sum(kafka_connect_rest_up${local.selector}) == bool 0"
+  exporter_scrape_expr = "(sum by (job) (up${local.scrape_selector}) == bool 0) or absent(kafka_connect_rest_up${local.selector})"
 }
 
 output "alert_rules" {
@@ -154,4 +162,24 @@ output "alert_rules" {
       }
     ] : [],
   )
+}
+
+output "connector_failed_expr" {
+  description = "Rendered PromQL for connector failed-state alerts"
+  value       = local.connector_failed_expr
+}
+
+output "task_failed_expr" {
+  description = "Rendered PromQL for task failed-state alerts"
+  value       = local.task_failed_expr
+}
+
+output "connect_rest_expr" {
+  description = "Rendered PromQL for Kafka Connect REST down alerts"
+  value       = local.connect_rest_expr
+}
+
+output "exporter_scrape_expr" {
+  description = "Rendered PromQL for Connect exporter scrape alerts"
+  value       = local.exporter_scrape_expr
 }

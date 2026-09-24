@@ -1,11 +1,8 @@
-# DMVP-10603 Review: Optional Kafka monitoring
+# Optional Kafka monitoring
 
-**Ticket:** [DMVP-10603](https://tutorbot.atlassian.net/browse/DMVP-10603)  
-**Repo:** `dasmeta/terraform-onpremise-grafana` (`dasmeta/grafana/onpremise`)  
-**Branch:** `DMVP-10603-kafka-observability`  
-**Status:** Implementation is on the branch. Waiting for reviewer approval before PR merge, onpremise minor, and consumer enablement.
+Reusable Kafka dashboard and alert blocks in `dasmeta/grafana/onpremise`. Environment files should only pass identifiers, datasource UIDs, thresholds, and `alerts.enabled`. Do not duplicate this implementation in an environment wrapper.
 
-Reusable logic stays in this shared module. Environment files such as `terraform/1-environments/dev/grafana.yaml` should only pass identifiers, datasource UIDs, thresholds, and `alerts.enabled`. Do not duplicate this implementation in an environment wrapper or edit the Terraform module cache.
+Consumer lag lives on `block/msk` (CloudWatch `MaxOffsetLag`). `block/kafka_observability` is Kafka Connect only.
 
 ---
 
@@ -122,7 +119,7 @@ application_dashboard = [{
       type               = "block/kafka_observability"
       namespace          = "example"
       datasource_uid     = "victoriametrics"
-      extra_filters      = "job=~\"kafka-connect-status-exporter\""
+      extra_filters      = "job=~\"example-connect-status-exporter\""
       stopped_connectors = ["example-stopped-sink"]
       alerts             = { enabled = true }
     }
@@ -147,7 +144,7 @@ rows:
   - type: block/kafka_observability
     namespace: example
     datasource_uid: victoriametrics
-    extra_filters: 'job=~"kafka-connect-status-exporter"'
+    extra_filters: 'job=~"example-connect-status-exporter"'
     alerts:
       enabled: true
 ```
@@ -158,16 +155,16 @@ Shared-module source: `dasmeta/grafana/onpremise`. The AWS wrapper (`dasmeta/gra
 
 ## 6. Alerts
 
-All Kafka/MSK widget alerts are **opt-in** (`alerts.enabled = true` on the row). Grafana owns them. They do not create CloudWatch alarms or Prometheus rules.
+All Kafka/MSK widget alerts are **opt-in**. They require `alerts.enabled = true` on that row. Dashboard-level `alerts.enabled` does not turn them on. Grafana owns them. They do not create CloudWatch alarms or Prometheus rules.
 
 | Alert | Source | Default |
 |-------|--------|---------|
-| Offline partitions `> 0` | CloudWatch `OfflinePartitionsCount` | off until row alerts enabled |
-| Sustained high lag `MaxOffsetLag > threshold` | CloudWatch, pending `15m` | off; requires `consumer_groups` |
-| Connect REST down | `sum(kafka_connect_rest_up)==0` | off until row alerts enabled |
+| Offline partitions `> 0` | CloudWatch `OfflinePartitionsCount` | off until that row sets `alerts.enabled = true` |
+| Sustained high lag `MaxOffsetLag > threshold` | CloudWatch, pending `15m` unless `alerts.consumer_lag.pending_period` is set | off; requires `consumer_groups` |
+| Connect REST down | `sum(kafka_connect_rest_up) == bool 0`, Grafana `last() > 0` | off until that row sets `alerts.enabled = true` |
 | Connector `failed` | `kafka_connect_connector_state{state="failed"}` | off; `stopped_connectors` excluded |
 | Task `failed` | `kafka_connect_task_state{state="failed"}` | off; `stopped_connectors` excluded |
-| Exporter down or metric missing | `up==0 or absent(kafka_connect_rest_up)` | off until row alerts enabled |
+| Exporter down or metric missing | `(up == bool 0) or absent(kafka_connect_rest_up)` | off until that row sets `alerts.enabled = true` |
 
 ---
 
@@ -226,6 +223,12 @@ Do this after a consumer enables the two rows in Dev. Do not apply from this mod
 - [ ] Missing lag uses `Strict` + `NoData`, not `replaceNN=0`
 - [ ] No member-count alert from `ConnectionCount`
 - [ ] Connect queries match the real exporter (`failed` lowercase)
+- [ ] Connect alerts do not expose unused Prometheus lag variables
+- [ ] REST-down and exporter-down queries use `== bool 0` so Grafana `last() > 0` can fire
+- [ ] MSK/Connect alerts require `alerts.enabled = true` on the row, not dashboard-level enablement
+- [ ] MaxOffsetLag pending stays `15m` unless `alerts.consumer_lag.pending_period` is set
+- [ ] Empty PromQL matchers do not emit `{,state=...}`
+- [ ] `block/kafka_observability` has Connect panels only; Prometheus consumer-lag widgets are not in this PR
 - [ ] Slack/Teams routing is reused, not duplicated
 - [ ] Environment YAML remains config-only
 - [ ] `kafka-lag-exporter` is not removed

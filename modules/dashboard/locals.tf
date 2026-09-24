@@ -258,11 +258,7 @@ locals {
     values(module.ses_sending_rate_widget).*.data,
     values(module.ses_bounce_reject_widget).*.data,
 
-    # Kafka observability widgets
-    values(module.kafka_consumer_lag_widget).*.data,
-    values(module.kafka_consumer_lag_trend_widget).*.data,
-    values(module.kafka_consumer_group_members_widget).*.data,
-    values(module.kafka_empty_consumer_groups_widget).*.data,
+    # Kafka Connect widgets
     values(module.kafka_connect_rest_up_widget).*.data,
     values(module.kafka_connector_state_widget).*.data,
     values(module.kafka_task_state_widget).*.data,

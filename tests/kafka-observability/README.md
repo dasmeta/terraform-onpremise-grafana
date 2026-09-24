@@ -5,7 +5,7 @@ Consumer-facing example for `source = "dasmeta/grafana/onpremise"`. It enables o
 - `block/msk` → CloudWatch DEFAULT `AWS/Kafka`
 - `block/kafka_observability` → `kafka-connect-status-exporter` through VictoriaMetrics
 
-Dashboard-level alerts stay off. Kafka/MSK alerts turn on only because each row sets `alerts.enabled = true`.
+Dashboard-level alerts stay off. Kafka/MSK alerts turn on only when that row sets `alerts.enabled = true`. Dashboard-level `alerts.enabled` is ignored for these rows.
 
 ## 1. Validate (no apply, no live Grafana)
 

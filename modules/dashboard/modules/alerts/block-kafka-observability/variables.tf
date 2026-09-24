@@ -33,34 +33,10 @@ variable "cluster" {
   description = "Optional cluster label value"
 }
 
-variable "critical_consumer_groups" {
-  type        = list(string)
-  default     = []
-  description = "Consumer groups that must stay active"
-}
-
-variable "idle_consumer_groups" {
-  type        = list(string)
-  default     = []
-  description = "Consumer groups that are intentionally idle and are excluded from empty-member alerts"
-}
-
 variable "stopped_connectors" {
   type        = list(string)
   default     = []
   description = "Connectors that are intentionally stopped and are excluded from FAILED alerts"
-}
-
-variable "lag_threshold" {
-  type        = number
-  default     = 0
-  description = "Minimum lag growth required to fire the empty-member alert"
-}
-
-variable "lag_growth_window" {
-  type        = string
-  default     = "15m"
-  description = "Range window used with increase(kafka_consumergroup_lag[window])"
 }
 
 variable "pending_period" {
@@ -96,5 +72,5 @@ variable "defaults" {
 variable "alerts" {
   type        = any
   default     = {}
-  description = "Per-rule Kafka Connect alert configuration. Supported keys: enabled, pending_period, labels, annotations, connector_failed, task_failed, connect_rest_down, exporter_scrape. All rules stay off unless alerts.enabled is true."
+  description = "Per-rule Kafka Connect alert configuration. Supported keys: enabled, pending_period, labels, annotations, connector_failed, task_failed, connect_rest_down, exporter_scrape. Rules stay off unless this row sets alerts.enabled = true. Dashboard-level alerts.enabled is ignored."
 }

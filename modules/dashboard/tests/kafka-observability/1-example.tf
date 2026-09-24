@@ -33,7 +33,7 @@ module "this" {
       block_name         = "Kafka Connect"
       namespace          = "example"
       datasource_uid     = "victoriametrics"
-      extra_filters      = "job=~\"kafka-connect-status-exporter\""
+      extra_filters      = "job=~\"example-connect-status-exporter\""
       stopped_connectors = ["example-stopped-sink"]
       pending_period     = "5m"
       dashboard_url      = "https://grafana.example.com/d/example-kafka"

@@ -60,7 +60,7 @@ variable "alerts" {
     consumer_lag = optional(object({
       enabled        = optional(bool, true)
       threshold      = optional(number, null)
-      pending_period = optional(string, null)
+      pending_period = optional(string, "15m")
       labels         = optional(any, {})
       annotations    = optional(any, {})
       group          = optional(string, null)

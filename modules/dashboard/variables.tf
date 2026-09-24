@@ -77,7 +77,7 @@ variable "variables" {
 variable "alerts" {
   type        = any
   default     = {}
-  description = "Allows to configure globally dashboard block/(sla|ingress|service|msk|kafka_observability) blocks/widgets related alerts. For `block/service` alerts, `map_namespace_to_env_label` (default true) maps each alert namespace to `labels.env`; set false to map it to `labels.namespace`."
+  description = "Allows to configure globally dashboard block/(sla|ingress|service|msk|kafka_observability) blocks/widgets related alerts. For `block/service` alerts, `map_namespace_to_env_label` (default true) maps each alert namespace to `labels.env`; set false to map it to `labels.namespace`. `block/msk` and `block/kafka_observability` still require `alerts.enabled = true` on the row; dashboard-level `alerts.enabled` does not turn those rows on."
 }
 
 variable "folder_name" {

@@ -18,7 +18,7 @@ locals {
   )
 
   lag_threshold = coalesce(try(var.alerts.consumer_lag.threshold, null), var.lag_threshold)
-  lag_pending   = coalesce(try(var.alerts.consumer_lag.pending_period, null), try(var.defaults.pending_period, null), "15m")
+  lag_pending   = coalesce(try(var.alerts.consumer_lag.pending_period, null), "15m")
 
   lag_targets = flatten([
     for cluster in var.cluster_names : [
@@ -37,6 +37,11 @@ locals {
       }]
     ]
   ])
+}
+
+output "lag_pending_period" {
+  description = "Pending period used by MaxOffsetLag alerts. Always 15m unless consumer_lag.pending_period is set."
+  value       = local.lag_pending
 }
 
 output "alert_rules" {

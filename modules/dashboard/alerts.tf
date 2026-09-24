@@ -74,7 +74,7 @@ module "block_service_alerts" {
 module "block_msk_alerts" {
   source = "./modules/alerts/block-msk"
 
-  for_each = { for index, item in try(local.blocks_by_type["msk"], []) : index => item if try(merge(var.alerts, try(item.block.alerts, {})).enabled, false) || try(item.block.alerts.enabled, false) }
+  for_each = { for index, item in try(local.blocks_by_type["msk"], []) : index => item if try(item.block.alerts.enabled, false) }
 
   cluster_names   = try(each.value.block.cluster_names, [])
   consumer_groups = try(each.value.block.consumer_groups, [])
@@ -89,23 +89,19 @@ module "block_msk_alerts" {
 module "block_kafka_observability_alerts" {
   source = "./modules/alerts/block-kafka-observability"
 
-  for_each = { for index, item in try(local.blocks_by_type["kafka_observability"], []) : index => item if try(merge(var.alerts, try(item.block.alerts, {})).enabled, false) || try(item.block.alerts.enabled, false) }
+  for_each = { for index, item in try(local.blocks_by_type["kafka_observability"], []) : index => item if try(item.block.alerts.enabled, false) }
 
-  namespace                = each.value.block.namespace
-  extra_filters            = try(each.value.block.extra_filters, "")
-  exporter_scrape_filters  = try(each.value.block.exporter_scrape_filters, try(each.value.block.extra_filters, ""))
-  cluster_label            = try(each.value.block.cluster_label, "")
-  cluster                  = try(each.value.block.cluster, "")
-  critical_consumer_groups = try(each.value.block.critical_consumer_groups, [])
-  idle_consumer_groups     = try(each.value.block.idle_consumer_groups, [])
-  stopped_connectors       = try(each.value.block.stopped_connectors, [])
-  lag_threshold            = try(each.value.block.lag_threshold, 0)
-  lag_growth_window        = try(each.value.block.lag_growth_window, "15m")
-  pending_period           = try(each.value.block.pending_period, "5m")
-  failed_state             = try(each.value.block.failed_state, "failed")
-  dashboard_url            = try(each.value.block.dashboard_url, "")
-  runbook_url              = try(each.value.block.runbook_url, "")
-  defaults                 = try(local.deep_merge_alert_configs["${each.key}_kafka_observability"].defaults, {})
-  alerts                   = try(local.deep_merge_alert_configs["${each.key}_kafka_observability"], {})
-  datasource               = try(each.value.block.datasource_uid, var.data_source.uid)
+  namespace               = each.value.block.namespace
+  extra_filters           = try(each.value.block.extra_filters, "")
+  exporter_scrape_filters = try(each.value.block.exporter_scrape_filters, try(each.value.block.extra_filters, ""))
+  cluster_label           = try(each.value.block.cluster_label, "")
+  cluster                 = try(each.value.block.cluster, "")
+  stopped_connectors      = try(each.value.block.stopped_connectors, [])
+  pending_period          = try(each.value.block.pending_period, "5m")
+  failed_state            = try(each.value.block.failed_state, "failed")
+  dashboard_url           = try(each.value.block.dashboard_url, "")
+  runbook_url             = try(each.value.block.runbook_url, "")
+  defaults                = try(local.deep_merge_alert_configs["${each.key}_kafka_observability"].defaults, {})
+  alerts                  = try(local.deep_merge_alert_configs["${each.key}_kafka_observability"], {})
+  datasource              = try(each.value.block.datasource_uid, var.data_source.uid)
 }
