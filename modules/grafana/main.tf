@@ -47,7 +47,8 @@ resource "helm_release" "grafana" {
       service_account_name        = var.configs.service_account.name
       service_account_annotations = var.configs.service_account.annotations
     }),
-    jsonencode(var.extra_configs)
+    jsonencode(var.extra_configs),
+    jsonencode(local.selector_owned_monitor_values),
   ]
 
   set_sensitive {

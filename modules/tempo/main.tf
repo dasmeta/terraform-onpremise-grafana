@@ -16,13 +16,14 @@ resource "helm_release" "tempo" {
       persistence_class   = var.configs.persistence.storage_class
 
       metrics_generator_enabled    = var.configs.metrics_generator.enabled
-      metrics_generator_remote_url = var.configs.metrics_generator.remote_url
+      metrics_generator_remote_url = local.effective_metrics_generator_remote_url
 
-      enable_service_monitor = var.configs.enable_service_monitor
+      enable_service_monitor = local.effective_service_monitor_enabled
 
       service_account_name        = var.configs.service_account.name
       service_account_annotations = var.configs.service_account.annotations
     }),
-    jsonencode(var.extra_configs)
+    jsonencode(var.extra_configs),
+    jsonencode(local.selector_owned_values),
   ]
 }

@@ -2,6 +2,9 @@
 grafana:
   enabled: false
 
+kubeStateMetrics:
+  enabled: false
+
 prometheusOperator:
   enabled: true
   serviceMonitor:
@@ -27,7 +30,7 @@ kubeProxy:
         action: drop
 
 prometheus:
-  enabled: true
+  enabled: ${prometheus_enabled}
   serviceMonitor:
     metricRelabelings:
       - sourceLabels: [__name__]
@@ -203,7 +206,7 @@ kubeApiServer:
 
 kubelet:
   serviceMonitor:
-    enabled: true
+    enabled: ${prometheus_enabled}
     probes: false
     metricRelabelings:
       - sourceLabels: [__name__]
@@ -213,32 +216,8 @@ kubelet:
       - sourceLabels: [__name__]
         regex: ${kubelet_labels}
         action: keep
-kube-state-metrics:
-  serviceMonitor:
-    metricRelabelings:
-      - sourceLabels: [__name__]
-        regex: ^go_.*
-        action: drop
-  enabled: true
-  collectors:
-    - horizontalpodautoscalers
-    - configmaps
-    - pods
-    - cronjobs
-    - deployments
-    - endpoints
-    - daemonsets
-    - ingresses
-    - nodes
-    - persistentvolumeclaims
-    - persistentvolumes
-    - volumeattachments
-    - poddisruptionbudgets
-    - replicasets
-    - storageclasses
-
 nodeExporter:
-  enabled: true
+  enabled: false
 
 prometheus-node-exporter:
   serviceMonitor:

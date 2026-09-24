@@ -1,6 +1,89 @@
 locals {
-  default_metrics_datasource_uid = var.victoria_metrics.enabled ? "victoriametrics" : "prometheus"
+  metrics_collector = var.metrics_collector
+
+  prometheus_scraping_enabled = local.metrics_collector == "prometheus"
+  victoria_metrics_operator_enabled = (
+    var.victoria_metrics.enabled &&
+    var.victoria_metrics.operator.enabled
+  )
+  victoria_metrics_agent_enabled = (
+    local.metrics_collector == "victoria_metrics" &&
+    local.victoria_metrics_operator_enabled
+  )
+  prometheus_converter_enabled = (
+    var.prometheus.enabled &&
+    local.victoria_metrics_operator_enabled
+  )
+  victoria_metrics_standalone = (
+    local.victoria_metrics_agent_enabled &&
+    var.victoria_metrics.enabled &&
+    !var.prometheus.enabled
+  )
+  default_metrics_datasource_uid = local.metrics_collector == "victoria_metrics" ? "victoriametrics" : "prometheus"
   default_metrics_data_source    = { uid = local.default_metrics_datasource_uid, type = "prometheus" }
+
+  victoria_metrics_agent_caller_scrape_configs = (
+    var.victoria_metrics.agent.extra_scrape_configs == null
+    ? []
+    : var.victoria_metrics.agent.extra_scrape_configs
+  )
+  victoria_metrics_agent_has_kube_state_metrics_scrape_config = try(anytrue([
+    for scrape_config in local.victoria_metrics_agent_caller_scrape_configs :
+    try(scrape_config.job_name, "") == "kube-state-metrics"
+  ]), false)
+
+  kube_state_metrics_namespace = coalesce(
+    var.kube_state_metrics.namespace,
+    var.prometheus.namespace,
+    var.namespace
+  )
+  kube_state_metrics_fullname = coalesce(
+    var.kube_state_metrics.fullname_override,
+    "${var.prometheus.release_name}-kube-state-metrics"
+  )
+  kube_state_metrics_service_target = format(
+    "%s.%s.svc.cluster.local:8080",
+    local.kube_state_metrics_fullname,
+    local.kube_state_metrics_namespace
+  )
+  kube_state_metrics_prometheus_monitor_enabled = (
+    var.kube_state_metrics.enabled &&
+    var.prometheus.enabled &&
+    local.prometheus_scraping_enabled
+  )
+  kube_state_metrics_vm_service_scrape_enabled = (
+    var.kube_state_metrics.enabled &&
+    var.victoria_metrics.enabled &&
+    local.victoria_metrics_agent_enabled &&
+    var.victoria_metrics.agent.managed_service_scrapes.kube_state_metrics &&
+    !local.victoria_metrics_agent_has_kube_state_metrics_scrape_config
+  )
+
+  node_exporter_namespace = coalesce(
+    var.node_exporter.namespace,
+    var.prometheus.namespace,
+    var.namespace,
+  )
+  node_exporter_fullname = coalesce(
+    var.node_exporter.fullname_override,
+    "prometheus-node-exporter",
+  )
+  node_exporter_service_target = format(
+    "%s.%s.svc.cluster.local:9100",
+    local.node_exporter_fullname,
+    local.node_exporter_namespace,
+  )
+  node_exporter_prometheus_monitor_enabled = (
+    var.node_exporter.enabled &&
+    var.prometheus.enabled &&
+    local.prometheus_scraping_enabled
+  )
+  node_exporter_vm_service_scrape_enabled = (
+    var.node_exporter.enabled &&
+    var.victoria_metrics.enabled &&
+    local.victoria_metrics_agent_enabled &&
+    var.victoria_metrics.agent.managed_service_scrapes.node_exporter
+  )
 
   app_dash_defaults = {
     folder_name = "application-dashboard"
@@ -43,27 +126,96 @@ locals {
   }
 
   victoria_metrics_namespace = coalesce(var.victoria_metrics.namespace, var.namespace)
+  victoria_metrics_vminsert_service_name = trimsuffix(substr(
+    "${var.victoria_metrics.release_name}-victoria-metrics-cluster-vminsert",
+    0,
+    63,
+  ), "-")
+  victoria_metrics_vmselect_service_name = trimsuffix(substr(
+    "${var.victoria_metrics.release_name}-victoria-metrics-cluster-vmselect",
+    0,
+    63,
+  ), "-")
   victoria_metrics_remote_write_url = format(
-    "http://%s-victoria-metrics-cluster-vminsert.%s.svc.cluster.local:8480/insert/0/prometheus/api/v1/write",
-    var.victoria_metrics.release_name,
+    "http://%s.%s.svc.cluster.local:8480/insert/0/prometheus/api/v1/write",
+    local.victoria_metrics_vminsert_service_name,
     local.victoria_metrics_namespace
   )
   victoria_metrics_query_url = format(
-    "http://%s-victoria-metrics-cluster-vmselect.%s.svc.cluster.local:8481/select/0/prometheus",
-    var.victoria_metrics.release_name,
+    "http://%s.%s.svc.cluster.local:8481/select/0/prometheus",
+    local.victoria_metrics_vmselect_service_name,
     local.victoria_metrics_namespace
   )
 
-  prometheus_remote_write_config = var.victoria_metrics.enabled ? {
-    prometheus = {
-      prometheusSpec = {
-        remoteWrite = [{
-          url = local.victoria_metrics_remote_write_url
-        }]
-      }
-    }
-  } : {}
+  prometheus_remote_write_receiver_url = format(
+    "http://%s-kube-prometheus-prometheus.%s.svc.cluster.local:9090/api/v1/write",
+    var.prometheus.release_name,
+    coalesce(var.prometheus.namespace, var.namespace),
+  )
+  selected_metrics_remote_write_url = (
+    local.metrics_collector == "victoria_metrics"
+    ? local.victoria_metrics_remote_write_url
+    : local.prometheus_remote_write_receiver_url
+  )
 
+  tempo_metrics_generator_remote_write_url = coalesce(
+    try(var.tempo.metrics_generator.remote_url, null),
+    local.selected_metrics_remote_write_url,
+  )
+  tempo_metrics_generator_uses_selected_backend = (
+    try(var.tempo.metrics_generator.remote_url, null) == null
+  )
+  tempo_prometheus_monitor_enabled = (
+    var.tempo.enabled &&
+    var.tempo.enable_service_monitor &&
+    var.prometheus.enabled &&
+    local.prometheus_scraping_enabled
+  )
+  tempo_vm_service_scrape_enabled = (
+    var.tempo.enabled &&
+    var.tempo.enable_service_monitor &&
+    var.victoria_metrics.enabled &&
+    local.victoria_metrics_agent_enabled &&
+    var.victoria_metrics.agent.managed_service_scrapes.tempo
+  )
+
+  loki_namespace = coalesce(var.loki_stack.namespace, var.namespace)
+  loki_caller_prometheus_monitor_enabled = coalesce(
+    try(var.loki_stack.loki.extra_configs.monitoring.serviceMonitor.enabled, null),
+    try(var.loki_stack.loki.monitoring.serviceMonitor.enabled, null),
+    false,
+  )
+  loki_caller_prometheus_rules_enabled = coalesce(
+    try(var.loki_stack.loki.extra_configs.monitoring.rules.enabled, null),
+    try(var.loki_stack.loki.monitoring.rules.enabled, null),
+    false,
+  )
+  loki_prometheus_monitor_enabled = (
+    var.loki_stack.enabled &&
+    local.loki_caller_prometheus_monitor_enabled &&
+    var.prometheus.enabled &&
+    local.prometheus_scraping_enabled
+  )
+  loki_prometheus_rules_enabled = (
+    var.loki_stack.enabled &&
+    var.prometheus.enabled &&
+    local.prometheus_scraping_enabled &&
+    local.loki_caller_prometheus_rules_enabled
+  )
+  loki_vm_service_scrape_enabled = (
+    var.loki_stack.enabled &&
+    local.loki_caller_prometheus_monitor_enabled &&
+    var.victoria_metrics.enabled &&
+    local.victoria_metrics_agent_enabled &&
+    var.victoria_metrics.agent.managed_service_scrapes.loki
+  )
+
+  grafana_prometheus_monitor_enabled = (
+    var.grafana.enabled &&
+    var.prometheus.enabled &&
+    local.prometheus_scraping_enabled &&
+    try(var.grafana.extra_configs.serviceMonitor.enabled, false)
+  )
 
   loki_query_url = var.loki_stack.enabled ? module.loki[0].query_url : ""
 

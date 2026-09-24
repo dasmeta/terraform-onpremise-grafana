@@ -44,9 +44,20 @@ locals {
           datasourceUid = "loki"
         }
         tracesToMetrics = {
-          datasourceUid = "prometheus"
+          datasourceUid = var.default_metrics_datasource_uid
         }
       })
+    }
+  }
+
+  effective_prometheus_monitor_enabled = coalesce(
+    var.prometheus_monitor_enabled,
+    try(var.extra_configs.serviceMonitor.enabled, false),
+  )
+
+  selector_owned_monitor_values = {
+    serviceMonitor = {
+      enabled = local.effective_prometheus_monitor_enabled
     }
   }
 

@@ -90,7 +90,7 @@ output "alert_rules" {
         no_data_state  = coalesce(local.alerts.replicas_state.no_data_state, local.defaults.no_data_state, "NoData")
         exec_err_state = coalesce(local.alerts.replicas_state.exec_err_state, local.defaults.exec_err_state, "Error")
         datasource     = var.datasource
-        expr           = "sum(kube_pod_status_phase{namespace='${var.namespace}', pod=~'^${local.workload_name}(-[^-]+)?-[^-]+$', phase!='Succeeded', phase!='Running'}) by (phase)"
+        expr           = "sum(kube_pod_status_phase{namespace='${var.namespace}', pod=~'^${local.workload_name}(-(primary|canary))?(-[^-]+)?-[^-]+$', phase!='Succeeded', phase!='Running'}) by (phase)"
         pending_period = coalesce(local.alerts.replicas_state.pending_period, local.defaults.pending_period)
         function       = "last"
         equation       = "gte"
@@ -202,7 +202,7 @@ output "alert_rules" {
         no_data_state  = coalesce(local.alerts.network_in.no_data_state, local.defaults.no_data_state, "NoData")
         exec_err_state = coalesce(local.alerts.network_in.exec_err_state, local.defaults.exec_err_state, "Error")
         datasource     = var.datasource
-        expr           = "abs(sum(rate(container_network_receive_bytes_total{pod=~'^${local.workload_name}(-[^-]+)?-[^-]+$', namespace='${var.namespace}'}[${coalesce(local.alerts.network_in.interval, local.defaults.interval)}])) by (namespace) / (sum(rate(container_network_receive_bytes_total{pod=~'^${local.workload_name}(-[^-]+)?-[^-]+$', namespace='${var.namespace}'}[${coalesce(local.alerts.network_in.interval, local.defaults.interval)}] offset ${coalesce(local.alerts.network_in.interval, local.defaults.interval)})) by (namespace) > 0) - 1)"
+        expr           = "abs(sum(rate(container_network_receive_bytes_total{pod=~'^${local.workload_name}(-(primary|canary))?(-[^-]+)?-[^-]+$', namespace='${var.namespace}'}[${coalesce(local.alerts.network_in.interval, local.defaults.interval)}])) by (namespace) / (sum(rate(container_network_receive_bytes_total{pod=~'^${local.workload_name}(-(primary|canary))?(-[^-]+)?-[^-]+$', namespace='${var.namespace}'}[${coalesce(local.alerts.network_in.interval, local.defaults.interval)}] offset ${coalesce(local.alerts.network_in.interval, local.defaults.interval)})) by (namespace) > 0) - 1)"
         pending_period = coalesce(local.alerts.network_in.pending_period, local.defaults.pending_period)
         function       = "last"
         filters        = {}
@@ -229,7 +229,7 @@ output "alert_rules" {
         no_data_state  = coalesce(local.alerts.network_out.no_data_state, local.defaults.no_data_state, "NoData")
         exec_err_state = coalesce(local.alerts.network_out.exec_err_state, local.defaults.exec_err_state, "Error")
         datasource     = var.datasource
-        expr           = "abs(sum(rate(container_network_transmit_bytes_total{pod=~'^${local.workload_name}(-[^-]+)?-[^-]+$', namespace='${var.namespace}'}[${coalesce(local.alerts.network_out.interval, local.defaults.interval)}])) by (namespace) / (sum(rate(container_network_transmit_bytes_total{pod=~'^${local.workload_name}(-[^-]+)?-[^-]+$', namespace='${var.namespace}'}[${coalesce(local.alerts.network_out.interval, local.defaults.interval)}] offset ${coalesce(local.alerts.network_out.interval, local.defaults.interval)})) by (namespace) > 0) - 1)"
+        expr           = "abs(sum(rate(container_network_transmit_bytes_total{pod=~'^${local.workload_name}(-(primary|canary))?(-[^-]+)?-[^-]+$', namespace='${var.namespace}'}[${coalesce(local.alerts.network_out.interval, local.defaults.interval)}])) by (namespace) / (sum(rate(container_network_transmit_bytes_total{pod=~'^${local.workload_name}(-(primary|canary))?(-[^-]+)?-[^-]+$', namespace='${var.namespace}'}[${coalesce(local.alerts.network_out.interval, local.defaults.interval)}] offset ${coalesce(local.alerts.network_out.interval, local.defaults.interval)})) by (namespace) > 0) - 1)"
         pending_period = coalesce(local.alerts.network_out.pending_period, local.defaults.pending_period)
         function       = "last"
         filters        = {}

@@ -11,6 +11,7 @@ resource "helm_release" "prometheus" {
 
   values = [
     templatefile("${path.module}/values/prometheus-values.yaml.tpl", {
+      prometheus_enabled = var.collector_enabled
       retention_days     = var.configs.retention_days
       storage_class_name = var.configs.storage_class
       storage_size       = var.configs.storage_size
@@ -36,7 +37,26 @@ resource "helm_release" "prometheus" {
       tls_secrets         = local.ingress_tls
       ingress_path_type   = var.configs.ingress.path_type
     }),
-    jsonencode(var.extra_configs)
+    jsonencode(local.effective_extra_configs),
+    jsonencode({
+      crds = {
+        enabled = true
+      }
+      kubeStateMetrics = {
+        enabled = false
+      }
+      kubelet = {
+        serviceMonitor = {
+          enabled = var.collector_enabled
+        }
+      }
+      nodeExporter = {
+        enabled = false
+      }
+      prometheus = {
+        enabled = var.collector_enabled
+      }
+    })
   ]
 
 }

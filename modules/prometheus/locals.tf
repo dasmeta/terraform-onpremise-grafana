@@ -40,4 +40,35 @@ locals {
     secret_name = join("-", [replace(var.configs.ingress.hosts[0], ".", "-"), "tls"])
   }] : []
 
+  caller_extra_configs = (
+    var.extra_configs == null
+    ? tomap({})
+    : merge({}, var.extra_configs)
+  )
+  caller_prometheus_values = try(
+    merge({}, local.caller_extra_configs.prometheus),
+    tomap({}),
+  )
+  caller_prometheus_spec = try(
+    merge({}, local.caller_prometheus_values.prometheusSpec),
+    tomap({}),
+  )
+  effective_prometheus_spec = merge(
+    local.caller_prometheus_spec,
+    var.remote_write_url == null ? {} : {
+      remoteWrite = [{
+        url = var.remote_write_url
+      }]
+    },
+  )
+  effective_extra_configs = merge(
+    local.caller_extra_configs,
+    {
+      prometheus = merge(
+        local.caller_prometheus_values,
+        { prometheusSpec = local.effective_prometheus_spec },
+      )
+    },
+  )
+
 }
