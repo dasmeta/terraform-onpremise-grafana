@@ -109,6 +109,6 @@ As a module maintainer, I have documentation and an example test proving URL beh
 ## Out of Scope
 
 - AWS wrapper `dasmeta/grafanav12/aws` pin bump
-- payconomy `grafana.yaml` version bump
+- downstream setup `grafana.yaml` version bump
 - Distributed mode full implementation beyond URL fallback
 - Promtail → Alloy/Fluent Bit migration
