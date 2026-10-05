@@ -69,6 +69,11 @@ locals {
   defaults = provider::deepmerge::mergo(var.defaults, try(local.type_specific_defaults[var.defaults.workload_type].defaults, {}))
   alerts   = provider::deepmerge::mergo(var.alerts, try(local.type_specific_defaults[var.defaults.workload_type].alerts, {}))
 
+  alert_annotations = merge({}, [
+    for k, v in try(local.alerts.annotations, {}) :
+    try(tostring(v), "") != "" ? { (k) = v } : {}
+  ]...)
+
   alert_type_labels = {
     replicas_no = {
       priority = "P1"
