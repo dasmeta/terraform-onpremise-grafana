@@ -88,7 +88,7 @@ module "prometheus" {
   chart_version    = var.prometheus.chart_version
   release_name     = var.prometheus.release_name
   configs          = var.prometheus
-  extra_configs    = merge(var.prometheus.extra_configs, local.prometheus_remote_write_config)
+  extra_configs    = local.prometheus_effective_extra_configs
   namespace        = coalesce(var.prometheus.namespace, var.namespace)
   create_namespace = var.prometheus.create_namespace
 }

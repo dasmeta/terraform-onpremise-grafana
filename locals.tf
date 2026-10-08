@@ -54,15 +54,26 @@ locals {
     local.victoria_metrics_namespace
   )
 
-  prometheus_remote_write_config = var.victoria_metrics.enabled ? {
-    prometheus = {
-      prometheusSpec = {
-        remoteWrite = [{
-          url = local.victoria_metrics_remote_write_url
-        }]
-      }
+  prometheus_effective_extra_configs = merge(
+    var.prometheus.extra_configs,
+    {
+      for key, value in {
+        prometheus = merge(
+          try(var.prometheus.extra_configs.prometheus, {}),
+          {
+            prometheusSpec = merge(
+              try(var.prometheus.extra_configs.prometheus.prometheusSpec, {}),
+              {
+                remoteWrite = [{
+                  url = local.victoria_metrics_remote_write_url
+                }]
+              }
+            )
+          }
+        )
+      } : key => value if var.victoria_metrics.enabled
     }
-  } : {}
+  )
 
 
   loki_query_url = var.loki_stack.enabled ? module.loki[0].query_url : ""

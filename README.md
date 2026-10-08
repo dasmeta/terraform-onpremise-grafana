@@ -271,6 +271,13 @@ When consuming this module through `dasmeta/grafanav12/aws` (for example Paycono
   - issue of alert creation has been fixed so no need to disable dashboards an re-enable if grafana changes needed
   - required provider version constraints got changed from ">=", ">", "=" to "~>" condition ones
 
+## Prometheus and VictoriaMetrics value ownership
+
+When VictoriaMetrics is enabled, caller-provided fields under
+`prometheus.extra_configs.prometheus.prometheusSpec` are retained. The module
+manages the VictoriaMetrics `remoteWrite` destination in that same map, so its
+generated destination remains authoritative.
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
