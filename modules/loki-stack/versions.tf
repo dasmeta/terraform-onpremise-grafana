@@ -9,5 +9,9 @@ terraform {
       source  = "hashicorp/random"
       version = "~> 3.7"
     }
+    deepmerge = {
+      source  = "isometry/deepmerge"
+      version = "~> 1.1"
+    }
   }
 }

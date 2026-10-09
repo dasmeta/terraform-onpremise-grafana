@@ -617,6 +617,7 @@ temporary local `source` overrides:
   - resources config item in all grafana/prometheus/loki-stack/tempo components got changed to have standard requests/limits fields and cpu/memory sub-fields instead old request/limit fields and cpu/mem sub-fields
   - BREAKING: loki resources requests/limits cpu/memory defaults got increased request=1000m/1000Mi, limit=1500m/2500Mi
   - extra_configs option have been added into all grafana/prometheus/loki-stack/tempo components which allows to pass this components helm charts any option
+  - Prometheus/Alertmanager, VictoriaMetrics, Tempo, and Loki callers can place `nodeSelector` and `tolerations` in their established component `extra_configs` paths. These scheduling fields are retained in the final Helm values; module-owned collector activation, endpoint, remote-write, and monitoring fields remain authoritative.
   - namespace/create_namespace options have been added  into all grafana/prometheus/loki-stack/tempo components, allowing to have way to manage/customize each helm release placement
   - BREAKING: changes in dashboard widget/blocks(make sure to check if dashboard created via code are working ok):
     - some of them got colocated like replicas count per pod status and restarts count
