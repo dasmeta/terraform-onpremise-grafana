@@ -81,14 +81,26 @@ resource "helm_release" "mysql" {
           rootPassword = local.database.root_password
         }
         primary = {
-          extraFlags = var.configs.database.extra_flags
-          podAnnotations = {
-            "karpenter.sh/do-not-disrupt" = "true"
-          }
+          extraFlags     = var.configs.database.extra_flags
+          podAnnotations = var.configs.database.do_not_disrupt ? { "karpenter.sh/do-not-disrupt" = "true" } : {}
+          # NO PodDisruptionBudget while this is a single-replica primary.
+          #
+          # The previous `minAvailable = 1` here permitted ZERO evictions, because minAvailable equal to the
+          # replica count leaves no disruption gap. That blocked every node drain, blocked spot replacement,
+          # and made EKS node group upgrades fail on pod eviction -- and it was found live on the majority of
+          # clusters running this module, because it is a shared default rather than a per-cluster mistake.
+          #
+          # A budget over one replica cannot help: it either permits nothing, or permits losing the only
+          # replica. The do-not-disrupt annotation above already prevents voluntary disruption, which is the
+          # part a budget could legitimately have covered. Neither protects against SPOT RECLAMATION, which
+          # is involuntary -- that is what the on-demand placement below is for.
           pdb = {
-            minAvailable   = 1
-            maxUnavailable = ""
+            create = false
           }
+          # Keep the database off reclaimable capacity. This is the actual protection: a spot reclaim kills
+          # this pod regardless of any budget or annotation, and its ReadWriteOnce volume then has to detach
+          # from a node that is already gone, which has produced multi-minute outages with VolumeInUse errors.
+          nodeSelector = var.configs.database.node_selector
           persistence = {
             enabled      = var.configs.database.persistence.enabled
             size         = var.configs.database.persistence.size

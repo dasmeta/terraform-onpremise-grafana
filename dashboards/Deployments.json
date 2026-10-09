@@ -195,7 +195,7 @@
                   {
                     "targetBlank": true,
                     "title": "gitlab",
-                    "url": "https://gitlab.com/corifyteam/application/${__data.fields.deployment}/-/pipelines?page=1&scope=all&ref=${__data.fields.deployment}"
+                    "url": "https://gitlab.com/example-org/application/${__data.fields.deployment}/-/pipelines?page=1&scope=all&ref=${__data.fields.deployment}"
                   }
                 ]
               }
@@ -401,7 +401,7 @@
               "options": {
                 "mode": "exclude",
                 "names": [
-                  "corify-external-api"
+                  "example-api"
                 ],
                 "prefix": "All except:",
                 "readOnly": true

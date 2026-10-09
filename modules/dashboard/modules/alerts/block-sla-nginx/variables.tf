@@ -14,7 +14,7 @@ variable "defaults" {
     no_data_state     = optional(string, "NoData")               # define how to handle if no data for query, by default it will fire alert with no data info
     exec_err_state    = optional(string, "Error")                # define how to handle if query execution error, by default it will fire alert with error info
     group             = optional(string, "0. sla nginx ingress") # grafana alert group name which used for grouping
-    metric_filter     = optional(string, " ")                    # allows to define custom metric filter, for example to exclude some host or path, we specially set `" "` as default value to not get coalesce() function failures
+    metric_filter     = optional(string, "")                     # allows to define a default custom metric filter, for example to select a namespace, ingress, host, or path
   })
   default     = {}
   description = "The general default values to use with alert rules"

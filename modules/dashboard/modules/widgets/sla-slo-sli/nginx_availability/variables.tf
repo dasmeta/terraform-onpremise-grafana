@@ -21,8 +21,9 @@ variable "coordinates" {
 
 # stats
 variable "period" {
-  type    = string
-  default = "3"
+  type        = string
+  default     = "1d"
+  description = "Prometheus range used to calculate availability and status distribution"
 }
 
 variable "filter" {

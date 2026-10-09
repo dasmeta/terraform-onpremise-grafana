@@ -7,7 +7,7 @@ module "widget_sla_slo_sli_nginx_availability" {
 
   datasource_uid = coalesce(try(each.value.datasource_uid, null), local.widget_default_values.prometheus.datasource_uid)
   coordinates    = each.value.coordinates
-  period         = try(each.value.period, local.widget_default_values.prometheus.period)
+  period         = trimspace(coalesce(try(each.value.period, null), "")) != "" ? each.value.period : "1d"
   histogram      = try(each.value.histogram, false)
   filter         = try(each.value.filter, "")
 }
@@ -19,7 +19,7 @@ module "widget_sla_slo_sli_nginx_latency" {
 
   datasource_uid = coalesce(try(each.value.datasource_uid, null), local.widget_default_values.prometheus.datasource_uid)
   coordinates    = each.value.coordinates
-  period         = try(each.value.period, local.widget_default_values.prometheus.period)
+  period         = trimspace(coalesce(try(each.value.period, null), "")) != "" ? each.value.period : "1d"
   histogram      = try(each.value.histogram, false)
   filter         = try(each.value.filter, "")
 }

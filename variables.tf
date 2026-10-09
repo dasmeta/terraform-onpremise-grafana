@@ -251,8 +251,38 @@ variable "grafana" {
       type          = optional(string, "mysql") # when we set external database we can set any sql compatible one like postgresql or ms sql, but when we create database it supports only mysql and changing this field do not affect
       host          = optional(string, null)    # it will set right host for grafana mysql in case create=true
       user          = optional(string, "grafana")
-      password      = optional(string, null)     # if not set it will use var.grafana_admin_password
-      root_password = optional(string, null)     # if not set it will use var.grafana_admin_password
+      password      = optional(string, null) # if not set it will use var.grafana_admin_password
+      root_password = optional(string, null) # if not set it will use var.grafana_admin_password
+      # Declared here as well as in modules/grafana, because terraform object conversion SILENTLY DROPS an
+      # attribute the target type does not list -- so without this line a consumer setting it changes
+      # nothing and the module keeps its own default, with no error anywhere.
+      # Where the created database primary runs. Empty by default: node labels are cluster-specific, and this
+      # module is not EKS-only -- a default naming karpenter labels leaves the pod Pending with no
+      # explanation on any cluster that does not use karpenter, including on-premise and plain managed
+      # kubernetes.
+      #
+      # Set it where the cluster has capacity worth pinning to. A single-replica database with ReadWriteOnce
+      # storage is the worst workload to leave on reclaimable capacity: a spot reclaim kills it
+      # involuntarily -- no PodDisruptionBudget or do-not-disrupt annotation prevents that -- and its volume
+      # must then detach from a node that is already gone, which has produced multi-minute outages with
+      # VolumeInUse errors. On EKS with karpenter that is:
+      #   node_selector = { "karpenter.sh/capacity-type" = "on-demand" }
+      # and if that capacity is tainted, add the matching toleration through mysql_extra_configs:
+      #   mysql_extra_configs = { primary = { tolerations = [{ key = "dedicated", operator = "Equal",
+      #                                                        value = "on-demand", effect = "NoSchedule" }] } }
+      node_selector = optional(map(string), {})
+
+      # Blocks karpenter from VOLUNTARILY disrupting the node hosting this pod. Off by default, because on
+      # the on-demand placement above it costs more than it buys: that pool consolidates WhenEmpty, so a
+      # node running this pod is never consolidated anyway, while the annotation also blocks DRIFT -- which
+      # is how nodes receive AMI patches. A node holding a do-not-disrupt pod is never replaced by a drift
+      # roll, so it stays on its old AMI until a human intervenes, and the eks assessment reports it as
+      # needing attention on every run thereafter.
+      #
+      # Turn it on if you set node_selector = {} and the database lands on a pool that consolidates while
+      # non-empty, where it is the only lever a single-replica workload has.
+      do_not_disrupt = optional(bool, false)
+
       persistence = optional(object({            # allows to configure created(when database.create=true) mysql databases storage/persistence configs
         enabled       = optional(bool, true)     # whether to have created in k8s mysql database with persistence
         size          = optional(string, "20Gi") # the size of primary persistent volume of mysql when creating it
@@ -284,7 +314,9 @@ variable "grafana" {
     redundancy = optional(object({
       enabled      = optional(bool, false)
       max_replicas = optional(number, 4)
-      min_replicas = optional(number, 1)
+      # >= 2. The redundancy block renders a PodDisruptionBudget of minAvailable: 1, which at a floor of 1
+      # permits ZERO evictions -- blocking drains, spot replacement and node group upgrades.
+      min_replicas = optional(number, 2)
     }), {})
 
     datasources = optional(list(map(any))) # a list of grafana datasource configurations. Based on the type of the datasource the module will fill in the missing configuration for some supported datasources. Mandatory are name and type fields
@@ -293,6 +325,11 @@ variable "grafana" {
       trace_pattern = optional(string, "trace_id=(\\w+)")
     }), {})
 
+    # 1, pending DMVP-10608. Raising this WITHOUT configuring unified_alerting HA peers gives each replica
+    # its own embedded alertmanager: both evaluate the same rules from the shared database and both
+    # dispatch, so every notification fires twice. The chart already provides POD_IP and the gossip ports
+    # and has a headlessService toggle, so the clustering is small to add -- but it belongs with the
+    # database HA question rather than in a PodDisruptionBudget fix.
     replicas            = optional(number, 1)
     extra_configs       = optional(any, {}) # allows to pass extra/custom configs to grafana helm chart, this configs will deep-merged with all generated internal configs and can override the default set ones. All available options can be found in for the specified chart version here: https://artifacthub.io/packages/helm/grafana/grafana?modal=values
     mysql_extra_configs = optional(any, {}) # allows to pass extra/custom configs to grafana-mysql created helm chart, this configs will deep-merged with all generated internal configs and can override the default set ones. All available options can be found in for the specified chart version here: https://artifacthub.io/packages/helm/bitnami/mysql?modal=values

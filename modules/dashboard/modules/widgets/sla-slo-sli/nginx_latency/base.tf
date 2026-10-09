@@ -1,18 +1,18 @@
 module "base" {
   source = "../../base"
 
-  name        = "${var.histogram ? "Latency distribution" : "Latency"} (1d)"
-  description = "${var.histogram ? "y-axis bars numbers are count of requests, x-axis each number is seconds and it means requests with {prev-number}<latency≤{number}, +inf means slower than 10(highest batch in list) seconds" : "percent of requests with latency≤2.5 seconds"} within 1 day"
+  name        = "${var.histogram ? "Latency distribution" : "Latency"} (${var.period})"
+  description = "${var.histogram ? "Request-count distribution by duration bucket for 2xx, 3xx, 429, and 499 responses" : "Request-weighted average duration of 2xx, 3xx, 429, and 499 responses in seconds"} within ${var.period}"
   data_source = {
     uid  = var.datasource_uid
     type = "prometheus"
   }
   coordinates = var.coordinates
-  decimals    = var.histogram ? null : 1
+  decimals    = var.histogram ? null : 3
   period      = var.period
   type        = var.histogram ? "bargauge" : "gauge"
   fillOpacity = 80
-  unit        = var.histogram ? null : "percent"
+  unit        = var.histogram ? null : "s"
 
   options = {
     legend = {
@@ -25,26 +25,26 @@ module "base" {
     "steps" = [
       {
         "value" = null,
-        "color" = "red"
+        "color" = "green"
       },
       {
-        "value" = 90,
-        "color" = "orange"
-      },
-      {
-        "value" = 96,
+        "value" = 2,
         "color" = "yellow"
       },
       {
-        "value" = 99,
-        "color" = "green"
+        "value" = 2.5,
+        "color" = "orange"
+      },
+      {
+        "value" = 3,
+        "color" = "red"
       }
     ]
   }
 
   metrics = var.histogram ? [
-    { label : "__auto", format : "heatmap", expression : "sum by (le) (increase(nginx_ingress_controller_request_duration_seconds_bucket{status=~'[^1]..', ${var.filter}}[1d]))" },
+    { label : "__auto", format : "heatmap", expression : "sum by (le) (increase(nginx_ingress_controller_request_duration_seconds_bucket{status=~\"2..|3..|429|499\"${local.metric_filter_suffix}}[${var.period}]))" },
     ] : [
-    { label : "__auto", expression : "100 * sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{le='2.5', status=~'[^1]..', ${var.filter}}[1d]))/sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{le='+Inf', status=~'[^1]..', ${var.filter}}[1d]))" }
+    { label : "__auto", expression : "sum(increase(nginx_ingress_controller_request_duration_seconds_sum{status=~\"2..|3..|429|499\"${local.metric_filter_suffix}}[${var.period}])) / sum(increase(nginx_ingress_controller_request_duration_seconds_count{status=~\"2..|3..|429|499\"${local.metric_filter_suffix}}[${var.period}]))" }
   ]
 }

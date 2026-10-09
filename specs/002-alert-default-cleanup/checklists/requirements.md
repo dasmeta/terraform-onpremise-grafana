@@ -32,5 +32,5 @@
 
 ## Notes
 
-- Buycycle-specific monitoring from DS-10938 remains excluded from default module scope.
+- requester-specific monitoring from DS-10938 remains excluded from default module scope.
 - `replicas_no` remains the P1 outage signal; `unavailable_replicas` is documented as a deployment degradation signal.

@@ -64,7 +64,7 @@
 
 ## DS-10938 Generic Signal
 
-**Purpose**: Captures the reusable alert portion extracted from the broader Buycycle monitoring request.
+**Purpose**: Captures the reusable alert portion extracted from the broader originating monitoring request.
 
 **Fields**:
 
@@ -75,4 +75,4 @@
 
 **Excluded Relationships**:
 
-- Does not include Buycycle route-specific API/web, ingress, SSR, Karpenter, or EC2 credit monitoring.
+- Does not include requester route-specific API/web, ingress, SSR, Karpenter, or EC2 credit monitoring.

@@ -9,7 +9,7 @@
 
 ### Session 2026-07-23
 
-- Q: Should the whole DS-10938 monitoring request be added to default module alerts? A: No. Add only the generic reusable deployment unavailable replicas alert; keep Buycycle-specific route, Karpenter, EC2 credit, SSR, and ingress path alerts out of the default module.
+- Q: Should the whole DS-10938 monitoring request be added to default module alerts? A: No. Add only the generic reusable deployment unavailable replicas alert; keep requester-specific route, Karpenter, EC2 credit, SSR, and ingress path alerts out of the default module.
 - Q: What default threshold and pending period should unavailable replicas use? A: Alert when deployment unavailable replicas are greater than `0` for `30s`.
 - Q: Should generated test fixtures and Spec Kit files remain in the change? A: Test fixture files were removed by request; Spec Kit files were restored by request.
 
@@ -82,7 +82,7 @@ As an operator, I want a default deployment alert when unavailable replicas pers
 - Services without network alert opt-in must not receive network anomaly rules.
 - Alert-specific labels must continue to override module-provided impact labels.
 - Non-deployment workloads must not receive deployment-only unavailable replica rules.
-- Buycycle-specific DS-10938 monitoring requirements must not leak into generic default module behavior.
+- requester-specific DS-10938 monitoring requirements must not leak into generic default module behavior.
 
 ## Requirements *(mandatory)*
 
@@ -106,7 +106,7 @@ As an operator, I want a default deployment alert when unavailable replicas pers
 - **Alert Type Label Defaults**: Module-owned priority and severity labels assigned by alert category.
 - **Alert Opt-In Flag**: Per-alert enablement switch controlling noisy or context-dependent alert creation.
 - **Workload Type**: Service workload category used to decide whether deployment-only alerts apply.
-- **DS-10938 Generic Signal**: The reusable deployment unavailable replicas signal extracted from the broader Buycycle ticket.
+- **DS-10938 Generic Signal**: The reusable deployment unavailable replicas signal extracted from the broader originating ticket.
 
 ## Success Criteria *(mandatory)*
 
@@ -121,7 +121,7 @@ As an operator, I want a default deployment alert when unavailable replicas pers
 
 ## Out of Scope
 
-- Buycycle-specific route, SSR, ingress path, Karpenter, EC2 credit, and customer-specific latency alerts from DS-10938.
+- requester-specific route, SSR, ingress path, Karpenter, EC2 credit, and customer-specific latency alerts from DS-10938.
 - Replacing `replicas_no`; full no-replica outage alerting remains separate from unavailable replica degradation alerting.
 - Changes to Grafana notification policy routing outside label values supplied by generated rules.
 - Adding durable CloudBrowser documentation or metric records for this code-only module change.

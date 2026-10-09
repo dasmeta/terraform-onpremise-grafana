@@ -30,15 +30,17 @@ locals {
 
   # bring all module results together
   blocks_results = {
-    ingress           = values(module.block_ingress).*.result
-    service           = values(module.block_service).*.result
-    sla               = values(module.block_sla).*.result
-    redis             = values(module.block_redis).*.result
-    cloudwatch        = values(module.block_cloudwatch).*.result
-    alb_ingress       = values(module.block_alb_ingress).*.result
-    elasticache_redis = values(module.block_elasticache_redis).*.result
-    rds               = values(module.block_rds).*.result
-    "aws-ses"         = values(module.block_aws_ses).*.result
+    ingress             = values(module.block_ingress).*.result
+    service             = values(module.block_service).*.result
+    sla                 = values(module.block_sla).*.result
+    redis               = values(module.block_redis).*.result
+    cloudwatch          = values(module.block_cloudwatch).*.result
+    alb_ingress         = values(module.block_alb_ingress).*.result
+    elasticache_redis   = values(module.block_elasticache_redis).*.result
+    rds                 = values(module.block_rds).*.result
+    msk                 = values(module.block_msk).*.result
+    "aws-ses"           = values(module.block_aws_ses).*.result
+    kafka_observability = values(module.block_kafka_observability).*.result
   }
 
   blocks_by_type_results = concat([], [
@@ -236,6 +238,17 @@ locals {
     values(module.rds_write_latency_widget).*.data,
     values(module.rds_read_iops_widget).*.data,
 
+    # MSK widgets
+    values(module.msk_cpu_widget).*.data,
+    values(module.msk_memory_widget).*.data,
+    values(module.msk_disk_widget).*.data,
+    values(module.msk_throughput_in_widget).*.data,
+    values(module.msk_throughput_out_widget).*.data,
+    values(module.msk_partitions_widget).*.data,
+    values(module.msk_offline_partitions_widget).*.data,
+    values(module.msk_under_replicated_widget).*.data,
+    values(module.msk_consumer_lag_widget).*.data,
+
     # SES widgets
     values(module.ses_sending_quota_widget).*.data,
     values(module.ses_send_delivery_widget).*.data,
@@ -244,5 +257,12 @@ locals {
     values(module.ses_bounces_timeseries_widget).*.data,
     values(module.ses_sending_rate_widget).*.data,
     values(module.ses_bounce_reject_widget).*.data,
+
+    # Kafka Connect widgets
+    values(module.kafka_connect_rest_up_widget).*.data,
+    values(module.kafka_connector_state_widget).*.data,
+    values(module.kafka_task_state_widget).*.data,
+    values(module.kafka_connect_totals_widget).*.data,
+    values(module.kafka_exporter_health_widget).*.data,
   )
 }

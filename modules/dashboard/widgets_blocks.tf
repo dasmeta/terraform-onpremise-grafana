@@ -94,6 +94,21 @@ module "block_rds" {
   block_name     = try(each.value.block.block_name, "RDS")
 }
 
+module "block_msk" {
+  source = "./modules/blocks/msk"
+
+  for_each = { for index, item in try(local.blocks_by_type["msk"], []) : index => item }
+
+  cluster_names   = try(each.value.block.cluster_names, [])
+  broker_ids      = try(each.value.block.broker_ids, ["1", "2", "3"])
+  consumer_groups = try(each.value.block.consumer_groups, [])
+  topics          = try(each.value.block.topics, [])
+  region          = try(each.value.block.region, local.widget_default_values.cloudwatch.region)
+  period          = try(each.value.block.period, local.widget_default_values.cloudwatch.period)
+  datasource_uid  = try(each.value.block.datasource_uid, local.widget_default_values.cloudwatch.datasource_uid)
+  block_name      = try(each.value.block.block_name, "MSK")
+}
+
 # AWS SES (block/aws-ses); widget types aws-ses/* with hyphens
 module "block_aws_ses" {
   source = "./modules/blocks/aws/ses"
@@ -106,4 +121,18 @@ module "block_aws_ses" {
   block_name     = try(each.value.block.block_name, "AWS SES")
   min            = try(each.value.block.min, null)
   max            = try(each.value.block.max, null)
+}
+
+module "block_kafka_observability" {
+  source = "./modules/blocks/kafka_observability"
+
+  for_each = { for index, item in try(local.blocks_by_type["kafka_observability"], []) : index => item }
+
+  namespace      = each.value.block.namespace
+  extra_filters  = try(each.value.block.extra_filters, "")
+  cluster_label  = try(each.value.block.cluster_label, "")
+  cluster        = try(each.value.block.cluster, "")
+  period         = try(each.value.block.period, local.widget_default_values.prometheus.period)
+  datasource_uid = try(each.value.block.datasource_uid, local.widget_default_values.prometheus.datasource_uid)
+  block_name     = try(each.value.block.block_name, "Kafka observability")
 }
