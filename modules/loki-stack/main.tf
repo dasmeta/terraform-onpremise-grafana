@@ -7,68 +7,7 @@ resource "helm_release" "loki" {
   version          = var.configs.loki.chart_version
   timeout          = 600
 
-  values = [
-    jsonencode(var.configs.loki.deploymentMode == "SingleBinary" ? {
-      singleBinary = {
-        persistence = var.configs.loki.persistence
-        replicas    = var.configs.loki.replicas
-        resources   = var.configs.loki.resources
-      }
-    } : {}),
-    jsonencode(
-      {
-        deploymentMode = var.configs.loki.deploymentMode
-        serviceAccount = var.configs.loki.serviceAccount
-        monitoring     = var.configs.loki.monitoring
-        loki = {
-          structuredConfig = var.configs.loki.structuredConfig
-          commonConfig     = var.configs.loki.commonConfig
-          auth_enabled     = var.configs.loki.auth_enabled
-          limits_config    = var.configs.loki.limits_config
-          storage          = var.configs.loki.storage
-          compactor        = local.loki_compactor_options
-          schemaConfig = {
-            configs = local.loki_schema_config
-          }
-        }
-        gateway = {
-          enabled = var.configs.loki.ingress.enabled
-          ingress = {
-            enabled          = var.configs.loki.ingress.enabled
-            ingressClassName = var.configs.loki.ingress.type
-            annotations      = local.ingress_annotations
-            hosts = [for host in var.configs.loki.ingress.hosts : {
-              host  = host
-              paths = [{ path = var.configs.loki.ingress.path, pathType = var.configs.loki.ingress.path_type }]
-            }]
-            tls = [for item in local.ingress_tls : {
-              secretName = item.secret_name
-              hosts      = var.configs.loki.ingress.hosts
-            }]
-          }
-        }
-        chunksCache    = var.configs.loki.chunksCache
-        resultsCache   = var.configs.loki.resultsCache
-        test           = var.configs.loki.test
-        lokiCanary     = var.configs.loki.lokiCanary
-        ruler          = var.configs.loki.ruler
-        compactor      = var.configs.loki.compactor
-        read           = local.loki_read
-        write          = local.loki_write
-        backend        = local.loki_backend
-        ingester       = var.configs.loki.ingester
-        querier        = var.configs.loki.querier
-        queryFrontend  = var.configs.loki.queryFrontend
-        queryScheduler = var.configs.loki.queryScheduler
-        distributor    = var.configs.loki.distributor
-        indexGateway   = var.configs.loki.indexGateway
-        bloomBuilder   = var.configs.loki.bloomBuilder
-        bloomPlanner   = var.configs.loki.bloomPlanner
-        bloomGateway   = var.configs.loki.bloomGateway
-    }),
-    jsonencode(var.configs.loki.extra_configs),
-    jsonencode(local.selector_owned_monitoring_values),
-  ]
+  values = [jsonencode(local.effective_values)]
 }
 
 # TODO: the promtail deprecated, consider to have this replaced with for example fluent/fluent-bit

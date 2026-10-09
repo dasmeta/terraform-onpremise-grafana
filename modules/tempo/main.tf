@@ -6,24 +6,5 @@ resource "helm_release" "tempo" {
   namespace        = var.namespace
   create_namespace = var.create_namespace
 
-  values = [
-    templatefile("${path.module}/values/tempo-values.yaml.tpl", {
-      storage_backend_type           = var.configs.storage.backend
-      storage_backend_configurations = yamlencode(var.configs.storage.backend_configuration)
-
-      persistence_enabled = var.configs.persistence.enabled
-      persistence_size    = var.configs.persistence.size
-      persistence_class   = var.configs.persistence.storage_class
-
-      metrics_generator_enabled    = var.configs.metrics_generator.enabled
-      metrics_generator_remote_url = local.effective_metrics_generator_remote_url
-
-      enable_service_monitor = local.effective_service_monitor_enabled
-
-      service_account_name        = var.configs.service_account.name
-      service_account_annotations = var.configs.service_account.annotations
-    }),
-    jsonencode(var.extra_configs),
-    jsonencode(local.selector_owned_values),
-  ]
+  values = [jsonencode(local.effective_values)]
 }
