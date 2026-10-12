@@ -17,6 +17,7 @@ variable "datasource" {
 variable "defaults" {
   type = object({
     enabled           = optional(bool, true)                 # whether by default block widget alerts are enabled, it allows to disable alert by default and enable for specific widget only
+    is_paused         = optional(bool, false)                # whether generated Grafana rules are paused by default
     workload_type     = optional(string, "deployment")       # the workload type of app setup, can be "daemonset", "deployment", "statefulset" and "cronjob"
     workload_name     = optional(string, null)               # allows workload/deployment name to differ from service/container name; if null workload_prefix/name/workload_suffix are used
     workload_suffix   = optional(string, "")                 # allows to filter workload or pod via {var.name}{var.defaults.workload_suffix} filtration, can be used for example in case we have flagger canary deployment to add "-primary" suffix to filter deployment
