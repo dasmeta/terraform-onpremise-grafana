@@ -27,7 +27,7 @@ No resources.
 | <a name="input_datasource_uid"></a> [datasource\_uid](#input\_datasource\_uid) | prometheus datasource type uid to use for widget | `string` | `"prometheus"` | no |
 | <a name="input_filter"></a> [filter](#input\_filter) | Allows to define additional filter on metrics | `string` | `""` | no |
 | <a name="input_histogram"></a> [histogram](#input\_histogram) | n/a | `bool` | `false` | no |
-| <a name="input_period"></a> [period](#input\_period) | stats | `string` | `"3"` | no |
+| <a name="input_period"></a> [period](#input\_period) | Prometheus range used to calculate availability and status distribution | `string` | `"1d"` | no |
 
 ## Outputs
 

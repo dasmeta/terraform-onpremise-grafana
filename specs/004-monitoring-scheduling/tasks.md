@@ -7,14 +7,14 @@
 - [x] T001 [US1] Create isolated mocked Helm-provider tests in `tests/monitoring-scheduling` for Prometheus/Alertmanager, VictoriaMetrics, Tempo, and Loki.
 - [x] T002 [US1] Run the focused test and record the red result against `v1.28.5` (the baseline rejects heterogeneous Prometheus Helm values before final composition).
 
-## Phase 2: One composed Helm values map
+## Phase 2: Preserve native Helm values precedence
 
-- [x] T003 [US1] Update Prometheus values composition and its provider requirements to retain caller scheduling while preserving remote-write and collector contract.
+- [x] T003 [US1] Normalize Prometheus `extra_configs` before inspection so heterogeneous Prometheus/Alertmanager values plan successfully.
 - [x] T004 [US1] Re-run the focused regression test and verify the Prometheus/Alertmanager assertion turns green.
-- [x] T005 [US1] Update VictoriaMetrics values composition and provider requirements to retain caller scheduling and cluster endpoint contract.
-- [x] T006 [US1] Update Tempo values composition and provider requirements to retain caller scheduling and metrics-generator/ServiceMonitor contract.
-- [x] T007 [US1] Update Loki values composition and provider requirements to retain caller scheduling and monitoring contract.
-- [x] T008 [US1] Re-run the focused regression test and verify all scheduling assertions turn green.
+- [x] T005 [US1] Verify VictoriaMetrics caller scheduling and its later cluster endpoint contract remain ordered Helm values documents.
+- [x] T006 [US1] Verify Tempo caller scheduling and its later metrics-generator/ServiceMonitor contract remain ordered Helm values documents.
+- [x] T007 [US1] Verify Loki caller scheduling and its later monitoring contract remain ordered Helm values documents.
+- [x] T008 [US1] Re-run the focused regression test and verify all scheduling and contract assertions turn green without a new provider dependency.
 
 ## Phase 3: Compatibility and handoff
 
