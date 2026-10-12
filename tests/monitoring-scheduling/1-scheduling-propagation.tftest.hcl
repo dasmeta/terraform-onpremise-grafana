@@ -24,6 +24,35 @@ run "prometheus_and_alertmanager_scheduling_survives_final_value_composition" {
           tolerations  = [{ key = "workload", operator = "Equal", value = "monitoring", effect = "NoSchedule" }]
         }
       }
+      additionalPrometheusRulesMap = {
+        generic_rule = {
+          groups = [{
+            name = "generic"
+            rules = [{
+              record = "example:metric:sum"
+              expr   = "sum(up)"
+            }]
+          }]
+        }
+      }
+      "kube-state-metrics" = {
+        service = {
+          annotations = { "prometheus.io/path" = "/metrics" }
+        }
+      }
+      "prometheus-node-exporter" = {
+        service = {
+          annotations = { "prometheus.io/path" = "/metrics" }
+        }
+      }
+      server = {
+        remoteWrite = [{
+          queueConfig = {
+            capacity          = 500
+            maxSamplesPerSend = 250
+          }
+        }]
+      }
     }
   }
 

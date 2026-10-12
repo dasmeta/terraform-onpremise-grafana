@@ -40,7 +40,7 @@ locals {
     secret_name = join("-", [replace(var.configs.ingress.hosts[0], ".", "-"), "tls"])
   }] : []
 
-  caller_extra_configs = var.extra_configs == null ? {} : yamldecode(jsonencode(var.extra_configs))
+  caller_extra_configs = yamldecode(var.extra_configs == null ? "{}" : jsonencode(var.extra_configs))
   caller_prometheus_values = try(
     merge({}, local.caller_extra_configs.prometheus),
     tomap({}),

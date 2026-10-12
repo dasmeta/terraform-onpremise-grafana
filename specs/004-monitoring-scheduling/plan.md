@@ -2,13 +2,13 @@
 
 **Goal:** Preserve caller scheduling values for Prometheus, Alertmanager, VictoriaMetrics, Tempo, and Loki without changing their public `extra_configs` interfaces.
 
-**Architecture:** Retain the existing ordered `helm_release.values` documents. Helm provider v2.17 recursively merges maps in order, so generated defaults apply first, caller values next, and module-owned contract values last. Fix the Prometheus-only Terraform type normalization that prevented a combined Prometheus and Alertmanager custom-values object from planning.
+**Architecture:** Retain the existing ordered `helm_release.values` documents. Helm provider v2.17 recursively merges maps in order, so generated defaults apply first, caller values next, and module-owned contract values last. Normalize Prometheus caller values by choosing between serialized YAML strings before decoding, preventing Terraform from attempting to unify heterogeneous top-level object shapes.
 
 **Tech Stack:** Terraform HCL, HashiCorp Helm provider, native Terraform tests with mocked providers.
 
 ## Scope
 
-- Target: `terraform-onpremise-grafana`, based on `v1.28.5`.
+- Target: `terraform-onpremise-grafana` current `1.29.1` implementation.
 - Public interface: established component `extra_configs` maps; unchanged.
 - Module-owned contract fields: collector enablement, remote-write URLs, service endpoints, and monitoring enablement remain authoritative.
 - Out of scope: Grafana/MySQL, Promtail, node-exporter, chart upgrades, and manual cluster changes.
@@ -31,8 +31,8 @@ specs/004-monitoring-scheduling/
 2. Assert the existing values-list ordering rather than a synthetic single map:
    - Prometheus caller values document retains Prometheus/Alertmanager scheduling and remote-write; the later module contract enables the collector.
    - VictoriaMetrics, Tempo, and Loki caller documents retain scheduling; their later documents retain respective endpoint, metrics, and monitoring contracts.
-3. Demonstrate the baseline Prometheus failure for a heterogeneous `extra_configs` object.
-4. Change only Prometheus `caller_extra_configs` to normalize the dynamic object through `yamldecode(jsonencode(...))` before local inspection.
+3. Demonstrate the baseline Prometheus failure for a heterogeneous six-key `extra_configs` object.
+4. Change only Prometheus `caller_extra_configs` to select between serialized YAML strings before `yamldecode(...)`, preserving the existing dynamic-object normalization before local inspection.
 5. Run formatting, root validation, and the focused scheduling test suite.
 
 ## Acceptance criteria

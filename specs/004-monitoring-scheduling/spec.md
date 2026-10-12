@@ -17,7 +17,7 @@ A platform operator supplies a node selector and matching NoSchedule toleration 
 
 **Acceptance Scenarios**:
 
-1. **Given** caller scheduling values for Prometheus and Alertmanager, **When** the module renders Helm values, **Then** both workload specifications retain them alongside module-managed remote-write configuration.
+1. **Given** caller scheduling values for Prometheus and Alertmanager together with other chart values of different shapes, **When** the module renders Helm values, **Then** both workload specifications retain them alongside module-managed remote-write configuration without a Terraform type error.
 2. **Given** caller scheduling values for VictoriaMetrics, Tempo, and Loki, **When** the module renders Helm values, **Then** the relevant chart workload maps retain them alongside module-managed integration values.
 
 ### User Story 2 - Preserve existing integration guarantees (Priority: P2)
@@ -48,6 +48,7 @@ An operator continues to use the module's selected metrics backend and monitorin
 - **FR-004**: The module MUST retain module-owned collector, remote-write, endpoint, and monitoring fields.
 - **FR-005**: The module MUST not add a new public input or alter existing caller input shapes.
 - **FR-006**: The module MUST include automated regression coverage for the final Helm values.
+- **FR-007**: The Prometheus caller-values normalizer MUST accept a heterogeneous `extra_configs` object without requiring all top-level chart values to share one Terraform object shape.
 
 ## Success Criteria
 
