@@ -64,6 +64,7 @@ variable "alert_rules" {
     datasource     = string                     # Name of the datasource used for the alert
     no_data_state  = optional(string, "NoData") # Describes what state to enter when the rule's query returns No Data
     exec_err_state = optional(string, "Error")  # Describes what state to enter when the rule's query is invalid and the rule cannot be executed
+    is_paused      = optional(bool, false)      # Whether the rule is paused in Grafana
 
     datasource_type = optional(string, "prometheus") # The type of the datasource, possible values are prometheus, loki, or cloudwatch
     interval_ms     = optional(number, 1000)         # The interval in milliseconds for the alert rule

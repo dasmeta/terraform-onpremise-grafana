@@ -59,7 +59,7 @@ resource "grafana_rule_group" "this" {
         # Override with rule-specific labels
         lookup(rule.value, "labels", {})
       )
-      is_paused = false
+      is_paused = rule.value.is_paused
       data {
         ref_id     = "A"
         query_type = ""
