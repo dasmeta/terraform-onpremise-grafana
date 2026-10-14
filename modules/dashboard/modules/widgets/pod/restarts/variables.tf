@@ -27,3 +27,9 @@ variable "period" {
   type    = string
   default = "$__rate_interval"
 }
+
+variable "legacy_dashboard_queries" {
+  type        = bool
+  default     = false
+  description = "Render the pre-migration dashboard queries for this widget."
+}

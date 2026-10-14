@@ -66,8 +66,9 @@ module "ingress_memory_widget" {
   coordinates     = each.value.coordinates
   period          = try(each.value.period, local.widget_default_values.prometheus.period)
 
-  pod       = each.value.pod
-  namespace = each.value.namespace
+  pod                      = each.value.pod
+  namespace                = each.value.namespace
+  legacy_dashboard_queries = local.legacy_dashboard_queries
 }
 
 module "ingress_latency_widget" {

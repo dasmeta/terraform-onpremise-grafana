@@ -35,3 +35,9 @@ variable "by_pod" {
   type    = bool
   default = false
 }
+
+variable "legacy_dashboard_queries" {
+  type        = bool
+  default     = false
+  description = "Render the pre-migration dashboard queries for this widget."
+}

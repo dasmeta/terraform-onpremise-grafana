@@ -1,3 +1,7 @@
+locals {
+  pod_matcher = var.legacy_dashboard_queries ? "^${var.pod}-[^-]+-[^-]+$" : "^${var.pod}(-(primary|canary))?-[^-]+-[^-]+$"
+}
+
 module "base" {
   source = "../../base"
 
@@ -10,6 +14,6 @@ module "base" {
   period      = var.period
 
   metrics = [
-    { label = "Restarts", color = "FF0F3C", expression = "sum(rate(kube_pod_container_status_restarts_total{pod=~\"^${var.pod}(-(primary|canary))?-[^-]+-[^-]+$\"}[${var.period}]))" },
+    { label = "Restarts", color = "FF0F3C", expression = "sum(rate(kube_pod_container_status_restarts_total{pod=~\"${local.pod_matcher}\"}[${var.period}]))" },
   ]
 }

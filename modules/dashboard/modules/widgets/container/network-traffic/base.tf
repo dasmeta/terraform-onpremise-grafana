@@ -1,3 +1,7 @@
+locals {
+  pod_matcher = var.legacy_dashboard_queries ? "^${var.pod}(-[^-]+)?-[^-]+$" : "^${var.pod}(-(primary|canary))?(-[^-]+)?-[^-]+$"
+}
+
 module "base" {
   source = "../../base"
 
@@ -13,7 +17,7 @@ module "base" {
   unit        = "bytes"
 
   metrics = [
-    { label : "Received", color : "7AAFF9", expression : "sum(rate(container_network_receive_bytes_total{namespace=\"${var.namespace}\", pod=~\"^${var.pod}(-(primary|canary))?(-[^-]+)?-[^-]+$\"}[${var.period}]))" },
-    { label : "Sent", color : "EF8BBE", expression : "- sum(rate(container_network_transmit_bytes_total{namespace=\"${var.namespace}\", pod=~\"^${var.pod}(-(primary|canary))?(-[^-]+)?-[^-]+$\"}[${var.period}]))" },
+    { label : "Received", color : "7AAFF9", expression : "sum(rate(container_network_receive_bytes_total{namespace=\"${var.namespace}\", pod=~\"${local.pod_matcher}\"}[${var.period}]))" },
+    { label : "Sent", color : "EF8BBE", expression : "- sum(rate(container_network_transmit_bytes_total{namespace=\"${var.namespace}\", pod=~\"${local.pod_matcher}\"}[${var.period}]))" },
   ]
 }

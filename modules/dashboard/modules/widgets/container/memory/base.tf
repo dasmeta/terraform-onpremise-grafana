@@ -1,3 +1,7 @@
+locals {
+  memory_metric = var.legacy_dashboard_queries ? "container_memory_usage_bytes" : "container_memory_working_set_bytes"
+}
+
 module "base" {
   source = "../../base"
 
@@ -16,11 +20,11 @@ module "base" {
   }
 
   metrics = [
-    { label = "Avg", color = "FFC300", expression = "avg(container_memory_working_set_bytes{container=\"${var.container}\", namespace=\"${var.namespace}\"})" },
-    { label = "Max", color = "FF774D", expression = "max(container_memory_working_set_bytes{container=\"${var.container}\", namespace=\"${var.namespace}\"})" },
+    { label = "Avg", color = "FFC300", expression = "avg(${local.memory_metric}{container=\"${var.container}\", namespace=\"${var.namespace}\"})" },
+    { label = "Max", color = "FF774D", expression = "max(${local.memory_metric}{container=\"${var.container}\", namespace=\"${var.namespace}\"})" },
     { label = "Request", color = "007CEF", expression = "avg(kube_pod_container_resource_requests{container=\"${var.container}\", namespace=\"${var.namespace}\", resource=\"memory\"})" },
     { label = "Limit", color = "FF0F3C", expression = "avg(kube_pod_container_resource_limits{container=\"${var.container}\", namespace=\"${var.namespace}\", resource=\"memory\"})" },
-    { label = "Avg({{pod}})", color = "FFC300", expression = "avg(container_memory_working_set_bytes{container=\"${var.container}\", namespace=\"${var.namespace}\"}) by (pod)" },
-    { label = "Max({{pod}})", color = "FF774D", expression = "max(container_memory_working_set_bytes{container=\"${var.container}\", namespace=\"${var.namespace}\"}) by (pod)" },
+    { label = "Avg({{pod}})", color = "FFC300", expression = "avg(${local.memory_metric}{container=\"${var.container}\", namespace=\"${var.namespace}\"}) by (pod)" },
+    { label = "Max({{pod}})", color = "FF774D", expression = "max(${local.memory_metric}{container=\"${var.container}\", namespace=\"${var.namespace}\"}) by (pod)" },
   ]
 }

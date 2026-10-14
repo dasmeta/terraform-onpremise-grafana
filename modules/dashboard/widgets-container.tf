@@ -24,8 +24,9 @@ module "container_memory_widget" {
   period         = try(each.value.period, local.widget_default_values.prometheus.period)
 
   # container
-  container = each.value.container
-  namespace = each.value.namespace
+  container                = each.value.container
+  namespace                = each.value.namespace
+  legacy_dashboard_queries = local.legacy_dashboard_queries
 }
 
 module "container_network_widget" {
@@ -38,9 +39,10 @@ module "container_network_widget" {
   period         = try(each.value.period, local.widget_default_values.prometheus.period)
 
   # container
-  container = each.value.container
-  namespace = each.value.namespace
-  host      = try(each.value.host, null)
+  container                = each.value.container
+  namespace                = each.value.namespace
+  host                     = try(each.value.host, null)
+  legacy_dashboard_queries = local.legacy_dashboard_queries
 }
 
 module "container_replicas_widget" {
@@ -55,8 +57,9 @@ module "container_replicas_widget" {
   period          = try(each.value.period, local.widget_default_values.prometheus.period)
 
   # container
-  container = each.value.container
-  namespace = each.value.namespace
+  container                = each.value.container
+  namespace                = each.value.namespace
+  legacy_dashboard_queries = local.legacy_dashboard_queries
 }
 
 module "container_restarts_widget" {
@@ -118,8 +121,9 @@ module "container_network_traffic_widget" {
   coordinates    = each.value.coordinates
   period         = try(each.value.period, local.widget_default_values.prometheus.period)
 
-  pod       = each.value.pod
-  namespace = each.value.namespace
+  pod                      = each.value.pod
+  namespace                = each.value.namespace
+  legacy_dashboard_queries = local.legacy_dashboard_queries
 }
 
 module "container_network_error_widget" {
@@ -131,8 +135,9 @@ module "container_network_error_widget" {
   coordinates    = each.value.coordinates
   period         = try(each.value.period, local.widget_default_values.prometheus.period)
 
-  pod       = each.value.pod
-  namespace = each.value.namespace
+  pod                      = each.value.pod
+  namespace                = each.value.namespace
+  legacy_dashboard_queries = local.legacy_dashboard_queries
 }
 
 module "container_volume_capacity_widget" {
