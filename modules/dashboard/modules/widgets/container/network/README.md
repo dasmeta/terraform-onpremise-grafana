@@ -28,6 +28,7 @@ No resources.
 | <a name="input_datasource_type"></a> [datasource\_type](#input\_datasource\_type) | n/a | `string` | `"prometheus"` | no |
 | <a name="input_datasource_uid"></a> [datasource\_uid](#input\_datasource\_uid) | n/a | `string` | `"prometheus"` | no |
 | <a name="input_host"></a> [host](#input\_host) | n/a | `string` | `null` | no |
+| <a name="input_legacy_dashboard_queries"></a> [legacy\_dashboard\_queries](#input\_legacy\_dashboard\_queries) | Render the pre-migration dashboard queries for this widget. | `bool` | `false` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | n/a | `string` | `"default"` | no |
 | <a name="input_period"></a> [period](#input\_period) | stats | `string` | `"$__rate_interval"` | no |
 

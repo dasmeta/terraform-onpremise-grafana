@@ -33,3 +33,9 @@ variable "period" {
   type    = string
   default = "3"
 }
+
+variable "legacy_dashboard_queries" {
+  type        = bool
+  default     = false
+  description = "Render the pre-migration dashboard queries for this widget."
+}

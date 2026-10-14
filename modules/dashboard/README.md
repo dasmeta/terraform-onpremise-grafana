@@ -1,4 +1,16 @@
 # Module to create Grafana dashboard from json/hcl
+## Preserve an existing dashboard query contract
+
+The default uses working-set memory for OOM-risk visibility and rollout-aware pod selectors. To keep the v1.28.2 expressions for one existing dashboard during an upgrade, set the dashboard defaults below:
+
+```yaml
+defaults:
+  query_compatibility:
+    legacy_dashboard_queries: true
+```
+
+The setting defaults to `false` and is for upgrades only, not new dashboards. It affects only the nine migrated dashboard widget types: container memory, ingress memory, pod memory, container network, network traffic, network errors, replicas, pod CPU, and pod restarts. It does not modify alert rules or unrelated widgets. It will be removed in a future major release after consumers migrate to the modern query contract.
+
 ## Yaml example
 ```
 source: dasmeta/grafana/onpremise//modules/dashboard
@@ -118,8 +130,8 @@ See `modules/dashboard/tests/kafka-observability/` and `docs/DMVP-10603-kafka-ob
 
 | Name | Version |
 |------|---------|
-| <a name="provider_grafana"></a> [grafana](#provider\_grafana) | ~> 4.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.6 |
+| <a name="provider_grafana"></a> [grafana](#provider\_grafana) | 4.49.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.9.1 |
 
 ## Modules
 
@@ -256,7 +268,7 @@ See `modules/dashboard/tests/kafka-observability/` and `docs/DMVP-10603-kafka-ob
 | <a name="input_alerts"></a> [alerts](#input\_alerts) | Allows to configure globally dashboard block/(sla\|ingress\|service\|msk\|kafka\_observability) blocks/widgets related alerts. For `block/service` alerts, `map_namespace_to_env_label` (default true) maps each alert namespace to `labels.env`; set false to map it to `labels.namespace`. `block/msk` and `block/kafka_observability` still require `alerts.enabled = true` on the row; dashboard-level `alerts.enabled` does not turn those rows on. | `any` | `{}` | no |
 | <a name="input_create_folder"></a> [create\_folder](#input\_create\_folder) | If true, create folder in this module. If false, use existing folder. | `bool` | `false` | no |
 | <a name="input_data_source"></a> [data\_source](#input\_data\_source) | The grafana dashboard global/default datasource, will be used in widget items if they have no their custom ones | <pre>object({<br/>    uid  = optional(string, null)<br/>    type = optional(string, "prometheus")<br/>  })</pre> | `{}` | no |
-| <a name="input_defaults"></a> [defaults](#input\_defaults) | Default values to be supplied to all modules. | `any` | `{}` | no |
+| <a name="input_defaults"></a> [defaults](#input\_defaults) | Default values to be supplied to all modules. Set query\_compatibility.legacy\_dashboard\_queries to true only while upgrading a v1.28.2 dashboard; it preserves that query contract and will be removed in a future major release. | `any` | `{}` | no |
 | <a name="input_folder_name"></a> [folder\_name](#input\_folder\_name) | The folder name to place grafana dashboard | `string` | `"application-dashboard"` | no |
 | <a name="input_folder_name_uids"></a> [folder\_name\_uids](#input\_folder\_name\_uids) | Map of folder names to folder UIDs. If provided, will be used instead of data sources | `map(string)` | `{}` | no |
 | <a name="input_loki_datasource_uid"></a> [loki\_datasource\_uid](#input\_loki\_datasource\_uid) | The default datasource uid for the logs widgets | `string` | `"loki"` | no |

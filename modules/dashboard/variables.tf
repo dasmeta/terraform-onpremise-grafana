@@ -15,7 +15,7 @@ variable "defaults" {
   #   }
   # )
   default     = {}
-  description = "Default values to be supplied to all modules."
+  description = "Default values to be supplied to all modules. Set query_compatibility.legacy_dashboard_queries to true only while upgrading a v1.28.2 dashboard; it preserves that query contract and will be removed in a future major release."
 }
 
 variable "create_folder" {

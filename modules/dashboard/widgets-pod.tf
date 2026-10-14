@@ -9,9 +9,10 @@ module "pod_cpu_widget" {
   period      = try(each.value.period, local.widget_default_values.prometheus.period)
 
   # pod
-  pod       = each.value.pod
-  namespace = each.value.namespace
-  by_pod    = try(each.value.by_pod, false)
+  pod                      = each.value.pod
+  namespace                = each.value.namespace
+  by_pod                   = try(each.value.by_pod, false)
+  legacy_dashboard_queries = local.legacy_dashboard_queries
 }
 
 module "pod_memory_widget" {
@@ -24,8 +25,9 @@ module "pod_memory_widget" {
   period      = try(each.value.period, local.widget_default_values.prometheus.period)
 
   # pod
-  pod       = each.value.pod
-  namespace = each.value.namespace
+  pod                      = each.value.pod
+  namespace                = each.value.namespace
+  legacy_dashboard_queries = local.legacy_dashboard_queries
 }
 
 module "pod_restarts_widget" {
@@ -38,8 +40,9 @@ module "pod_restarts_widget" {
   period         = try(each.value.period, local.widget_default_values.prometheus.period)
 
   # pod
-  pod       = each.value.pod
-  namespace = each.value.namespace
+  pod                      = each.value.pod
+  namespace                = each.value.namespace
+  legacy_dashboard_queries = local.legacy_dashboard_queries
 }
 
 module "deployment_replicas_widget" {
