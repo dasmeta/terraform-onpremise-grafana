@@ -3,7 +3,7 @@ locals {
     [
       { type : "container/cpu", container : var.name, datasource_uid = var.prometheus_datasource_uid, period = var.period },
       { type : "container/memory", container : var.name, datasource_uid = var.prometheus_datasource_uid, period = var.period },
-      { type : "container/replicas", container : var.name, datasource_uid = var.prometheus_datasource_uid, period = var.period },
+      { type : "container/replicas", container : var.name, datasource_uid = var.prometheus_datasource_uid, period = var.period, legacy_service_block_queries = var.legacy_service_block_queries },
     ],
     [
       { type : "container/network", host : var.host, container : var.name, datasource_uid = var.prometheus_datasource_uid, period = var.period },

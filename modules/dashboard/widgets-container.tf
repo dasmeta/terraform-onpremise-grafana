@@ -57,9 +57,10 @@ module "container_replicas_widget" {
   period          = try(each.value.period, local.widget_default_values.prometheus.period)
 
   # container
-  container                = each.value.container
-  namespace                = each.value.namespace
-  legacy_dashboard_queries = local.legacy_dashboard_queries
+  container                    = each.value.container
+  namespace                    = each.value.namespace
+  legacy_dashboard_queries     = local.legacy_dashboard_queries
+  legacy_service_block_queries = try(each.value.legacy_service_block_queries, false)
 }
 
 module "container_restarts_widget" {

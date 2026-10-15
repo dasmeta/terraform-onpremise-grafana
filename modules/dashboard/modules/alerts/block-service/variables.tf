@@ -178,3 +178,9 @@ variable "alerts" {
   default     = {}
   description = "Alerts to enable on services/apps which have pods, if option set null it generally takes option value from var.defaults"
 }
+
+variable "legacy_service_block_queries" {
+  type        = bool
+  default     = false
+  description = "Render the deployed legacy service-block alert query contract."
+}
