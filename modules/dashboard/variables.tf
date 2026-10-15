@@ -15,7 +15,7 @@ variable "defaults" {
   #   }
   # )
   default     = {}
-  description = "Default values to be supplied to all modules. Set query_compatibility.legacy_dashboard_queries or query_compatibility.legacy_service_block_queries to true only while upgrading an existing dashboard; each preserves its corresponding deployed query contract and will be removed in a future major release."
+  description = "Default values to be supplied to all modules. Set query_compatibility.legacy_dashboard_queries or query_compatibility.legacy_service_block_queries to true only while upgrading an existing dashboard; legacy_service_block_queries reproduces the v1.28.0 block/service query contract. Both settings will be removed in a future major release."
 }
 
 variable "create_folder" {

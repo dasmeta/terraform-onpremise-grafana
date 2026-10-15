@@ -705,7 +705,7 @@ When consuming this module through `dasmeta/grafanav12/aws` (for example a downs
 
 | Name | Version |
 |------|---------|
-| <a name="provider_grafana"></a> [grafana](#provider\_grafana) | 4.50.0 |
+| <a name="provider_grafana"></a> [grafana](#provider\_grafana) | ~> 4.0 |
 
 ## Modules
 

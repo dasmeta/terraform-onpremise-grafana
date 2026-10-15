@@ -25,6 +25,7 @@ run "legacy_service_block_mode_preserves_deployed_queries" {
     condition = alltrue([
       contains(compact(flatten([for panel in output.widget_result : [for target in try(panel.targets, []) : try(target.expr, null)]])), "sum(kube_pod_status_phase{namespace=\"prod\", pod=~\"example-service-.*\"})"),
       contains(compact(flatten([for panel in output.widget_result : [for target in try(panel.targets, []) : try(target.expr, null)]])), "sum(kube_pod_status_phase{namespace=\"prod\", pod=~\"example-service-.*\"}) by (phase)"),
+      contains(compact(flatten([for panel in output.widget_result : [for target in try(panel.targets, []) : try(target.expr, null)]])), "sum(rate(kube_pod_container_status_restarts_total{namespace=\"prod\", pod=~\"^example-service-[^-]+-[^-]+$\"}[$__rate_interval])) by (container)"),
       contains(compact([for rule in output.widget_alert_rules : try(rule.expr, null)]), "sum(kube_pod_status_phase{namespace='prod', pod=~'^example-service(-[^-]+)?-[^-]+$', phase!='Succeeded', phase!='Running'}) by (phase)"),
       contains(compact([for rule in output.widget_alert_rules : try(rule.expr, null)]), "(sum(container_memory_usage_bytes{container='example-service', namespace='prod'}) by (pod) / max(kube_pod_container_resource_limits{container='example-service', namespace='prod', resource='memory'}) by (pod)) * 100"),
     ])
