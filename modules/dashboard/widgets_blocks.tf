@@ -16,14 +16,15 @@ module "block_service" {
 
   for_each = { for index, item in try(local.blocks_by_type["service"], []) : index => item }
 
-  name                      = each.value.block.name
-  namespace                 = try(each.value.block.namespace, "$namespace")
-  columns                   = try(each.value.block.columns, 4)
-  host                      = try(each.value.block.host, null)
-  prometheus_datasource_uid = try(each.value.block.prometheus_datasource_uid, var.data_source.uid)
-  loki_datasource_uid       = try(each.value.block.loki_datasource_uid, var.loki_datasource_uid)
-  disk_widgets              = try(each.value.block.disk_widgets, {})
-  log_widgets               = try(each.value.block.log_widgets, {})
+  name                         = each.value.block.name
+  namespace                    = try(each.value.block.namespace, "$namespace")
+  columns                      = try(each.value.block.columns, 4)
+  host                         = try(each.value.block.host, null)
+  prometheus_datasource_uid    = try(each.value.block.prometheus_datasource_uid, var.data_source.uid)
+  loki_datasource_uid          = try(each.value.block.loki_datasource_uid, var.loki_datasource_uid)
+  disk_widgets                 = try(each.value.block.disk_widgets, {})
+  log_widgets                  = try(each.value.block.log_widgets, {})
+  legacy_service_block_queries = local.legacy_service_block_queries
 }
 
 module "block_sla" {

@@ -106,7 +106,8 @@ locals {
   # Keep established dashboard query contracts when explicitly requested. This is
   # deliberately dashboard-scoped so alert queries and unrelated widgets remain
   # on their current behavior.
-  legacy_dashboard_queries = try(tobool(var.defaults.query_compatibility.legacy_dashboard_queries), false)
+  legacy_dashboard_queries     = try(tobool(var.defaults.query_compatibility.legacy_dashboard_queries), false)
+  legacy_service_block_queries = try(tobool(var.defaults.query_compatibility.legacy_service_block_queries), false)
 
   # this will walk through every widget and add row/column + merge with default values
   widget_config_with_raw_column_data_and_defaults = [

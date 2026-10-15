@@ -67,3 +67,9 @@ variable "period_loki" {
   type    = string
   default = "$__interval"
 }
+
+variable "legacy_service_block_queries" {
+  type        = bool
+  default     = false
+  description = "Render the legacy service-block replicas query contract."
+}

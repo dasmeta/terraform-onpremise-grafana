@@ -1,5 +1,5 @@
 locals {
-  pod_matcher = var.legacy_dashboard_queries ? "^${var.container}-[^-]+-[^-]+$" : "^${var.container}(-(primary|canary))?-[^-]+-[^-]+$"
+  pod_matcher = var.legacy_service_block_queries ? "${var.container}-.*" : (var.legacy_dashboard_queries ? "^${var.container}-[^-]+-[^-]+$" : "^${var.container}(-(primary|canary))?-[^-]+-[^-]+$")
 }
 
 module "base" {

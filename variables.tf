@@ -29,7 +29,7 @@ variable "skip_folder_creation" {
 variable "application_dashboard" {
   type = list(object({
     name             = string
-    defaults         = optional(any, {})                         # allows to pass/override general datasource/widget defaults, including the temporary upgrade-only query_compatibility.legacy_dashboard_queries
+    defaults         = optional(any, {})                         # allows to pass/override general datasource/widget defaults, including temporary upgrade-only query_compatibility settings
     folder_name      = optional(string, "application-dashboard") # the folder name for dashboard
     namespace        = optional(string, "prod")
     rows             = optional(any, [])

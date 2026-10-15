@@ -38,3 +38,9 @@ variable "legacy_dashboard_queries" {
   default     = false
   description = "Render the pre-migration dashboard queries for this widget."
 }
+
+variable "legacy_service_block_queries" {
+  type        = bool
+  default     = false
+  description = "Render the deployed legacy service-block replicas query contract."
+}
