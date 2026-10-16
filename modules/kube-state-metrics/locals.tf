@@ -20,6 +20,12 @@ locals {
     ]
     service = {
       port = 8080
+      annotations = {
+        # Prometheus discovers this exporter through the ServiceMonitor below.
+        # Opting out prevents a duplicate legacy annotation job from scraping
+        # the Service root instead of its /metrics endpoint.
+        "prometheus.io/scrape" = "false"
+      }
     }
     prometheus = {
       monitor = {

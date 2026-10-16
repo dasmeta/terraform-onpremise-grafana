@@ -29,6 +29,11 @@ VictoriaMetrics mode, a caller inline job named exactly `kube-state-metrics`
 suppresses the native object and remains responsible for its own scrape-size
 limit.
 
+In Prometheus mode, the Service opts out of annotation-based scraping with
+`prometheus.io/scrape: "false"`. The chart `ServiceMonitor` is the single
+supported discovery path, which prevents a legacy annotation job from creating
+a duplicate target that can request the Service root rather than `/metrics`.
+
 For an existing installation, first apply the root module while Prometheus
 remains installed and selected. The root dependency ordering lets the
 Prometheus chart remove its bundled kube-state-metrics resources before this
