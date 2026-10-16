@@ -481,6 +481,9 @@ run "kube_state_metrics_values_are_collector_owned" {
       fullnameOverride = "wrong-name"
       service = {
         port = 9090
+        annotations = {
+          "prometheus.io/scrape" = "true"
+        }
       }
       prometheus = {
         monitor = {
@@ -520,6 +523,7 @@ run "kube_state_metrics_values_are_collector_owned" {
         "storageclasses",
       ],
       jsondecode(helm_release.kube_state_metrics.values[1]).service.port == 8080,
+      jsondecode(helm_release.kube_state_metrics.values[1]).service.annotations["prometheus.io/scrape"] == "false",
       jsondecode(helm_release.kube_state_metrics.values[1]).prometheus.monitor.enabled == true,
       jsondecode(helm_release.kube_state_metrics.values[1]).prometheus.monitor.additionalLabels.release == "prometheus",
       jsondecode(helm_release.kube_state_metrics.values[1]).prometheus.monitor.selectorOverride["app.kubernetes.io/name"] == "kube-state-metrics",
