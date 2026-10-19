@@ -30,6 +30,7 @@ variable "defaults" {
     no_data_state     = optional(string, "NoData")           # define how to handle if no data for query, by default it will fire alert with no data info
     exec_err_state    = optional(string, "Error")            # define how to handle if query execution error, by default it will fire alert with error info
     group             = optional(string, null)               # grafana alert group name which used for grouping, if null the group name will be based on service name/namespace in format `Service {namespace}/{name}`
+    stable_uids       = optional(bool, false)                # derive rule uids from namespace/name/alert so they do not move between rules when alerts are added/removed/reordered; enabling it on existing alerts changes their uids once
   })
   default     = {}
   description = "The general default values to use with alert rules"
@@ -100,6 +101,7 @@ variable "alerts" {
       enabled        = optional(bool, null)   # whether the restart based alert is enabled
       interval       = optional(string, null) # the time interval used to evaluate/aggregate restart count, if set `null` here it takes  defaults value
       threshold      = optional(number, 3)    # the count of restarts that it will consider as read line to fire alert if exceeded
+      pending_period = optional(string, null) # define for how long restarts should exceed threshold to fire alert, if null the alert fires on first evaluation(previous behaviour, defaults.pending_period is not applied here)
       no_data_state  = optional(string, null) # define how to handle if no data for query, if set `null` here it takes  defaults value
       exec_err_state = optional(string, null) # define how to handle if query execution error, if set `null` here it takes  defaults value
       labels         = optional(any, {})      # define alert labels to filter in notification policies, this extends with override the defaults labels

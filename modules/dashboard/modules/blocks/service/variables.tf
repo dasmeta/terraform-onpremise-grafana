@@ -3,6 +3,12 @@ variable "name" {
   description = "Service name"
 }
 
+variable "workload_name" {
+  type        = string
+  default     = null
+  description = "The workload(deployment/statefulset/daemonset) name, used as pod name prefix in replicas/network/volume/logs widgets, set it when it differs from container name(var.name), for example karpenter deployment is named `karpenter` while its container is named `controller`. If null var.name is used"
+}
+
 variable "namespace" {
   type        = string
   description = "EKS namespace name"
@@ -72,4 +78,10 @@ variable "legacy_service_block_queries" {
   type        = bool
   default     = false
   description = "Render the legacy service-block replicas query contract."
+}
+
+variable "block_name" {
+  type        = string
+  default     = null
+  description = "Dashboard block title, if null the service name is used"
 }

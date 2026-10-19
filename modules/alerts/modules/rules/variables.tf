@@ -60,6 +60,7 @@ variable "folder_name_uids" {
 variable "alert_rules" {
   type = list(object({
     name           = string                     # The name of the alert rule
+    uid_key        = optional(string, null)     # Stable key of the rule, when set the rule uid is derived from folder/group/key so it stays the same when rules are added/removed/reordered; null keeps grafana generated(position based) uid
     folder_name    = optional(string, null)     # The folder name for the alert rule, if not set it defaults to var.folder_name
     datasource     = string                     # Name of the datasource used for the alert
     no_data_state  = optional(string, "NoData") # Describes what state to enter when the rule's query returns No Data

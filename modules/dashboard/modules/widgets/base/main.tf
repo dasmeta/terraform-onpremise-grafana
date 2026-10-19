@@ -21,6 +21,7 @@ module "base_grafana" {
   unit               = var.unit
   min                = var.min
   max                = var.max
+  no_value           = var.no_value
   fillOpacity        = var.fillOpacity
   options            = var.options
   cloudwatch_targets = var.cloudwatch_targets

@@ -21,6 +21,7 @@ No resources.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_block_name"></a> [block\_name](#input\_block\_name) | Dashboard block title, if null the service name is used | `string` | `null` | no |
 | <a name="input_columns"></a> [columns](#input\_columns) | The number of widgets to place in each line | `number` | `4` | no |
 | <a name="input_disk_widgets"></a> [disk\_widgets](#input\_disk\_widgets) | The configs allow to manage the volumes related widgets | <pre>object({<br/>    enabled   = optional(bool, true)<br/>    pvc_names = optional(list(string), [])<br/>  })</pre> | `{}` | no |
 | <a name="input_host"></a> [host](#input\_host) | The service host name | `string` | `null` | no |
@@ -32,6 +33,7 @@ No resources.
 | <a name="input_period"></a> [period](#input\_period) | n/a | `string` | `"$__rate_interval"` | no |
 | <a name="input_period_loki"></a> [period\_loki](#input\_period\_loki) | n/a | `string` | `"$__interval"` | no |
 | <a name="input_prometheus_datasource_uid"></a> [prometheus\_datasource\_uid](#input\_prometheus\_datasource\_uid) | datasource uid for the metrics widgets | `string` | `"prometheus"` | no |
+| <a name="input_workload_name"></a> [workload\_name](#input\_workload\_name) | The workload(deployment/statefulset/daemonset) name, used as pod name prefix in replicas/network/volume/logs widgets, set it when it differs from container name(var.name), for example karpenter deployment is named `karpenter` while its container is named `controller`. If null var.name is used | `string` | `null` | no |
 
 ## Outputs
 
@@ -39,3 +41,45 @@ No resources.
 |------|-------------|
 | <a name="output_result"></a> [result](#output\_result) | description |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+
+<!-- BEGIN_TF_DOCS -->
+## Requirements
+
+No requirements.
+
+## Providers
+
+No providers.
+
+## Modules
+
+No modules.
+
+## Resources
+
+No resources.
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_block_name"></a> [block\_name](#input\_block\_name) | Dashboard block title, if null the service name is used | `string` | `null` | no |
+| <a name="input_columns"></a> [columns](#input\_columns) | The number of widgets to place in each line | `number` | `4` | no |
+| <a name="input_disk_widgets"></a> [disk\_widgets](#input\_disk\_widgets) | The configs allow to manage the volumes related widgets | <pre>object({<br/>    enabled   = optional(bool, true)<br/>    pvc_names = optional(list(string), [])<br/>  })</pre> | `{}` | no |
+| <a name="input_host"></a> [host](#input\_host) | The service host name | `string` | `null` | no |
+| <a name="input_legacy_service_block_queries"></a> [legacy\_service\_block\_queries](#input\_legacy\_service\_block\_queries) | Render the legacy service-block replicas query contract. | `bool` | `false` | no |
+| <a name="input_log_widgets"></a> [log\_widgets](#input\_log\_widgets) | The logs widgets configs | <pre>object({<br/>    enabled       = optional(bool, true)                         # whether log widgets are enabled, by default only size of total/error/warn logs will be shown<br/>    show_logs     = optional(bool, false)                        # whether total/error/warn logs showing widgets are enabled, this widgets usually are heavy in terms of load on loki so we have them disabled by default<br/>    parser        = optional(string, "logfmt")                   # parser to use to format logs before applying filter<br/>    error_filter  = optional(string, "detected_level=\"error\"") # error logs widget filter<br/>    warn_filter   = optional(string, "detected_level=\"warn\"")  # warn logs widget filter<br/>    latest_filter = optional(string, "")                         # latest logs widget filter<br/>    direction     = optional(string, "backward")                 # the direction search of log entries<br/>    limit         = optional(number, 10)                         # count of items to fetch for each log widget<br/>  })</pre> | `{}` | no |
+| <a name="input_loki_datasource_uid"></a> [loki\_datasource\_uid](#input\_loki\_datasource\_uid) | datasource uid for the logs widgets | `string` | `"loki"` | no |
+| <a name="input_name"></a> [name](#input\_name) | Service name | `string` | n/a | yes |
+| <a name="input_namespace"></a> [namespace](#input\_namespace) | EKS namespace name | `string` | n/a | yes |
+| <a name="input_period"></a> [period](#input\_period) | n/a | `string` | `"$__rate_interval"` | no |
+| <a name="input_period_loki"></a> [period\_loki](#input\_period\_loki) | n/a | `string` | `"$__interval"` | no |
+| <a name="input_prometheus_datasource_uid"></a> [prometheus\_datasource\_uid](#input\_prometheus\_datasource\_uid) | datasource uid for the metrics widgets | `string` | `"prometheus"` | no |
+| <a name="input_workload_name"></a> [workload\_name](#input\_workload\_name) | The workload(deployment/statefulset/daemonset) name, used as pod name prefix in replicas/network/volume/logs widgets, set it when it differs from container name(var.name), for example karpenter deployment is named `karpenter` while its container is named `controller`. If null var.name is used | `string` | `null` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_result"></a> [result](#output\_result) | description |
+<!-- END_TF_DOCS -->

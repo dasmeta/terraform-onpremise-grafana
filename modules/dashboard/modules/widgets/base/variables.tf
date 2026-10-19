@@ -316,3 +316,9 @@ variable "max" {
   nullable    = true
   description = "Standard options: maximum value for the field (e.g. gauge scale; null = auto)"
 }
+
+variable "no_value" {
+  type        = string
+  default     = null
+  description = "Standard options: text shown instead of \"No data\" when the panel queries return nothing (null = grafana default)"
+}
