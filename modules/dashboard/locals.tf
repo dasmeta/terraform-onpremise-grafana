@@ -41,6 +41,7 @@ locals {
     msk                 = values(module.block_msk).*.result
     "aws-ses"           = values(module.block_aws_ses).*.result
     kafka_observability = values(module.block_kafka_observability).*.result
+    karpenter           = values(module.block_karpenter).*.result
   }
 
   blocks_by_type_results = concat([], [
@@ -270,5 +271,8 @@ locals {
     values(module.kafka_task_state_widget).*.data,
     values(module.kafka_connect_totals_widget).*.data,
     values(module.kafka_exporter_health_widget).*.data,
+
+    # Karpenter widgets
+    values(module.karpenter_widget).*.data,
   )
 }

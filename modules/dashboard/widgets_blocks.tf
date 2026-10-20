@@ -17,6 +17,8 @@ module "block_service" {
   for_each = { for index, item in try(local.blocks_by_type["service"], []) : index => item }
 
   name                         = each.value.block.name
+  block_name                   = try(each.value.block.block_name, null)
+  workload_name                = try(each.value.block.workload_name, null)
   namespace                    = try(each.value.block.namespace, "$namespace")
   columns                      = try(each.value.block.columns, 4)
   host                         = try(each.value.block.host, null)
@@ -136,4 +138,18 @@ module "block_kafka_observability" {
   period         = try(each.value.block.period, local.widget_default_values.prometheus.period)
   datasource_uid = try(each.value.block.datasource_uid, local.widget_default_values.prometheus.datasource_uid)
   block_name     = try(each.value.block.block_name, "Kafka observability")
+}
+
+module "block_karpenter" {
+  source = "./modules/blocks/karpenter"
+
+  for_each = { for index, item in try(local.blocks_by_type["karpenter"], []) : index => item }
+
+  namespace      = try(each.value.block.namespace, "karpenter")
+  extra_filters  = try(each.value.block.extra_filters, "")
+  period         = try(each.value.block.period, local.widget_default_values.prometheus.period)
+  datasource_uid = try(each.value.block.datasource_uid, local.widget_default_values.prometheus.datasource_uid)
+  block_name     = try(each.value.block.block_name, "Karpenter")
+  columns        = try(each.value.block.columns, 3)
+  widgets        = try(each.value.block.widgets, {})
 }

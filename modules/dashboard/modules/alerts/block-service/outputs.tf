@@ -4,6 +4,7 @@ output "alert_rules" {
       coalesce(local.alerts.replicas_no.enabled, local.defaults.enabled, false) ? [
         {
           name           = "`${var.namespace}/${var.name}` service has no any running replica/pod"
+          uid_key        = try(var.defaults.stable_uids, false) ? "service/${var.namespace}/${var.name}/replicas_no" : null
           folder_name    = try(coalesce(local.alerts.replicas_no.folder_name, local.defaults.folder_name), null)
           summary        = "{{ .Labels.alertname }} it is already ${coalesce(local.alerts.replicas_no.pending_period, local.defaults.pending_period)}"
           group          = try(coalesce(local.alerts.replicas_no.group, local.defaults.group), "${var.namespace}/${var.name} service")
@@ -31,6 +32,7 @@ output "alert_rules" {
       local.replicas_max_enabled ? [
         {
           name           = "`${var.namespace}/${var.name}` service has reached to its max ${local.alerts.replicas_max.threshold != null ? local.alerts.replicas_max.threshold : "hpa"} replicas/pods"
+          uid_key        = try(var.defaults.stable_uids, false) ? "service/${var.namespace}/${var.name}/replicas_max" : null
           folder_name    = try(coalesce(local.alerts.replicas_max.folder_name, local.defaults.folder_name), null)
           summary        = "{{ .Labels.alertname }} count it is already ${coalesce(local.alerts.replicas_max.pending_period, local.defaults.pending_period)}"
           group          = try(coalesce(local.alerts.replicas_max.group, local.defaults.group), "${var.namespace}/${var.name} service")
@@ -58,6 +60,7 @@ output "alert_rules" {
       local.replicas_min_enabled ? [
         {
           name           = "`${var.namespace}/${var.name}` service has less than min ${local.alerts.replicas_min.threshold != null ? local.alerts.replicas_min.threshold : "hpa"} replicas/pods"
+          uid_key        = try(var.defaults.stable_uids, false) ? "service/${var.namespace}/${var.name}/replicas_min" : null
           summary        = "{{ .Labels.alertname }} it is already ${coalesce(local.alerts.replicas_min.pending_period, local.defaults.pending_period)}"
           group          = try(coalesce(local.alerts.replicas_min.group, local.defaults.group), "${var.namespace}/${var.name} service")
           no_data_state  = coalesce(local.alerts.replicas_min.no_data_state, local.defaults.no_data_state, "NoData")
@@ -86,6 +89,7 @@ output "alert_rules" {
       coalesce(local.alerts.replicas_state.enabled, local.defaults.enabled, false) ? [
         {
           name           = "`${var.namespace}/${var.name}` service has Failed/Pending/Unknown status/phase replicas/pods"
+          uid_key        = try(var.defaults.stable_uids, false) ? "service/${var.namespace}/${var.name}/replicas_state" : null
           summary        = "{{ .Labels.alertname }} it is already ${coalesce(local.alerts.replicas_state.pending_period, local.defaults.pending_period)}"
           group          = try(coalesce(local.alerts.replicas_state.group, local.defaults.group), "${var.namespace}/${var.name} service")
           no_data_state  = coalesce(local.alerts.replicas_state.no_data_state, local.defaults.no_data_state, "NoData")
@@ -113,6 +117,7 @@ output "alert_rules" {
       local.unavailable_replicas_enabled ? [
         {
           name           = "`${var.namespace}/${var.name}` deployment has unavailable replicas"
+          uid_key        = try(var.defaults.stable_uids, false) ? "service/${var.namespace}/${var.name}/unavailable_replicas" : null
           folder_name    = try(coalesce(local.alerts.unavailable_replicas.folder_name, local.defaults.folder_name), null)
           summary        = "{{ .Labels.alertname }} it is already ${coalesce(local.alerts.unavailable_replicas.pending_period, local.defaults.pending_period)}"
           group          = try(coalesce(local.alerts.unavailable_replicas.group, local.defaults.group), "${var.namespace}/${var.name} service")
@@ -141,6 +146,7 @@ output "alert_rules" {
       coalesce(local.alerts.job_failed.enabled, local.defaults.enabled, false) ? [
         {
           name           = "`${var.namespace}/${var.name}` job/cronjob has failed replicas/pods"
+          uid_key        = try(var.defaults.stable_uids, false) ? "service/${var.namespace}/${var.name}/job_failed" : null
           summary        = "{{ .Labels.alertname }} it is already ${coalesce(local.alerts.job_failed.pending_period, local.defaults.pending_period)}"
           group          = try(coalesce(local.alerts.job_failed.group, local.defaults.group), "${var.namespace}/${var.name} service")
           no_data_state  = coalesce(local.alerts.job_failed.no_data_state, local.defaults.no_data_state, "NoData")
@@ -168,6 +174,8 @@ output "alert_rules" {
       coalesce(local.alerts.restarts.enabled, local.defaults.enabled, false) ? [
         {
           name            = "`${var.namespace}/${var.name}` service has too many restarts for ${coalesce(local.alerts.restarts.interval, local.defaults.interval)} interval"
+          pending_period  = local.alerts.restarts.pending_period # applied only when set explicitly, unset keeps the previous immediate(0s) firing
+          uid_key         = try(var.defaults.stable_uids, false) ? "service/${var.namespace}/${var.name}/restarts" : null
           group           = try(coalesce(local.alerts.restarts.group, local.defaults.group), "${var.namespace}/${var.name} service")
           no_data_state   = coalesce(local.alerts.restarts.no_data_state, local.defaults.no_data_state, "NoData")
           exec_err_state  = coalesce(local.alerts.restarts.exec_err_state, local.defaults.exec_err_state, "Error")
@@ -198,6 +206,7 @@ output "alert_rules" {
       local.network_in_enabled ? [
         {
           name           = "`${var.namespace}/${var.name}` service has anomaly increase of in/receive network traffic for ${coalesce(local.alerts.network_in.interval, local.defaults.interval)} interval"
+          uid_key        = try(var.defaults.stable_uids, false) ? "service/${var.namespace}/${var.name}/network_in" : null
           summary        = "{{ .Labels.alertname }} it is already ${coalesce(local.alerts.network_in.pending_period, local.defaults.pending_period)}"
           group          = try(coalesce(local.alerts.network_in.group, local.defaults.group), "${var.namespace}/${var.name} service")
           no_data_state  = coalesce(local.alerts.network_in.no_data_state, local.defaults.no_data_state, "NoData")
@@ -225,6 +234,7 @@ output "alert_rules" {
       local.network_out_enabled ? [
         {
           name           = "`${var.namespace}/${var.name}` service has anomaly increase of out/transmit network traffic for ${coalesce(local.alerts.network_out.interval, local.defaults.interval)} interval"
+          uid_key        = try(var.defaults.stable_uids, false) ? "service/${var.namespace}/${var.name}/network_out" : null
           summary        = "{{ .Labels.alertname }} it is already ${coalesce(local.alerts.network_out.pending_period, local.defaults.pending_period)}"
           group          = try(coalesce(local.alerts.network_out.group, local.defaults.group), "${var.namespace}/${var.name} service")
           no_data_state  = coalesce(local.alerts.network_out.no_data_state, local.defaults.no_data_state, "NoData")
@@ -252,6 +262,7 @@ output "alert_rules" {
       coalesce(local.alerts.cpu.enabled, local.defaults.enabled, false) ? [
         {
           name           = "`${var.namespace}/${var.name}` service has pods with cpu overloaded for ${coalesce(local.alerts.cpu.interval, local.defaults.interval)} interval"
+          uid_key        = try(var.defaults.stable_uids, false) ? "service/${var.namespace}/${var.name}/cpu" : null
           summary        = "{{ .Labels.alertname }} it is already ${coalesce(local.alerts.cpu.pending_period, local.defaults.pending_period)}"
           group          = try(coalesce(local.alerts.cpu.group, local.defaults.group), "${var.namespace}/${var.name} service")
           no_data_state  = coalesce(local.alerts.cpu.no_data_state, local.defaults.no_data_state, "NoData")
@@ -281,6 +292,7 @@ output "alert_rules" {
       coalesce(local.alerts.memory.enabled, local.defaults.enabled, false) ? [
         {
           name           = "`${var.namespace}/${var.name}` service has pods with memory overloaded"
+          uid_key        = try(var.defaults.stable_uids, false) ? "service/${var.namespace}/${var.name}/memory" : null
           summary        = "{{ .Labels.alertname }} it is already ${coalesce(local.alerts.memory.pending_period, local.defaults.pending_period)}"
           group          = try(coalesce(local.alerts.memory.group, local.defaults.group), "${var.namespace}/${var.name} service")
           no_data_state  = coalesce(local.alerts.memory.no_data_state, local.defaults.no_data_state, "NoData")

@@ -127,7 +127,7 @@ locals {
     datasource  = var.data_source
     description = var.description
     fieldConfig = {
-      defaults  = local.field_config_defaults
+      defaults  = merge(local.field_config_defaults, { for key, value in { noValue = var.no_value } : key => value if value != null })
       overrides = local.field_config_overrides
     }
     gridPos = {

@@ -106,6 +106,46 @@ module "this" {
 
 See `modules/dashboard/tests/kafka-observability/` and `docs/DMVP-10603-kafka-observability.md`.
 
+## Karpenter monitoring (block/service + block/karpenter)
+
+`block/karpenter` works with any karpenter cloud provider and with any kubernetes cluster, it only needs karpenter
+metrics to be scraped. The `block/service` row covers the controller pod health with the standard service widgets
+and alerts, the `block/karpenter` row covers nodes, drift, disruption, capacity, cloud provider errors and controller
+errors. Alerts of both blocks are created automatically.
+
+```hcl
+rows = [
+  {
+    type          = "block/service"
+    name          = "controller" # karpenter container name, used by cpu/memory/restarts widgets and alerts
+    workload_name = "karpenter"  # karpenter deployment name, used by replicas/network/logs widgets and replicas alerts
+    namespace     = "karpenter"
+    alerts        = { cpu = { enabled = false } } # karpenter chart sets no cpu limit by default, so cpu alert has nothing to compare with
+  },
+  {
+    type          = "block/karpenter"
+    namespace     = "karpenter" # the `namespace` label of karpenter metrics, set "" to not filter by namespace
+    extra_filters = ""          # extra PromQL matchers for every query, for example `cluster="prod"`
+    columns       = 3           # widgets per line
+    # widget groups: nodes, drift, disruption, capacity, cloud_provider, controller (on by default) and
+    # interruption (off by default, only providers with an interruption queue such as AWS SQS expose its metrics)
+    widgets = { interruption = true }
+    alerts = {
+      # each alert has its own enabled/pending_period/labels/annotations and alert specific thresholds
+      node_drift_stuck         = { threshold_hours = 24 } # node stays in drifted state for more than a day
+      pods_pending             = { threshold_minutes = 15 }
+      nodepool_limit           = { threshold_percent = 90 }
+      interruption_not_handled = { enabled = true } # opt-in, same reason as the interruption widgets
+      disruption_rate          = { enabled = true, threshold = 20, interval = "1h" } # opt-in, the right value depends on cluster size
+    }
+  }
+]
+```
+
+Karpenter alerts treat "no data" as OK: their queries return nothing when there is no problem (no drifted
+nodes, no pending pods) or when the cluster does not run karpenter. `block/service` keeps its own defaults.
+See `modules/alerts/block-karpenter/variables.tf` for all alert options.
+
 ## How add new widget
 1. create module in modules/widgets (copy from one)
 2. implement data loading as required
@@ -150,6 +190,8 @@ See `modules/dashboard/tests/kafka-observability/` and `docs/DMVP-10603-kafka-ob
 | <a name="module_block_ingress_nginx_alerts"></a> [block\_ingress\_nginx\_alerts](#module\_block\_ingress\_nginx\_alerts) | ./modules/alerts/block-ingress-nginx | n/a |
 | <a name="module_block_kafka_observability"></a> [block\_kafka\_observability](#module\_block\_kafka\_observability) | ./modules/blocks/kafka_observability | n/a |
 | <a name="module_block_kafka_observability_alerts"></a> [block\_kafka\_observability\_alerts](#module\_block\_kafka\_observability\_alerts) | ./modules/alerts/block-kafka-observability | n/a |
+| <a name="module_block_karpenter"></a> [block\_karpenter](#module\_block\_karpenter) | ./modules/blocks/karpenter | n/a |
+| <a name="module_block_karpenter_alerts"></a> [block\_karpenter\_alerts](#module\_block\_karpenter\_alerts) | ./modules/alerts/block-karpenter | n/a |
 | <a name="module_block_msk"></a> [block\_msk](#module\_block\_msk) | ./modules/blocks/msk | n/a |
 | <a name="module_block_msk_alerts"></a> [block\_msk\_alerts](#module\_block\_msk\_alerts) | ./modules/alerts/block-msk | n/a |
 | <a name="module_block_rds"></a> [block\_rds](#module\_block\_rds) | ./modules/blocks/rds | n/a |
@@ -198,6 +240,7 @@ See `modules/dashboard/tests/kafka-observability/` and `docs/DMVP-10603-kafka-ob
 | <a name="module_kafka_connector_state_widget"></a> [kafka\_connector\_state\_widget](#module\_kafka\_connector\_state\_widget) | ./modules/widgets/kafka/connector_state | n/a |
 | <a name="module_kafka_exporter_health_widget"></a> [kafka\_exporter\_health\_widget](#module\_kafka\_exporter\_health\_widget) | ./modules/widgets/kafka/exporter_health | n/a |
 | <a name="module_kafka_task_state_widget"></a> [kafka\_task\_state\_widget](#module\_kafka\_task\_state\_widget) | ./modules/widgets/kafka/task_state | n/a |
+| <a name="module_karpenter_widget"></a> [karpenter\_widget](#module\_karpenter\_widget) | ./modules/widgets/karpenter | n/a |
 | <a name="module_logs_count_widget"></a> [logs\_count\_widget](#module\_logs\_count\_widget) | ./modules/widgets/loki/count | n/a |
 | <a name="module_logs_error_rate_widget"></a> [logs\_error\_rate\_widget](#module\_logs\_error\_rate\_widget) | ./modules/widgets/loki/error-rate | n/a |
 | <a name="module_logs_warning_rate_widget"></a> [logs\_warning\_rate\_widget](#module\_logs\_warning\_rate\_widget) | ./modules/widgets/loki/warning-rate | n/a |
@@ -266,7 +309,7 @@ See `modules/dashboard/tests/kafka-observability/` and `docs/DMVP-10603-kafka-ob
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_alerts"></a> [alerts](#input\_alerts) | Allows to configure globally dashboard block/(sla\|ingress\|service\|msk\|kafka\_observability) blocks/widgets related alerts. For `block/service` alerts, `map_namespace_to_env_label` (default true) maps each alert namespace to `labels.env`; set false to map it to `labels.namespace`. `block/msk` and `block/kafka_observability` still require `alerts.enabled = true` on the row; dashboard-level `alerts.enabled` does not turn those rows on. | `any` | `{}` | no |
+| <a name="input_alerts"></a> [alerts](#input\_alerts) | Allows to configure globally dashboard block/(sla\|ingress\|service\|msk\|kafka\_observability\|karpenter) blocks/widgets related alerts. For `block/service` alerts, `map_namespace_to_env_label` (default true) maps each alert namespace to `labels.env`; set false to map it to `labels.namespace`. `block/karpenter` alerts are on by default like `block/service`. `block/msk` and `block/kafka_observability` still require `alerts.enabled = true` on the row; dashboard-level `alerts.enabled` does not turn those rows on. | `any` | `{}` | no |
 | <a name="input_create_folder"></a> [create\_folder](#input\_create\_folder) | If true, create folder in this module. If false, use existing folder. | `bool` | `false` | no |
 | <a name="input_data_source"></a> [data\_source](#input\_data\_source) | The grafana dashboard global/default datasource, will be used in widget items if they have no their custom ones | <pre>object({<br/>    uid  = optional(string, null)<br/>    type = optional(string, "prometheus")<br/>  })</pre> | `{}` | no |
 | <a name="input_defaults"></a> [defaults](#input\_defaults) | Default values to be supplied to all modules. Set query\_compatibility.legacy\_dashboard\_queries or query\_compatibility.legacy\_service\_block\_queries to true only while upgrading an existing dashboard; legacy\_service\_block\_queries reproduces the v1.28.0 block/service query contract. Both settings will be removed in a future major release. | `any` | `{}` | no |

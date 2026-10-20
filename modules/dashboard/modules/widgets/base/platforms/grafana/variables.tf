@@ -238,3 +238,9 @@ variable "transformations" {
   description = "Custom transformations to use"
   default     = null
 }
+
+variable "no_value" {
+  type        = string
+  default     = null
+  description = "Standard options: text shown instead of \"No data\" when the panel queries return nothing (null = grafana default)"
+}

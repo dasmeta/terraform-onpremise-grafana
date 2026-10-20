@@ -6,7 +6,8 @@ locals {
     flatten(values(module.block_ingress_nginx_alerts).*.alert_rules),
     flatten(values(module.block_service_alerts).*.alert_rules),
     flatten(values(module.block_msk_alerts).*.alert_rules),
-    flatten(values(module.block_kafka_observability_alerts).*.alert_rules)
+    flatten(values(module.block_kafka_observability_alerts).*.alert_rules),
+    flatten(values(module.block_karpenter_alerts).*.alert_rules)
   )
 
   deep_merge_alert_configs = merge(
@@ -14,7 +15,8 @@ locals {
     { for index, item in try(local.blocks_by_type["ingress"], []) : "${index}_ingress" => provider::deepmerge::mergo(var.alerts, try(item.block.alerts, {})) },
     { for index, item in try(local.blocks_by_type["service"], []) : "${index}_service" => provider::deepmerge::mergo(var.alerts, try(item.block.alerts, {})) },
     { for index, item in try(local.blocks_by_type["msk"], []) : "${index}_msk" => provider::deepmerge::mergo(var.alerts, try(item.block.alerts, {})) },
-    { for index, item in try(local.blocks_by_type["kafka_observability"], []) : "${index}_kafka_observability" => provider::deepmerge::mergo(var.alerts, try(item.block.alerts, {})) }
+    { for index, item in try(local.blocks_by_type["kafka_observability"], []) : "${index}_kafka_observability" => provider::deepmerge::mergo(var.alerts, try(item.block.alerts, {})) },
+    { for index, item in try(local.blocks_by_type["karpenter"], []) : "${index}_karpenter" => provider::deepmerge::mergo(var.alerts, try(item.block.alerts, {})) }
   )
 }
 
@@ -64,9 +66,14 @@ module "block_service_alerts" {
     ]]) : index => item if try(merge(var.alerts, try(item.block.alerts, {})).enabled, true)
   }
 
-  name                         = each.value.block.name
-  namespace                    = each.value.namespace
-  defaults                     = provider::deepmerge::mergo(try(local.deep_merge_alert_configs["${each.value.service_index}_service"].defaults, {}), { labels = { (try(local.deep_merge_alert_configs["${each.value.service_index}_service"].map_namespace_to_env_label, true) == true ? "env" : "namespace") = each.value.namespace } })
+  name      = each.value.block.name
+  namespace = each.value.namespace
+  defaults = provider::deepmerge::mergo(
+    try(local.deep_merge_alert_configs["${each.value.service_index}_service"].defaults, {}),
+    { labels = { (try(local.deep_merge_alert_configs["${each.value.service_index}_service"].map_namespace_to_env_label, true) == true ? "env" : "namespace") = each.value.namespace } },
+    # block level workload_name(used also by dashboard widgets) is the default for alerts, alerts.defaults.workload_name still overrides it
+    { for key, value in { workload_name = try(each.value.block.workload_name, null) } : key => value if value != null && try(local.deep_merge_alert_configs["${each.value.service_index}_service"].defaults.workload_name, null) == null }
+  )
   alerts                       = try(local.deep_merge_alert_configs["${each.value.service_index}_service"], {})
   datasource                   = try(each.value.block.datasource_uid, var.data_source.uid)
   legacy_service_block_queries = local.legacy_service_block_queries
@@ -105,4 +112,16 @@ module "block_kafka_observability_alerts" {
   defaults                = try(local.deep_merge_alert_configs["${each.key}_kafka_observability"].defaults, {})
   alerts                  = try(local.deep_merge_alert_configs["${each.key}_kafka_observability"], {})
   datasource              = try(each.value.block.datasource_uid, var.data_source.uid)
+}
+
+module "block_karpenter_alerts" {
+  source = "./modules/alerts/block-karpenter"
+
+  for_each = { for index, item in try(local.blocks_by_type["karpenter"], []) : index => item if try(merge(var.alerts, try(item.block.alerts, {})).enabled, true) }
+
+  namespace     = try(each.value.block.namespace, "karpenter")
+  extra_filters = try(each.value.block.extra_filters, "")
+  defaults      = try(local.deep_merge_alert_configs["${each.key}_karpenter"].defaults, {})
+  alerts        = try(local.deep_merge_alert_configs["${each.key}_karpenter"], {})
+  datasource    = try(each.value.block.datasource_uid, var.data_source.uid)
 }

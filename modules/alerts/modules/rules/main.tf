@@ -39,6 +39,7 @@ resource "grafana_rule_group" "this" {
     for_each = local.alerts[each.key]
     content {
       name           = rule.value["name"]
+      uid            = try(rule.value.uid_key, null) != null ? "r${substr(sha1(join("/", [rule.value.folder_name != null ? rule.value.folder_name : (var.folder_name != null ? var.folder_name : ""), each.key, rule.value.uid_key])), 0, 30)}" : null
       for            = lookup(rule.value, "pending_period", "0")
       condition      = "C"
       no_data_state  = lookup(rule.value, "no_data_state", "NoData")
