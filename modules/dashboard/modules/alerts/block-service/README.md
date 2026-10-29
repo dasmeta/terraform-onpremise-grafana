@@ -1,4 +1,7 @@
 ## terraform module prepares service/pod/container alert rules based on k8s prometheus metrics
+
+Replica count and HPA min/max alerts aggregate kube-state-metrics samples by Kubernetes object before comparing values. This prevents overlapping scraper series from causing duplicate alert instances or PromQL vector-matching errors. The resulting alert instances omit scraper labels such as `pod` and `instance`; review silences that match those labels before deploying this change. Existing firing instances may resolve and re-fire when their label sets change.
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
