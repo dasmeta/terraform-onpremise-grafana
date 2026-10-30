@@ -92,10 +92,12 @@ locals {
         datasource_uid = local.default_metrics_datasource_uid
       }
     }
-    rows        = []
-    data_source = local.default_metrics_data_source
-    variables   = []
-    alerts      = { enabled = true }
+    rows                = []
+    data_source         = local.default_metrics_data_source
+    loki_datasource_uid = "loki"
+    variables           = []
+    alerts              = { enabled = true }
+    time_range_hours    = 6
   }
 
   # Fill defaults
@@ -281,7 +283,7 @@ locals {
   # Extract all unique folder names when using centralized approach
   all_folder_names = var.skip_folder_creation ? [] : distinct(compact(concat(
     # Dashboard folders (these are also used for dashboard submodule alerts)
-    [for dashboard in var.application_dashboard : dashboard.folder_name if try(dashboard.folder_name, null) != null],
+    [for dashboard in local.app_dash_list : dashboard.folder_name if try(dashboard.folder_name, null) != null],
     # Main alerts module folder names
     [for rule in local.alert_rules : rule.folder_name if try(rule.folder_name, null) != null]
   )))

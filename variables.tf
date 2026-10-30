@@ -27,38 +27,9 @@ variable "skip_folder_creation" {
 }
 
 variable "application_dashboard" {
-  type = list(object({
-    name             = string
-    defaults         = optional(any, {})                         # allows to pass/override general datasource/widget defaults, including temporary upgrade-only query_compatibility settings
-    folder_name      = optional(string, "application-dashboard") # the folder name for dashboard
-    namespace        = optional(string, "prod")
-    rows             = optional(any, [])
-    time_range_hours = optional(number, 6) # dashboard time range in hours (6, 12, 18, 24), default 6
-    data_source = optional(object({
-      uid  = optional(string, null) # defaults to VictoriaMetrics when enabled, otherwise Prometheus
-      type = optional(string, "prometheus")
-    }), {})
-    loki_datasource_uid = optional(string, "loki") # the default datasource that will be used on loki/logs related widgets/blocks, "block/service" block allows to pass custom value for this variable
-    variables = optional(list(object({             # Allows to define variables to be used in dashboard
-      name             = string
-      type             = optional(string, "custom")
-      hide             = optional(number, 0)
-      includeAll       = optional(bool, false)
-      multi            = optional(bool, false)
-      query            = optional(string, "")
-      queryValue       = optional(string, "")
-      skipUrlSync      = optional(bool, false)
-      allowCustomValue = optional(bool, false)
-      options = optional(list(object({
-        selected = optional(bool, false)
-        value    = string
-        text     = optional(string, null)
-      })), [])
-    })), [])
-    alerts = optional(any, { enabled = true }) # Allows to configure globally dashboard block/(sla|ingress|service) blocks/widgets related alerts
-  }))
   default     = []
-  description = "Dashboard for monitoring applications"
+  type        = any
+  description = "Dashboard configuration for monitoring applications. Dashboard and row objects may use block-specific, heterogeneous shapes."
 }
 
 variable "alerts" {
