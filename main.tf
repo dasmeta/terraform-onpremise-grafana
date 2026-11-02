@@ -44,7 +44,7 @@ module "alerts" {
   alert_interval_seconds = var.alerts.alert_interval_seconds
   disable_provenance     = var.alerts.disable_provenance
   create_folder          = var.skip_folder_creation
-  folder_name            = coalesce(var.alerts.folder_name, try(var.application_dashboard[0].folder_name, null), local.app_dash_defaults.folder_name)
+  folder_name            = coalesce(var.alerts.folder_name, try(local.app_dash_list[0].folder_name, null), local.app_dash_defaults.folder_name)
   group                  = var.alerts.group
   rules                  = local.alert_rules
   annotations            = var.alerts.annotations
