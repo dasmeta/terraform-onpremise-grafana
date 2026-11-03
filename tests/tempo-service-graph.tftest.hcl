@@ -44,3 +44,24 @@ run "tempo_without_victoria_metrics_preserves_existing_datasource_behavior" {
     error_message = "Tempo must not reference VictoriaMetrics service-map fields when VictoriaMetrics is disabled."
   }
 }
+
+run "tempo_with_deployed_victoria_metrics_uses_the_selected_prometheus_collector" {
+  command = apply
+
+  variables {
+    grafana_admin_password = "test-password"
+    metrics_collector      = "prometheus"
+    grafana                = { enabled = true }
+    tempo                  = { enabled = true }
+    victoria_metrics       = { enabled = true, operator = { enabled = true } }
+  }
+
+  assert {
+    condition = try(alltrue([
+      jsondecode(output.grafana.datasources.Tempo.encoded_json).tracesToMetrics.datasourceUid == "prometheus",
+      jsondecode(output.grafana.datasources.Tempo.encoded_json).serviceMap.datasourceUid == "prometheus",
+      jsondecode(output.grafana.datasources.Tempo.encoded_json).nodeGraph.enabled,
+    ]), false)
+    error_message = "Tempo must query the collector selected by metrics_collector, even when VictoriaMetrics is deployed."
+  }
+}

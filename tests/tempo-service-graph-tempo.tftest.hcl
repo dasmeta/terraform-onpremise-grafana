@@ -43,7 +43,7 @@ run "service_graph_dimensions_are_applied_to_both_processors" {
       yamldecode(helm_release.tempo.values[2]).tempo.overrides.defaults.metrics_generator.processor.service_graphs.dimensions == ["deployment.environment.name"],
       yamldecode(helm_release.tempo.values[2]).tempo.overrides.defaults.metrics_generator.processor.service_graphs.enable_client_server_prefix,
       yamldecode(helm_release.tempo.values[2]).tempo.overrides.defaults.metrics_generator.processor.span_metrics.dimensions == ["deployment.environment.name"],
-      yamldecode(helm_release.tempo.values[2]).tempo.overrides.defaults.metrics_generator.processor.span_metrics.enable_client_server_prefix,
+      !contains(keys(yamldecode(helm_release.tempo.values[2]).tempo.overrides.defaults.metrics_generator.processor.span_metrics), "enable_client_server_prefix"),
     ]), false)
     error_message = "Configured service-graph dimensions must apply consistently to service-graphs and span-metrics."
   }

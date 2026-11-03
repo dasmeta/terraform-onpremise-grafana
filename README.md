@@ -24,10 +24,15 @@ Grafana provider sometimes has issues with endpoints behind WAFs: https://github
 ## Tempo service maps with VictoriaMetrics
 
 When both Tempo and VictoriaMetrics are enabled, the module updates the single
-built-in Tempo datasource in place. Grafana uses the stable `victoriametrics`
-datasource UID for traces-to-metrics and service-map queries, enables the Tempo
-node graph, and enables Tempo's `service-graphs` and `span-metrics`
+built-in Tempo datasource in place. Grafana uses the datasource selected by
+`metrics_collector` for traces-to-metrics and service-map queries, enables the
+Tempo node graph, and enables Tempo's `service-graphs` and `span-metrics`
 metrics-generator processors. It does not create a second Tempo datasource.
+
+During a Prometheus-to-VictoriaMetrics migration, both backends can be deployed
+while `metrics_collector = "prometheus"`; in that state Tempo continues to
+write to and query Prometheus. After selecting `victoria_metrics`, Tempo uses
+the stable `victoriametrics` datasource UID.
 
 To distinguish same-named services from multiple environments, opt in to a
 bounded list of trace-attribute labels:
@@ -734,7 +739,7 @@ When consuming this module through `dasmeta/grafanav12/aws` (for example a downs
 
 | Name | Version |
 |------|---------|
-| <a name="provider_grafana"></a> [grafana](#provider\_grafana) | ~> 4.0 |
+| <a name="provider_grafana"></a> [grafana](#provider\_grafana) | 4.53.0 |
 
 ## Modules
 

@@ -1,9 +1,9 @@
 # Feature Specification: Tempo Service Map Integration
 
-**Feature Branch**: `009-tempo-service-graph`  
-**Created**: 2026-11-03  
-**Status**: Approved  
-**Input**: Configure Grafana Tempo service map and node graph automatically when VictoriaMetrics is enabled, with optional service-graph metric dimensions.
+**Feature Branch**: `009-tempo-service-graph`
+**Created**: 2026-11-03
+**Status**: Approved
+**Input**: Configure Grafana Tempo service map and node graph automatically when VictoriaMetrics is enabled, with optional service-graph metric dimensions, while always querying the selected metrics collector.
 
 ## User Scenarios & Testing
 
@@ -18,8 +18,8 @@ keeping one datasource prevents configuration drift and gives a usable service
 topology view where metrics are available.
 
 **Independent Test**: A native Terraform test verifies that a Tempo datasource
-uses the VictoriaMetrics UID for traces-to-metrics and service-map queries and
-enables its node graph when both components are enabled.
+uses the selected metrics collector's UID for traces-to-metrics and service-map
+queries and enables its node graph when both components are enabled.
 
 **Acceptance Scenarios**:
 
@@ -31,6 +31,10 @@ enables its node graph when both components are enabled.
 2. **Given** Tempo is enabled and VictoriaMetrics is disabled, **When** the
    module plans, **Then** it retains the existing Tempo datasource behavior and
    does not emit a VictoriaMetrics service-map reference.
+3. **Given** Tempo and VictoriaMetrics are enabled but `metrics_collector` is
+   `"prometheus"`, **When** the module plans, **Then** Tempo writes and Grafana
+   queries use `prometheus`, rather than the deployed-but-unselected
+   VictoriaMetrics datasource.
 
 ---
 
@@ -52,7 +56,8 @@ omitted value adds no processor override.
 
 1. **Given** `tempo.service_graph_dimensions = ["deployment.environment.name"]`,
    **When** the module plans, **Then** the Tempo Helm values apply that dimension
-   to service-graph and span-metrics processors and enable client/server prefixes.
+   to service-graph and span-metrics processors and enable client/server prefixes
+   only for service-graph series.
 2. **Given** `tempo.service_graph_dimensions` is omitted, **When** the module
    plans, **Then** the generated Tempo processor configuration is unchanged.
 
@@ -71,15 +76,16 @@ omitted value adds no processor override.
 
 - **FR-001**: When both Tempo and VictoriaMetrics are enabled, the module MUST
   configure the existing Tempo datasource—not create a second Tempo datasource—
-  with VictoriaMetrics for traces-to-metrics and service-map queries and enable
-  the node graph.
+  with the UID of the selected metrics collector for traces-to-metrics and
+  service-map queries, and enable the node graph.
 - **FR-002**: When VictoriaMetrics is disabled, the module MUST preserve the
   existing Tempo datasource configuration and must not refer to its UID.
 - **FR-003**: The `tempo` input MUST expose an optional
   `service_graph_dimensions` list of strings, defaulting to an empty list.
 - **FR-004**: Non-empty `service_graph_dimensions` MUST be rendered for both
-  Tempo service-graph and span-metrics processors and enable client/server
-  prefixes for unambiguous graph series.
+  Tempo service-graph and span-metrics processors. Client/server prefixes MUST
+  be enabled only for service-graph series, because Tempo does not support that
+  setting for span metrics.
 - **FR-005**: When both Tempo and VictoriaMetrics are enabled, the module MUST
   enable Tempo's `service-graphs` and `span-metrics` metrics-generator
   processors so the configured Grafana views receive their required series.
@@ -106,8 +112,9 @@ omitted value adds no processor override.
 
 ## Assumptions
 
-- The existing Prometheus remote-write path delivers Tempo metrics to
-  VictoriaMetrics when both components are enabled.
+- Tempo metrics are remote-written to the collector selected by
+  `metrics_collector`; a deployed VictoriaMetrics backend is not necessarily
+  the selected collector.
 - `deployment.environment.name` is an OpenTelemetry resource attribute, but
   consumers opt in because metric-label cardinality is deployment-specific.
 - The automatic processor activation is intentionally limited to configurations

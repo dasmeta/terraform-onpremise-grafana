@@ -26,8 +26,7 @@ locals {
                 enable_client_server_prefix = true
               }
               span_metrics = {
-                dimensions                  = var.service_graph_dimensions
-                enable_client_server_prefix = true
+                dimensions = var.service_graph_dimensions
               }
             }
           })

@@ -2,24 +2,25 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:subagent-driven-development` (recommended) or `superpowers:executing-plans` to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Make the built-in Tempo datasource and Tempo metrics generator automatically support VictoriaMetrics-backed service maps, with optional bounded dimensions.
+**Goal:** Make the built-in Tempo datasource and Tempo metrics generator automatically support service maps when VictoriaMetrics is deployed, with optional bounded dimensions and collector-consistent queries.
 
-**Architecture:** Keep the public change within the existing root `tempo` object and pass the resolved sibling integration state through narrowly scoped child-module inputs. Grafana extends its existing Tempo datasource JSON in place; the Tempo Helm child emits processors and optional labels only when the root has enabled VictoriaMetrics.
+**Architecture:** Keep the public change within the existing root `tempo` object and pass the resolved sibling integration state through narrowly scoped child-module inputs. Grafana extends its existing Tempo datasource JSON in place using the root's selected collector UID; the Tempo Helm child emits processors and optional labels only when the root has enabled VictoriaMetrics.
 
 **Tech Stack:** Terraform HCL, Grafana provider, Helm provider, Grafana Tempo chart, native Terraform tests.
 
 ---
 
 **Branch**: `009-tempo-service-graph` | **Date**: 2026-11-03 | **Spec**: [spec.md](spec.md)
-**Input**: Configure the built-in Tempo datasource to use VictoriaMetrics for
-service-map and trace-metric queries, and expose optional service-graph metric dimensions.
+**Input**: Configure the built-in Tempo datasource to use the selected metrics
+collector for service-map and trace-metric queries, and expose optional
+service-graph metric dimensions.
 
 ## Summary
 
 The root module already creates one Tempo datasource (`uid = "tempo"`) and
 selects a metrics datasource for `tracesToMetrics`. Extend that datasource
-rather than creating a second one. When VictoriaMetrics is enabled, its stable
-`victoriametrics` UID becomes the Tempo service-map and traces-to-metrics
+rather than creating a second one. When VictoriaMetrics is enabled, the
+selected metrics collector remains the Tempo service-map and traces-to-metrics
 backend, and the node graph plus both Tempo metrics processors are enabled. A
 narrow `tempo.service_graph_dimensions` list remains empty by default and, when
 supplied, is emitted to both processor configurations.
@@ -43,6 +44,9 @@ one native regression test, README documentation, and Speckit evidence.
   generate the series used by service-map views. Their processor configuration
   belongs under `overrides.defaults.metrics_generator`.
   [Grafana Tempo configuration](https://grafana.com/docs/tempo/latest/configuration/)
+- `enable_client_server_prefix` is supported by the service-graphs processor,
+  but not by span metrics. It must therefore be emitted only beneath
+  `processor.service_graphs`.
 - Extra dimensions are read from trace resource/span attributes, are added only
   when present, and increase series cardinality. This justifies an empty default
   and an explicit opt-in list.
@@ -83,9 +87,8 @@ and remote-write traffic, so the README must call out the operational cost.
 
 1. `variables.tf`: add documented `tempo.service_graph_dimensions` as
    `optional(list(string), [])`.
-2. `main.tf`: derive the internal VictoriaMetrics UID only when its deployment
-   is enabled; pass it to the Grafana child alongside the dimensions and the
-   enabled state for the Tempo child.
+2. `main.tf`: pass the existing resolved selected-collector UID to the Grafana
+   child alongside the VictoriaMetrics-enabled state for the Tempo child.
 3. `modules/grafana/variables.tf` and `modules/grafana/locals.tf`: accept an
    internal Tempo metrics datasource UID and a separate service-graph enabled
    state. Conditionally add `serviceMap` and `nodeGraph` JSON to the existing
@@ -96,7 +99,8 @@ and remote-write traffic, so the README must call out the operational cost.
 5. `tests/tempo-service-graph.tftest.hcl` and
    `tests/tempo-service-graph-tempo.tftest.hcl`: add native plan assertions for
    root datasource wiring and direct Tempo Helm values respectively. Separate
-   files avoid native-test provider type conflicts between the two module roots.
+   files avoid native-test provider type conflicts between the two module roots;
+   the root test includes the deployed-VM/Prometheus-selected migration state.
 6. `README.md`: document automatic datasource behavior, processor activation,
    and the opt-in cardinality trade-off.
 7. `specs/009-tempo-service-graph/tasks.md`: record the executable TDD steps.

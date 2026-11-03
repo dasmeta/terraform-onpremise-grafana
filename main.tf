@@ -71,7 +71,7 @@ module "grafana" {
   create_namespace                   = var.grafana.create_namespace
   sso_settings                       = var.grafana.sso_settings
   default_metrics_datasource_uid     = local.default_metrics_datasource_uid
-  tempo_service_graph_datasource_uid = var.victoria_metrics.enabled ? "victoriametrics" : "prometheus"
+  tempo_service_graph_datasource_uid = local.default_metrics_datasource_uid
   tempo_service_graph_enabled        = var.victoria_metrics.enabled
   prometheus_monitor_enabled         = local.grafana_prometheus_monitor_enabled
 

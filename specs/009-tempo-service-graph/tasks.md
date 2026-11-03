@@ -43,7 +43,10 @@
 
   Add the same root module configuration with `victoria_metrics = { enabled = false }`
   and `metrics_collector = "prometheus"`; assert `tracesToMetrics.datasourceUid ==
-  "prometheus"` and that `serviceMap` and `nodeGraph` keys are absent.
+  "prometheus"` and that `serviceMap` and `nodeGraph` keys are absent. Add a
+  third root run with VictoriaMetrics deployed and `metrics_collector =
+  "prometheus"`; assert both `tracesToMetrics.datasourceUid` and
+  `serviceMap.datasourceUid` equal `"prometheus"`.
 
   Put the two direct Tempo-child runs in
   `tests/tempo-service-graph-tempo.tftest.hcl`, with only a mocked `helm`
@@ -51,8 +54,8 @@
   `service_graph_enabled = true`: one omits
   dimensions and asserts processor names plus absence of `processor`, while
   the other passes `service_graph_dimensions = ["deployment.environment.name"]`
-  and asserts that both `service_graphs` and `span_metrics` receive that list
-  and `enable_client_server_prefix = true`.
+  and asserts that both `service_graphs` and `span_metrics` receive that list,
+  while only `service_graphs` has `enable_client_server_prefix = true`.
 
 - [ ] **Step 2: Initialize the untouched module and run the new test (red)**
 
@@ -63,8 +66,9 @@
   terraform test -filter=tests/tempo-service-graph.tftest.hcl
   ```
 
-  Expected: the new datasource and child-module input assertions fail because
-  `victoriametrics` service-map JSON and the child variables do not exist yet.
+  Expected: the mixed collector run fails because it receives `victoriametrics`
+  rather than the selected `prometheus` datasource, and the dimensions run
+  fails because `span_metrics` still contains the unsupported prefix field.
   A provider-installation failure is not an acceptable red result; initialize
   first and resolve only test syntax/configuration errors before proceeding.
 
@@ -94,7 +98,7 @@
   In `module "grafana"`, pass:
 
   ```hcl
-  tempo_service_graph_datasource_uid = var.victoria_metrics.enabled ? "victoriametrics" : "prometheus"
+  tempo_service_graph_datasource_uid = local.default_metrics_datasource_uid
   tempo_service_graph_enabled        = var.victoria_metrics.enabled
   ```
 
@@ -199,8 +203,7 @@
             enable_client_server_prefix = true
           }
           span_metrics = {
-            dimensions                  = var.service_graph_dimensions
-            enable_client_server_prefix = true
+            dimensions = var.service_graph_dimensions
           }
         }
       })
@@ -221,7 +224,7 @@
   terraform test -filter=tests/tempo-service-graph.tftest.hcl
   ```
 
-  Expected: all four runs pass, proving both datasource modes and both
+  Expected: all five runs pass, proving all datasource modes and both
   dimension modes.
 
 ## Task 4: Document and regenerate interface documentation
@@ -234,7 +237,7 @@
 
   Add a concise section stating that enabling both Tempo and VictoriaMetrics
   updates the single built-in Tempo datasource in place, uses the stable
-  `victoriametrics` UID for traces-to-metrics and service maps, enables the
+  selected metrics datasource UID for traces-to-metrics and service maps, enables the
   node graph plus both metrics-generator processors, and does not create a
   second datasource. Document this opt-in example:
 
