@@ -26,7 +26,8 @@ enables its node graph when both components are enabled.
 1. **Given** Tempo and VictoriaMetrics are enabled, **When** the module plans,
    **Then** the existing `Tempo` datasource has `tracesToMetrics.datasourceUid`
    and `serviceMap.datasourceUid` set to `victoriametrics` and `nodeGraph.enabled`
-   set to true.
+   set to true, and Tempo enables the `service-graphs` and `span-metrics`
+   metrics-generator processors.
 2. **Given** Tempo is enabled and VictoriaMetrics is disabled, **When** the
    module plans, **Then** it retains the existing Tempo datasource behavior and
    does not emit a VictoriaMetrics service-map reference.
@@ -79,11 +80,14 @@ omitted value adds no processor override.
 - **FR-004**: Non-empty `service_graph_dimensions` MUST be rendered for both
   Tempo service-graph and span-metrics processors and enable client/server
   prefixes for unambiguous graph series.
-- **FR-005**: The module MUST add native Terraform regression tests for both
+- **FR-005**: When both Tempo and VictoriaMetrics are enabled, the module MUST
+  enable Tempo's `service-graphs` and `span-metrics` metrics-generator
+  processors so the configured Grafana views receive their required series.
+- **FR-006**: The module MUST add native Terraform regression tests for both
   datasource modes and both dimensions modes.
-- **FR-006**: The README MUST document automatic VictoriaMetrics integration,
+- **FR-007**: The README MUST document automatic VictoriaMetrics integration,
   the optional dimensions input, and its cardinality trade-off.
-- **FR-007**: After the upstream module is released, the AWS wrapper MUST be
+- **FR-008**: After the upstream module is released, the AWS wrapper MUST be
   updated in a separate PR to pin that release; no workspace-specific datasource
   configuration may be required.
 
@@ -106,5 +110,8 @@ omitted value adds no processor override.
   VictoriaMetrics when both components are enabled.
 - `deployment.environment.name` is an OpenTelemetry resource attribute, but
   consumers opt in because metric-label cardinality is deployment-specific.
+- The automatic processor activation is intentionally limited to configurations
+  that enable both Tempo and VictoriaMetrics; it is necessary for the service
+  map to produce metrics and may increase remote-write volume.
 - The upstream release will be published before its AWS-wrapper dependency PR
   is opened.
