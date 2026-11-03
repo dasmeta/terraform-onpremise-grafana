@@ -39,3 +39,4 @@ terraform.rc
 
 # Local AI-assisted planning artifacts are not part of the published module.
 /docs/superpowers/
+/.worktrees/

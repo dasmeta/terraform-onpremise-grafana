@@ -619,6 +619,7 @@ variable "tempo" {
       enabled    = optional(bool, true)
       remote_url = optional(string, null)
     }), {})
+    service_graph_dimensions = optional(list(string), []) # Optional Tempo metric labels from trace attributes; each label increases series cardinality.
 
     persistence = optional(object({
       enabled       = optional(bool, true)
