@@ -53,6 +53,13 @@ variable "default_metrics_datasource_uid" {
   description = "UID used by Tempo traces-to-metrics integration."
 }
 
+variable "tempo_service_graph_datasource_uid" {
+  type        = string
+  default     = null
+  nullable    = true
+  description = "Internal UID for Tempo service-map and node-graph queries; null keeps the existing Tempo datasource JSON."
+}
+
 variable "prometheus_monitor_enabled" {
   type        = bool
   default     = null

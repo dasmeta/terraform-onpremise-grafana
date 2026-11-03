@@ -67,6 +67,18 @@ variable "service_monitor_enabled" {
   description = "Selector-resolved Prometheus ServiceMonitor state; null preserves the configs request for direct child use."
 }
 
+variable "service_graph_enabled" {
+  type        = bool
+  default     = false
+  description = "Whether the parent has enabled the VictoriaMetrics-backed Tempo service graph."
+}
+
+variable "service_graph_dimensions" {
+  type        = list(string)
+  default     = []
+  description = "Optional trace attribute labels added to Tempo service-graph and span-metrics series."
+}
+
 variable "extra_configs" {
   type        = any
   default     = {}

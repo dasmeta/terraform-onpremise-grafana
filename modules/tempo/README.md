@@ -41,6 +41,8 @@ No modules.
 | <a name="input_metrics_generator_remote_url"></a> [metrics\_generator\_remote\_url](#input\_metrics\_generator\_remote\_url) | Selector-resolved metrics-generator remote-write URL. A non-null value takes precedence over chart values. | `string` | `null` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | namespace for tempo deployment | `string` | `"monitoring"` | no |
 | <a name="input_release_name"></a> [release\_name](#input\_release\_name) | tempo release name | `string` | `"tempo"` | no |
+| <a name="input_service_graph_dimensions"></a> [service\_graph\_dimensions](#input\_service\_graph\_dimensions) | Optional trace attribute labels added to Tempo service-graph and span-metrics series. | `list(string)` | `[]` | no |
+| <a name="input_service_graph_enabled"></a> [service\_graph\_enabled](#input\_service\_graph\_enabled) | Whether the parent has enabled the VictoriaMetrics-backed Tempo service graph. | `bool` | `false` | no |
 | <a name="input_service_monitor_enabled"></a> [service\_monitor\_enabled](#input\_service\_monitor\_enabled) | Selector-resolved Prometheus ServiceMonitor state; null preserves the configs request for direct child use. | `bool` | `null` | no |
 
 ## Outputs

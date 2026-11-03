@@ -71,7 +71,10 @@ module "grafana" {
   create_namespace               = var.grafana.create_namespace
   sso_settings                   = var.grafana.sso_settings
   default_metrics_datasource_uid = local.default_metrics_datasource_uid
-  prometheus_monitor_enabled     = local.grafana_prometheus_monitor_enabled
+  tempo_service_graph_datasource_uid = (
+    var.victoria_metrics.enabled ? "victoriametrics" : null
+  )
+  prometheus_monitor_enabled = local.grafana_prometheus_monitor_enabled
 
   datasources = concat(
     var.grafana.datasources == null ? [] : var.grafana.datasources,
@@ -204,6 +207,8 @@ module "tempo" {
   create_namespace             = var.tempo.create_namespace
   metrics_generator_remote_url = local.tempo_metrics_generator_remote_write_url
   service_monitor_enabled      = local.tempo_prometheus_monitor_enabled
+  service_graph_enabled        = var.victoria_metrics.enabled
+  service_graph_dimensions     = var.tempo.service_graph_dimensions
 }
 
 module "loki" {

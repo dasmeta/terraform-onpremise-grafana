@@ -10,11 +10,30 @@ locals {
   )
 
   selector_owned_values = {
-    tempo = {
+    tempo = merge({
       metricsGenerator = {
         remoteWriteUrl = local.effective_metrics_generator_remote_url
       }
-    }
+      }, var.service_graph_enabled ? {
+      overrides = {
+        defaults = {
+          metrics_generator = merge({
+            processors = ["local-blocks", "service-graphs", "span-metrics"]
+            }, length(var.service_graph_dimensions) == 0 ? {} : {
+            processor = {
+              service_graphs = {
+                dimensions                  = var.service_graph_dimensions
+                enable_client_server_prefix = true
+              }
+              span_metrics = {
+                dimensions                  = var.service_graph_dimensions
+                enable_client_server_prefix = true
+              }
+            }
+          })
+        }
+      }
+    } : {})
     serviceMonitor = {
       enabled = local.effective_service_monitor_enabled
     }

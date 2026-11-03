@@ -38,15 +38,22 @@ locals {
       url         = "http://tempo.${var.namespace}.svc.cluster.local:3200"
       is_default  = false
 
-      encoded_json = jsonencode({
+      encoded_json = jsonencode(merge({
         httpMethod = "GET"
         tracesToLogsV2 = {
           datasourceUid = "loki"
         }
         tracesToMetrics = {
-          datasourceUid = var.default_metrics_datasource_uid
+          datasourceUid = coalesce(var.tempo_service_graph_datasource_uid, var.default_metrics_datasource_uid)
         }
-      })
+        }, var.tempo_service_graph_datasource_uid == null ? {} : {
+        serviceMap = {
+          datasourceUid = var.tempo_service_graph_datasource_uid
+        }
+        nodeGraph = {
+          enabled = true
+        }
+      }))
     }
   }
 
