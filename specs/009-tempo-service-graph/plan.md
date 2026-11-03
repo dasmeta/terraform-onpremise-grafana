@@ -87,9 +87,9 @@ and remote-write traffic, so the README must call out the operational cost.
    is enabled; pass it to the Grafana child alongside the dimensions and the
    enabled state for the Tempo child.
 3. `modules/grafana/variables.tf` and `modules/grafana/locals.tf`: accept an
-   internal nullable Tempo service-graph datasource UID and conditionally add
-   `serviceMap` and `nodeGraph` JSON to the existing Tempo datasource while
-   retaining its UID and Loki link.
+   internal Tempo metrics datasource UID and a separate service-graph enabled
+   state. Conditionally add `serviceMap` and `nodeGraph` JSON to the existing
+   Tempo datasource while retaining its UID and Loki link.
 4. `modules/tempo/variables.tf` and `modules/tempo/locals.tf`: accept the
    internal enabled state and dimensions list, then conditionally configure
    `service-graphs` and `span-metrics` processors under Tempo overrides.

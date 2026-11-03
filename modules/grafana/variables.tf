@@ -57,7 +57,13 @@ variable "tempo_service_graph_datasource_uid" {
   type        = string
   default     = null
   nullable    = true
-  description = "Internal UID for Tempo service-map and node-graph queries; null keeps the existing Tempo datasource JSON."
+  description = "Internal override for the Tempo traces-to-metrics datasource UID; null preserves default_metrics_datasource_uid for direct child callers."
+}
+
+variable "tempo_service_graph_enabled" {
+  type        = bool
+  default     = false
+  description = "Whether the parent has enabled VictoriaMetrics-backed Tempo service-map and node-graph queries."
 }
 
 variable "prometheus_monitor_enabled" {

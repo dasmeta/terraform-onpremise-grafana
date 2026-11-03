@@ -94,7 +94,8 @@
   In `module "grafana"`, pass:
 
   ```hcl
-  tempo_service_graph_datasource_uid = var.victoria_metrics.enabled ? "victoriametrics" : null
+  tempo_service_graph_datasource_uid = var.victoria_metrics.enabled ? "victoriametrics" : "prometheus"
+  tempo_service_graph_enabled        = var.victoria_metrics.enabled
   ```
 
   In `module "tempo"`, pass:
@@ -110,14 +111,20 @@
 
 - [ ] **Step 3: Add the internal Grafana input and extend only the built-in Tempo JSON**
 
-  Add this nullable child variable in `modules/grafana/variables.tf`:
+  Add these child variables in `modules/grafana/variables.tf`:
 
   ```hcl
   variable "tempo_service_graph_datasource_uid" {
     type        = string
     default     = null
     nullable    = true
-    description = "Internal UID for Tempo service-map and node-graph queries; null keeps the existing Tempo datasource JSON."
+    description = "Internal override for the Tempo traces-to-metrics datasource UID; null preserves default_metrics_datasource_uid for direct child callers."
+  }
+
+  variable "tempo_service_graph_enabled" {
+    type        = bool
+    default     = false
+    description = "Whether the parent has enabled VictoriaMetrics-backed Tempo service-map and node-graph queries."
   }
   ```
 
@@ -131,7 +138,7 @@
     tracesToMetrics = {
       datasourceUid = coalesce(var.tempo_service_graph_datasource_uid, var.default_metrics_datasource_uid)
     }
-    }, var.tempo_service_graph_datasource_uid == null ? {} : {
+    }, var.tempo_service_graph_enabled ? {
     serviceMap = { datasourceUid = var.tempo_service_graph_datasource_uid }
     nodeGraph  = { enabled = true }
   }))

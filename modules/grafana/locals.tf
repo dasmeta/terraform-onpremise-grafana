@@ -46,14 +46,14 @@ locals {
         tracesToMetrics = {
           datasourceUid = coalesce(var.tempo_service_graph_datasource_uid, var.default_metrics_datasource_uid)
         }
-        }, var.tempo_service_graph_datasource_uid == null ? {} : {
+        }, var.tempo_service_graph_enabled ? {
         serviceMap = {
           datasourceUid = var.tempo_service_graph_datasource_uid
         }
         nodeGraph = {
           enabled = true
         }
-      }))
+      } : {}))
     }
   }
 

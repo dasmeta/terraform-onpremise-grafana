@@ -61,20 +61,19 @@ module "grafana" {
 
   count = var.grafana.enabled ? 1 : 0
 
-  chart_version                  = var.grafana.chart_version
-  release_name                   = var.grafana.release_name
-  grafana_admin_password         = var.grafana_admin_password
-  configs                        = var.grafana
-  extra_configs                  = var.grafana.extra_configs
-  mysql_extra_configs            = var.grafana.mysql_extra_configs
-  namespace                      = coalesce(var.grafana.namespace, var.namespace)
-  create_namespace               = var.grafana.create_namespace
-  sso_settings                   = var.grafana.sso_settings
-  default_metrics_datasource_uid = local.default_metrics_datasource_uid
-  tempo_service_graph_datasource_uid = (
-    var.victoria_metrics.enabled ? "victoriametrics" : null
-  )
-  prometheus_monitor_enabled = local.grafana_prometheus_monitor_enabled
+  chart_version                      = var.grafana.chart_version
+  release_name                       = var.grafana.release_name
+  grafana_admin_password             = var.grafana_admin_password
+  configs                            = var.grafana
+  extra_configs                      = var.grafana.extra_configs
+  mysql_extra_configs                = var.grafana.mysql_extra_configs
+  namespace                          = coalesce(var.grafana.namespace, var.namespace)
+  create_namespace                   = var.grafana.create_namespace
+  sso_settings                       = var.grafana.sso_settings
+  default_metrics_datasource_uid     = local.default_metrics_datasource_uid
+  tempo_service_graph_datasource_uid = var.victoria_metrics.enabled ? "victoriametrics" : "prometheus"
+  tempo_service_graph_enabled        = var.victoria_metrics.enabled
+  prometheus_monitor_enabled         = local.grafana_prometheus_monitor_enabled
 
   datasources = concat(
     var.grafana.datasources == null ? [] : var.grafana.datasources,
