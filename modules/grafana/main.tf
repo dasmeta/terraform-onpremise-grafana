@@ -1,7 +1,7 @@
 # Deploy Grafana
 resource "helm_release" "grafana" {
   name             = var.release_name
-  repository       = "https://grafana.github.io/helm-charts"
+  repository       = var.chart_repository
   chart            = "grafana"
   namespace        = var.namespace
   create_namespace = var.create_namespace

@@ -14,6 +14,8 @@ persistence:
 
 grafana.ini:
   database: ${database}
+  auth.anonymous:
+    hide_version: true
   server:
     root_url: ${grafana_root_url}
     serve_from_sub_path: false

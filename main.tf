@@ -62,6 +62,7 @@ module "grafana" {
   count = var.grafana.enabled ? 1 : 0
 
   chart_version                      = var.grafana.chart_version
+  chart_repository                   = var.grafana.chart_repository
   release_name                       = var.grafana.release_name
   grafana_admin_password             = var.grafana_admin_password
   configs                            = var.grafana
