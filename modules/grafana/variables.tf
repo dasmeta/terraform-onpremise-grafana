@@ -26,7 +26,13 @@ variable "grafana_wait_duration" {
 variable "chart_version" {
   type        = string
   description = "grafana chart version"
-  default     = "9.2.9"
+  default     = "14.3.1"
+}
+
+variable "chart_repository" {
+  type        = string
+  description = "Helm repository containing the selected Grafana chart version"
+  default     = "https://grafana-community.github.io/helm-charts"
 }
 
 variable "mysql_chart_version" {
