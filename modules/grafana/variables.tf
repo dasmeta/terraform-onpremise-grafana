@@ -29,6 +29,12 @@ variable "chart_version" {
   default     = "9.2.9"
 }
 
+variable "chart_repository" {
+  type        = string
+  description = "Helm repository containing the selected Grafana chart version"
+  default     = "https://grafana.github.io/helm-charts"
+}
+
 variable "mysql_chart_version" {
   type        = string
   description = "mysql chart version"

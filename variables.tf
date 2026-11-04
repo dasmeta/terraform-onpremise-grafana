@@ -239,6 +239,7 @@ variable "grafana" {
     namespace        = optional(string, null) # the namespace fallbacks to var.namespace if not specified
     create_namespace = optional(bool, true)   # whether create namespace if not exist
     chart_version    = optional(string, "9.2.9")
+    chart_repository = optional(string, "https://grafana.github.io/helm-charts") # Helm repository containing the selected Grafana chart version
     release_name     = optional(string, "grafana")
     resources = optional(object({
       requests = optional(object({
