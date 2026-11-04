@@ -35,9 +35,11 @@ grafana = {
 ```
 
 The module also sets `grafana.ini` → `[auth.anonymous] hide_version = true` by
-default. Unauthenticated `/api/health` and login responses omit the Grafana
-version and commit. Set `grafana.extra_configs["grafana.ini"]["auth.anonymous"].hide_version`
-to `false` only if version disclosure is needed.
+default. This hides Grafana's displayed version text in the footer and Help
+tooltip for unauthenticated users. It does not guarantee that the running
+version is absent from public login-page content or bundled assets. Set
+`grafana.extra_configs["grafana.ini"]["auth.anonymous"].hide_version` to
+`false` only when that UI version display is needed.
 
 Back up the Grafana database before a major-version upgrade and verify the
 rendered chart, sign-in, data sources, dashboards, and alerting in a test
