@@ -11,9 +11,11 @@ resource "helm_release" "grafana" {
   values = [
     templatefile("${path.module}/values/grafana-values.yaml.tpl", {
       database = var.configs.database.enabled ? jsonencode({ # if we enable/set database, no need for enabling persistence
-        host     = local.database.host
-        user     = local.database.username
-        password = local.database.password
+        host = local.database.host
+        user = local.database.username
+        # The password is injected through envRenderSecret below. Keep only an
+        # environment-variable reference in the ConfigMap-rendered grafana.ini.
+        password = "$__env{GF_DATABASE_PASSWORD}"
         name     = local.database.name
         type     = local.database.type
         }

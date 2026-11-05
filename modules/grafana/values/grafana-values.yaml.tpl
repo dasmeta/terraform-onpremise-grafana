@@ -19,7 +19,9 @@ grafana.ini:
   server:
     root_url: ${grafana_root_url}
     serve_from_sub_path: false
-assertNoLeakedSecrets: false
+# Database credentials are injected from the chart-managed Secret via
+# GF_DATABASE_PASSWORD, rather than being stored in this ConfigMap.
+assertNoLeakedSecrets: true
 
 serviceAccount:
   create: ${create_service_account}
