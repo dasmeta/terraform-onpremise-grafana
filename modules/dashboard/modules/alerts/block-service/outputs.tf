@@ -180,12 +180,13 @@ output "alert_rules" {
           no_data_state   = coalesce(local.alerts.restarts.no_data_state, local.defaults.no_data_state, "NoData")
           exec_err_state  = coalesce(local.alerts.restarts.exec_err_state, local.defaults.exec_err_state, "Error")
           datasource      = var.datasource
+          expr            = var.defaults.container_name == null ? null : "increase(kube_pod_container_status_restarts_total{${local.container_selector}, namespace='${var.namespace}'}[${coalesce(local.alerts.restarts.interval, local.defaults.interval)}])"
           metric_name     = "kube_pod_container_status_restarts_total"
           metric_function = "increase"
           metric_interval = "[${coalesce(local.alerts.restarts.interval, local.defaults.interval)}]"
           filters = {
             namespace = var.namespace
-            container = var.name
+            container = local.container_name
           }
           function  = "last"
           equation  = "gte"
@@ -268,7 +269,7 @@ output "alert_rules" {
           no_data_state  = coalesce(local.alerts.cpu.no_data_state, local.defaults.no_data_state, "NoData")
           exec_err_state = coalesce(local.alerts.cpu.exec_err_state, local.defaults.exec_err_state, "Error")
           datasource     = var.datasource
-          expr           = "(max(rate(container_cpu_usage_seconds_total{container='${var.name}', namespace='${var.namespace}'}[${coalesce(local.alerts.cpu.interval, local.defaults.interval)}])) by (pod) / ${local.alerts.cpu.threshold != null ? "${local.alerts.cpu.threshold}" : "max(kube_pod_container_resource_${local.alerts.cpu.threshold_resource}{container='${var.name}', namespace='${var.namespace}', resource='cpu'}) by (pod)"}) * 100"
+          expr           = "(max(rate(container_cpu_usage_seconds_total{${local.container_selector}, namespace='${var.namespace}'}[${coalesce(local.alerts.cpu.interval, local.defaults.interval)}])) by (pod) / ${local.alerts.cpu.threshold != null ? "${local.alerts.cpu.threshold}" : "max(kube_pod_container_resource_${local.alerts.cpu.threshold_resource}{${local.container_selector}, namespace='${var.namespace}', resource='cpu'}) by (pod)"}) * 100"
           pending_period = coalesce(local.alerts.cpu.pending_period, local.defaults.pending_period)
           function       = "last"
           filters        = {}
@@ -298,7 +299,7 @@ output "alert_rules" {
           no_data_state  = coalesce(local.alerts.memory.no_data_state, local.defaults.no_data_state, "NoData")
           exec_err_state = coalesce(local.alerts.memory.exec_err_state, local.defaults.exec_err_state, "Error")
           datasource     = var.datasource
-          expr           = "(sum(${local.memory_metric}{container='${var.name}', namespace='${var.namespace}'}) by (pod) / ${local.alerts.memory.threshold != null ? "(${local.alerts.memory.threshold} * 1048576 )" : "max(kube_pod_container_resource_${local.alerts.memory.threshold_resource}{container='${var.name}', namespace='${var.namespace}', resource='memory'}) by (pod)"}) * 100"
+          expr           = "(sum(${local.memory_metric}{${local.container_selector}, namespace='${var.namespace}'}) by (pod) / ${local.alerts.memory.threshold != null ? "(${local.alerts.memory.threshold} * 1048576 )" : "max(kube_pod_container_resource_${local.alerts.memory.threshold_resource}{${local.container_selector}, namespace='${var.namespace}', resource='memory'}) by (pod)"}) * 100"
           pending_period = coalesce(local.alerts.memory.pending_period, local.defaults.pending_period)
           function       = "last"
           filters        = {}
