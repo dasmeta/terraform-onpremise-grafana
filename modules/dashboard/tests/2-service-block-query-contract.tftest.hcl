@@ -51,8 +51,41 @@ run "omitted_service_block_mode_keeps_modern_queries" {
     condition = alltrue([
       contains(compact(flatten([for panel in output.widget_result : [for target in try(panel.targets, []) : try(target.expr, null)]])), "sum(kube_pod_status_phase{namespace=\"prod\", pod=~\"^example-service(-(primary|canary))?-[^-]+-[^-]+$\"})"),
       contains(compact([for rule in output.widget_alert_rules : try(rule.expr, null)]), "sum(kube_pod_status_phase{namespace='prod', pod=~'^example-service(-(primary|canary))?(-[^-]+)?-[^-]+$', phase!='Succeeded', phase!='Running'}) by (phase)"),
+      contains(compact([for rule in output.widget_alert_rules : try(rule.expr, null)]), "(max(rate(container_cpu_usage_seconds_total{container='example-service', namespace='prod'}[5m])) by (pod) / max(kube_pod_container_resource_limits{container='example-service', namespace='prod', resource='cpu'}) by (pod)) * 100"),
       contains(compact([for rule in output.widget_alert_rules : try(rule.expr, null)]), "(sum(container_memory_working_set_bytes{container='example-service', namespace='prod'}) by (pod) / max(kube_pod_container_resource_limits{container='example-service', namespace='prod', resource='memory'}) by (pod)) * 100"),
+      contains([for rule in output.widget_alert_rules : rule.filters if try(rule.metric_name, null) == "kube_pod_container_status_restarts_total"], { namespace = "prod", container = "example-service" }),
     ])
     error_message = "omitting service block compatibility must preserve modern status and alert expressions"
+  }
+}
+
+run "container_name_scopes_resource_alerts_to_workload_pods" {
+  command = plan
+
+  variables {
+    name             = "container-selector-contract"
+    folder_name      = "dashboards"
+    folder_name_uids = { dashboards = "dashboard-folder" }
+    data_source      = { uid = "prometheus", type = "prometheus" }
+    alerts           = { enabled = true }
+    rows = [
+      {
+        type      = "block/service"
+        name      = "api"
+        namespace = "prod"
+        alerts = {
+          defaults = { container_name = "app" }
+        }
+      },
+    ]
+  }
+
+  assert {
+    condition = alltrue([
+      contains(compact([for rule in output.widget_alert_rules : try(rule.expr, null)]), "increase(kube_pod_container_status_restarts_total{container='app', pod=~'^api(-(primary|canary))?(-[^-]+)?-[^-]+$', namespace='prod'}[5m])"),
+      contains(compact([for rule in output.widget_alert_rules : try(rule.expr, null)]), "(max(rate(container_cpu_usage_seconds_total{container='app', pod=~'^api(-(primary|canary))?(-[^-]+)?-[^-]+$', namespace='prod'}[5m])) by (pod) / max(kube_pod_container_resource_limits{container='app', pod=~'^api(-(primary|canary))?(-[^-]+)?-[^-]+$', namespace='prod', resource='cpu'}) by (pod)) * 100"),
+      contains(compact([for rule in output.widget_alert_rules : try(rule.expr, null)]), "(sum(container_memory_working_set_bytes{container='app', pod=~'^api(-(primary|canary))?(-[^-]+)?-[^-]+$', namespace='prod'}) by (pod) / max(kube_pod_container_resource_limits{container='app', pod=~'^api(-(primary|canary))?(-[^-]+)?-[^-]+$', namespace='prod', resource='memory'}) by (pod)) * 100"),
+    ])
+    error_message = "container_name must scope CPU, memory, and restart alerts to the configured workload pods."
   }
 }

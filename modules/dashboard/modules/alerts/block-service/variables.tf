@@ -20,6 +20,7 @@ variable "defaults" {
     is_paused         = optional(bool, false)                # whether generated Grafana rules are paused by default
     workload_type     = optional(string, "deployment")       # the workload type of app setup, can be "daemonset", "deployment", "statefulset" and "cronjob"
     workload_name     = optional(string, null)               # allows workload/deployment name to differ from service/container name; if null workload_prefix/name/workload_suffix are used
+    container_name    = optional(string, null)               # container metric label override; when set, resource alerts are scoped to the workload pods
     workload_suffix   = optional(string, "")                 # allows to filter workload or pod via {var.name}{var.defaults.workload_suffix} filtration, can be used for example in case we have flagger canary deployment to add "-primary" suffix to filter deployment
     workload_prefix   = optional(string, "")                 # allows to filter workload or pod via {var.defaults.workload_suffix}{var.name} filtration, can be used for example in case we have a deployment which name differs from container name with custom suffix like in nginx ingress container named "controller" and daemonset named "ingress-nginx-controller"
     labels            = optional(any, { "priority" : "P1" }) # the service level monitoring alarms generally are considered as P1 priority
