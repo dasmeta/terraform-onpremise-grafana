@@ -58,6 +58,15 @@ resource "helm_release" "grafana" {
     value = var.grafana_admin_password
   }
 
+  dynamic "set_sensitive" {
+    for_each = var.configs.database.enabled ? [local.database.password] : []
+
+    content {
+      name  = "envRenderSecret.GF_DATABASE_PASSWORD"
+      value = set_sensitive.value
+    }
+  }
+
   depends_on = [helm_release.mysql]
 }
 
