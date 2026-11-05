@@ -1,4 +1,13 @@
 ## terraform module prepares service/pod/container alert rules based on k8s prometheus metrics
+
+## Container selector override
+
+Set `defaults.container_name` only when a block/service name differs from its
+workload's Prometheus `container` label. CPU, memory, and restart alerts then
+match that container and only pods belonging to the configured workload. Omit
+it when the service and container names are the same; the existing selectors
+are preserved.
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
