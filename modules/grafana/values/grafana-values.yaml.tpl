@@ -14,9 +14,13 @@ persistence:
 
 grafana.ini:
   database: ${database}
+  auth.anonymous:
+    hide_version: true
   server:
     root_url: ${grafana_root_url}
     serve_from_sub_path: false
+# The module supports existing consumers that pass other literal secrets through
+# extra_configs, so the chart-level assertion remains disabled.
 assertNoLeakedSecrets: false
 
 serviceAccount:

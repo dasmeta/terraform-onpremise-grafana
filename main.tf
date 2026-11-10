@@ -44,7 +44,7 @@ module "alerts" {
   alert_interval_seconds = var.alerts.alert_interval_seconds
   disable_provenance     = var.alerts.disable_provenance
   create_folder          = var.skip_folder_creation
-  folder_name            = coalesce(var.alerts.folder_name, try(var.application_dashboard[0].folder_name, null), local.app_dash_defaults.folder_name)
+  folder_name            = coalesce(var.alerts.folder_name, try(local.app_dash_list[0].folder_name, null), local.app_dash_defaults.folder_name)
   group                  = var.alerts.group
   rules                  = local.alert_rules
   annotations            = var.alerts.annotations
@@ -61,17 +61,20 @@ module "grafana" {
 
   count = var.grafana.enabled ? 1 : 0
 
-  chart_version                  = var.grafana.chart_version
-  release_name                   = var.grafana.release_name
-  grafana_admin_password         = var.grafana_admin_password
-  configs                        = var.grafana
-  extra_configs                  = var.grafana.extra_configs
-  mysql_extra_configs            = var.grafana.mysql_extra_configs
-  namespace                      = coalesce(var.grafana.namespace, var.namespace)
-  create_namespace               = var.grafana.create_namespace
-  sso_settings                   = var.grafana.sso_settings
-  default_metrics_datasource_uid = local.default_metrics_datasource_uid
-  prometheus_monitor_enabled     = local.grafana_prometheus_monitor_enabled
+  chart_version                      = var.grafana.chart_version
+  chart_repository                   = var.grafana.chart_repository
+  release_name                       = var.grafana.release_name
+  grafana_admin_password             = var.grafana_admin_password
+  configs                            = var.grafana
+  extra_configs                      = var.grafana.extra_configs
+  mysql_extra_configs                = var.grafana.mysql_extra_configs
+  namespace                          = coalesce(var.grafana.namespace, var.namespace)
+  create_namespace                   = var.grafana.create_namespace
+  sso_settings                       = var.grafana.sso_settings
+  default_metrics_datasource_uid     = local.default_metrics_datasource_uid
+  tempo_service_graph_datasource_uid = local.default_metrics_datasource_uid
+  tempo_service_graph_enabled        = var.victoria_metrics.enabled
+  prometheus_monitor_enabled         = local.grafana_prometheus_monitor_enabled
 
   datasources = concat(
     var.grafana.datasources == null ? [] : var.grafana.datasources,
@@ -204,6 +207,8 @@ module "tempo" {
   create_namespace             = var.tempo.create_namespace
   metrics_generator_remote_url = local.tempo_metrics_generator_remote_write_url
   service_monitor_enabled      = local.tempo_prometheus_monitor_enabled
+  service_graph_enabled        = var.victoria_metrics.enabled
+  service_graph_dimensions     = var.tempo.service_graph_dimensions
 }
 
 module "loki" {

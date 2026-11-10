@@ -2,6 +2,8 @@ locals {
   workload_name              = coalesce(var.defaults.workload_name, "${var.defaults.workload_prefix}${var.name}${var.defaults.workload_suffix}")
   replicas_state_pod_matcher = var.legacy_service_block_queries ? "^${local.workload_name}(-[^-]+)?-[^-]+$" : "^${local.workload_name}(-(primary|canary))?(-[^-]+)?-[^-]+$"
   memory_metric              = var.legacy_service_block_queries ? "container_memory_usage_bytes" : "container_memory_working_set_bytes"
+  container_name             = coalesce(var.defaults.container_name, var.name)
+  container_selector         = var.defaults.container_name == null ? "container='${local.container_name}'" : "container='${local.container_name}', pod=~'${local.replicas_state_pod_matcher}'"
 
   type_specific_defaults = {
     deployment = {

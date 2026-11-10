@@ -2,6 +2,15 @@
 
 Replica count and HPA min/max alerts aggregate kube-state-metrics samples by Kubernetes object before comparing values. This prevents overlapping scraper series from causing duplicate alert instances or PromQL vector-matching errors. The resulting alert instances omit scraper labels such as `pod` and `instance`; review silences that match those labels before deploying this change. Existing firing instances may resolve and re-fire when their label sets change.
 
+## Container selector override
+
+Set `defaults.container_name` when a block/service name differs from its
+workload's Prometheus `container` label, particularly when that container name
+is shared by several workloads in one namespace. CPU, memory, and restart
+alerts then match that container and only pods belonging to the configured
+workload. Omit it when the service and container names are the same; the
+existing selectors are preserved.
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
