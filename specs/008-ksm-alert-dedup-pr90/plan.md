@@ -11,6 +11,7 @@ Downstream repository: `dasmeta/terraform-onpremise-grafana`; affected module: `
 3. Correct numeric threshold branches and deduplicate `replicas_no`.
 4. Expand native Terraform tests across workload types, default deployment behavior, and threshold expression shapes.
 5. Run module tests, validation, format checks, and root validation. Document label-identity change and production rollout risk in PR #90.
+6. Correct shared notification templates to preserve a fractional B value. Keep explicit annotation fallback for alerts without B and omit title values when B is absent or zero.
 
 ## Risks and rollout
 

@@ -12,6 +12,7 @@ DS-12693 and DS-13964 report Grafana `DatasourceError` when overlapping kube-sta
 - `replicas_no` must also avoid duplicate alert instances for duplicate scraper series.
 - Preserve existing consumer inputs and current `main` behavior, including stable UIDs and legacy query options.
 - Cover generated expressions and workload-type planning in Terraform tests.
+- Preserve fractional Grafana alert query values in notification titles and bodies; when B has no value, omit it rather than displaying a fabricated zero. This also addresses DS-14078's misleading displayed value.
 
 ## Acceptance
 
@@ -19,3 +20,4 @@ DS-12693 and DS-13964 report Grafana `DatasourceError` when overlapping kube-sta
 - Generated PromQL for HPA comparisons is unambiguous and numeric-threshold comparisons parse.
 - Plan tests pass for all five workload types, with default deployment alerts enabled.
 - PR branch merges current `main` without conflicts. Production deployment and 24-hour observation remain separate approved operations.
+- A B value of 0.173333 is displayed as a nonzero fraction; a missing or zero B value is not displayed as a fabricated measurement in the title.

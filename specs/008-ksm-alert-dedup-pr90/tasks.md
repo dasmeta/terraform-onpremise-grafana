@@ -6,3 +6,4 @@
 - [x] Add plan tests for all workload types, default deployment, and threshold branches.
 - [x] Run Terraform format, tests, and validation; inspect final PR diff and checks.
 - [x] Update PR #90 with review responses, validation, and rollout risk; push the fixed branch.
+- [x] Preserve fractional B values in modules/alerts/modules/contact-points/main.tf and validate Terraform syntax. Live firing/resolved notification verification remains a rollout gate.

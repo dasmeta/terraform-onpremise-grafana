@@ -86,13 +86,13 @@ resource "grafana_message_template" "body_template" {
 
 {{- $currentFromB := "" -}}
 {{- with (index $a.Values "B") -}}
-  {{- $currentFromB = printf "%.0f" . -}}
+  {{- $currentFromB = printf "%v" . -}}
 {{- end -}}
 
 {{- $metric     := or .CommonAnnotations.metric     $a.Annotations.metric -}}
 {{- $threshold  := or .CommonAnnotations.threshold  $a.Annotations.threshold -}}
 {{- $evaluation := or .CommonAnnotations.evaluation $a.Annotations.evaluation -}}
-{{- $current    := or $currentFromB                 (or .CommonAnnotations.current $a.Annotations.current) -}}
+{{- $current    := or $currentFromB (or .CommonAnnotations.current $a.Annotations.current) -}}
 
 {{- $summary := or .CommonAnnotations.summary $a.Annotations.summary -}}
 {{- $impact  := or .CommonAnnotations.impact  $a.Annotations.impact  -}}
@@ -151,7 +151,10 @@ resource "grafana_message_template" "title_template" {
 
 {{- $prio := or (or .CommonLabels.priority $a.Labels.priority) "P3" -}}
 {{- $issue := or (or .CommonAnnotations.issue_phrase $a.Annotations.issue_phrase) (or .CommonLabels.alertname $a.Labels.alertname) "Alert" -}}
-{{- $val := printf "%.0f" (index $a.Values "B") -}}
+{{- $val := "" -}}
+{{- with (index $a.Values "B") -}}
+  {{- $val = printf "%v" . -}}
+{{- end -}}
 {{- $threshold := or .CommonAnnotations.threshold $a.Labels.threshold }}
 {{- $component := or .CommonAnnotations.component $a.Labels.component "unknown-component" -}}
 {{- $resource  := or .CommonAnnotations.resource  $a.Labels.resource  "-" -}}
