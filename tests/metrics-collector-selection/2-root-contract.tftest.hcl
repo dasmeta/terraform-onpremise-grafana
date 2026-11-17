@@ -632,3 +632,29 @@ run "victoria_metrics_active" {
     error_message = "Dual VictoriaMetrics mode must use converted kube-prometheus-stack monitors without native component discovery duplicates."
   }
 }
+
+run "heterogeneous_scrape_jobs_at_root" {
+  command = plan
+  module { source = "../.." }
+  variables {
+    metrics_collector = "victoria_metrics"
+    grafana           = { enabled = false }
+    prometheus        = { enabled = false }
+    victoria_metrics = {
+      enabled  = true
+      operator = { enabled = true }
+      agent = { extra_scrape_configs = [
+        { job_name = "ingress", kubernetes_sd_configs = [{ role = "endpoints" }] },
+        { job_name = "connection-metrics", scrape_interval = "15s", static_configs = [{ targets = ["example.invalid:9090"] }] },
+        { job_name = "third", metrics_path = "/metrics", relabel_configs = [{ action = "keep", regex = "example" }] },
+      ] }
+    }
+    tempo      = { enabled = false }
+    loki_stack = { enabled = false }
+    alerts     = { disk_capacity = { enabled = false }, rules = [], contact_points = null, notifications = null }
+  }
+  assert {
+    condition     = output.metrics_collector_status.victoria_metrics_agent_enabled
+    error_message = "Differently shaped scrape jobs must be accepted by the root module."
+  }
+}

@@ -61,10 +61,9 @@ locals {
     }
   }
 
-  agent_caller_scrape_configs = (
-    var.agent_extra_scrape_configs == null
-    ? []
-    : var.agent_extra_scrape_configs
+  agent_caller_scrape_configs = try(
+    [for job in var.agent_extra_scrape_configs : job],
+    [],
   )
 
   # Keep the native object distinct from the Operator-converted ServiceMonitor,
