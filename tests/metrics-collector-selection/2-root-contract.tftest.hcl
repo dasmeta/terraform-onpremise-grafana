@@ -658,3 +658,23 @@ run "heterogeneous_scrape_jobs_at_root" {
     error_message = "Differently shaped scrape jobs must be accepted by the root module."
   }
 }
+
+run "root_rejects_scalar_scrape_jobs" {
+  command = plan
+  module { source = "../.." }
+  variables {
+    grafana          = { enabled = false }
+    victoria_metrics = { agent = { extra_scrape_configs = "invalid" } }
+  }
+  expect_failures = [var.victoria_metrics]
+}
+
+run "root_rejects_unnamed_scrape_job" {
+  command = plan
+  module { source = "../.." }
+  variables {
+    grafana          = { enabled = false }
+    victoria_metrics = { agent = { extra_scrape_configs = [{ static_configs = [] }] } }
+  }
+  expect_failures = [var.victoria_metrics]
+}

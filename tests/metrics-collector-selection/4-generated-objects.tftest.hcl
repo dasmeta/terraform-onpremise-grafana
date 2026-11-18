@@ -593,6 +593,20 @@ run "caller_owned_service_jobs_survive_native_scrape_opt_outs" {
   }
 }
 
+run "child_rejects_object_scrape_jobs" {
+  command = plan
+  module { source = "../../modules/victoria-metrics" }
+  variables { agent_extra_scrape_configs = { job_name = "invalid" } }
+  expect_failures = [var.agent_extra_scrape_configs]
+}
+
+run "child_rejects_unnamed_scrape_job" {
+  command = plan
+  module { source = "../../modules/victoria-metrics" }
+  variables { agent_extra_scrape_configs = [{ static_configs = [] }] }
+  expect_failures = [var.agent_extra_scrape_configs]
+}
+
 run "victoria_metrics_cluster_resource_defaults" {
   command = plan
 

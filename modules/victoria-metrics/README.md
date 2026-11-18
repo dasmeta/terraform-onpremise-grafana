@@ -127,14 +127,14 @@ switching or rolling back, or configure persistent queue storage separately.
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.3 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 2.17 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_helm"></a> [helm](#provider\_helm) | ~> 2.17 |
 
 ## Modules
@@ -144,7 +144,7 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [helm_release.victoria_metrics](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.victoria_metrics_operator](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.victoria_metrics_resources](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
@@ -152,7 +152,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_agent_cadvisor_scrape_enabled"></a> [agent\_cadvisor\_scrape\_enabled](#input\_agent\_cadvisor\_scrape\_enabled) | Whether the active VMAgent renders a native VMNodeScrape for the kubelet /metrics/cadvisor endpoint. | `bool` | `true` | no |
 | <a name="input_agent_enabled"></a> [agent\_enabled](#input\_agent\_enabled) | Whether to render the VMAgent custom resource as the active Kubernetes scraper. | `bool` | `false` | no |
 | <a name="input_agent_extra_configs"></a> [agent\_extra\_configs](#input\_agent\_extra\_configs) | Non-protected VMAgent spec overrides. | `any` | `{}` | no |
@@ -194,7 +194,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_helm_metadata"></a> [helm\_metadata](#output\_helm\_metadata) | victoria metrics helm release metadata |
 | <a name="output_native_kubernetes_component_scrapes"></a> [native\_kubernetes\_component\_scrapes](#output\_native\_kubernetes\_component\_scrapes) | Rendered native Kubernetes component discovery state; these booleans do not report runtime target health. |
 | <a name="output_native_node_scrapes"></a> [native\_node\_scrapes](#output\_native\_node\_scrapes) | Resolved native VMNodeScrape activation state. |
