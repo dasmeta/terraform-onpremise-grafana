@@ -561,6 +561,16 @@ variable "victoria_metrics" {
   default     = {}
 
   validation {
+    condition = try(
+      var.victoria_metrics.agent.extra_scrape_configs == null ? true :
+      can(concat([], var.victoria_metrics.agent.extra_scrape_configs)) &&
+      alltrue([for job in var.victoria_metrics.agent.extra_scrape_configs : can(tostring(job.job_name)) && job.job_name != null]),
+      false,
+    )
+    error_message = "victoria_metrics.agent.extra_scrape_configs must be a list of jobs with a non-null job_name."
+  }
+
+  validation {
     condition = (
       length(var.victoria_metrics.agent.name) <= 253 &&
       alltrue([

@@ -102,6 +102,16 @@ variable "agent_extra_scrape_configs" {
   type        = any
   description = "Non-secret inlineScrapeConfig entries for the VMAgent custom resource; direct child callers replacing a module integration must disable its matching agent_*_enabled input."
   default     = []
+
+  validation {
+    condition = try(
+      var.agent_extra_scrape_configs == null ? true :
+      can(concat([], var.agent_extra_scrape_configs)) &&
+      alltrue([for job in var.agent_extra_scrape_configs : can(tostring(job.job_name)) && job.job_name != null]),
+      false,
+    )
+    error_message = "agent_extra_scrape_configs must be a list of jobs with a non-null job_name."
+  }
 }
 
 variable "agent_extra_configs" {

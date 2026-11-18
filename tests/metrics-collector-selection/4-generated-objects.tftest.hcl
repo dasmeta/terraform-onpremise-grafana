@@ -593,6 +593,20 @@ run "caller_owned_service_jobs_survive_native_scrape_opt_outs" {
   }
 }
 
+run "child_rejects_object_scrape_jobs" {
+  command = plan
+  module { source = "../../modules/victoria-metrics" }
+  variables { agent_extra_scrape_configs = { job_name = "invalid" } }
+  expect_failures = [var.agent_extra_scrape_configs]
+}
+
+run "child_rejects_unnamed_scrape_job" {
+  command = plan
+  module { source = "../../modules/victoria-metrics" }
+  variables { agent_extra_scrape_configs = [{ static_configs = [] }] }
+  expect_failures = [var.agent_extra_scrape_configs]
+}
+
 run "victoria_metrics_cluster_resource_defaults" {
   command = plan
 
@@ -1192,5 +1206,24 @@ run "standalone_component_names_remain_collision_safe" {
       ]),
     ])
     error_message = "Long valid VMAgent names must produce distinct DNS-label-safe component Service and VMServiceScrape names."
+  }
+}
+
+run "heterogeneous_scrape_jobs_are_preserved" {
+  command = plan
+  module { source = "../../modules/victoria-metrics" }
+  variables {
+    operator_enabled = true
+    agent_enabled    = true
+    configs          = {}
+    agent_extra_scrape_configs = [
+      { job_name = "ingress", kubernetes_sd_configs = [{ role = "endpoints" }] },
+      { job_name = "connection-metrics", scrape_interval = "15s", static_configs = [{ targets = ["example.invalid:9090"] }] },
+      { job_name = "third", metrics_path = "/metrics", relabel_configs = [{ action = "keep", regex = "example" }] },
+    ]
+  }
+  assert {
+    condition     = [for job in yamldecode(one([for object in jsondecode(helm_release.victoria_metrics_resources[0].values[0]).objects : object if try(object.kind, "") == "VMAgent"]).spec.inlineScrapeConfig) : job.job_name] == ["ingress", "connection-metrics", "third"]
+    error_message = "All differently shaped inline scrape jobs must be rendered in order."
   }
 }

@@ -22,10 +22,9 @@ locals {
   default_metrics_datasource_uid = local.metrics_collector == "victoria_metrics" ? "victoriametrics" : "prometheus"
   default_metrics_data_source    = { uid = local.default_metrics_datasource_uid, type = "prometheus" }
 
-  victoria_metrics_agent_caller_scrape_configs = (
-    var.victoria_metrics.agent.extra_scrape_configs == null
-    ? []
-    : var.victoria_metrics.agent.extra_scrape_configs
+  victoria_metrics_agent_caller_scrape_configs = try(
+    [for job in var.victoria_metrics.agent.extra_scrape_configs : job],
+    [],
   )
   victoria_metrics_agent_has_kube_state_metrics_scrape_config = try(anytrue([
     for scrape_config in local.victoria_metrics_agent_caller_scrape_configs :
