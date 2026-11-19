@@ -457,7 +457,7 @@ variable "kube_state_metrics" {
     extra_configs     = optional(any, {})
   })
   default     = {}
-  description = "Independent kube-state-metrics release shared by the selected metrics collector."
+  description = "Independent kube-state-metrics release shared by the selected metrics collector. Set enabled=false for dashboard-only deployments using an external collector."
 }
 
 variable "node_exporter" {
@@ -481,7 +481,7 @@ variable "node_exporter" {
     extra_configs = optional(any, {})
   })
   default     = {}
-  description = "Independent node-exporter release shared by the selected metrics collector."
+  description = "Independent node-exporter release shared by the selected metrics collector. Set enabled=false for dashboard-only deployments using an external collector."
 }
 
 variable "victoria_metrics" {

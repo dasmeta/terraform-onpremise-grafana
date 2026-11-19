@@ -21,6 +21,13 @@ output "metrics_collector" {
   precondition {
     condition = (
       (
+        !var.grafana.enabled &&
+        !var.prometheus.enabled &&
+        !var.victoria_metrics.enabled &&
+        !var.tempo.enabled &&
+        !var.loki_stack.enabled
+      ) ||
+      (
         local.metrics_collector == "prometheus" &&
         var.prometheus.enabled
       ) ||
